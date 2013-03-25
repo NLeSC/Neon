@@ -1,0 +1,18 @@
+#version 140
+
+uniform mat4 MVMatrix;
+uniform mat4 PMatrix;
+uniform mat4 SMatrix;
+uniform mat3 NormalMatrix;
+
+in vec4 MCvertex;
+in vec3 MCnormal;
+in vec3 MCtexCoord;
+out vec3 MCposition;
+
+void main()
+{
+    MCposition      = MCtexCoord; 
+    
+    gl_Position     = PMatrix * MVMatrix * SMatrix * MCvertex;
+}

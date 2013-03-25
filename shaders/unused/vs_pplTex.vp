@@ -1,0 +1,18 @@
+#version 140
+
+in vec4 MCvertex;
+in vec3 MCnormal;
+in vec3 MCtexCoord;
+
+uniform mat4 PMatrix;
+uniform mat4 MVMatrix;
+uniform mat3 NormalMatrix;
+
+out vec3 EyespaceNormal;
+out vec2 tCoord;
+
+void main() {
+	tCoord = MCtexCoord.xy;
+    EyespaceNormal = NormalMatrix * MCnormal;
+    gl_Position = PMatrix * MVMatrix * MCvertex;
+}
