@@ -11,9 +11,9 @@ import nl.esciencecenter.esight.math.MatrixF;
 import nl.esciencecenter.esight.math.VectorF;
 
 /**
- * Loader/convenience class for {@link ShaderProgram} instances.
- * Different formats for shader source inclusion are possible (files, strings).
- * Shader programs can be constructed consisting of {@link VertexShader} and
+ * Loader/convenience class for {@link ShaderProgram} instances. Different
+ * formats for shader source inclusion are possible (files, strings). Shader
+ * programs can be constructed consisting of {@link VertexShader} and
  * {@link FragmentShader}, and an optional {@link GeometryShader}.
  * 
  * @see ShaderProgram
@@ -32,8 +32,8 @@ public class ShaderProgramLoader {
 
     /**
      * Creation method for {@link ShaderProgram} instances. Reads, parses,
-     * checks, compiles and
-     * initializes Shader source code. Then stores a reference to it.
+     * checks, compiles and initializes Shader source code. Then stores a
+     * reference to it.
      * 
      * @param gl
      *            The global openGL instance.
@@ -51,9 +51,9 @@ public class ShaderProgramLoader {
      * @throws CompilationFailedException
      *             if one of the source compilations generates an error.
      */
-    public ShaderProgram createProgram(GL3 gl, String programName, File vsSourceFile,
-            File gsSourceFile, File fsSourceFile) throws FileNotFoundException,
-            CompilationFailedException {
+    public ShaderProgram createProgram(GL3 gl, String programName,
+            File vsSourceFile, File gsSourceFile, File fsSourceFile)
+            throws FileNotFoundException, CompilationFailedException {
         VertexShader vs = new VertexShader(programName + " : Vertex Shader",
                 vsSourceFile);
         vs.init(gl);
@@ -73,8 +73,8 @@ public class ShaderProgramLoader {
 
     /**
      * Creation method for {@link ShaderProgram} instances. Reads, parses,
-     * checks, compiles and
-     * initializes Shader source code. Then stores a reference to it.
+     * checks, compiles and initializes Shader source code. Then stores a
+     * reference to it.
      * 
      * @param gl
      *            The global openGL instance.
@@ -90,8 +90,8 @@ public class ShaderProgramLoader {
      * @throws CompilationFailedException
      *             if one of the source compilations generates an error.
      */
-    public ShaderProgram createProgram(GL3 gl, String programName, File vsSourceFile,
-            File fsSourceFile) throws FileNotFoundException,
+    public ShaderProgram createProgram(GL3 gl, String programName,
+            File vsSourceFile, File fsSourceFile) throws FileNotFoundException,
             CompilationFailedException {
         VertexShader vs = new VertexShader(programName + " : Vertex Shader",
                 vsSourceFile);
@@ -109,8 +109,8 @@ public class ShaderProgramLoader {
 
     /**
      * Creation method for {@link ShaderProgram} instances. Reads, parses,
-     * checks, compiles and
-     * initializes Shader source code. Then stores a reference to it.
+     * checks, compiles and initializes Shader source code. Then stores a
+     * reference to it.
      * 
      * @param gl
      *            The global openGL instance.
@@ -145,8 +145,8 @@ public class ShaderProgramLoader {
 
     /**
      * Creation method for {@link ShaderProgram} instances. Reads, parses,
-     * checks, compiles and
-     * initializes Shader source code. Then stores a reference to it.
+     * checks, compiles and initializes Shader source code. Then stores a
+     * reference to it.
      * 
      * @param gl
      *            The global openGL instance.
@@ -162,9 +162,9 @@ public class ShaderProgramLoader {
      * @throws CompilationFailedException
      *             if one of the source compilations generates an error.
      */
-    public ShaderProgram createProgram(GL3 gl, String programName, File vsSourceFile,
-            String fsSourceCode) throws FileNotFoundException,
-            CompilationFailedException {
+    public ShaderProgram createProgram(GL3 gl, String programName,
+            File vsSourceFile, String fsSourceCode)
+            throws FileNotFoundException, CompilationFailedException {
         VertexShader vs = new VertexShader(programName + " : Vertex Shader",
                 vsSourceFile);
         vs.init(gl);
@@ -181,8 +181,8 @@ public class ShaderProgramLoader {
 
     /**
      * Creation method for {@link ShaderProgram} instances. Reads, parses,
-     * checks, compiles and
-     * initializes Shader source code. Then stores a reference to it.
+     * checks, compiles and initializes Shader source code. Then stores a
+     * reference to it.
      * 
      * @param gl
      *            The global openGL instance.
@@ -227,7 +227,8 @@ public class ShaderProgramLoader {
      *            A predefined {@link FragmentShader}
      * @return The shader program just created.
      */
-    public ShaderProgram createProgram(GL3 gl, VertexShader vs, FragmentShader fs) {
+    public ShaderProgram createProgram(GL3 gl, VertexShader vs,
+            FragmentShader fs) {
         ShaderProgram program = new ShaderProgram(vs, fs);
         program.init(gl);
         programs.add(program);
@@ -273,8 +274,7 @@ public class ShaderProgramLoader {
 
     /**
      * Stages a given variable for all currently loaded {@link ShaderProgram}
-     * instances.
-     * (use only in exceptional circumstances)
+     * instances. (use only in exceptional circumstances)
      * 
      * @param pointerNameInShader
      *            The name of the variable in the GLSL source code.
@@ -289,8 +289,7 @@ public class ShaderProgramLoader {
 
     /**
      * Stages a given variable for all currently loaded {@link ShaderProgram}
-     * instances.
-     * (use only in exceptional circumstances)
+     * instances. (use only in exceptional circumstances)
      * 
      * @param pointerNameInShader
      *            The name of the variable in the GLSL source code.
@@ -305,8 +304,7 @@ public class ShaderProgramLoader {
 
     /**
      * Stages a given variable for all currently loaded {@link ShaderProgram}
-     * instances.
-     * (use only in exceptional circumstances)
+     * instances. (use only in exceptional circumstances)
      * 
      * @param pointerNameInShader
      *            The name of the variable in the GLSL source code.
@@ -321,8 +319,7 @@ public class ShaderProgramLoader {
 
     /**
      * Stages a given variable for all currently loaded {@link ShaderProgram}
-     * instances.
-     * (use only in exceptional circumstances)
+     * instances. (use only in exceptional circumstances)
      * 
      * @param pointerNameInShader
      *            The name of the variable in the GLSL source code.
@@ -337,8 +334,7 @@ public class ShaderProgramLoader {
 
     /**
      * Stages a given variable for all currently loaded {@link ShaderProgram}
-     * instances.
-     * (use only in exceptional circumstances)
+     * instances. (use only in exceptional circumstances)
      * 
      * @param pointerNameInShader
      *            The name of the variable in the GLSL source code.
