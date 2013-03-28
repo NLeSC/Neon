@@ -2,96 +2,129 @@ package nl.esciencecenter.esight.math;
 
 import java.nio.FloatBuffer;
 
+/* Copyright [2013] [Netherlands eScience Center]
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Abstract for all Matrices that provides several utility functions.
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
 public abstract class MatrixF {
-	protected float m[];
-	protected FloatBuffer buf;
-	
-	protected MatrixF(int size) {
-		m = new float[size];
-    	buf = FloatBuffer.wrap(m);
-    	buf.rewind();
-	}
-	
+    /** The main storage array for this matrix. */
+    protected float m[];
+
+    /** The same storage, but in FloatBuffer form. */
+    protected FloatBuffer buf;
+
+    /**
+     * Basic constructor for MatrixF.
+     * 
+     * @param size
+     *            the number of floats to be stored in this matrix.
+     */
+    protected MatrixF(int size) {
+        m = new float[size];
+        buf = FloatBuffer.wrap(m);
+        buf.rewind();
+    }
+
     /**
      * Returns the flattened Array associated with this matrix.
-     * @return
-     * 		This matrix as a flat Array.
-     */    
+     * 
+     * @return This matrix as a flat Array.
+     */
     public float[] asArray() {
         return m;
     }
-    
+
     /**
      * Returns the FloatBuffer associated with this matrix.
-     * @return
-     * 		This matrix as a FloatBuffer.
+     * 
+     * @return This matrix as a FloatBuffer.
      */
     public FloatBuffer asBuffer() {
-    	buf.rewind();
-    	return buf;
+        buf.rewind();
+        return buf;
     }
-    
-    
+
     /**
-     * Returns the value of this matrix at position i,j. 
+     * Returns the value of this matrix at position i,j.
+     * 
      * @param i
-     * 		The column.
+     *            The column.
      * @param j
-     * 		The row.
-     * @return
-     * 		The value at index i,j.
+     *            The row.
+     * @return The value at index i,j.
      */
     public float get(int i, int j) {
-    	int rowSize = (int) Math.sqrt(m.length);
+        int rowSize = (int) Math.sqrt(m.length);
         return m[i * rowSize + j];
     }
-    
+
     /**
-     * Returns the value of this matrix at position i. 
+     * Returns the value of this matrix at position i.
+     * 
      * @param i
-     * 		The index.
-     * @return
-     * 		The value at index i.
+     *            The index.
+     * @return The value at index i.
      */
     public float get(int i) {
         return m[i];
     }
-    
+
     /**
-     * Sets the value of this matrix at position i,j. 
+     * Sets the value of this matrix at position i,j.
+     * 
      * @param i
-     * 		The column.
+     *            The column.
      * @param j
-     * 		The row.
+     *            The row.
      * @param f
-     * 		The new value.
+     *            The new value.
      */
-    public void set(int i, int j, float f) {   
-    	int rowSize = (int) Math.sqrt(m.length);
+    public void set(int i, int j, float f) {
+        int rowSize = (int) Math.sqrt(m.length);
         m[i * rowSize + j] = f;
     }
-    
+
     /**
-     * Sets the value of this matrix at position i. 
+     * Sets the value of this matrix at position i.
+     * 
      * @param i
-     * 		The column.
+     *            The column.
      * @param f
-     * 		The new value.
+     *            The new value.
      */
-    public void set(int i, float f) {        
+    public void set(int i, float f) {
         m[i] = f;
     }
-    
+
+    @Override
     public String toString() {
-    	int rowSize = (int) Math.sqrt(m.length);
-    	String result = "";
-    	
-    	for (int i=0; i<m.length; i++) {    		
-    		if (i != 0 && i % rowSize == 0) result += "\n";
-    		
-    		result += m[i] + " ";
-    	}
-    	
-    	return result;
+        int rowSize = (int) Math.sqrt(m.length);
+        String result = "";
+
+        for (int i = 0; i < m.length; i++) {
+            if (i != 0 && i % rowSize == 0)
+                result += "\n";
+
+            result += m[i] + " ";
+        }
+
+        return result;
     }
 }

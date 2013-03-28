@@ -1,10 +1,18 @@
 package nl.esciencecenter.esight.math;
 
-import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 public class MatF4 extends MatrixF {
+    /** The number of elements in this matrix */
     public static final int SIZE = 16;
+
+    /**
+     * Creates a new identity matrix.
+     */
+    public MatF4() {
+        super(SIZE);
+        identity();
+    }
 
     private void identity() {
         Arrays.fill(m, 0f);
@@ -12,15 +20,11 @@ public class MatF4 extends MatrixF {
     }
 
     /**
-     * Creates a new 4x4 identity matrix.
+     * Helper method to create an identity matrix.
      */
-    public MatF4() {
-        super(SIZE);
-        identity();
-    }
 
     /**
-     * Creates a new 4x4 matrix with all slots filled with the parameter.
+     * Creates a new matrix with all slots filled with the parameter.
      * 
      * @param in
      *            The value to be put in all matrix fields.
@@ -31,7 +35,7 @@ public class MatF4 extends MatrixF {
     }
 
     /**
-     * Creates a new 4x4 matrix, using the 4 vectors in order as filling.
+     * Creates a new matrix, using the vectors in order as filling.
      * 
      * @param v0
      *            The first row of the matrix.
@@ -51,7 +55,7 @@ public class MatF4 extends MatrixF {
     }
 
     /**
-     * Creates a new 4x4 matrix using the SIZE parameters row-wise as filling.
+     * Creates a new matrix using the parameters row-wise as filling.
      * 
      * @param m00
      *            The parameter on position 0x0.
@@ -109,7 +113,7 @@ public class MatF4 extends MatrixF {
     }
 
     /**
-     * Creates a new 4x4 matrix by copying the matrix used as parameter.
+     * Creates a new matrix by copying the matrix used as parameter.
      * 
      * @param n
      *            The old matrix to be copied.
@@ -122,14 +126,6 @@ public class MatF4 extends MatrixF {
         }
     }
 
-    public MatF4(FloatBuffer src) {
-        super(SIZE);
-
-        for (int i = 0; i < SIZE; i++) {
-            m[i] = src.get(i);
-        }
-    }
-
     /**
      * Multiplies this matrix with the given matrix, returning a new matrix.
      * 
@@ -138,7 +134,7 @@ public class MatF4 extends MatrixF {
      * @return The new 4x4 matrix that is the result of the multiplication.
      */
     public MatF4 mul(MatF4 n) {
-        MatF4 a = new MatF4(0);
+        MatF4 a = new MatF4(0f);
 
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
@@ -152,51 +148,20 @@ public class MatF4 extends MatrixF {
     }
 
     /**
-     * Multiplies this matrix with the given vector, returning a new vector.
-     * 
-     * @param v
-     *            The vector to be multiplied with the current matrix.
-     * @return The new 4-place vector that is the result of the multiplication.
-     */
-    public VecF4 mul(VecF4 v) {
-        return new VecF4(m[0 * 4 + 0] * v.v[0] + m[0 * 4 + 1] * v.v[1]
-                + m[0 * 4 + 2] * v.v[2] + m[0 * 4 + 3] * v.v[3], m[1 * 4 + 0]
-                * v.v[0] + m[1 * 4 + 1] * v.v[1] + m[1 * 4 + 2] * v.v[2]
-                + m[1 * 4 + 3] * v.v[3], m[2 * 4 + 0] * v.v[0] + m[2 * 4 + 1]
-                * v.v[1] + m[2 * 4 + 2] * v.v[2] + m[2 * 4 + 3] * v.v[3],
-                m[3 * 4 + 0] * v.v[0] + m[3 * 4 + 1] * v.v[1] + m[3 * 4 + 2]
-                        * v.v[2] + m[3 * 4 + 3] * v.v[3]);
-    }
-
-    /**
-     * Multiplies this matrix with the given scalar, returning a new matrix.
-     * 
-     * @param n
-     *            The scalar to be multiplied with the current matrix.
-     * @return The new 4x4 matrix that is the result of the multiplication.
-     */
-    public MatF4 mul(Number n) {
-        float fn = n.floatValue();
-        for (int i = 0; i < SIZE; ++i) {
-            m[i] *= fn;
-        }
-
-        return this;
-    }
-
-    /**
      * Adds this matrix to the given matrix, returning a new matrix.
      * 
      * @param n
      *            The matrix to be added to the current matrix.
-     * @return The new 4x4 matrix that is the result of the addition.
+     * @return The new matrix that is the result of the addition.
      */
     public MatF4 add(MatF4 n) {
+        MatF4 result = new MatF4(0f);
+
         for (int i = 0; i < SIZE; ++i) {
-            m[i] += n.m[i];
+            result.m[i] = m[i] + n.m[i];
         }
 
-        return this;
+        return result;
     }
 
     /**
@@ -204,14 +169,70 @@ public class MatF4 extends MatrixF {
      * 
      * @param n
      *            The matrix to be substracted from to the current matrix.
-     * @return The new 4x4 matrix that is the result of the substraction.
+     * @return The new matrix that is the result of the substraction.
      */
     public MatF4 sub(MatF4 n) {
+        MatF4 result = new MatF4(0f);
+
         for (int i = 0; i < SIZE; ++i) {
-            m[i] -= n.m[i];
+            result.m[i] = m[i] - n.m[i];
         }
 
-        return this;
+        return result;
+    }
+
+    /**
+     * Multiplies this matrix with the given scalar, returning a new matrix.
+     * 
+     * @param n
+     *            The scalar to be multiplied with the current matrix.
+     * @return The new matrix that is the result of the multiplication.
+     */
+    public MatF4 mul(Number n) {
+        MatF4 result = new MatF4(0f);
+
+        float fn = n.floatValue();
+        for (int i = 0; i < SIZE; ++i) {
+            result.m[i] = m[i] * fn;
+        }
+
+        return result;
+    }
+
+    /**
+     * Multiplies this matrix with the given scalar, returning a new matrix.
+     * 
+     * @param n
+     *            The scalar to be multiplied with the current matrix.
+     * @return The new matrix that is the result of the multiplication.
+     */
+    public MatF4 add(Number n) {
+        MatF4 result = new MatF4(0f);
+
+        float fn = n.floatValue();
+        for (int i = 0; i < SIZE; ++i) {
+            result.m[i] = m[i] + fn;
+        }
+
+        return result;
+    }
+
+    /**
+     * Multiplies this matrix with the given scalar, returning a new matrix.
+     * 
+     * @param n
+     *            The scalar to be multiplied with the current matrix.
+     * @return The new matrix that is the result of the multiplication.
+     */
+    public MatF4 sub(Number n) {
+        MatF4 result = new MatF4(0f);
+
+        float fn = n.floatValue();
+        for (int i = 0; i < SIZE; ++i) {
+            result.m[i] = m[i] - fn;
+        }
+
+        return result;
     }
 
     /**
@@ -221,16 +242,33 @@ public class MatF4 extends MatrixF {
      * @param n
      *            The scalar with which to divide the values of the current
      *            matrix.
-     * @return The new 4x4 matrix that is the result of the division.
+     * @return The new matrix that is the result of the division.
      */
     public MatF4 div(Number n) {
+        MatF4 result = new MatF4(0f);
+
         float fn = 1f / n.floatValue();
 
         for (int i = 0; i < SIZE; ++i) {
-            m[i] *= fn;
+            result.m[i] = m[i] * fn;
         }
 
-        return this;
+        return result;
+    }
+
+    /**
+     * Multiplies this matrix with the given vector, returning a new vector.
+     * 
+     * @param v
+     *            The vector to be multiplied with the current matrix.
+     * @return The new vector that is the result of the multiplication.
+     */
+    public VecF4 mul(VecF4 v) {
+        return new VecF4(m[0] * v.v[0] + m[1] * v.v[1] + m[2] * v.v[2] + m[3]
+                * v.v[3], m[4] * v.v[0] + m[5] * v.v[1] + m[6] * v.v[2] + m[7]
+                * v.v[3], m[8] * v.v[0] + m[9] * v.v[1] + m[10] * v.v[2]
+                + m[11] * v.v[3], m[12] * v.v[0] + m[13] * v.v[1] + m[14]
+                * v.v[2] + m[15] * v.v[3]);
     }
 
     @Override

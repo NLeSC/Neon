@@ -1,9 +1,30 @@
 package nl.esciencecenter.esight.math;
 
-import java.nio.FloatBuffer;
 import java.util.Arrays;
 
+/* Copyright [2013] [Netherlands eScience Center]
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * 3x3 float matrix implementation
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
 public class MatF3 extends MatrixF {
+    /** The number of elements in this matrix */
     public static final int SIZE = 9;
 
     /**
@@ -14,13 +35,16 @@ public class MatF3 extends MatrixF {
         identity();
     }
 
+    /**
+     * Helper method to create a new identity matrix.
+     */
     private void identity() {
         Arrays.fill(m, 0f);
         m[0] = m[4] = m[8] = 1.0f;
     }
 
     /**
-     * Creates a new 3x3 matrix with all slots filled with the parameter.
+     * Creates a new matrix with all slots filled with the parameter.
      * 
      * @param in
      *            The value to be put in all matrix fields.
@@ -31,7 +55,7 @@ public class MatF3 extends MatrixF {
     }
 
     /**
-     * Creates a new 3x3 matrix, using the 3 vectors in order as filling.
+     * Creates a new matrix, using the vectors in order as filling.
      * 
      * @param v0
      *            The first row of the matrix.
@@ -48,7 +72,7 @@ public class MatF3 extends MatrixF {
     }
 
     /**
-     * Creates a new 3x3 matrix using the 9 parameters row-wise as filling.
+     * Creates a new matrix using the parameters row-wise as filling.
      * 
      * @param m00
      *            The parameter on position 0x0.
@@ -84,7 +108,7 @@ public class MatF3 extends MatrixF {
     }
 
     /**
-     * Creates a new 3x3 matrix by copying the matrix used as parameter.
+     * Creates a new matrix by copying the matrix used as parameter.
      * 
      * @param n
      *            The old matrix to be copied.
@@ -97,63 +121,25 @@ public class MatF3 extends MatrixF {
         }
     }
 
-    public MatF3(FloatBuffer src) {
-        super(SIZE);
-
-        for (int i = 0; i < SIZE; i++) {
-            m[i] = src.get(i);
-        }
-    }
-
     /**
      * Multiplies this matrix with the given matrix, returning a new matrix.
      * 
      * @param n
      *            The matrix to be multiplied with the current matrix.
-     * @return The new 4x4 matrix that is the result of the multiplication.
+     * @return The new matrix that is the result of the multiplication.
      */
     public MatF3 mul(MatF3 n) {
-        MatF3 a = new MatF3(0);
+        MatF3 result = new MatF3(0f);
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 for (int k = 0; k < 3; ++k) {
-                    a.m[i * 3 + j] += m[i * 3 + k] * n.m[k * 3 + j];
+                    result.m[i * 3 + j] += m[i * 3 + k] * n.m[k * 3 + j];
                 }
             }
         }
 
-        return a;
-    }
-
-    /**
-     * Multiplies this matrix with the given vector, returning a new matrix.
-     * 
-     * @param v
-     *            The vector to be multiplied with the current matrix.
-     * @return The new 4x4 matrix that is the result of the multiplication.
-     */
-    public VecF3 mul(VecF3 v) {
-        return new VecF3(m[0 * 3 + 0] * v.v[0] + m[0 * 3 + 1] * v.v[1]
-                + m[0 * 3 + 2] * v.v[2], m[1 * 3 + 0] * v.v[0] + m[1 * 3 + 1]
-                * v.v[1] + m[1 * 3 + 2] * v.v[2], m[2 * 3 + 0] * v.v[0]
-                + m[2 * 3 + 1] * v.v[1] + m[2 * 3 + 2] * v.v[2]);
-    }
-
-    /**
-     * Multiplies this matrix with the given scalar, returning a new matrix.
-     * 
-     * @param n
-     *            The scalar to be multiplied with the current matrix.
-     * @return The new 4x4 matrix that is the result of the multiplication.
-     */
-    public MatF3 mul(Number n) {
-        float fn = n.floatValue();
-        for (int i = 0; i < SIZE; ++i) {
-            m[i] *= fn;
-        }
-
-        return this;
+        return result;
     }
 
     /**
@@ -161,14 +147,16 @@ public class MatF3 extends MatrixF {
      * 
      * @param n
      *            The matrix to be added to the current matrix.
-     * @return The new 4x4 matrix that is the result of the addition.
+     * @return The new matrix that is the result of the addition.
      */
     public MatF3 add(MatF3 n) {
+        MatF3 result = new MatF3(0f);
+
         for (int i = 0; i < SIZE; ++i) {
-            m[i] += n.m[i];
+            result.m[i] = m[i] + n.m[i];
         }
 
-        return this;
+        return result;
     }
 
     /**
@@ -176,14 +164,70 @@ public class MatF3 extends MatrixF {
      * 
      * @param n
      *            The matrix to be substracted from to the current matrix.
-     * @return The new 4x4 matrix that is the result of the substraction.
+     * @return The new matrix that is the result of the substraction.
      */
     public MatF3 sub(MatF3 n) {
+        MatF3 result = new MatF3(0f);
+
         for (int i = 0; i < SIZE; ++i) {
-            m[i] -= n.m[i];
+            result.m[i] = m[i] - n.m[i];
         }
 
-        return this;
+        return result;
+    }
+
+    /**
+     * Multiplies this matrix with the given scalar, returning a new matrix.
+     * 
+     * @param n
+     *            The scalar to be multiplied with the current matrix.
+     * @return The new matrix that is the result of the multiplication.
+     */
+    public MatF3 mul(Number n) {
+        MatF3 result = new MatF3(0f);
+
+        float fn = n.floatValue();
+        for (int i = 0; i < SIZE; ++i) {
+            result.m[i] = m[i] * fn;
+        }
+
+        return result;
+    }
+
+    /**
+     * Multiplies this matrix with the given scalar, returning a new matrix.
+     * 
+     * @param n
+     *            The scalar to be multiplied with the current matrix.
+     * @return The new matrix that is the result of the multiplication.
+     */
+    public MatF3 add(Number n) {
+        MatF3 result = new MatF3(0f);
+
+        float fn = n.floatValue();
+        for (int i = 0; i < SIZE; ++i) {
+            result.m[i] = m[i] + fn;
+        }
+
+        return result;
+    }
+
+    /**
+     * Multiplies this matrix with the given scalar, returning a new matrix.
+     * 
+     * @param n
+     *            The scalar to be multiplied with the current matrix.
+     * @return The new matrix that is the result of the multiplication.
+     */
+    public MatF3 sub(Number n) {
+        MatF3 result = new MatF3(0f);
+
+        float fn = n.floatValue();
+        for (int i = 0; i < SIZE; ++i) {
+            result.m[i] = m[i] - fn;
+        }
+
+        return result;
     }
 
     /**
@@ -193,16 +237,32 @@ public class MatF3 extends MatrixF {
      * @param n
      *            The scalar with which to divide the values of the current
      *            matrix.
-     * @return The new 4x4 matrix that is the result of the division.
+     * @return The new matrix that is the result of the division.
      */
     public MatF3 div(Number n) {
+        MatF3 result = new MatF3(0f);
+
         float fn = 1f / n.floatValue();
 
         for (int i = 0; i < SIZE; ++i) {
-            m[i] *= fn;
+            result.m[i] = m[i] * fn;
         }
 
-        return this;
+        return result;
+    }
+
+    /**
+     * Multiplies this matrix with the given vector, returning a new vector.
+     * 
+     * @param v
+     *            The vector to be multiplied with the current matrix.
+     * @return The new vector that is the result of the multiplication.
+     */
+    public VecF3 mul(VecF3 v) {
+        VecF3 result = new VecF3(m[0] * v.v[0] + m[1] * v.v[1] + m[2] * v.v[2],
+                m[3] * v.v[0] + m[4] * v.v[1] + m[5] * v.v[2], m[6] * v.v[0]
+                        + m[7] * v.v[1] + m[8] * v.v[2]);
+        return result;
     }
 
     @Override

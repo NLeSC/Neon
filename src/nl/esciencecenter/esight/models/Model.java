@@ -10,6 +10,21 @@ import nl.esciencecenter.esight.datastructures.VBO;
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 import nl.esciencecenter.esight.shaders.ShaderProgram;
 
+/* Copyright [2013] [Netherlands eScience Center]
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * General extendible class representing a model with a {@link VBO}.
  * 
@@ -31,16 +46,16 @@ public abstract class Model {
     protected vertex_format format;
 
     /** The storage buffers for the standard elements of a model. */
-    protected FloatBuffer   vertices, normals, texCoords;
+    protected FloatBuffer vertices, normals, texCoords;
 
     /** The resulting {@link VBO}. */
-    protected VBO           vbo;
+    protected VBO vbo;
 
     /** The number of vertices stored in this model. */
-    protected int           numVertices;
+    protected int numVertices;
 
     /** The state of this model. */
-    private boolean         initialized = false;
+    private boolean initialized = false;
 
     /**
      * General (extensible) constructor for this class. Initializes storage to 0
@@ -59,8 +74,7 @@ public abstract class Model {
 
     /**
      * Initializes the model by constructing the {@link VBO} out of the
-     * vertices,
-     * normals and texCoords buffers.
+     * vertices, normals and texCoords buffers.
      * 
      * @param gl
      *            The global openGL instance.

@@ -1,44 +1,18 @@
 package nl.esciencecenter.esight.math;
 
-import java.nio.FloatBuffer;
-
 import nl.esciencecenter.esight.exceptions.InverseNotAvailableException;
 
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.LUDecomposition;
-import org.apache.commons.math3.linear.RealMatrix;
-
-import com.jogamp.common.nio.Buffers;
-
 public class MatrixFMath {
-
     public static double degreesToRadians = Math.PI / 180.0;
 
-    public static MatF3 getNormalMatrix(MatF4 mv) {
-        MatF3 result = new MatF3();
+    public static MatF3 getNormalMatrix(MatF4 mv)
+            throws InverseNotAvailableException {
+        MatF3 upper3x3 = new MatF3(mv.get(0), mv.get(1), mv.get(2), mv.get(4),
+                mv.get(5), mv.get(6), mv.get(7), mv.get(8), mv.get(9));
+        MatF3 inverse = inverse(upper3x3);
+        MatF3 transpose = transpose(inverse);
 
-        double[][] d = { { mv.get(0), mv.get(1), mv.get(2) },
-                { mv.get(4), mv.get(5), mv.get(6) },
-                { mv.get(8), mv.get(9), mv.get(10) } };
-
-        RealMatrix m = new Array2DRowRealMatrix(d);
-        RealMatrix inverse = new LUDecomposition(m).getSolver().getInverse();
-
-        inverse = inverse.transpose();
-
-        result.set(0, (float) inverse.getEntry(0, 0));
-        result.set(1, (float) inverse.getEntry(0, 1));
-        result.set(2, (float) inverse.getEntry(0, 2));
-
-        result.set(3, (float) inverse.getEntry(1, 0));
-        result.set(4, (float) inverse.getEntry(1, 1));
-        result.set(5, (float) inverse.getEntry(1, 2));
-
-        result.set(6, (float) inverse.getEntry(2, 0));
-        result.set(7, (float) inverse.getEntry(2, 1));
-        result.set(8, (float) inverse.getEntry(2, 2));
-
-        return result;
+        return transpose;
     }
 
     /**
@@ -420,38 +394,31 @@ public class MatrixFMath {
     }
 
     public static MatF2 minor(MatF3 m, int col, int row) {
-        FloatBuffer r = Buffers.newDirectFloatBuffer(4);
+        MatF2 result = new MatF2();
 
         for (int iRow = 0; iRow < 3; iRow++) {
             for (int iCol = 0; iCol < 3; iCol++) {
                 if (iRow != row && iCol != col) {
-                    r.put(m.m[iRow * 3 + iCol]);
+                    result.buf.put(m.m[iRow * 3 + iCol]);
                 }
             }
         }
 
-        System.out.println(r);
-
-        for (int i = 0; i < 4; i++) {
-            System.out.println(r.get(i));
-        }
-
-        MatF2 n = new MatF2(r);
-        return n;
+        return result;
     }
 
     public static MatF3 minor(MatF4 m, int col, int row) {
-        FloatBuffer r = Buffers.newDirectFloatBuffer(9);
+        MatF3 result = new MatF3();
 
         for (int iRow = 0; iRow < 4; iRow++) {
             for (int iCol = 0; iCol < 4; iCol++) {
                 if (iRow != row && iCol != col) {
-                    r.put(m.m[iRow * 4 + iCol]);
+                    result.buf.put(m.m[iRow * 4 + iCol]);
                 }
             }
         }
 
-        return new MatF3(r);
+        return result;
     }
 
     public static MatF2 transpose(MatF2 m) {
