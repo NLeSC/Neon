@@ -5,14 +5,26 @@ import nl.esciencecenter.esight.exceptions.InverseNotAvailableException;
 public class MatrixFMath {
     public static double degreesToRadians = Math.PI / 180.0;
 
-    public static MatF3 getNormalMatrix(MatF4 mv)
-            throws InverseNotAvailableException {
+    /**
+     * Get the normal matrix from the modelview matrix.
+     * 
+     * @param mv
+     *            The Modelview matrix to extract the Normal Matrix from.
+     * @return The Normal Matrix for this Modelview Matrix.
+     */
+    public static MatF3 getNormalMatrix(MatF4 mv) {
         MatF3 upper3x3 = new MatF3(mv.get(0), mv.get(1), mv.get(2), mv.get(4),
-                mv.get(5), mv.get(6), mv.get(7), mv.get(8), mv.get(9));
-        MatF3 inverse = inverse(upper3x3);
-        MatF3 transpose = transpose(inverse);
+                mv.get(5), mv.get(6), mv.get(8), mv.get(9), mv.get(10));
 
-        return transpose;
+        MatF3 inverse;
+        try {
+            inverse = inverse(upper3x3);
+            MatF3 transpose = transpose(inverse);
+
+            return transpose;
+        } catch (InverseNotAvailableException e) {
+            return new MatF3();
+        }
     }
 
     /**
@@ -369,9 +381,11 @@ public class MatrixFMath {
     }
 
     public static float determinant(MatF3 m) {
-        return m.m[0] * (m.m[4] * m.m[8] - m.m[5] * m.m[7]) - m.m[1]
-                * (m.m[3] * m.m[8] - m.m[5] * m.m[6]) + m.m[2]
-                * (m.m[3] * m.m[7] - m.m[4] * m.m[6]);
+        float minor1 = m.m[4] * m.m[8] - m.m[7] * m.m[5];
+        float minor2 = m.m[1] * m.m[8] - m.m[7] * m.m[2];
+        float minor3 = m.m[1] * m.m[5] - m.m[4] * m.m[2];
+
+        return m.m[0] * minor1 - m.m[3] * minor2 + m.m[6] * minor3;
     }
 
     public static float determinant(MatF4 m) {
@@ -517,7 +531,7 @@ public class MatrixFMath {
     public static MatF2 inverse(MatF2 m) throws InverseNotAvailableException {
         float det = determinant(m);
         if (det == 0f) {
-            throw new InverseNotAvailableException();
+            throw new InverseNotAvailableException("Determinant 0");
         }
 
         MatF2 adj = adjoint(m);
@@ -530,7 +544,7 @@ public class MatrixFMath {
     public static MatF3 inverse(MatF3 m) throws InverseNotAvailableException {
         float det = determinant(m);
         if (det == 0f) {
-            throw new InverseNotAvailableException();
+            throw new InverseNotAvailableException("Determinant 0");
         }
 
         MatF3 adj = adjoint(m);
@@ -543,7 +557,7 @@ public class MatrixFMath {
     public static MatF4 inverse(MatF4 m) throws InverseNotAvailableException {
         float det = determinant(m);
         if (det == 0f) {
-            throw new InverseNotAvailableException();
+            throw new InverseNotAvailableException("Determinant 0");
         }
 
         MatF4 adj = adjoint(m);
