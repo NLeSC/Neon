@@ -44,6 +44,26 @@ public class VecF4 extends VectorF {
     }
 
     /**
+     * Creates a new vector by copying the given vector, supplemented by the
+     * scalar.
+     * 
+     * @param v
+     *            The vector to be copied.
+     * @param v3
+     *            The additional value to be put into the fourth index.
+     */
+    public VecF4(Vector vector, float f) {
+        super(4);
+        if (vector.getSize() == 3) {
+            this.v[0] = ((VecF3) vector).v[0];
+            this.v[1] = ((VecF3) vector).v[1];
+            this.v[2] = ((VecF3) vector).v[2];
+
+        }
+        // TODO Auto-generated constructor stub
+    }
+
+    /**
      * Creates a new vector with the given values.
      * 
      * @param x
@@ -90,6 +110,23 @@ public class VecF4 extends VectorF {
         result.v[1] = v[1] + u.v[1];
         result.v[2] = v[2] + u.v[2];
         result.v[3] = v[3] + u.v[3];
+        return result;
+    }
+
+    /**
+     * Adds the given vector to the current vector, and returns the result.
+     * leaves the last place of the original vector untouched.
+     * 
+     * @param u
+     *            The vector to be added to this vector.
+     * @return The new vector.
+     */
+    public VecF4 add(VecF3 u) {
+        VecF4 result = new VecF4();
+        result.v[0] = v[0] + u.v[0];
+        result.v[1] = v[1] + u.v[1];
+        result.v[2] = v[2] + u.v[2];
+        result.v[3] = v[3];
         return result;
     }
 
