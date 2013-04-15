@@ -2,8 +2,6 @@ package nl.esciencecenter.esight.textures;
 
 import javax.media.opengl.GL3;
 
-import nl.esciencecenter.esight.datastructures.RenderBuffer;
-
 import com.jogamp.common.nio.Buffers;
 
 /**

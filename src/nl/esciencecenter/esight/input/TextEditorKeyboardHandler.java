@@ -14,21 +14,42 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GLException;
 
+/* Copyright [2013] [Netherlands eScience Center]
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Keyboard input handler for a text editor interface.
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
 public class TextEditorKeyboardHandler extends InputHandler {
-    private ArrayList<String>                  textLines                    = new ArrayList<String>();
-    private ArrayList<String>                  clipBoard                    = new ArrayList<String>();
-    private final ArrayList<ArrayList<String>> undoSave                     = new ArrayList<ArrayList<String>>();
+    private ArrayList<String> textLines = new ArrayList<String>();
+    private ArrayList<String> clipBoard = new ArrayList<String>();
+    private final ArrayList<ArrayList<String>> undoSave = new ArrayList<ArrayList<String>>();
 
-    private int                                cursorPosition               = 0;
-    private int                                linePosition                 = 0;
-    private int                                screenPosition               = 0;
+    private int cursorPosition = 0;
+    private int linePosition = 0;
+    private int screenPosition = 0;
 
-    private int                                selectionLineStartPosition   = 0;
-    private int                                selectionLineStopPosition    = 0;
-    private int                                selectionCursorStartPosition = 0;
-    private int                                selectionCursorStopPosition  = 0;
+    private int selectionLineStartPosition = 0;
+    private int selectionLineStopPosition = 0;
+    private int selectionCursorStartPosition = 0;
+    private int selectionCursorStopPosition = 0;
 
-    private final int                          MAX_SCREEN_POSITION          = 30;
+    private final int MAX_SCREEN_POSITION = 30;
 
     private static class SingletonHolder {
         public static final TextEditorKeyboardHandler instance = new TextEditorKeyboardHandler();

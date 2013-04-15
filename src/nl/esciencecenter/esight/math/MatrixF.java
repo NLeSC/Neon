@@ -30,6 +30,8 @@ public abstract class MatrixF {
     /** The same storage, but in FloatBuffer form. */
     protected FloatBuffer buf;
 
+    protected int size;
+
     /**
      * Basic constructor for MatrixF.
      * 
@@ -37,6 +39,7 @@ public abstract class MatrixF {
      *            the number of floats to be stored in this matrix.
      */
     protected MatrixF(int size) {
+        this.size = size;
         m = new float[size];
         buf = FloatBuffer.wrap(m);
         buf.rewind();
@@ -126,5 +129,41 @@ public abstract class MatrixF {
         }
 
         return result;
+    }
+
+    @Override
+    public int hashCode() {
+        int rowsAndCols = (int) Math.sqrt(size);
+
+        int hashCode = 1;
+        for (int i = 0; i < rowsAndCols; ++i) {
+            for (int j = 0; j < rowsAndCols; ++j) {
+                int v = Float.floatToIntBits(m[i * rowsAndCols + j]);
+                int valHash = v ^ (v >>> 32);
+                hashCode = 31 * hashCode + valHash;
+            }
+        }
+        return hashCode;
+    }
+
+    @Override
+    public boolean equals(Object thatObject) {
+        if (this == thatObject)
+            return true;
+        if (!(thatObject instanceof MatrixF))
+            return false;
+
+        // cast to native object is now safe
+        MatrixF that = (MatrixF) thatObject;
+
+        // now a proper field-by-field evaluation can be made
+        boolean same = true;
+        for (int i = 0; i < size; i++) {
+            if (m[i] < that.m[i] - MatrixFMath.EPSILON
+                    || m[i] > that.m[i] + MatrixFMath.EPSILON) {
+                same = false;
+            }
+        }
+        return same;
     }
 }

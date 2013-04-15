@@ -5,6 +5,7 @@ import java.nio.IntBuffer;
 
 import javax.media.opengl.GL3;
 
+import nl.esciencecenter.esight.datastructures.FBO;
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 
 
