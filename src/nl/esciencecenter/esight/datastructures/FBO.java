@@ -124,8 +124,7 @@ public class FBO {
     }
 
     /**
-     * Internal method to check for errors with the setup of the FBO. Logs
-     * errors if there were any.
+     * Internal method to check for OpenGL errorsLogs errors if there were any.
      * 
      * @param gl
      *            The opengl instance.

@@ -1,8 +1,13 @@
 package nl.esciencecenter.esight.input;
 
+/**
+ * Bytebuffer (as byte[]) transformation class. Used for Touch events.
+ * 
+ * @author Paul Melis, SurfSARA
+ */
 class ByteBufferView {
     private byte[] buffer;
-    private int    offset;
+    private int offset;
 
     public ByteBufferView(byte[] buffer) {
         this.buffer = buffer;

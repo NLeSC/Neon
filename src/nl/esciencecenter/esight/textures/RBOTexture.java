@@ -5,8 +5,8 @@ import javax.media.opengl.GL3;
 import com.jogamp.common.nio.Buffers;
 
 /**
- * Generic wrapper for a {@link Texture} for use as a {@link RenderBuffer}
- * Object. Does not allocate memory for a ByteBuffer, since it is not needed.
+ * Generic wrapper for a {@link Texture} for use as a RenderBuffer Object. Does
+ * not allocate memory for a ByteBuffer, since it is not needed.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
@@ -14,8 +14,8 @@ import com.jogamp.common.nio.Buffers;
 public class RBOTexture extends Texture2D {
 
     /**
-     * Default constructor, use this in combination with {@link RenderBuffer}.
-     * Do not forget to call {@link #init(javax.media.opengl.GL3)} before use.
+     * Default constructor, use this in combination with RenderBuffer. Do not
+     * forget to call {@link #init(javax.media.opengl.GL3)} before use.
      * 
      * @param glMultitexUnit
      *            The OpenGL-internal MultitexUnit (GL.GL_TEXTUREX) this texture

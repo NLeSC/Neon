@@ -1,4 +1,4 @@
-#version 150
+#version 140
 
 in vec4 MCvertex;
 in vec3 MCnormal;
@@ -8,9 +8,5 @@ uniform mat4 MVMatrix;
 uniform mat4 PMatrix;
 
 void main() {
-	//vec3 temp;
-	//temp = MCnormal;
-	//temp = MCtexCoord;
-
     gl_Position = PMatrix * MVMatrix * MCvertex;
 }

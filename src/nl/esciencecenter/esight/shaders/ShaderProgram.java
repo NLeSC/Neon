@@ -3,6 +3,7 @@ package nl.esciencecenter.esight.shaders;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,6 +15,7 @@ import nl.esciencecenter.esight.datastructures.VBO;
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 import nl.esciencecenter.esight.math.MatrixF;
 import nl.esciencecenter.esight.math.VectorF;
+import nl.esciencecenter.esight.math.VectorS;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +23,10 @@ import org.slf4j.LoggerFactory;
 import com.jogamp.common.nio.Buffers;
 
 /**
- * This library's interpretation of a Shader program.
- * Different formats for shader source inclusion are possible (files, strings).
- * Shader programs can be constructed consisting of vertex shader and fragment
- * shader, and an optional geometry shader.
+ * This library's interpretation of a Shader program. Different formats for
+ * shader source inclusion are possible (files, strings). Shader programs can be
+ * constructed consisting of vertex shader and fragment shader, and an optional
+ * geometry shader.
  * 
  * Shader Programs made with this class have an internal storage for GLSL
  * uniform variables, and perform checks on use to see if these variables have
@@ -51,34 +53,54 @@ import com.jogamp.common.nio.Buffers;
  * 
  */
 public class ShaderProgram {
-    private final static Logger                logger           = LoggerFactory
-                                                                        .getLogger(ShaderProgram.class);
+    private final static Logger logger = LoggerFactory
+            .getLogger(ShaderProgram.class);
 
-    public int                                 pointer;
-    private final VertexShader                 vs;
-    private GeometryShader                     gs;
-    private final FragmentShader               fs;
+    public int pointer;
+    private final VertexShader vs;
+    private GeometryShader gs;
+    private final FragmentShader fs;
 
     private final HashMap<String, FloatBuffer> uniformFloatMatrices;
     private final HashMap<String, FloatBuffer> uniformFloatVectors;
-    private final HashMap<String, Boolean>     uniformBooleans;
-    private final HashMap<String, Integer>     uniformInts;
-    private final HashMap<String, Float>       uniformFloats;
+    private final HashMap<String, ShortBuffer> uniformShortVectors;
+    private final HashMap<String, Boolean> uniformBooleans;
+    private final HashMap<String, Integer> uniformInts;
+    private final HashMap<String, Float> uniformFloats;
 
-    private boolean                            geometry_enabled = false;
-    private boolean                            warningsGiven    = false;
+    private boolean geometry_enabled = false;
+    private boolean warningsGiven = false;
 
+    /**
+     * Basic constructor for ShaderProgram with Vertex and Fragment shaders.
+     * 
+     * @param vs
+     *            The vertex shader to use for this program.
+     * @param fs
+     *            The fragment shader to use for this program.
+     */
     public ShaderProgram(VertexShader vs, FragmentShader fs) {
         pointer = 0;
         this.vs = vs;
         this.fs = fs;
         uniformFloatMatrices = new HashMap<String, FloatBuffer>();
         uniformFloatVectors = new HashMap<String, FloatBuffer>();
+        uniformShortVectors = new HashMap<String, ShortBuffer>();
         uniformBooleans = new HashMap<String, Boolean>();
         uniformInts = new HashMap<String, Integer>();
         uniformFloats = new HashMap<String, Float>();
     }
 
+    /**
+     * Basic constructor for ShaderProgram with Vertex and Fragment shaders.
+     * 
+     * @param vs
+     *            The vertex shader to use for this program.
+     * @param gs
+     *            The geometry shader to use for this program.
+     * @param fs
+     *            The fragment shader to use for this program.
+     */
     public ShaderProgram(VertexShader vs, GeometryShader gs, FragmentShader fs) {
         pointer = 0;
         this.vs = vs;
@@ -86,6 +108,7 @@ public class ShaderProgram {
         this.fs = fs;
         uniformFloatMatrices = new HashMap<String, FloatBuffer>();
         uniformFloatVectors = new HashMap<String, FloatBuffer>();
+        uniformShortVectors = new HashMap<String, ShortBuffer>();
         uniformBooleans = new HashMap<String, Boolean>();
         uniformInts = new HashMap<String, Integer>();
         uniformFloats = new HashMap<String, Float>();
@@ -93,7 +116,13 @@ public class ShaderProgram {
         geometry_enabled = true;
     }
 
-    public int init(GL3 gl) {
+    /**
+     * OpenGL initialization method.
+     * 
+     * @param gl
+     *            The opengl instance.
+     */
+    public void init(GL3 gl) {
         pointer = gl.glCreateProgram();
 
         try {
@@ -119,10 +148,19 @@ public class ShaderProgram {
 
         warningsGiven = false;
         checkCompatibility(vs, fs);
-
-        return pointer;
     }
 
+    /**
+     * Internal checking method to provide debugging information about shader
+     * programming. Checks for compatibility of outputs of the vertex shader and
+     * inputs for the fragment shader. logs warnings if not.
+     * 
+     * @param vs
+     *            The vertex shader to check.
+     * @param fs
+     *            the fragment shader to check.
+     * @return true if the given shaders are compatible.
+     */
     @SuppressWarnings("rawtypes")
     private boolean checkCompatibility(Shader vs, Shader fs) {
         HashMap<String, Class> outs = vs.getOuts();
@@ -164,6 +202,16 @@ public class ShaderProgram {
         return compatible;
     }
 
+    /**
+     * Check whether the uniform variables for this shader were set before use.
+     * logs warnings if not.
+     * 
+     * @param vs
+     *            The vertex shader to check.
+     * @param fs
+     *            the fragment shader to check.
+     * @return true if the shader's uniforms are all present.
+     */
     @SuppressWarnings("rawtypes")
     private boolean checkUniforms(Shader vs, Shader fs) {
         HashMap<String, Class> vsUniforms = vs.getUniforms();
@@ -204,6 +252,16 @@ public class ShaderProgram {
         return allPresent;
     }
 
+    /**
+     * Check whether the input attributes for this shader were set before use.
+     * logs warnings if not.
+     * 
+     * @param vs
+     *            The vertex shader to check.
+     * @param attribs
+     *            the list of attributes to check for.
+     * @return true if the shader's uniforms are all present.
+     */
     @SuppressWarnings("rawtypes")
     private boolean checkIns(Shader vs, GLSLAttrib... attribs) {
         HashMap<String, Class> vsIns = vs.getIns();
@@ -230,6 +288,12 @@ public class ShaderProgram {
         return allPresent;
     }
 
+    /**
+     * OpenGL detachment method for the shaders of this program.
+     * 
+     * @param gl
+     *            The openGL instance.
+     */
     public void detachShaders(GL3 gl) {
         try {
             gl.glDetachShader(pointer, vs.getShaderPointer());
@@ -256,6 +320,16 @@ public class ShaderProgram {
         }
     }
 
+    /**
+     * use method for this shader. sets this shader as the current rendering
+     * shader and loads all staged uniform variables. Also checks for the
+     * presence of all uniforms and checks for additional opengl errors.
+     * 
+     * @param gl
+     *            The opengl instance.
+     * @throws UninitializedException
+     *             if this ShaderProgram was used without initialization.
+     */
     public void use(GL3 gl) throws UninitializedException {
         if (pointer == 0)
             throw new UninitializedException();
@@ -289,6 +363,14 @@ public class ShaderProgram {
         }
     }
 
+    /**
+     * Link method for linking the attribute objects to the shader inputs.
+     * 
+     * @param gl
+     *            The opengl instance.
+     * @param attribs
+     *            The list of attributes to link.
+     */
     public void linkAttribs(GL3 gl, GLSLAttrib... attribs) {
         int nextStart = 0;
         for (GLSLAttrib attrib : attribs) {
@@ -305,6 +387,13 @@ public class ShaderProgram {
         warningsGiven = true;
     }
 
+    /**
+     * Internal method for getting the error code and message from opengl and
+     * logging them.
+     * 
+     * @param gl
+     *            The opengl instance
+     */
     private void printError(GL3 gl) {
         IntBuffer buf = Buffers.newDirectIntBuffer(1);
         gl.glGetProgramiv(pointer, GL3.GL_INFO_LOG_LENGTH, buf);
@@ -315,6 +404,15 @@ public class ShaderProgram {
         logger.error(new String(reason.array()));
     }
 
+    /**
+     * Staging method for a Uniform Float Vector variable. This will be given to
+     * the GPU upon {@link ShaderProgram#use(GL3 gl)} of this ShaderProgram.
+     * 
+     * @param name
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The Vector to stage.
+     */
     public void setUniformVector(String name, VectorF var) {
         if (!uniformFloatVectors.containsKey(name)) {
             warningsGiven = false;
@@ -323,12 +421,48 @@ public class ShaderProgram {
 
     }
 
+    /**
+     * Staging method for a Uniform Short Vector variable. This will be given to
+     * the GPU upon {@link ShaderProgram#use(GL3 gl)} of this ShaderProgram.
+     * 
+     * @param name
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The Vector to stage.
+     */
+    public void setUniformVector(String name, VectorS var) {
+        if (!uniformFloatVectors.containsKey(name)) {
+            warningsGiven = false;
+        }
+        uniformShortVectors.put(name, var.asBuffer());
+
+    }
+
+    /**
+     * Staging method for a Uniform Float Matrix variable. This will be given to
+     * the GPU upon {@link ShaderProgram#use(GL3 gl)} of this ShaderProgram.
+     * 
+     * @param name
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The Matrix to stage.
+     */
     public void setUniformMatrix(String name, MatrixF var) {
         if (!uniformFloatMatrices.containsKey(name)) {
             warningsGiven = false;
         }
         uniformFloatMatrices.put(name, var.asBuffer());
     }
+
+    /**
+     * Staging method for a Uniform Boolean variable. This will be given to the
+     * GPU upon {@link ShaderProgram#use(GL3 gl)} of this ShaderProgram.
+     * 
+     * @param name
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The Boolean to stage.
+     */
 
     public void setUniform(String name, Boolean var) {
         if (!uniformBooleans.containsKey(name)) {
@@ -337,6 +471,16 @@ public class ShaderProgram {
         uniformBooleans.put(name, var);
     }
 
+    /**
+     * Staging method for a Uniform Integer variable. This will be given to the
+     * GPU upon {@link ShaderProgram#use(GL3 gl)} of this ShaderProgram.
+     * 
+     * @param name
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The Integer to stage.
+     */
+
     public void setUniform(String name, Integer var) {
         if (!uniformInts.containsKey(name)) {
             warningsGiven = false;
@@ -344,6 +488,15 @@ public class ShaderProgram {
         uniformInts.put(name, var);
     }
 
+    /**
+     * Staging method for a Uniform Float variable. This will be given to the
+     * GPU upon {@link ShaderProgram#use(GL3 gl)} of this ShaderProgram.
+     * 
+     * @param name
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The Float to stage.
+     */
     public void setUniform(String name, Float var) {
         if (!uniformFloats.containsKey(name)) {
             warningsGiven = false;
@@ -351,6 +504,20 @@ public class ShaderProgram {
         uniformFloats.put(name, var);
     }
 
+    /**
+     * Method used to pass uniform variables directly to the shader without
+     * staging them beforehand. Using this method to set shader variables
+     * interferes directly with the error checking code present in this class.
+     * Use is not recommended. Use {@link #setUniformVector(String, VectorF)}
+     * instead.
+     * 
+     * @param gl
+     *            The OpenGL instance.
+     * @param pointerNameInShader
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The uniform variable to pas to the shader.
+     */
     public void passUniformVec(GL3 gl, String pointerNameInShader,
             FloatBuffer var) {
         int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
@@ -367,6 +534,20 @@ public class ShaderProgram {
         }
     }
 
+    /**
+     * Method used to pass uniform variables directly to the shader without
+     * staging them beforehand. Using this method to set shader variables
+     * interferes directly with the error checking code present in this class.
+     * Use is not recommended. Use {@link #setUniformVector(String, VectorF)}
+     * instead.
+     * 
+     * @param gl
+     *            The OpenGL instance.
+     * @param pointerNameInShader
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The uniform variable to pas to the shader.
+     */
     public void passUniformVecArray(GL3 gl, String pointerNameInShader,
             FloatBuffer var, int vecSize, int count) {
         int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
@@ -382,6 +563,20 @@ public class ShaderProgram {
         }
     }
 
+    /**
+     * Method used to pass uniform variables directly to the shader without
+     * staging them beforehand. Using this method to set shader variables
+     * interferes directly with the error checking code present in this class.
+     * Use is not recommended. Use {@link #setUniformVector(String, VectorS)}
+     * instead.
+     * 
+     * @param gl
+     *            The OpenGL instance.
+     * @param pointerNameInShader
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The uniform variable to pas to the shader.
+     */
     public void passUniformVecArray(GL3 gl, String pointerNameInShader,
             IntBuffer var, int vecSize, int count) {
         int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
@@ -397,6 +592,20 @@ public class ShaderProgram {
         }
     }
 
+    /**
+     * Method used to pass uniform variables directly to the shader without
+     * staging them beforehand. Using this method to set shader variables
+     * interferes directly with the error checking code present in this class.
+     * Use is not recommended. Use {@link #setUniformMatrix(String, MatrixF)}
+     * instead.
+     * 
+     * @param gl
+     *            The OpenGL instance.
+     * @param pointerNameInShader
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The uniform variable to pas to the shader.
+     */
     public void passUniformMat(GL3 gl, String pointerNameInShader,
             FloatBuffer var) {
         int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
@@ -411,6 +620,19 @@ public class ShaderProgram {
         }
     }
 
+    /**
+     * Method used to pass uniform variables directly to the shader without
+     * staging them beforehand. Using this method to set shader variables
+     * interferes directly with the error checking code present in this class.
+     * Use is not recommended. Use {@link #setUniform(String, boolean)} instead.
+     * 
+     * @param gl
+     *            The OpenGL instance.
+     * @param pointerNameInShader
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The uniform variable to pas to the shader.
+     */
     public void passUniform(GL3 gl, String pointerNameInShader, boolean var) {
         int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
         int passable = 0;
@@ -420,16 +642,50 @@ public class ShaderProgram {
         gl.glUniform1i(ptr, passable);
     }
 
+    /**
+     * Method used to pass uniform variables directly to the shader without
+     * staging them beforehand. Using this method to set shader variables
+     * interferes directly with the error checking code present in this class.
+     * Use is not recommended. Use {@link #setUniform(String, int)} instead.
+     * 
+     * @param gl
+     *            The OpenGL instance.
+     * @param pointerNameInShader
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The uniform variable to pas to the shader.
+     */
+
     public void passUniform(GL3 gl, String pointerNameInShader, int var) {
         int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
         gl.glUniform1i(ptr, var);
     }
+
+    /**
+     * Method used to pass uniform variables directly to the shader without
+     * staging them beforehand. Using this method to set shader variables
+     * interferes directly with the error checking code present in this class.
+     * Use is not recommended. Use {@link #setUniform(String, float)} instead.
+     * 
+     * @param gl
+     *            The OpenGL instance.
+     * @param pointerNameInShader
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The uniform variable to pas to the shader.
+     */
 
     public void passUniform(GL3 gl, String pointerNameInShader, float var) {
         int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
         gl.glUniform1f(ptr, var);
     }
 
+    /**
+     * OpenGL deletion method.
+     * 
+     * @param gl
+     *            The opengl intance.
+     */
     public void delete(GL3 gl) {
         gl.glDeleteProgram(pointer);
     }
