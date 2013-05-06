@@ -8,15 +8,13 @@ import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
 
 /**
- * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
- *         A singleton pattern generic Input event Handler for use in OpenGL
- *         applications.
- *         Currently handles only basic mouse events (left-click-drag,
- *         scrollwheel).
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl> A
+ *         singleton pattern generic Input event Handler for use in OpenGL
+ *         applications. Currently handles only basic mouse events
+ *         (left-click-drag, scrollwheel).
  * 
  */
-public class InputHandler implements MouseListener,
-        KeyListener {
+public class InputHandler implements MouseListener, KeyListener {
 
     /**
      * Octants are used to define a direction from which the viewer is looking
@@ -27,7 +25,7 @@ public class InputHandler implements MouseListener,
     }
 
     /** Initial value for the rotation in the X direction */
-    protected float rotationXorigin     = 0;
+    protected float rotationXorigin = 0;
     /**
      * Final rotation in the X direction, translated to openGL units, stored to
      * make successive rotations smooth
@@ -35,7 +33,7 @@ public class InputHandler implements MouseListener,
     protected float rotationX;
 
     /** Initial value for the rotation in the Y direction */
-    protected float rotationYorigin     = 0;
+    protected float rotationYorigin = 0;
     /**
      * Final rotation in the Y direction, translated to openGL units, stored to
      * make successive rotations smooth
@@ -48,9 +46,9 @@ public class InputHandler implements MouseListener,
     protected float dragLeftYorigin;
 
     /** Final rotation in openGL units */
-    public VecF3    rotation;
+    public VecF3 rotation;
     /** Final view distance (translation) in openGL units */
-    public float    viewDist            = -150f;
+    public float viewDist = -5f;
     /** Current direction of the view */
     private octants current_view_octant = octants.PPP;
 
@@ -61,8 +59,7 @@ public class InputHandler implements MouseListener,
     /**
      * The only access point for this singleton class.
      * 
-     * @return
-     *         The only instance of this class allowed at one time.
+     * @return The only instance of this class allowed at one time.
      */
     public static InputHandler getInstance() {
         return SingletonHolder.instance;

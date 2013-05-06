@@ -291,11 +291,27 @@ public class VectorFMath {
         return result;
     }
 
-    public static VecF3[] bezierCurve(int steps, VecF3 startLocation,
-            VecF3 startControl, VecF3 endControl, VecF3 endLocation) {
-        VecF3[] newBezierPoints = new VecF3[steps];
+    /**
+     * Bezier curve interpolation between two points with control vectors (this
+     * could be particle speed at the points).
+     * 
+     * @param steps
+     *            The number of steps on the bezier curve to calculate.
+     * @param startLocation
+     *            The starting point for this bezier curve.
+     * @param startControl
+     *            The starting point's control vector.
+     * @param endControl
+     *            The end point for this bezier curve.
+     * @param endLocation
+     *            The end point's control vector.
+     * @return The array of points on the new bezier curve.
+     */
+    public static VecF4[] bezierCurve(int steps, VecF4 startLocation,
+            VecF3 startControl, VecF3 endControl, VecF4 endLocation) {
+        VecF4[] newBezierPoints = new VecF4[steps];
         for (int i = 0; i < steps; i++) {
-            newBezierPoints[i] = new VecF3();
+            newBezierPoints[i] = new VecF4();
         }
 
         float t = 1f / steps;
@@ -337,6 +353,23 @@ public class VectorFMath {
         return newBezierPoints;
     }
 
+    /**
+     * Bezier curve interpolation for _rotation_ between two points with control
+     * vectors (this could be particle speed at the points). Outputs a number of
+     * degrees for rotations.
+     * 
+     * @param steps
+     *            The number of steps on the bezier curve to calculate.
+     * @param startLocation
+     *            The starting point for this bezier curve.
+     * @param startControl
+     *            The starting point's control vector.
+     * @param endControl
+     *            The end point for this bezier curve.
+     * @param endLocation
+     *            The end point's control vector.
+     * @return The array of points on the new bezier curve.
+     */
     public static VecF3[] degreesBezierCurve(int steps, VecF3 startLocation,
             VecF3 startControl, VecF3 endControl, VecF3 endLocation) {
         VecF3[] newBezierPoints = new VecF3[steps];

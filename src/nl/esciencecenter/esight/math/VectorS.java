@@ -2,11 +2,12 @@ package nl.esciencecenter.esight.math;
 
 import java.nio.ShortBuffer;
 
-public abstract class VectorS {
+public abstract class VectorS extends Vector {
     protected short v[];
     private final ShortBuffer buf;
 
     protected VectorS(int size) {
+        super(size, Type.SHORT);
         v = new short[size];
         buf = ShortBuffer.wrap(v);
         buf.rewind();
@@ -62,5 +63,39 @@ public abstract class VectorS {
         }
 
         return result;
+    }
+
+    @Override
+    public int hashCode() {
+        int cols = size;
+
+        int hashCode = 1;
+        for (int i = 0; i < cols; ++i) {
+            int val = v[i];
+            int valHash = val ^ (val >>> 32);
+            hashCode = 31 * hashCode + valHash;
+
+        }
+        return hashCode;
+    }
+
+    @Override
+    public boolean equals(Object thatObject) {
+        if (this == thatObject)
+            return true;
+        if (!(thatObject instanceof VectorS))
+            return false;
+
+        // cast to native object is now safe
+        VectorS that = (VectorS) thatObject;
+
+        // now a proper field-by-field evaluation can be made
+        boolean same = true;
+        for (int i = 0; i < size; i++) {
+            if (v[i] != that.v[i]) {
+                same = false;
+            }
+        }
+        return same;
     }
 }

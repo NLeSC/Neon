@@ -36,15 +36,17 @@ public class Sphere extends Model {
     private static final float X = 0.525731112119133606f;
     private static final float Z = 0.850650808352039932f;
 
-    private static final VecF3[] vdata = { new VecF3(-X, 0f, Z), new VecF3(X, 0f, Z), new VecF3(-X, 0f, -Z),
-            new VecF3(X, 0f, -Z), new VecF3(0f, Z, X), new VecF3(0f, Z, -X), new VecF3(0f, -Z, X),
-            new VecF3(0f, -Z, -X), new VecF3(Z, X, 0f), new VecF3(-Z, X, 0f), new VecF3(Z, -X, 0f),
-            new VecF3(-Z, -X, 0f) };
+    private static final VecF3[] vdata = { new VecF3(-X, 0f, Z),
+            new VecF3(X, 0f, Z), new VecF3(-X, 0f, -Z), new VecF3(X, 0f, -Z),
+            new VecF3(0f, Z, X), new VecF3(0f, Z, -X), new VecF3(0f, -Z, X),
+            new VecF3(0f, -Z, -X), new VecF3(Z, X, 0f), new VecF3(-Z, X, 0f),
+            new VecF3(Z, -X, 0f), new VecF3(-Z, -X, 0f) };
 
-    private static final int[][] tindices = { { 1, 4, 0 }, { 4, 9, 0 }, { 4, 5, 9 }, { 8, 5, 4 }, { 1, 8, 4 },
-            { 1, 10, 8 }, { 10, 3, 8 }, { 8, 3, 5 }, { 3, 2, 5 }, { 3, 7, 2 }, { 3, 10, 7 }, { 10, 6, 7 },
-            { 6, 11, 7 }, { 6, 0, 11 }, { 6, 1, 0 }, { 10, 1, 6 }, { 11, 0, 9 }, { 2, 11, 9 }, { 5, 2, 9 },
-            { 11, 2, 7 } };
+    private static final int[][] tindices = { { 1, 4, 0 }, { 4, 9, 0 },
+            { 4, 5, 9 }, { 8, 5, 4 }, { 1, 8, 4 }, { 1, 10, 8 }, { 10, 3, 8 },
+            { 8, 3, 5 }, { 3, 2, 5 }, { 3, 7, 2 }, { 3, 10, 7 }, { 10, 6, 7 },
+            { 6, 11, 7 }, { 6, 0, 11 }, { 6, 1, 0 }, { 10, 1, 6 },
+            { 11, 0, 9 }, { 2, 11, 9 }, { 5, 2, 9 }, { 11, 2, 7 } };
 
     /**
      * Basic constructor for Sphere. Allows for multiple levels of detail.
@@ -59,7 +61,8 @@ public class Sphere extends Model {
         List<VecF3> points3List = new ArrayList<VecF3>();
 
         for (int i = 0; i < tindices.length; i++) {
-            makeVertices(points3List, vdata[tindices[i][0]], vdata[tindices[i][1]], vdata[tindices[i][2]], divisions);
+            makeVertices(points3List, vdata[tindices[i][0]],
+                    vdata[tindices[i][1]], vdata[tindices[i][2]], divisions);
         }
 
         List<VecF4> points4List = new ArrayList<VecF4>();
@@ -75,7 +78,23 @@ public class Sphere extends Model {
         numVertices = points3List.size();
     }
 
-    private void makeVertices(List<VecF3> pointsList, VecF3 a, VecF3 b, VecF3 c, int div) {
+    /**
+     * Helper method to produce the vertices for a triangular part of the
+     * sphere.
+     * 
+     * @param pointsList
+     *            _output_ array for the vertex data.
+     * @param a
+     *            Point A of the triangle.
+     * @param b
+     *            Point B of the triangle.
+     * @param c
+     *            Point C of the triangle.
+     * @param div
+     *            The The number of divisions for this triangle.
+     */
+    private void makeVertices(List<VecF3> pointsList, VecF3 a, VecF3 b,
+            VecF3 c, int div) {
         if (div <= 0) {
             pointsList.add(a);
             pointsList.add(b);

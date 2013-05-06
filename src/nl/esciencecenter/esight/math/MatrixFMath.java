@@ -1,44 +1,31 @@
 package nl.esciencecenter.esight.math;
 
-import java.nio.FloatBuffer;
-
 import nl.esciencecenter.esight.exceptions.InverseNotAvailableException;
 
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.LUDecomposition;
-import org.apache.commons.math3.linear.RealMatrix;
-
-import com.jogamp.common.nio.Buffers;
-
 public class MatrixFMath {
-
     public static double degreesToRadians = Math.PI / 180.0;
+    public static float EPSILON = 0.0000001f;
 
+    /**
+     * Get the normal matrix from the modelview matrix.
+     * 
+     * @param mv
+     *            The Modelview matrix to extract the Normal Matrix from.
+     * @return The Normal Matrix for this Modelview Matrix.
+     */
     public static MatF3 getNormalMatrix(MatF4 mv) {
-        MatF3 result = new MatF3();
+        MatF3 upper3x3 = new MatF3(mv.get(0), mv.get(1), mv.get(2), mv.get(4),
+                mv.get(5), mv.get(6), mv.get(8), mv.get(9), mv.get(10));
 
-        double[][] d = { { mv.get(0), mv.get(1), mv.get(2) },
-                { mv.get(4), mv.get(5), mv.get(6) },
-                { mv.get(8), mv.get(9), mv.get(10) } };
+        MatF3 inverse;
+        try {
+            inverse = inverse(upper3x3);
+            MatF3 transpose = transpose(inverse);
 
-        RealMatrix m = new Array2DRowRealMatrix(d);
-        RealMatrix inverse = new LUDecomposition(m).getSolver().getInverse();
-
-        inverse = inverse.transpose();
-
-        result.set(0, (float) inverse.getEntry(0, 0));
-        result.set(1, (float) inverse.getEntry(0, 1));
-        result.set(2, (float) inverse.getEntry(0, 2));
-
-        result.set(3, (float) inverse.getEntry(1, 0));
-        result.set(4, (float) inverse.getEntry(1, 1));
-        result.set(5, (float) inverse.getEntry(1, 2));
-
-        result.set(6, (float) inverse.getEntry(2, 0));
-        result.set(7, (float) inverse.getEntry(2, 1));
-        result.set(8, (float) inverse.getEntry(2, 2));
-
-        return result;
+            return transpose;
+        } catch (InverseNotAvailableException e) {
+            return new MatF3();
+        }
     }
 
     /**
@@ -317,6 +304,14 @@ public class MatrixFMath {
 
         MatF4 m = new MatF4(ca, -sa, 0, 0, sa, ca, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
+        // System.err.println("------a------");
+        // System.err.println();
+        // System.err.println("------b------");
+        // System.err.println();
+        // System.err.println("------result------");
+        // System.err.println(m);
+        // System.err.println("-------------");
+
         return m;
     }
 
@@ -390,70 +385,181 @@ public class MatrixFMath {
         return R;
     }
 
+    /**
+     * Find the determinant for this matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the determinant
+     */
     public static float determinant(MatF2 m) {
         return m.m[0] * m.m[3] - m.m[2] * m.m[1];
     }
 
+    /**
+     * Find the determinant for this matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the determinant
+     */
     public static float determinant(MatF3 m) {
-        return m.m[0] * (m.m[4] * m.m[8] - m.m[5] * m.m[7]) - m.m[1]
-                * (m.m[3] * m.m[8] - m.m[5] * m.m[6]) + m.m[2]
-                * (m.m[3] * m.m[7] - m.m[4] * m.m[6]);
+        float minor00 = determinant(exclude(m, 0, 0));
+        float minor01 = determinant(exclude(m, 0, 1));
+        float minor02 = determinant(exclude(m, 0, 2));
+
+        return m.m[0] * minor00 - m.m[3] * minor01 + m.m[6] * minor02;
     }
 
+    /**
+     * Find the determinant for this matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the determinant
+     */
     public static float determinant(MatF4 m) {
-        return m.m[12] * m.m[9] * m.m[6] * m.m[3] - m.m[8] * m.m[13] * m.m[6]
-                * m.m[3] - m.m[12] * m.m[5] * m.m[10] * m.m[3] + m.m[4]
-                * m.m[13] * m.m[10] * m.m[3] + m.m[8] * m.m[5] * m.m[14]
-                * m.m[3] - m.m[4] * m.m[9] * m.m[14] * m.m[3] - m.m[12]
-                * m.m[9] * m.m[2] * m.m[7] + m.m[8] * m.m[13] * m.m[2] * m.m[7]
-                + m.m[12] * m.m[1] * m.m[10] * m.m[7] - m.m[0] * m.m[13]
-                * m.m[10] * m.m[7] - m.m[8] * m.m[1] * m.m[14] * m.m[7]
-                + m.m[0] * m.m[9] * m.m[14] * m.m[7] + m.m[12] * m.m[5]
-                * m.m[2] * m.m[11] - m.m[4] * m.m[13] * m.m[2] * m.m[11]
-                - m.m[12] * m.m[1] * m.m[6] * m.m[11] + m.m[0] * m.m[13]
-                * m.m[6] * m.m[11] + m.m[4] * m.m[1] * m.m[14] * m.m[11]
-                - m.m[0] * m.m[5] * m.m[14] * m.m[11] - m.m[8] * m.m[5]
-                * m.m[2] * m.m[15] + m.m[4] * m.m[9] * m.m[2] * m.m[15]
-                + m.m[8] * m.m[1] * m.m[6] * m.m[15] - m.m[0] * m.m[9] * m.m[6]
-                * m.m[15] - m.m[4] * m.m[1] * m.m[10] * m.m[15] + m.m[0]
-                * m.m[5] * m.m[10] * m.m[15];
+        float minor00 = determinant(exclude(m, 0, 0));
+        float minor01 = determinant(exclude(m, 0, 1));
+        float minor02 = determinant(exclude(m, 0, 2));
+        float minor03 = determinant(exclude(m, 0, 3));
+
+        return m.m[0] * minor00 - m.m[4] * minor01 + m.m[8] * minor02 + m.m[12]
+                * minor03;
     }
 
-    public static MatF2 minor(MatF3 m, int col, int row) {
-        FloatBuffer r = Buffers.newDirectFloatBuffer(4);
+    /**
+     * Find the cofactors for this matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the cofactors
+     */
+    public static MatF3 cofactors(MatF3 m) {
+        MatF3 checkerboard = new MatF3(1f, -1f, 1f, -1f, 1f, -1f, 1f, -1f, 1f);
+        MatF3 minors = minors(m);
+        MatF3 result = new MatF3();
+
+        for (int i = 0; i < result.size; i++) {
+            result.m[i] = minors.m[i] * checkerboard.m[i];
+        }
+
+        return result;
+    }
+
+    /**
+     * Find the cofactors for this matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the cofactors
+     */
+    public static MatF4 cofactors(MatF4 m) {
+        MatF4 checkerboard = new MatF4(1f, -1f, 1f, -1f, -1f, 1f, -1f, 1f, 1f,
+                -1f, 1f, -1f, -1f, 1f, -1f, 1f);
+        MatF4 minors = minors(m);
+        MatF4 result = new MatF4();
+
+        for (int i = 0; i < result.size; i++) {
+            result.m[i] = minors.m[i] * checkerboard.m[i];
+        }
+
+        return result;
+    }
+
+    /**
+     * Find the minors for this matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the minors
+     */
+    public static MatF3 minors(MatF3 m) {
+        MatF3 result = new MatF3();
+
+        for (int iRow = 0; iRow < 3; iRow++) {
+            for (int iCol = 0; iCol < 3; iCol++) {
+                MatF2 excluded = exclude(m, iCol, iRow);
+                float det = determinant(excluded);
+                result.buf.put(det);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Find the minors for this matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the minors
+     */
+    public static MatF4 minors(MatF4 m) {
+        MatF4 result = new MatF4();
+
+        for (int iRow = 0; iRow < 4; iRow++) {
+            for (int iCol = 0; iCol < 4; iCol++) {
+                MatF3 excluded = exclude(m, iCol, iRow);
+                float det = determinant(excluded);
+                result.buf.put(det);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Get the matrix which is the input matrix, but with the column and row
+     * given excluded
+     * 
+     * @param m
+     *            the input matrix
+     * @return the exclusion matrix
+     */
+    public static MatF2 exclude(MatF3 m, int col, int row) {
+        MatF2 result = new MatF2();
 
         for (int iRow = 0; iRow < 3; iRow++) {
             for (int iCol = 0; iCol < 3; iCol++) {
                 if (iRow != row && iCol != col) {
-                    r.put(m.m[iRow * 3 + iCol]);
+                    result.buf.put(m.m[iRow * 3 + iCol]);
                 }
             }
         }
 
-        System.out.println(r);
-
-        for (int i = 0; i < 4; i++) {
-            System.out.println(r.get(i));
-        }
-
-        MatF2 n = new MatF2(r);
-        return n;
+        return result;
     }
 
-    public static MatF3 minor(MatF4 m, int col, int row) {
-        FloatBuffer r = Buffers.newDirectFloatBuffer(9);
+    /**
+     * Get the matrix which is the input matrix, but with the column and row
+     * given excluded
+     * 
+     * @param m
+     *            the input matrix
+     * @return the exclusion matrix
+     */
+    public static MatF3 exclude(MatF4 m, int col, int row) {
+        MatF3 result = new MatF3();
 
         for (int iRow = 0; iRow < 4; iRow++) {
             for (int iCol = 0; iCol < 4; iCol++) {
                 if (iRow != row && iCol != col) {
-                    r.put(m.m[iRow * 4 + iCol]);
+                    result.buf.put(m.m[iRow * 4 + iCol]);
                 }
             }
         }
 
-        return new MatF3(r);
+        return result;
     }
 
+    /**
+     * Get the transposed matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the transposed matrix
+     */
     public static MatF2 transpose(MatF2 m) {
         MatF2 r = new MatF2();
 
@@ -466,6 +572,13 @@ public class MatrixFMath {
         return r;
     }
 
+    /**
+     * Get the transposed matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the transposed matrix
+     */
     public static MatF3 transpose(MatF3 m) {
         MatF3 r = new MatF3();
 
@@ -484,6 +597,13 @@ public class MatrixFMath {
         return r;
     }
 
+    /**
+     * Get the transposed matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the transposed matrix
+     */
     public static MatF4 transpose(MatF4 m) {
         MatF4 r = new MatF4();
 
@@ -510,47 +630,59 @@ public class MatrixFMath {
         return r;
     }
 
+    /**
+     * Get the adjoint matrix of the given matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the adjoint matrix
+     */
     public static MatF2 adjoint(MatF2 m) {
         MatF2 r = new MatF2();
 
         r.m[0] = m.m[3];
         r.m[1] = -m.m[1];
         r.m[2] = -m.m[2];
-        r.m[3] = m.m[1];
+        r.m[3] = m.m[0];
 
         return r;
 
     }
 
+    /**
+     * Get the adjoint matrix of the given matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the adjoint matrix
+     */
     public static MatF3 adjoint(MatF3 m) {
-        MatF3 r = new MatF3(determinant(minor(m, 0, 0)), -determinant(minor(m,
-                1, 0)), determinant(minor(m, 2, 0)),
-                -determinant(minor(m, 0, 1)), determinant(minor(m, 1, 1)),
-                -determinant(minor(m, 2, 1)), determinant(minor(m, 0, 2)),
-                -determinant(minor(m, 1, 2)), determinant(minor(m, 2, 2)));
-
-        return MatrixFMath.transpose(r);
+        return transpose(cofactors(m));
 
     }
 
+    /**
+     * Get the adjoint matrix of the given matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the adjoint matrix
+     */
     public static MatF4 adjoint(MatF4 m) {
-        MatF4 r = new MatF4(determinant(minor(m, 0, 0)), -determinant(minor(m,
-                1, 0)), determinant(minor(m, 2, 0)),
-                -determinant(minor(m, 3, 0)), -determinant(minor(m, 0, 1)),
-                determinant(minor(m, 1, 1)), -determinant(minor(m, 2, 1)),
-                determinant(minor(m, 3, 1)), determinant(minor(m, 0, 2)),
-                -determinant(minor(m, 1, 2)), determinant(minor(m, 2, 2)),
-                -determinant(minor(m, 3, 2)), -determinant(minor(m, 0, 3)),
-                determinant(minor(m, 1, 3)), -determinant(minor(m, 2, 3)),
-                determinant(minor(m, 3, 3)));
-
-        return MatrixFMath.transpose(r);
+        return transpose(cofactors(m));
     }
 
+    /**
+     * Get the inverse matrix of the given matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the inverse matrix
+     */
     public static MatF2 inverse(MatF2 m) throws InverseNotAvailableException {
         float det = determinant(m);
         if (det == 0f) {
-            throw new InverseNotAvailableException();
+            throw new InverseNotAvailableException("Determinant 0");
         }
 
         MatF2 adj = adjoint(m);
@@ -560,10 +692,17 @@ public class MatrixFMath {
         return inverse;
     }
 
+    /**
+     * Get the inverse matrix of the given matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the inverse matrix
+     */
     public static MatF3 inverse(MatF3 m) throws InverseNotAvailableException {
         float det = determinant(m);
         if (det == 0f) {
-            throw new InverseNotAvailableException();
+            throw new InverseNotAvailableException("Determinant 0");
         }
 
         MatF3 adj = adjoint(m);
@@ -573,10 +712,17 @@ public class MatrixFMath {
         return inverse;
     }
 
+    /**
+     * Get the inverse matrix of the given matrix
+     * 
+     * @param m
+     *            the input matrix
+     * @return the inverse matrix
+     */
     public static MatF4 inverse(MatF4 m) throws InverseNotAvailableException {
         float det = determinant(m);
         if (det == 0f) {
-            throw new InverseNotAvailableException();
+            throw new InverseNotAvailableException("Determinant 0");
         }
 
         MatF4 adj = adjoint(m);

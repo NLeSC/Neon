@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public class ColormapInterpreter {
     private final static Logger logger = LoggerFactory
-                                               .getLogger(ColormapInterpreter.class);
+            .getLogger(ColormapInterpreter.class);
 
     static class ExtFilter implements FilenameFilter {
         private final String ext;
@@ -68,7 +68,7 @@ public class ColormapInterpreter {
     }
 
     public static class Color {
-        public float              red, green, blue, alpha;
+        public float red, green, blue, alpha;
         public static final Color WHITE = new Color(1f, 1f, 1f, 1f);
         public static final Color BLACK = new Color(0f, 0f, 0f, 1f);
 
@@ -88,10 +88,10 @@ public class ColormapInterpreter {
     }
 
     private static HashMap<String, ArrayList<Color>> colorMaps;
-    private static HashMap<String, Color[][]>        legends;
+    private static HashMap<String, Color[][]> legends;
 
-    private final static int                         LEGEND_WIDTH  = 150;
-    private final static int                         LEGEND_HEIGHT = 150;
+    private final static int LEGEND_WIDTH = 150;
+    private final static int LEGEND_HEIGHT = 150;
 
     static {
         rebuild();
@@ -197,6 +197,7 @@ public class ColormapInterpreter {
             float red = 0;
             float green = 0;
             float blue = 0;
+            alpha = 1f;
 
             int iLow = (int) Math.floor(rawIndex);
             int iHigh = (int) Math.ceil(rawIndex);
@@ -225,7 +226,7 @@ public class ColormapInterpreter {
             green = getInterpolatedColor(cHigh.green, cLow.green, colorInterval);
             blue = getInterpolatedColor(cHigh.blue, cLow.blue, colorInterval);
 
-            color = new Color(red, green, blue, 1f);
+            color = new Color(red, green, blue, alpha);
         }
 
         return color;

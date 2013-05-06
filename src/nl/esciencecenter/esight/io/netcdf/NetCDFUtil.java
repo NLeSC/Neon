@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.esciencecenter.esight.util.Settings;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,11 +15,38 @@ import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
-public class NetCDFUtil {
-    private final static Settings settings = Settings.getInstance();
-    private final static Logger   logger   = LoggerFactory
-                                                   .getLogger(NetCDFUtil.class);
+/* Copyright [2013] [Netherlands eScience Center]
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+/**
+ * Stand-alone class that facilitates reading from NetCDF files and getting some
+ * information from collections of such files.
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
+public class NetCDFUtil {
+    private final static Logger logger = LoggerFactory
+            .getLogger(NetCDFUtil.class);
+
+    /**
+     * Extension filter for files.
+     * 
+     * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+     * 
+     */
     static class ExtFilter implements FilenameFilter {
         private final String ext;
 
@@ -35,6 +60,19 @@ public class NetCDFUtil {
         }
     }
 
+    /**
+     * Static function to get a sequence number from a filename in a collection
+     * of netcdf files. This currently assumes a file name format with a
+     * sequence number of no less than 4 characters wide, and only one such
+     * number per file name. example filename:
+     * t.t0.1_42l_nccs01.007502.interp900x602.nc, where 007502 is the sequence
+     * number.
+     * 
+     * @param file
+     *            A file in the sequence of which the sequence number is
+     *            requested.
+     * @return The sequence number of the file.
+     */
     private static String getSequenceNumber(File file) {
         final String path = getPath(file);
         final String name = file.getName();
@@ -65,6 +103,14 @@ public class NetCDFUtil {
         return sequenceNumberString;
     }
 
+    /**
+     * Static function to get the part of a filename that comes before the
+     * sequence number.
+     * 
+     * @param file
+     *            A file in the sequence for which the prefix is requested.
+     * @return The part of the filename that comes before the sequence number.
+     */
     public static String getPrefix(File file) {
         final String path = getPath(file);
         final String name = file.getName();
@@ -76,6 +122,14 @@ public class NetCDFUtil {
         return fullPath.substring(0, index);
     }
 
+    /**
+     * Static function to get the part of a filename that comes after the
+     * sequence number.
+     * 
+     * @param file
+     *            A file in the sequence for which the postfix is requested.
+     * @return The part of the filename that comes after the sequence number.
+     */
     public static String getPostfix(File file) {
         final String path = getPath(file);
         final String name = file.getName();
@@ -87,12 +141,27 @@ public class NetCDFUtil {
         return fullPath.substring(index);
     }
 
+    /**
+     * Static function to get the path of a file.
+     * 
+     * @param file
+     *            The file for which the path is requested.
+     * @return The path of the file.
+     */
     public static String getPath(File file) {
         final String path = file.getPath().substring(0,
                 file.getPath().length() - file.getName().length());
         return path;
     }
 
+    /**
+     * Static function to open a file with the netcdf library. Will generate a
+     * log error when this fails.
+     * 
+     * @param filename
+     *            The file's full name.
+     * @return The (now open) NetcdfFile.
+     */
     public static NetcdfFile open(String filename) {
         NetcdfFile ncfile = null;
         try {
@@ -104,6 +173,14 @@ public class NetCDFUtil {
         return ncfile;
     }
 
+    /**
+     * Static function to open a file with the netcdf library. Will generate a
+     * log error when this fails.
+     * 
+     * @param filename
+     *            The file to open.
+     * @return The (now open) NetcdfFile.
+     */
     public static NetcdfFile open(File file) {
         NetcdfFile ncfile = null;
         try {
@@ -115,6 +192,13 @@ public class NetCDFUtil {
         return ncfile;
     }
 
+    /**
+     * Static function to close a NetcdfFile. Will generate a log error when
+     * this fails.
+     * 
+     * @param ncfile
+     *            The file to close.
+     */
     public static void close(NetcdfFile ncfile) {
         try {
             ncfile.close();
@@ -123,29 +207,22 @@ public class NetCDFUtil {
         }
     }
 
-    public static int getNumColorMaps() {
-        final String[] ls = new File("colormaps").list(new ExtFilter("ncmap"));
-
-        return ls.length;
-    }
-
-    public static String[] getColorMaps() {
-        final String[] ls = new File("colormaps").list(new ExtFilter("ncmap"));
-        final String[] result = new String[ls.length];
-
-        for (int i = 0; i < ls.length; i++) {
-            result[i] = ls[i].split("\\.")[0];
-        }
-
-        return result;
-    }
-
-    public static int getNumFiles(File file) {
+    /**
+     * Static function to count the number of files matching a certain
+     * extension.
+     * 
+     * @param file
+     *            An example file in the directory to search in.
+     * @param ext
+     *            The extension to filer on.
+     * @return The number of files in the directory of file that match the
+     *         extension ext.
+     */
+    public static int getNumFiles(File file, String ext) {
         final String path = getPath(file);
         int fileNameLength = file.getName().length();
 
-        final String[] ls = new File(path).list(new ExtFilter(settings
-                .getCurrentNetCDFExtension()));
+        final String[] ls = new File(path).list(new ExtFilter(ext));
 
         int result = 0;
         for (String s : ls) {
@@ -157,16 +234,45 @@ public class NetCDFUtil {
         return result;
     }
 
+    /**
+     * Static function to count the number of files matching a certain
+     * extension.
+     * 
+     * @param pathName
+     *            The pathname of the directory to search in.
+     * @param ext
+     *            The extension to filer on.
+     * @return The number of files in the directory of file that match the
+     *         extension ext.
+     */
     public static int getNumFiles(String pathName, String ext) {
         final String[] ls = new File(pathName).list(new ExtFilter(ext));
 
         return ls.length;
     }
 
+    /**
+     * Debug method that prints some info about a NetcdfFile.
+     * 
+     * @param ncfile
+     *            the file to print info on.
+     */
     public static void printInfo(NetcdfFile ncfile) {
         System.out.println(ncfile.getDetailInfo());
     }
 
+    /**
+     * Static function to get specific data from a netcdf dataset file.
+     * Generates a logfile error if there was an IOException during the read.
+     * 
+     * @param ncfile
+     *            The file to get data from.
+     * @param varName
+     *            The Netcdf variable to read from the data file.
+     * @return The Netcdf Array containing the requested data.
+     * @throws NetCDFNoSuchVariableException
+     *             if the variable was not found.
+     */
     public static Array getData(NetcdfFile ncfile, String varName)
             throws NetCDFNoSuchVariableException {
         Variable v = ncfile.findVariable(varName);
@@ -183,6 +289,18 @@ public class NetCDFUtil {
         return data;
     }
 
+    /**
+     * Experimental function to retrieve a used dimension name out of a list of
+     * possible permutations.
+     * 
+     * @param ncfile
+     *            The file to check for used dimensions.
+     * @param permutations
+     *            The list of name permutations to check.
+     * @return The actually used name out of the list.
+     * @throws NetCDFNoSuchVariableException
+     *             If all permutations ended up not being used.
+     */
     public static String getUsedDimensionName(NetcdfFile ncfile,
             String... permutations) throws NetCDFNoSuchVariableException {
         List<Dimension> dims = ncfile.getDimensions();
@@ -220,6 +338,18 @@ public class NetCDFUtil {
         return current;
     }
 
+    /**
+     * Experimental method to extract the used dimension names from a NetcdfFile
+     * by a substring in that dimension's name.
+     * 
+     * @param ncfile
+     *            The NetcdfFile to check.
+     * @param subString
+     *            The substring to check for.
+     * @return The used dimension names matching the substring.
+     * @throws NetCDFNoSuchVariableException
+     *             If no dimension name was found with the given substring.
+     */
     public static ArrayList<String> getUsedDimensionNamesBySubstring(
             NetcdfFile ncfile, String subString)
             throws NetCDFNoSuchVariableException {
@@ -235,6 +365,19 @@ public class NetCDFUtil {
         return result;
     }
 
+    /**
+     * Experimental method to extract the used variable names from a NetcdfFile
+     * by candidate dimension names.
+     * 
+     * @param ncfile
+     *            The file to extract the variables from.
+     * @param latCandidates
+     *            The list of candidates for the first dimension.
+     * @param lonCandidates
+     *            The list of candidates for the second dimension.
+     * @return The list of variable names matching at least one of both of the
+     *         first and last dimension names given.
+     */
     public static ArrayList<String> getVarNames(NetcdfFile ncfile,
             ArrayList<String> latCandidates, ArrayList<String> lonCandidates) {
         ArrayList<String> varNames = new ArrayList<String>();
@@ -270,6 +413,16 @@ public class NetCDFUtil {
         return varNames;
     }
 
+    /**
+     * Static method to extract the full name of a Netcdf variable.
+     * 
+     * @param ncfile
+     *            The NetcdfFile to extract the information from.
+     * @param varName
+     *            The shorthand variable name.
+     * 
+     * @return The full variable name.
+     */
     public static String getFancyVarName(NetcdfFile ncfile, String varName) {
         List<Variable> vars = ncfile.getVariables();
 
@@ -282,6 +435,16 @@ public class NetCDFUtil {
         return "";
     }
 
+    /**
+     * Static method to extract the full name of a variable's units.
+     * 
+     * @param ncfile
+     *            The NetcdfFile to extract the information from.
+     * @param varName
+     *            The shorthand variable name.
+     * 
+     * @return The full variable's units.
+     */
     public static String getFancyVarUnits(NetcdfFile ncfile, String varName) {
         List<Variable> vars = ncfile.getVariables();
 
@@ -294,6 +457,16 @@ public class NetCDFUtil {
         return "";
     }
 
+    /**
+     * Static method to extract the shape of a variable's dimensions.
+     * 
+     * @param ncfile
+     *            The NetcdfFile to extract the information from.
+     * @param varName
+     *            The shorthand variable name.
+     * 
+     * @return The full variable's dimensions.
+     */
     public static int[] getDimensions(NetcdfFile ncfile, String varName) {
         List<Variable> vars = ncfile.getVariables();
 
@@ -306,6 +479,18 @@ public class NetCDFUtil {
         return null;
     }
 
+    /**
+     * Experimental method to extract the used dimensions from a NetcdfFile by a
+     * substring in that dimension's name.
+     * 
+     * @param ncfile
+     *            The NetcdfFile to check.
+     * @param subString
+     *            The substring to check for.
+     * @return The used dimensions matching the substring.
+     * @throws NetCDFNoSuchVariableException
+     *             If no dimension name was found with the given substring.
+     */
     public static Dimension[] getUsedDimensionsBySubstring(NetcdfFile ncfile,
             String subString) throws NetCDFNoSuchVariableException {
         List<Dimension> dims = ncfile.getDimensions();
@@ -320,6 +505,19 @@ public class NetCDFUtil {
         return result.toArray(new Dimension[0]);
     }
 
+    /**
+     * Experimental method to extract the used variable names from a NetcdfFile
+     * by candidate dimensions.
+     * 
+     * @param ncfile
+     *            The file to extract the variables from.
+     * @param latCandidates
+     *            The list of candidates for the first dimension.
+     * @param lonCandidates
+     *            The list of candidates for the second dimension.
+     * @return The list of variable names matching at least one of both of the
+     *         first and last dimensions given.
+     */
     public static Variable[] getQualifyingVariables(NetcdfFile ncfile,
             Dimension[] latCandidates, Dimension[] lonCandidates) {
         ArrayList<Variable> qualifyingVariables = new ArrayList<Variable>();
@@ -346,12 +544,24 @@ public class NetCDFUtil {
             }
         }
 
-        for (Variable v : qualifyingVariables) {
-            System.out.println(v.getShortName());
-        }
+        // for (Variable v : qualifyingVariables) {
+        // System.out.println(v.getShortName());
+        // }
         return qualifyingVariables.toArray(new Variable[0]);
     }
 
+    /**
+     * Experimental method to extract the used dimensions from a NetcdfFile
+     * based on permutations of dimension names.
+     * 
+     * @param ncfile
+     *            The NetcdfFile to check.
+     * @param permutations
+     *            The permutations to check for.
+     * @return The used dimensions matching the permutations.
+     * @throws NetCDFNoSuchVariableException
+     *             If no dimension name was found among the permutations.
+     */
     public static String[] getUsedDimensionNames(NetcdfFile ncfile,
             String... permutations) throws NetCDFNoSuchVariableException {
         List<Dimension> dims = ncfile.getDimensions();
@@ -368,6 +578,17 @@ public class NetCDFUtil {
         return result.toArray(new String[0]);
     }
 
+    /**
+     * Experimental method to extract the used variable names from a NetcdfFile
+     * by mandatory dimension names.
+     * 
+     * @param ncfile
+     *            The file to extract the variables from.
+     * @param mandatoryDims
+     *            The list of mandatory dimension names for the variables to
+     *            have.
+     * @return The list of variable names matching all mandatory dimensions.
+     */
     public static String[] getVarNames(NetcdfFile ncfile,
             String... mandatoryDims) {
         ArrayList<String> varNames = new ArrayList<String>();
@@ -394,12 +615,25 @@ public class NetCDFUtil {
         }
         String[] result = varNames.toArray(new String[0]);
 
-        for (String s : result) {
-            System.out.println(s);
-        }
+        // for (String s : result) {
+        // System.out.println(s);
+        // }
         return result;
     }
 
+    /**
+     * Experimental method to extract the used variable names from a NetcdfFile
+     * by candidate dimension names.
+     * 
+     * @param ncfile
+     *            The file to extract the variables from.
+     * @param latCandidates
+     *            The list of candidates for the first dimension.
+     * @param lonCandidates
+     *            The list of candidates for the second dimension.
+     * @return The array of variable names matching at least one of both of the
+     *         first and last dimension names given.
+     */
     public static String[] getVarNames(NetcdfFile ncfile,
             String[] latCandidates, String[] lonCandidates) {
         ArrayList<String> varNames = new ArrayList<String>();
@@ -433,12 +667,26 @@ public class NetCDFUtil {
         }
         String[] result = varNames.toArray(new String[0]);
 
-        for (String s : result) {
-            System.out.println(s);
-        }
+        // for (String s : result) {
+        // System.out.println(s);
+        // }
         return result;
     }
 
+    /**
+     * Experimental method to get a subset of the data, denoted by the variable
+     * name and a subsection according to the Netcdf format for specifying these
+     * subsections.
+     * 
+     * @param ncfile
+     *            The NetcdfFile to extract the data from.
+     * @param varName
+     *            The name of the variable to extract.
+     * @param subsections
+     *            The netcdf format string for specification of subsections.
+     * @return The subsection of data.
+     * @throws NetCDFNoSuchVariableException
+     */
     public static Array getDataSubset(NetcdfFile ncfile, String varName,
             String subsections) throws NetCDFNoSuchVariableException {
         Variable v = ncfile.findVariable(varName);
@@ -457,12 +705,26 @@ public class NetCDFUtil {
         return data;
     }
 
+    /**
+     * Get the frame (sequence) number from a file.
+     * 
+     * @param file
+     *            The file to check for the presence of a sequence number.
+     * @return The sequence number in integer format.
+     */
     public static int getFrameNumber(File file) {
         String number = getSequenceNumber(file);
 
         return Integer.parseInt(number);
     }
 
+    /**
+     * Get the lowest file in a sequence of files.
+     * 
+     * @param initialFile
+     *            Any file in the sequence.
+     * @return The file that is the lowest in the sequence of files.
+     */
     public static File getSeqLowestFile(File initialFile) {
         String prefix = getPrefix(initialFile);
         String postfix = getPostfix(initialFile);
@@ -482,8 +744,17 @@ public class NetCDFUtil {
         return null;
     }
 
-    public static boolean isAcceptableFile(File file) {
-        String[] accExts = settings.getAcceptableNetCDFExtensions();
+    /**
+     * Check whether the file's extension is acceptable.
+     * 
+     * @param file
+     *            The file to check.
+     * @param accExts
+     *            The list of acceptable extensions.
+     * @return True if the file's extension is present in the list of acceptable
+     *         extensions.
+     */
+    public static boolean isAcceptableFile(File file, String[] accExts) {
         final String path = getPath(file);
         final String name = file.getName();
         final String fullPath = path + name;
@@ -499,6 +770,14 @@ public class NetCDFUtil {
         return result;
     }
 
+    /**
+     * Get the file that is the previous one in a sequence of files.
+     * 
+     * @param initialFile
+     *            The file to get the predecessor of.
+     * @return The file that is the predecessor of the given file in the
+     *         sequence.
+     */
     public static File getSeqPreviousFile(File initialFile) {
         String prefix = getPrefix(initialFile);
         String postfix = getPostfix(initialFile);
@@ -517,6 +796,20 @@ public class NetCDFUtil {
         return null;
     }
 
+    /**
+     * Getter for a file in a sequence of files, that corresponds to a certain
+     * sequence number.
+     * 
+     * @param initialFile
+     *            Any file in the sequence.
+     * @param value
+     *            The sequence number of the file to get.
+     * @return The file corresponding to the sequence number given, that is in
+     *         the sequence denoted by the initial file given.
+     * @throws IOException
+     *             If there was no file in the sequence with the given sequence
+     *             number.
+     */
     public static File getSeqFile(File initialFile, int value)
             throws IOException {
         String prefix = getPrefix(initialFile);
@@ -538,6 +831,13 @@ public class NetCDFUtil {
         return null;
     }
 
+    /**
+     * Getter for the next file in the sequence denoted by the file given.
+     * 
+     * @param initialFile
+     *            Any file in the sequence.
+     * @return The next file in the sequence.
+     */
     public static File getSeqNextFile(File initialFile) {
         String prefix = getPrefix(initialFile);
         String postfix = getPostfix(initialFile);

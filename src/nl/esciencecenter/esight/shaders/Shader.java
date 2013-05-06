@@ -18,16 +18,16 @@ import com.jogamp.common.nio.Buffers;
  * Generic abstract shader class with most of the implementation specifics
  * shared by all shaders.
  * 
- * Provides object-oriented interface, I/O, compilation and error
- * checking for GLSL shaders.
+ * Provides object-oriented interface, I/O, compilation and error checking for
+ * GLSL shaders.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  */
 public abstract class Shader {
     /** The library-internal name for this shader. */
-    private final String   shaderName;
+    private final String shaderName;
     /** The source-file name for this shader. */
-    private final String   filename;
+    private final String filename;
     /** The source code for this shader. */
     private final String[] source;
 
@@ -38,7 +38,7 @@ public abstract class Shader {
      * The OpenGL-internal pointer of this shader, set by initializing said
      * shader.
      */
-    protected int                        shaderPointer = -1;
+    protected int shaderPointer = -1;
 
     /**
      * Constructor, reads the GLSL shader source code from file.
@@ -51,14 +51,15 @@ public abstract class Shader {
      *             If the file given was not found.
      */
     @SuppressWarnings("rawtypes")
-    public Shader(String shaderName, File file) throws FileNotFoundException {
+    public Shader(String shaderName, File path) throws FileNotFoundException {
         this.shaderName = shaderName;
-        this.filename = file.getName();
+        this.filename = path.getName();
 
         // Read file
         StringBuffer buf = new StringBuffer();
         Scanner scan;
-        scan = new Scanner(file);
+        scan = new Scanner(ClassLoader.getSystemClassLoader()
+                .getResourceAsStream(path.getPath()));
 
         ins = new HashMap<String, Class>();
         outs = new HashMap<String, Class>();
@@ -224,15 +225,15 @@ public abstract class Shader {
             // Get additional information
             gl.glGetShaderInfoLog(shaderPointer, logLength, null, 0, reason, 0);
 
-            throw new CompilationFailedException("Compilation of " + filename + " failed, " + new String(reason));
+            throw new CompilationFailedException("Compilation of " + filename
+                    + " failed, " + new String(reason));
         }
     }
 
     /**
      * Getter for the OpenGL-internal pointer.
      * 
-     * @return
-     *         the OpenGL-internal Pointer to this shader.
+     * @return the OpenGL-internal Pointer to this shader.
      * @throws UninitializedException
      *             If the shader is not initialized before this method is
      *             called.
@@ -268,8 +269,8 @@ public abstract class Shader {
     /**
      * Get the uniform names (and their raw types) of this shader.
      * 
-     * @return the HashMap containing the uniform names (and their raw
-     *         types) of this shader.
+     * @return the HashMap containing the uniform names (and their raw types) of
+     *         this shader.
      */
     @SuppressWarnings("rawtypes")
     public HashMap<String, Class> getUniforms() {

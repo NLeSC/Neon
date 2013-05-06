@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
+/**
+ * Connection handling class. Used for Touch events for collaboratorium.
+ * 
+ * @author Paul Melis, SurfSARA
+ */
 class ConnectionHandler implements Runnable {
     private static final int INITIAL_MESSAGE_LENGTH = 4;
     private static final int MAX_TOUCH_EVENTS = 6;
@@ -78,7 +83,8 @@ class ConnectionHandler implements Runnable {
         }
     }
 
-    private boolean readFully(InputStream is, byte[] buffer, int n) throws IOException {
+    private boolean readFully(InputStream is, byte[] buffer, int n)
+            throws IOException {
         int read;
         int offset = 0;
 
