@@ -1,0 +1,16 @@
+#version 420
+
+in vec4 MCvertex;
+in vec3 MCnormal;
+in vec3 MCtexCoord;
+
+uniform mat4 MVMatrix;
+uniform mat4 PMatrix;
+
+out vec2 tCoord;
+
+void main() {
+	tCoord = MCtexCoord.xy;
+   	
+   	gl_Position = PMatrix * MVMatrix * MCvertex;
+} 
