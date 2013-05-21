@@ -6,7 +6,7 @@ import nl.esciencecenter.esight.util.TypedProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* Copyright [2013] [Netherlands eScience Center]
+/* Copyright 2013 Netherlands eScience Center
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,14 +26,13 @@ import org.slf4j.LoggerFactory;
  * from the classpath, and loads its values accordingly. This class uses the
  * Singleton design pattern found here:
  * 
- * @link{http://en.wikipedia.org/wiki/Singleton_pattern
+ * http://en.wikipedia.org/wiki/Singleton_pattern
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
 public class ESightExampleSettings extends Settings {
-    private final static Logger logger = LoggerFactory
-            .getLogger(ESightExampleSettings.class);
+    private final static Logger logger = LoggerFactory.getLogger(ESightExampleSettings.class);
 
     private static class SingletonHolder {
         public final static ESightExampleSettings instance = new ESightExampleSettings();

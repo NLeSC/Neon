@@ -42,22 +42,17 @@ class ByteBufferView {
     }
 
     public int getInt() {
-        int value = (buffer[offset] & 0xff) | (buffer[offset + 1] & 0xff) << 8
-                | (buffer[offset + 2] & 0xff) << 16
+        int value = (buffer[offset] & 0xff) | (buffer[offset + 1] & 0xff) << 8 | (buffer[offset + 2] & 0xff) << 16
                 | (buffer[offset + 3] & 0xff) << 24;
         offset += 4;
         return value;
     }
 
     public long getLong() {
-        long value = buffer[offset] & 0xff
-                | (long) (buffer[offset + 1] & 0xff) << 8
-                | (long) (buffer[offset + 2] & 0xff) << 16
-                | (long) (buffer[offset + 3] & 0xff) << 24
-                | (long) (buffer[offset + 4] & 0xff) << 32
-                | (long) (buffer[offset + 5] & 0xff) << 40
-                | (long) (buffer[offset + 6] & 0xff) << 48
-                | (long) (buffer[offset + 7] & 0xff) << 56;
+        long value = buffer[offset] & 0xff | (long) (buffer[offset + 1] & 0xff) << 8
+                | (long) (buffer[offset + 2] & 0xff) << 16 | (long) (buffer[offset + 3] & 0xff) << 24
+                | (long) (buffer[offset + 4] & 0xff) << 32 | (long) (buffer[offset + 5] & 0xff) << 40
+                | (long) (buffer[offset + 6] & 0xff) << 48 | (long) (buffer[offset + 7] & 0xff) << 56;
         offset += 8;
         return value;
     }

@@ -86,10 +86,8 @@ public class Quad extends Model {
         float ypos = y + height / 2f;
         float yneg = y - height / 2f;
 
-        Point4[] result = new Point4[] { new Point4(xneg, yneg, 0.0f, 1.0f),
-                new Point4(xneg, ypos, 0.0f, 1.0f),
-                new Point4(xpos, ypos, 0.0f, 1.0f),
-                new Point4(xpos, yneg, 0.0f, 1.0f) };
+        Point4[] result = new Point4[] { new Point4(xneg, yneg, 0.0f, 1.0f), new Point4(xneg, ypos, 0.0f, 1.0f),
+                new Point4(xpos, ypos, 0.0f, 1.0f), new Point4(xpos, yneg, 0.0f, 1.0f) };
 
         return result;
     }
@@ -108,13 +106,16 @@ public class Quad extends Model {
      *            OUTPUT parameter. Make sure to allocate enough space
      *            beforehand.
      * @param a
+     *            The first index in the source array to use.
      * @param b
+     *            The 2nd index in the source array to use.
      * @param c
+     *            The 3rd index in the source array to use.
      * @param d
-     * @return
+     *            The 4th index in the source array to use.
+     * @return the new index in the destination arrays.
      */
-    private int newQuad(Point4[] points, int arrayindex, Point4[] source,
-            VecF3[] tCoords, int a, int b, int c, int d) {
+    private int newQuad(Point4[] points, int arrayindex, Point4[] source, VecF3[] tCoords, int a, int b, int c, int d) {
         points[arrayindex] = source[a];
         tCoords[arrayindex] = new VecF3(0, 0, 0);
         arrayindex++;

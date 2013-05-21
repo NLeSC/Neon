@@ -18,7 +18,7 @@ import java.nio.FloatBuffer;
  */
 
 /**
- * Abstract for all Matrices that provides several utility functions.
+ * Abstract class for all Matrices that provides several utility functions.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
@@ -159,8 +159,7 @@ public abstract class MatrixF {
         // now a proper field-by-field evaluation can be made
         boolean same = true;
         for (int i = 0; i < size; i++) {
-            if (m[i] < that.m[i] - MatrixFMath.EPSILON
-                    || m[i] > that.m[i] + MatrixFMath.EPSILON) {
+            if (m[i] < that.m[i] - MatrixFMath.EPSILON || m[i] > that.m[i] + MatrixFMath.EPSILON) {
                 same = false;
             }
         }

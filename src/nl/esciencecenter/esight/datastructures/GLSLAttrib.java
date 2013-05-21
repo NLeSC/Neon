@@ -2,7 +2,7 @@ package nl.esciencecenter.esight.datastructures;
 
 import java.nio.Buffer;
 
-/* Copyright [2013] [Netherlands eScience Center]
+/* Copyright 2013 Netherlands eScience Center
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import java.nio.Buffer;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-
 public class GLSLAttrib {
     public static int SIZE_FLOAT = 4;
     public static int SIZE_SHORT = 2;
@@ -44,8 +43,6 @@ public class GLSLAttrib {
      * @param name
      *            The GLSL name for this attribute, must correspond to the "in"
      *            variable in your GLSL shader.
-     * @param type
-     *            The type of data in the vectors.
      * @param numVectors
      *            The number of vectors to be represented by this attribute.
      * @param vectorSize

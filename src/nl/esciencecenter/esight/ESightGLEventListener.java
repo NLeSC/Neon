@@ -1,7 +1,5 @@
 package nl.esciencecenter.esight;
 
-import java.io.IOException;
-
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLContext;
@@ -15,34 +13,48 @@ import nl.esciencecenter.esight.math.Point4;
 import nl.esciencecenter.esight.math.VecF3;
 import nl.esciencecenter.esight.math.VecF4;
 import nl.esciencecenter.esight.shaders.ShaderProgramLoader;
+import nl.esciencecenter.esight.text.jogampExperimental.Font;
+import nl.esciencecenter.esight.text.jogampExperimental.FontFactory;
 
-import com.jogamp.graph.font.Font;
-import com.jogamp.graph.font.FontFactory;
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /**
- * Common (extendible) class for OpenGL event listeners, providing
- * several helper methods.
+ * Common (extendible) class for OpenGL event listeners, providing several
+ * helper methods.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
 public abstract class ESightGLEventListener implements GLEventListener {
     /** General radius variable needed for lookAt method */
-    protected final float               radius  = 1.0f;
+    protected final float radius = 1.0f;
     /** General ftheta variable needed for lookAt method */
-    protected final float               ftheta  = 0.0f;
+    protected final float ftheta = 0.0f;
     /** General phi variable needed for lookAt method */
-    protected final float               phi     = 0.0f;
+    protected final float phi = 0.0f;
 
     /**
      * General Field of View Y-direction variable needed for a default
      * perspective
      */
-    protected final float               fovy    = 45.0f;
+    protected final float fovy = 45.0f;
     /** General Near clipping plane variable needed for a default perspective */
-    protected final float               zNear   = 0.1f;
+    protected final float zNear = 0.1f;
     /** General Far clipping plane variable needed for a default perspective */
-    protected final float               zFar    = 3000.0f;
+    protected final float zFar = 3000.0f;
 
     /**
      * A default implementation of the ProgramLoader, needed for programmable
@@ -53,48 +65,44 @@ public abstract class ESightGLEventListener implements GLEventListener {
     /**
      * Aspect ratio variable, normally set by the reshape function
      */
-    protected float                     aspect;
+    protected float aspect;
 
     /** Ubuntu fontset is used for HUD elements */
-    protected int                       fontSet = FontFactory.UBUNTU;
+    protected int fontSet = FontFactory.UBUNTU;
     /** font is used for HUD elements @see fontSet */
-    protected Font                      font;
+    protected Font font;
 
     /**
      * This variable is used (among others) in the lookAt helper function to
      * define the ModelView matrix, if no inputHandler was specified when
      * constructing this class.
      */
-    protected float                     inputRotationX;
+    protected float inputRotationX;
     /**
      * This variable is used (among others) in the lookAt helper function to
      * define the ModelView matrix, if no inputHandler was specified when
      * constructing this class.
      */
-    protected float                     inputRotationY;
+    protected float inputRotationY;
     /**
      * This variable is used (among others) in the lookAt helper function to
      * define the ModelView matrix, if no inputHandler was specified when
      * constructing this class.
      */
-    protected float                     inputViewDistance;
+    protected float inputViewDistance;
 
     /**
      * This inputHandler is used to define the Modelview Matrix in the lookAt
      * helper function if it is specified upon constructing this class.
      */
-    protected InputHandler              inputHandler;
+    protected InputHandler inputHandler;
 
     /**
      * Creates a new GLEventListener
      */
     public ESightGLEventListener() {
         this.loader = new ShaderProgramLoader();
-        try {
-            this.font = FontFactory.get(fontSet).getDefault();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.font = FontFactory.get(fontSet).getDefault();
     }
 
     /**
@@ -106,11 +114,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
      */
     public ESightGLEventListener(InputHandler inputHandler) {
         this.loader = new ShaderProgramLoader();
-        try {
-            this.font = FontFactory.get(fontSet).getDefault();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.font = FontFactory.get(fontSet).getDefault();
 
         this.inputHandler = inputHandler;
     }
@@ -119,8 +123,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
     public void init(GLAutoDrawable drawable) {
         try {
             final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT)
-                    && (status != GLContext.CONTEXT_CURRENT_NEW)) {
+            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
                 System.err.println("Error swapping context to onscreen.");
             }
         } catch (final GLException e) {
@@ -190,8 +193,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
         try {
             final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT)
-                    && (status != GLContext.CONTEXT_CURRENT_NEW)) {
+            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
                 System.err.println("Error swapping context to onscreen.");
             }
         } catch (final GLException e) {
@@ -210,49 +212,40 @@ public abstract class ESightGLEventListener implements GLEventListener {
 
     /**
      * A helper function that generates a ModelView Matrix based on either the
-     * current
-     * inputRotationX, inputRotationY and inputViewDistance, or, if an Input
-     * event Handler was defined by the constructor, on the viewDist and
-     * rotation defined therein.
-     * Also uses the predifined radius, ftheta and phi global variables.
+     * current inputRotationX, inputRotationY and inputViewDistance, or, if an
+     * Input event Handler was defined by the constructor, on the viewDist and
+     * rotation defined therein. Also uses the predifined radius, ftheta and phi
+     * global variables.
      * 
-     * @return
-     *         A new Modelview Matrix that defines a rotated and translated view
+     * @return A new Modelview Matrix that defines a rotated and translated view
      *         at coordinates (0,0,0).
      */
     public MatF4 lookAt() {
-        Point4 eye = new Point4(
-                (float) (radius * Math.sin(ftheta) * Math.cos(phi)),
-                (float) (radius * Math.sin(ftheta) * Math.sin(phi)),
-                (float) (radius * Math.cos(ftheta)), 1.0f);
+        Point4 eye = new Point4((float) (radius * Math.sin(ftheta) * Math.cos(phi)),
+                (float) (radius * Math.sin(ftheta) * Math.sin(phi)), (float) (radius * Math.cos(ftheta)), 1.0f);
         Point4 at = new Point4(0.0f, 0.0f, 0.0f, 1.0f);
         VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
         MatF4 mv = MatrixFMath.lookAt(eye, at, up);
 
         if (inputHandler != null) {
-            mv = mv.mul(MatrixFMath.translate(new VecF3(0f, 0f,
-                    inputViewDistance)));
+            mv = mv.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputViewDistance)));
             mv = mv.mul(MatrixFMath.rotationX(inputRotationX));
             mv = mv.mul(MatrixFMath.rotationY(inputRotationY));
         } else {
-            mv = mv.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputHandler
-                    .getViewDist())));
-            mv = mv.mul(MatrixFMath
-                    .rotationX(inputHandler.getRotation().get(0)));
-            mv = mv.mul(MatrixFMath
-                    .rotationY(inputHandler.getRotation().get(1)));
+            mv = mv.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputHandler.getViewDist())));
+            mv = mv.mul(MatrixFMath.rotationX(inputHandler.getRotation().get(0)));
+            mv = mv.mul(MatrixFMath.rotationY(inputHandler.getRotation().get(1)));
         }
 
         return mv;
     }
 
     /**
-     * A helper function that generates a Perspective Matrix.
-     * Uses the fovy, aspect, zNear and zFar global variables.
+     * A helper function that generates a Perspective Matrix. Uses the fovy,
+     * aspect, zNear and zFar global variables.
      * 
-     * @return
-     *         A new Perspective Matrix that defines a common perspective
+     * @return A new Perspective Matrix that defines a common perspective
      *         frustum.
      */
     public MatF4 perspective() {
@@ -264,8 +257,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
         try {
             final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT)
-                    && (status != GLContext.CONTEXT_CURRENT_NEW)) {
+            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
                 System.err.println("Error swapping context to onscreen.");
             }
         } catch (final GLException e) {
@@ -298,8 +290,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
     public void dispose(GLAutoDrawable drawable) {
         try {
             final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT)
-                    && (status != GLContext.CONTEXT_CURRENT_NEW)) {
+            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
                 System.err.println("Error swapping context to onscreen.");
             }
         } catch (final GLException e) {

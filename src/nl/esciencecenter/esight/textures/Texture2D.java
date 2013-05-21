@@ -6,6 +6,21 @@ import nl.esciencecenter.esight.exceptions.UninitializedException;
 
 import com.jogamp.common.nio.Buffers;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * 2-Dimensional {@link Texture} object representation. Provides some generic
  * methods and variables for all types of 2-Dimensional textures.
@@ -17,8 +32,8 @@ public abstract class Texture2D extends Texture {
 
     /**
      * Generic constructor, should be called by all classes extending this class
-     * to set the glMultitexUnit.
-     * Do not forget to call {@link #init(javax.media.opengl.GL3)} before use.
+     * to set the glMultitexUnit. Do not forget to call
+     * {@link #init(javax.media.opengl.GL3)} before use.
      * 
      * @param glMultitexUnit
      *            The OpenGL-internal MultitexUnit (GL.GL_TEXTUREX) this texture
@@ -55,14 +70,10 @@ public abstract class Texture2D extends Texture {
             gl.glBindTexture(GL3.GL_TEXTURE_2D, pointer.get(0));
 
             // Wrap.
-            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_S,
-                    GL3.GL_CLAMP_TO_EDGE);
-            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_T,
-                    GL3.GL_CLAMP_TO_EDGE);
-            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER,
-                    GL3.GL_LINEAR);
-            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER,
-                    GL3.GL_LINEAR);
+            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_S, GL3.GL_CLAMP_TO_EDGE);
+            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_T, GL3.GL_CLAMP_TO_EDGE);
+            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
+            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
 
             // Specifies the alignment requirements for the start of each pixel
             // row in memory.

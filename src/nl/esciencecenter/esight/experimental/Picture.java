@@ -9,6 +9,27 @@ import javax.media.opengl.GLException;
 
 import com.jogamp.opengl.util.awt.Screenshot;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Experimental class, use at your own risk.
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
 public class Picture {
     private final int width, height;
 
@@ -39,8 +60,7 @@ public class Picture {
                 attempt++;
             }
 
-            System.out.println("Writing screenshot: "
-                    + newFile.getAbsolutePath());
+            System.out.println("Writing screenshot: " + newFile.getAbsolutePath());
 
             Screenshot.writeToFile(newFile, width, height);
             // }
@@ -52,8 +72,7 @@ public class Picture {
     }
 
     @SuppressWarnings("unused")
-    private BufferedImage transformPixelsRGBBuffer2ARGB_ByHand(
-            ByteBuffer pixelsRGB) {
+    private BufferedImage transformPixelsRGBBuffer2ARGB_ByHand(ByteBuffer pixelsRGB) {
         // Transform the ByteBuffer and get it as pixeldata.
 
         int[] pixelInts = new int[width * height];
@@ -75,14 +94,12 @@ public class Picture {
                 int iR = pixelsRGB.get(q++);
                 int iG = pixelsRGB.get(q++);
                 int iB = pixelsRGB.get(q++);
-                pixelInts[i++] = 0xFF000000 | ((iR & 0x000000FF) << 16)
-                        | ((iG & 0x000000FF) << 8) | (iB & 0x000000FF);
+                pixelInts[i++] = 0xFF000000 | ((iR & 0x000000FF) << 16) | ((iG & 0x000000FF) << 8) | (iB & 0x000000FF);
             }
         }
 
         // Create a new BufferedImage from the pixeldata.
-        BufferedImage bufferedImage = new BufferedImage(width, height,
-                BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         bufferedImage.setRGB(0, 0, width, height, pixelInts, 0, width);
 
         return bufferedImage;

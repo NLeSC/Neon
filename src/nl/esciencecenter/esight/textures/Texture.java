@@ -8,6 +8,21 @@ import javax.media.opengl.GL3;
 
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * Texture object representation. Provides some generic methods and variables
  * for all types of textures.
@@ -17,12 +32,12 @@ import nl.esciencecenter.esight.exceptions.UninitializedException;
  */
 public abstract class Texture {
     /** The OpenGL-internal MultitexUnit (GL.GL_TEXTUREX) this texture uses. */
-    protected int        glMultiTexUnit;
+    protected int glMultiTexUnit;
 
-    protected IntBuffer  pointer;
+    protected IntBuffer pointer;
     protected ByteBuffer pixelBuffer;
-    protected int        width, height, depth;
-    protected boolean    initialized = false;
+    protected int width, height, depth;
+    protected boolean initialized = false;
 
     /**
      * Generic constructor, should be called by all classes extending this class

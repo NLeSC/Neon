@@ -33,11 +33,11 @@ import java.util.Collections;
 
 import com.jogamp.graph.curve.tess.Triangulation;
 import com.jogamp.graph.curve.tess.Triangulator;
-import com.jogamp.graph.geom.AABBox;
 import com.jogamp.graph.geom.Outline;
 import com.jogamp.graph.geom.Triangle;
 import com.jogamp.graph.geom.Vertex;
-import com.jogamp.graph.math.VectorUtil;
+import com.jogamp.opengl.math.VectorUtil;
+import com.jogamp.opengl.math.geom.AABBox;
 
 /**
  * A Generic shape objects which is defined by a list of Outlines. This Shape
@@ -213,8 +213,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
      *             if position is out of range (position < 0 || position >
      *             getOutlineNumber())
      */
-    public void addOutline(int position, Outline outline)
-            throws NullPointerException, IndexOutOfBoundsException {
+    public void addOutline(int position, Outline outline) throws NullPointerException, IndexOutOfBoundsException {
         if (null == outline) {
             throw new NullPointerException("outline is null");
         }
@@ -254,8 +253,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
      *             if position is out of range (position < 0 || position >
      *             getOutlineNumber())
      */
-    public void addOutlineShape(OutlineShape outlineShape)
-            throws NullPointerException {
+    public void addOutlineShape(OutlineShape outlineShape) throws NullPointerException {
         if (null == outlineShape) {
             throw new NullPointerException("OutlineShape is null");
         }
@@ -282,8 +280,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
      *             if position is out of range (position < 0 || position >=
      *             getOutlineNumber())
      */
-    public void setOutline(int position, Outline outline)
-            throws NullPointerException, IndexOutOfBoundsException {
+    public void setOutline(int position, Outline outline) throws NullPointerException, IndexOutOfBoundsException {
         if (null == outline) {
             throw new NullPointerException("outline is null");
         }
@@ -304,8 +301,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
      *             if position is out of range (position < 0 || position >=
      *             getOutlineNumber())
      */
-    public final Outline removeOutline(int position)
-            throws IndexOutOfBoundsException {
+    public final Outline removeOutline(int position) throws IndexOutOfBoundsException {
         dirtyBits |= DIRTY_BOUNDS;
         return outlines.remove(position);
     }
@@ -410,8 +406,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
      *            flag if this vertex is on the final curve or defines a curved
      *            region of the shape around this vertex.
      */
-    public final void addVertex(float[] coordsBuffer, int offset, int length,
-            boolean onCurve) {
+    public final void addVertex(float[] coordsBuffer, int offset, int length, boolean onCurve) {
         addVertex(vertexFactory.create(coordsBuffer, offset, length, onCurve));
     }
 
@@ -448,15 +443,13 @@ public class OutlineShape implements Comparable<OutlineShape> {
                 transformOutlines2Quadratic();
                 checkOverlaps();
             } else {
-                throw new IllegalStateException("destinationType "
-                        + destinationType.name() + " not supported (currently "
-                        + outlineState.name() + ")");
+                throw new IllegalStateException("destinationType " + destinationType.name()
+                        + " not supported (currently " + outlineState.name() + ")");
             }
         }
     }
 
-    private void subdivideTriangle(final Outline outline, Vertex a, Vertex b,
-            Vertex c, int index) {
+    private void subdivideTriangle(final Outline outline, Vertex a, Vertex b, Vertex c, int index) {
         float[] v1 = VectorUtil.mid(a.getCoord(), b.getCoord());
         float[] v3 = VectorUtil.mid(b.getCoord(), c.getCoord());
         float[] v2 = VectorUtil.mid(v1, v3);
@@ -488,10 +481,8 @@ public class OutlineShape implements Comparable<OutlineShape> {
                 for (int i = 0; i < outline.getVertexCount(); i++) {
                     final Vertex currentVertex = outline.getVertex(i);
                     if (!currentVertex.isOnCurve()) {
-                        final Vertex nextV = outline.getVertex((i + 1)
-                                % vertexCount);
-                        final Vertex prevV = outline
-                                .getVertex((i + vertexCount - 1) % vertexCount);
+                        final Vertex nextV = outline.getVertex((i + 1) % vertexCount);
+                        final Vertex prevV = outline.getVertex((i + vertexCount - 1) % vertexCount);
                         Vertex overlap = null;
 
                         // check for overlap even if already set for subdivision
@@ -500,14 +491,12 @@ public class OutlineShape implements Comparable<OutlineShape> {
                         // second pass to clear the overlaps arrray(reduces
                         // precision errors)
                         if (firstpass) {
-                            overlap = checkTriOverlaps(prevV, currentVertex,
-                                    nextV);
+                            overlap = checkTriOverlaps(prevV, currentVertex, nextV);
                         }
                         if (overlaps.contains(currentVertex) || overlap != null) {
                             overlaps.remove(currentVertex);
 
-                            subdivideTriangle(outline, prevV, currentVertex,
-                                    nextV, i);
+                            subdivideTriangle(outline, prevV, currentVertex, nextV, i);
                             i += 3;
                             vertexCount += 2;
 
@@ -530,33 +519,26 @@ public class OutlineShape implements Comparable<OutlineShape> {
             int vertexCount = outline.getVertexCount();
             for (int i = 0; i < vertexCount; i++) {
                 final Vertex current = outline.getVertex(i);
-                if (current.isOnCurve() || current == a || current == b
-                        || current == c) {
+                if (current.isOnCurve() || current == a || current == b || current == c) {
                     continue;
                 }
                 final Vertex nextV = outline.getVertex((i + 1) % vertexCount);
-                final Vertex prevV = outline.getVertex((i + vertexCount - 1)
-                        % vertexCount);
+                final Vertex prevV = outline.getVertex((i + vertexCount - 1) % vertexCount);
 
                 // skip neighboring triangles
                 if (prevV == c || nextV == a) {
                     continue;
                 }
 
-                if (VectorUtil.vertexInTriangle(a.getCoord(), b.getCoord(), c
-                        .getCoord(), current.getCoord())
-                        || VectorUtil.vertexInTriangle(a.getCoord(), b
-                                .getCoord(), c.getCoord(), nextV.getCoord())
-                        || VectorUtil.vertexInTriangle(a.getCoord(), b
-                                .getCoord(), c.getCoord(), prevV.getCoord())) {
+                if (VectorUtil.vertexInTriangle(a.getCoord(), b.getCoord(), c.getCoord(), current.getCoord())
+                        || VectorUtil.vertexInTriangle(a.getCoord(), b.getCoord(), c.getCoord(), nextV.getCoord())
+                        || VectorUtil.vertexInTriangle(a.getCoord(), b.getCoord(), c.getCoord(), prevV.getCoord())) {
 
                     return current;
                 }
                 if (VectorUtil.tri2SegIntersection(a, b, c, prevV, current)
-                        || VectorUtil.tri2SegIntersection(a, b, c, current,
-                                nextV)
-                        || VectorUtil
-                                .tri2SegIntersection(a, b, c, prevV, nextV)) {
+                        || VectorUtil.tri2SegIntersection(a, b, c, current, nextV)
+                        || VectorUtil.tri2SegIntersection(a, b, c, prevV, nextV)) {
                     return current;
                 }
             }
@@ -572,13 +554,10 @@ public class OutlineShape implements Comparable<OutlineShape> {
 
             for (int i = 0; i < vertexCount; i++) {
                 final Vertex currentVertex = outline.getVertex(i);
-                final Vertex nextVertex = outline.getVertex((i + 1)
-                        % vertexCount);
+                final Vertex nextVertex = outline.getVertex((i + 1) % vertexCount);
                 if (!currentVertex.isOnCurve() && !nextVertex.isOnCurve()) {
-                    final float[] newCoords = VectorUtil.mid(currentVertex
-                            .getCoord(), nextVertex.getCoord());
-                    final Vertex v = vertexFactory
-                            .create(newCoords, 0, 3, true);
+                    final float[] newCoords = VectorUtil.mid(currentVertex.getCoord(), nextVertex.getCoord());
+                    final Vertex v = vertexFactory.create(newCoords, 0, 3, true);
                     i++;
                     vertexCount++;
                     outline.addVertex(i, v);
@@ -592,8 +571,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
             }
 
             if (vertexCount > 0) {
-                if (VectorUtil.checkEquality(outline.getVertex(0).getCoord(),
-                        outline.getLastVertex().getCoord())) {
+                if (VectorUtil.checkEquality(outline.getVertex(0).getCoord(), outline.getLastVertex().getCoord())) {
                     outline.removeVertex(vertexCount - 1);
                 }
             }
@@ -614,8 +592,8 @@ public class OutlineShape implements Comparable<OutlineShape> {
     }
 
     /**
-     * @return the list of concatenated vertices associated with all {@code
-     *         Outline}s of this object
+     * @return the list of concatenated vertices associated with all
+     *         {@code Outline}s of this object
      */
     public ArrayList<Vertex> getVertices() {
         ArrayList<Vertex> vertices = new ArrayList<Vertex>();
@@ -662,6 +640,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
      * 
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
+    @Override
     public final int compareTo(OutlineShape outline) {
         float size = getBounds().getSize();
         float newSize = outline.getBounds().getSize();

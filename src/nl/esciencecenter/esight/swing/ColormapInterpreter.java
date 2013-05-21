@@ -18,13 +18,48 @@ import javax.swing.JComboBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ColormapInterpreter {
-    private final static Logger logger = LoggerFactory
-            .getLogger(ColormapInterpreter.class);
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+/**
+ * Utility class for the creation and interpretation of colormaps useable in
+ * both OpenGL and Java Swing. Reads the "colormaps/" directory in the classpath
+ * and tries to statically build colormaps out of each file it finds there with
+ * the .ncmap extension.
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
+public class ColormapInterpreter {
+    private final static Logger logger = LoggerFactory.getLogger(ColormapInterpreter.class);
+
+    /**
+     * Extension filter for the filtering of filenames in directory structures.
+     * 
+     * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+     * 
+     */
     static class ExtFilter implements FilenameFilter {
         private final String ext;
 
+        /**
+         * Basic constructor for ExtFilter.
+         * 
+         * @param ext
+         *            The extension to filter for.
+         */
         public ExtFilter(String ext) {
             this.ext = ext;
         }
@@ -35,14 +70,36 @@ public class ColormapInterpreter {
         }
     }
 
+    /**
+     * Helper class used to communicate the minimum and maximum values of a
+     * dataset.
+     * 
+     * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+     * 
+     */
     public static class Dimensions {
         public float min, max;
 
+        /**
+         * Constructor for Dimensions.
+         * 
+         * @param min
+         *            The minimum value in the dataset (corresponding with the
+         *            bottom end of the colormap).
+         * @param max
+         *            The maximum value in the dataset (corresponding with the
+         *            top end of the colormap).
+         */
         public Dimensions(float min, float max) {
             this.min = min;
             this.max = max;
         }
 
+        /**
+         * Getter for the difference between max and min.
+         * 
+         * @return The range of the dataset
+         */
         public float getDiff() {
             return max - min;
         }
@@ -67,6 +124,12 @@ public class ColormapInterpreter {
         }
     }
 
+    /**
+     * helper class for the definition of a color.
+     * 
+     * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+     * 
+     */
     public static class Color {
         public float red, green, blue, alpha;
         public static final Color WHITE = new Color(1f, 1f, 1f, 1f);
@@ -87,7 +150,9 @@ public class ColormapInterpreter {
         }
     }
 
+    /** Storage for the statically read colormaps. */
     private static HashMap<String, ArrayList<Color>> colorMaps;
+    /** Storage for the statically built legend images. */
     private static HashMap<String, Color[][]> legends;
 
     private final static int LEGEND_WIDTH = 150;
@@ -97,6 +162,10 @@ public class ColormapInterpreter {
         rebuild();
     }
 
+    /**
+     * Rebuilds (and re-reads) the storage of colormaps. Outputs succesfully
+     * read colormap names to the command line.
+     */
     public static void rebuild() {
         colorMaps = new HashMap<String, ArrayList<Color>>();
         legends = new HashMap<String, Color[][]>();
@@ -106,24 +175,20 @@ public class ColormapInterpreter {
             for (String fileName : colorMapFileNames) {
                 ArrayList<Color> colorMap = new ArrayList<Color>();
 
-                BufferedReader in = new BufferedReader(new FileReader(
-                        "colormaps/" + fileName + ".ncmap"));
+                BufferedReader in = new BufferedReader(new FileReader("colormaps/" + fileName + ".ncmap"));
                 String str;
 
                 while ((str = in.readLine()) != null) {
                     String[] numbers = str.split(" ");
-                    colorMap.add(new Color(Integer.parseInt(numbers[0]) / 255f,
-                            Integer.parseInt(numbers[1]) / 255f, Integer
-                                    .parseInt(numbers[2]) / 255f, 1f));
+                    colorMap.add(new Color(Integer.parseInt(numbers[0]) / 255f, Integer.parseInt(numbers[1]) / 255f,
+                            Integer.parseInt(numbers[2]) / 255f, 1f));
                 }
 
                 in.close();
 
                 colorMaps.put(fileName, colorMap);
-                legends.put(fileName,
-                        makeLegendImage(LEGEND_WIDTH, LEGEND_HEIGHT, colorMap));
-                System.out.println("Colormap " + fileName
-                        + " registered for use.");
+                legends.put(fileName, makeLegendImage(LEGEND_WIDTH, LEGEND_HEIGHT, colorMap));
+                System.out.println("Colormap " + fileName + " registered for use.");
             }
 
         } catch (IOException e) {
@@ -131,6 +196,13 @@ public class ColormapInterpreter {
         }
     }
 
+    /**
+     * Getter for the list of colormap names in the directory. Used to load
+     * these maps.
+     * 
+     * @return the array containing all of the colormap names in the directory.
+     *         These are unchecked.
+     */
     private static String[] getColorMaps() {
         final String[] ls = new File("colormaps").list(new ExtFilter("ncmap"));
         final String[] result = new String[ls.length];
@@ -142,6 +214,13 @@ public class ColormapInterpreter {
         return result;
     }
 
+    /**
+     * Getter for the list of colormap names in the directory. Used to load
+     * these maps.
+     * 
+     * @return the array containing all of the currently available colormap
+     *         names.
+     */
     public static String[] getColormapNames() {
         String[] names = new String[legends.size()];
         int i = 0;
@@ -153,11 +232,21 @@ public class ColormapInterpreter {
         return names;
     }
 
-    public synchronized static Color getLogColor(String colorMapName,
-            Dimensions dim, float var) {
+    /**
+     * Experimental function to return a color from the colormap with
+     * logatithmic scaling between endpoints. Use at your own risk.
+     * 
+     * @param colorMapName
+     *            The name of the colormap to use
+     * @param dim
+     *            The dimensions in the dataset to pick a color value between.
+     * @param var
+     *            The value to use.
+     * @return The color.
+     */
+    public synchronized static Color getLogColor(String colorMapName, Dimensions dim, float var) {
         if (!colorMaps.containsKey(colorMapName)) {
-            System.err.println("Unregistered color map requested: "
-                    + colorMapName);
+            System.err.println("Unregistered color map requested: " + colorMapName);
             colorMaps.get("default");
         }
 
@@ -232,11 +321,21 @@ public class ColormapInterpreter {
         return color;
     }
 
-    public synchronized static Color getColor(String colorMapName,
-            Dimensions dim, float var) {
+    /**
+     * Function to return a color from the colormap with linear scaling between
+     * endpoints.
+     * 
+     * @param colorMapName
+     *            The name of the colormap to use
+     * @param dim
+     *            The dimensions in the dataset to pick a color value between.
+     * @param var
+     *            The value to use.
+     * @return The color.
+     */
+    public synchronized static Color getColor(String colorMapName, Dimensions dim, float var) {
         if (!colorMaps.containsKey(colorMapName)) {
-            System.err.println("Unregistered color map requested: "
-                    + colorMapName);
+            System.err.println("Unregistered color map requested: " + colorMapName);
             colorMaps.get("default");
         }
 
@@ -306,11 +405,21 @@ public class ColormapInterpreter {
         return color;
     }
 
-    public synchronized static java.awt.Color getSwingColor(
-            String colorMapName, Dimensions dim, float var) {
+    /**
+     * Function to return a Swing Color from the colormap with linear scaling
+     * between endpoints.
+     * 
+     * @param colorMapName
+     *            The name of the colormap to use
+     * @param dim
+     *            The dimensions in the dataset to pick a color value between.
+     * @param var
+     *            The value to use.
+     * @return The color.
+     */
+    public synchronized static java.awt.Color getSwingColor(String colorMapName, Dimensions dim, float var) {
         if (!colorMaps.containsKey(colorMapName)) {
-            System.err.println("Unregistered color map requested: "
-                    + colorMapName);
+            System.err.println("Unregistered color map requested: " + colorMapName);
             colorMaps.get("default");
         }
 
@@ -359,6 +468,14 @@ public class ColormapInterpreter {
         return color;
     }
 
+    /**
+     * Function that returns a combobox with all of the legends of the entire
+     * list of colormaps for selection.
+     * 
+     * @param preferredDimensions
+     *            The dimensions of the combobox to be returned.
+     * @return The combobox.
+     */
     public static JComboBox getLegendJComboBox(Dimension preferredDimensions) {
         int width = (int) (preferredDimensions.width * .8), height = (int) (preferredDimensions.height * .8);
 
@@ -369,22 +486,17 @@ public class ColormapInterpreter {
         String[] names = new String[legends.size()];
         for (Entry<String, Color[][]> entry : legends.entrySet()) {
             String name = entry.getKey();
-            Color[][] legendImageBuffer = makeLegendImage(width, height,
-                    colorMaps.get(name));
+            Color[][] legendImageBuffer = makeLegendImage(width, height, colorMaps.get(name));
 
             intArray[i] = new Integer(i);
-            BufferedImage legend = new BufferedImage(width, height,
-                    BufferedImage.TYPE_3BYTE_BGR);
+            BufferedImage legend = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
             WritableRaster raster = legend.getRaster();
 
             for (int col = 0; col < width; col++) {
                 for (int row = 0; row < height; row++) {
-                    raster.setSample(col, row, 0,
-                            legendImageBuffer[col][row].blue * 255);
-                    raster.setSample(col, row, 1,
-                            legendImageBuffer[col][row].green * 255);
-                    raster.setSample(col, row, 2,
-                            legendImageBuffer[col][row].red * 255);
+                    raster.setSample(col, row, 0, legendImageBuffer[col][row].blue * 255);
+                    raster.setSample(col, row, 1, legendImageBuffer[col][row].green * 255);
+                    raster.setSample(col, row, 2, legendImageBuffer[col][row].red * 255);
                 }
             }
 
@@ -399,8 +511,7 @@ public class ColormapInterpreter {
         }
 
         JComboBox legendList = new JComboBox(intArray);
-        ImageComboBoxRenderer renderer = new ImageComboBoxRenderer(names,
-                images);
+        ImageComboBoxRenderer renderer = new ImageComboBoxRenderer(names, images);
         renderer.setPreferredSize(preferredDimensions);
         legendList.setRenderer(renderer);
         legendList.setMaximumRowCount(10);
@@ -408,8 +519,14 @@ public class ColormapInterpreter {
         return legendList;
     }
 
-    private static Color[][] makeLegendImage(int width, int height,
-            ArrayList<Color> colorMap) {
+    /**
+     * Function that returns an 'image' of the entire colormap.
+     * 
+     * @param preferredDimensions
+     *            The dimensions of the image to be returned.
+     * @return The image, in a Color[][].
+     */
+    private static Color[][] makeLegendImage(int width, int height, ArrayList<Color> colorMap) {
         Color[][] outBuf = new Color[width][height];
 
         for (int col = 0; col < width; col++) {
@@ -457,8 +574,18 @@ public class ColormapInterpreter {
         return outBuf;
     }
 
-    private static float getInterpolatedColor(float high, float low,
-            float colorInterval) {
+    /**
+     * helper function to interpolate linearly between two single colors.
+     * 
+     * @param high
+     *            The highpoint color
+     * @param low
+     *            The lowpoint color
+     * @param colorInterval
+     *            The percentage of the way between low and high.
+     * @return The interpolated color.
+     */
+    private static float getInterpolatedColor(float high, float low, float colorInterval) {
         float result = 0f;
 
         if (low > high) {
@@ -476,6 +603,13 @@ public class ColormapInterpreter {
         return result;
     }
 
+    /**
+     * Getter for the index number of a specific colormap name (used by swing).
+     * 
+     * @param colorMap
+     *            The name of the colormap selected
+     * @return The index number.
+     */
     public static int getIndexOfColormap(String colorMap) {
         int i = 0;
         for (Entry<String, Color[][]> entry : legends.entrySet()) {
