@@ -2,8 +2,22 @@ package nl.esciencecenter.esight.noise;
 
 import java.nio.ByteBuffer;
 
-
 import com.jogamp.common.nio.Buffers;
+
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /**
  * Noise creation class for visual effects. Didn't write this as much as
@@ -38,8 +52,8 @@ public class Noise {
         double amplitude = 128.0;
         double frequency = 0.1;
         for (int i = 0; i < channels; i++) {
-            pixelBuffer.put((byte) (ImprovedPerlinNoise.noise(x * frequency, y
-                    * frequency, z * frequency) * amplitude));
+            pixelBuffer
+                    .put((byte) (ImprovedPerlinNoise.noise(x * frequency, y * frequency, z * frequency) * amplitude));
 
             amplitude *= p;
             frequency *= 2;
@@ -84,14 +98,11 @@ public class Noise {
     }
 
     private float smoothNoise3(int x, int y, int z) {
-        float corners = (noise3(x - 1, y - 1, z - 1)
-                + noise3(x + 1, y - 1, z - 1) + noise3(x - 1, y + 1, z - 1)
-                + noise3(x + 1, y + 1, z - 1) + noise3(x - 1, y - 1, z + 1)
-                + noise3(x + 1, y - 1, z + 1) + noise3(x - 1, y + 1, z + 1) + noise3(
-                x + 1, y + 1, z + 1)) / 32f;
+        float corners = (noise3(x - 1, y - 1, z - 1) + noise3(x + 1, y - 1, z - 1) + noise3(x - 1, y + 1, z - 1)
+                + noise3(x + 1, y + 1, z - 1) + noise3(x - 1, y - 1, z + 1) + noise3(x + 1, y - 1, z + 1)
+                + noise3(x - 1, y + 1, z + 1) + noise3(x + 1, y + 1, z + 1)) / 32f;
 
-        float sides = (noise3(x - 1, y, z) + noise3(x + 1, y, z)
-                + noise3(x, y - 1, z) + noise3(x, y + 1, z)
+        float sides = (noise3(x - 1, y, z) + noise3(x + 1, y, z) + noise3(x, y - 1, z) + noise3(x, y + 1, z)
                 + noise3(x, y, z - 1) + noise3(x, y, z + 1)) / 12f;
 
         float center = noise3(x, y, z) / 4f;
@@ -126,12 +137,11 @@ public class Noise {
     }
 
     private float smoothNoise(int octave, int x, int y) {
-        float corners = (noise2(octave, x - 1, y - 1)
-                + noise2(octave, x + 1, y - 1) + noise2(octave, x - 1, y + 1) + noise2(
+        float corners = (noise2(octave, x - 1, y - 1) + noise2(octave, x + 1, y - 1) + noise2(octave, x - 1, y + 1) + noise2(
                 octave, x + 1, y + 1)) / 16;
 
-        float sides = (noise2(octave, x - 1, y) + noise2(octave, x + 1, y)
-                + noise2(octave, x, y - 1) + noise2(octave, x, y + 1)) / 8;
+        float sides = (noise2(octave, x - 1, y) + noise2(octave, x + 1, y) + noise2(octave, x, y - 1) + noise2(octave,
+                x, y + 1)) / 8;
 
         float center = noise2(octave, x, y) / 4;
 
@@ -165,8 +175,7 @@ public class Noise {
         int n = x + y * 57;
         n = (n << 13) ^ n;
 
-        float noise = (1.0f - ((n * (n * n * primes[0] + primes[1]) + primes[2]) & 0x7fffffff)
-                / primes[3]);
+        float noise = (1.0f - ((n * (n * n * primes[0] + primes[1]) + primes[2]) & 0x7fffffff) / primes[3]);
 
         System.out.println("noise: " + noise);
         return noise;

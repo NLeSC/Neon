@@ -9,6 +9,21 @@ import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * Generic wrapper for a {@link Texture} read out of an image file.
  * 
@@ -16,8 +31,8 @@ import javax.imageio.ImageIO;
  */
 public class ImageTexture extends Texture2D {
     /**
-     * Constructor for this Texture. Reads the file designated by fileName.
-     * Do not forget to call {@link #init(javax.media.opengl.GL3)} before use.
+     * Constructor for this Texture. Reads the file designated by fileName. Do
+     * not forget to call {@link #init(javax.media.opengl.GL3)} before use.
      * 
      * @param filename
      *            The image file to be read.
@@ -29,8 +44,7 @@ public class ImageTexture extends Texture2D {
      *            The OpenGL-internal MultitexUnit (GL.GL_TEXTUREX) this texture
      *            uses.
      */
-    public ImageTexture(String filename, int w_offSet, int h_offSet,
-            int glMultiTexUnit) {
+    public ImageTexture(String filename, int w_offSet, int h_offSet, int glMultiTexUnit) {
         super(glMultiTexUnit);
 
         // Read the file
@@ -50,8 +64,7 @@ public class ImageTexture extends Texture2D {
 
         // Grab pixels
         int[] pixels = new int[width * height];
-        PixelGrabber pg = new PixelGrabber(bi, x, y, width, height, pixels, 0,
-                width);
+        PixelGrabber pg = new PixelGrabber(bi, x, y, width, height, pixels, 0, width);
         try {
             pg.grabPixels();
         } catch (InterruptedException e) {

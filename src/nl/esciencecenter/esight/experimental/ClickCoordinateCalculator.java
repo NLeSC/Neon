@@ -4,6 +4,27 @@ import nl.esciencecenter.esight.math.MatF4;
 import nl.esciencecenter.esight.math.VecF2;
 import nl.esciencecenter.esight.math.VecF4;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Experimental class, use at your own risk.
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
 public class ClickCoordinateCalculator {
     static float getDiv3(float var) {
         float result = 0;
@@ -29,8 +50,7 @@ public class ClickCoordinateCalculator {
         return result;
     }
 
-    public static VecF2 calc(int numCols, int numRows, float scrWidth,
-            float scrHeight, float x, float y) {
+    public static VecF2 calc(int numCols, int numRows, float scrWidth, float scrHeight, float x, float y) {
         VecF2 tCoord;
 
         float relativeX = x / scrWidth;

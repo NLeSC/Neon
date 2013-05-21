@@ -12,7 +12,7 @@ import nl.esciencecenter.esight.textures.Texture2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* Copyright [2013] [Netherlands eScience Center]
+/* Copyright 2013 Netherlands eScience Center
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,27 +87,29 @@ public class FBO {
             gl.glGenFramebuffers(1, fboPointer);
             gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fboPointer.get(0));
 
+            checkNoError(gl, "Bind framebuffer: ", false);
+
             // Setup texture and color buffer
             rboTexture.init(gl);
             rboTexture.use(gl);
-            gl.glFramebufferTexture2D(GL3.GL_FRAMEBUFFER,
-                    GL3.GL_COLOR_ATTACHMENT0, GL3.GL_TEXTURE_2D,
+            gl.glFramebufferTexture2D(GL3.GL_FRAMEBUFFER, GL3.GL_COLOR_ATTACHMENT0, GL3.GL_TEXTURE_2D,
                     rboTexture.getPointer(), 0);
             rboTexture.unBind(gl);
+
+            checkNoError(gl, "Setup texture: ", false);
 
             // Setup the depth buffer
             gl.glGenRenderbuffers(1, rboPointer);
             gl.glBindRenderbuffer(GL3.GL_RENDERBUFFER, rboPointer.get(0));
-            gl.glRenderbufferStorage(GL.GL_RENDERBUFFER,
-                    GL3.GL_DEPTH_COMPONENT16, width, height);
+            gl.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL3.GL_DEPTH_COMPONENT16, width, height);
             gl.glBindRenderbuffer(GL3.GL_RENDERBUFFER, 0);
 
+            checkNoError(gl, "Setup depth buffer: ", false);
+
             // Attach both buffers to the frame buffer
-            gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
-                    GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D,
+            gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D,
                     rboTexture.getPointer(), 0);
-            gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER,
-                    GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER,
+            gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER,
                     rboPointer.get(0));
 
             checkNoError(gl, "POST: ", false);
@@ -135,14 +137,14 @@ public class FBO {
      *            only, or print all errors that are buffered by opengl.
      * @return true if there was no error.
      */
-    private boolean checkNoError(GL gl, String exceptionMessage,
-            boolean quietlyRemoveAllPreviousErrors) {
+    private boolean checkNoError(GL gl, String exceptionMessage, boolean quietlyRemoveAllPreviousErrors) {
         int error = gl.glGetError();
         if (!quietlyRemoveAllPreviousErrors) {
             if (GL.GL_NO_ERROR != error) {
                 logger.error("GL ERROR(s) " + exceptionMessage + " : ");
                 while (GL.GL_NO_ERROR != error) {
-                    logger.error(" GL Error 0x" + Integer.toHexString(error));
+                    Exception exception = new Exception(" GL Error 0x" + Integer.toHexString(error));
+                    logger.error("Error in OpenGL operation while initializing FBO", exception);
                     error = gl.glGetError();
                 }
                 return false;

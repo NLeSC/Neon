@@ -30,6 +30,21 @@ import com.jogamp.graph.geom.Triangle;
 import com.jogamp.graph.geom.Vertex;
 import com.jogamp.graph.geom.opengl.SVertex;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * Multicolor-enabled text model. Relies _heavily_ on experimental and
  * undocumented jogamp additions for font and graph rendering (which I do not
@@ -39,7 +54,7 @@ import com.jogamp.graph.geom.opengl.SVertex;
  */
 public class MultiColorText extends Model {
     /** Initialization is needed for certain functions to work properly */
-    private boolean                            initialized = false;
+    private boolean initialized = false;
 
     /**
      * Private storage construct for glyph shapes (one per character in the
@@ -50,32 +65,32 @@ public class MultiColorText extends Model {
      * Private storage construct for character colors (one per character in the
      * text)
      */
-    private final HashMap<Integer, VecF4>      colors;
+    private final HashMap<Integer, VecF4> colors;
 
     /** Buffer for final per-vertex colors */
-    private FloatBuffer                        vertexColors;
+    private FloatBuffer vertexColors;
 
     /** internal-use only bounding box for the model */
-    private final BoundingBox                  bbox;
+    private final BoundingBox bbox;
 
     /**
      * The previous string, as long as it doesn't change we need to do far less
      * work
      */
-    private String                             cachedString;
+    private String cachedString;
     /**
      * The previous size, as long as it doesn't change we need to do far less
      * work
      */
-    private int                                cachedSize;
+    private int cachedSize;
     /**
      * The previous color, as long as it doesn't change we need to do far less
      * work
      */
-    private Color4                             cachedColor;
+    private Color4 cachedColor;
 
     /** The desired font for this text model */
-    private final Font                         font;
+    private final Font font;
 
     /**
      * Constructor, doesn't actually do any work, only prepares storage.
@@ -97,15 +112,27 @@ public class MultiColorText extends Model {
         numVertices = 0;
     }
 
+    public MultiColorText(GL3 gl, Font font, String text, Color4 initialColor, int fontSize) {
+        super(vertex_format.TRIANGLES);
+
+        this.font = font;
+
+        cachedString = "";
+
+        this.bbox = new BoundingBox();
+        colors = new HashMap<Integer, VecF4>();
+        glyphs = new HashMap<Integer, GlyphShape>();
+
+        setString(gl, text, initialColor, fontSize);
+    }
+
     @Override
     public void init(GL3 gl) {
         // We override because we do not have the normals information.
 
         if (!initialized) {
-            GLSLAttrib vAttrib = new GLSLAttrib(vertices, "MCvertex",
-                    GLSLAttrib.SIZE_FLOAT, 4);
-            GLSLAttrib cAttrib = new GLSLAttrib(vertexColors, "MCvertexColor",
-                    GLSLAttrib.SIZE_FLOAT, 4);
+            GLSLAttrib vAttrib = new GLSLAttrib(vertices, "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
+            GLSLAttrib cAttrib = new GLSLAttrib(vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
 
             vbo = new VBO(gl, vAttrib, cAttrib);
         }
@@ -129,8 +156,7 @@ public class MultiColorText extends Model {
             glyphs.clear();
 
             // Get the outline shapes for the current string in this font
-            ArrayList<OutlineShape> shapes = ((TypecastFont) font).getOutlineShapes(str,
-                    size, SVertex.factory());
+            ArrayList<OutlineShape> shapes = ((TypecastFont) font).getOutlineShapes(str, size, SVertex.factory());
 
             // Make a set of glyph shapes from the outlines
             int numGlyps = shapes.size();
@@ -141,8 +167,7 @@ public class MultiColorText extends Model {
                     glyphs.put(index, null);
                     continue;
                 }
-                GlyphShape glyphShape = new GlyphShape(SVertex.factory(),
-                        shapes.get(index));
+                GlyphShape glyphShape = new GlyphShape(SVertex.factory(), shapes.get(index));
 
                 if (glyphShape.getNumVertices() < 3) {
                     colors.put(index, null);
@@ -208,10 +233,8 @@ public class MultiColorText extends Model {
         }
         this.vertices = VectorFMath.toBuffer(myVertices);
         this.vertexColors = VectorFMath.vec4ListToBuffer(vertexColors);
-        GLSLAttrib vAttrib = new GLSLAttrib(this.vertices, "MCvertex",
-                GLSLAttrib.SIZE_FLOAT, 4);
-        GLSLAttrib cAttrib = new GLSLAttrib(this.vertexColors, "MCvertexColor",
-                GLSLAttrib.SIZE_FLOAT, 4);
+        GLSLAttrib vAttrib = new GLSLAttrib(this.vertices, "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
+        GLSLAttrib cAttrib = new GLSLAttrib(this.vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
         vbo = new VBO(gl, vAttrib, cAttrib);
 
         this.numVertices = vertices.size();
@@ -243,8 +266,7 @@ public class MultiColorText extends Model {
      * @param newColor
      *            The new color.
      */
-    public void setSubstringColorWordBounded(GL3 gl, String subString,
-            Color4 newColor) {
+    public void setSubstringColorWordBounded(GL3 gl, String subString, Color4 newColor) {
         if (cachedString.contains(subString) && subString.compareTo("") != 0) {
             Pattern p = Pattern.compile("\\b" + subString + "\\b");
             Matcher m = p.matcher(cachedString);
@@ -296,8 +318,7 @@ public class MultiColorText extends Model {
      * @param newColor
      *            The new color.
      */
-    public void setSubstringAtIndexColor(GL3 gl, int startIndex,
-            String subString, Color4 newColor) {
+    public void setSubstringAtIndexColor(GL3 gl, int startIndex, String subString, Color4 newColor) {
         if (cachedString.contains(subString) && subString.compareTo("") != 0) {
             for (int i = 0; i < subString.length(); i++) {
                 colors.put(startIndex + i, newColor);
@@ -309,15 +330,11 @@ public class MultiColorText extends Model {
         makeVBO(gl);
     }
 
-    public void draw(GL3 gl, ShaderProgram program, float canvasWidth,
-            float canvasHeight, float RasterPosX, float RasterPosY) {
+    public void draw(GL3 gl, ShaderProgram program, float canvasWidth, float canvasHeight, float RasterPosX,
+            float RasterPosY) {
         if (initialized) {
-            program.setUniformMatrix(
-                    "MVMatrix",
-                    getMVMatrixForHUD(canvasWidth, canvasHeight, RasterPosX,
-                            RasterPosY));
-            program.setUniformMatrix("PMatrix",
-                    getPMatrixForHUD(canvasWidth, canvasHeight));
+            program.setUniformMatrix("MVMatrix", getMVMatrixForHUD(canvasWidth, canvasHeight, RasterPosX, RasterPosY));
+            program.setUniformMatrix("PMatrix", getPMatrixForHUD(canvasWidth, canvasHeight));
 
             try {
                 program.use(gl);
@@ -353,12 +370,10 @@ public class MultiColorText extends Model {
      * @return the Modelview matrix needed to paint at the given coordinates on
      *         the HUD.
      */
-    private MatF4 getMVMatrixForHUD(float canvasWidth, float canvasHeight,
-            float RasterPosX, float RasterPosY) {
+    private MatF4 getMVMatrixForHUD(float canvasWidth, float canvasHeight, float RasterPosX, float RasterPosY) {
 
         MatF4 MVMatrix = new MatF4();
-        MVMatrix = MVMatrix.mul(MatrixFMath.translate(
-                (RasterPosX / canvasWidth), (RasterPosY / canvasHeight), 0f));
+        MVMatrix = MVMatrix.mul(MatrixFMath.translate((RasterPosX / canvasWidth), (RasterPosY / canvasHeight), 0f));
 
         return MVMatrix;
     }
@@ -375,8 +390,7 @@ public class MultiColorText extends Model {
      */
     private MatF4 getPMatrixForHUD(float canvasWidth, float canvasHeight) {
 
-        MatF4 PMatrix = MatrixFMath.ortho(0f, canvasWidth, 0f, canvasHeight,
-                -1f, 1f);
+        MatF4 PMatrix = MatrixFMath.ortho(0f, canvasWidth, 0f, canvasHeight, -1f, 1f);
 
         return PMatrix;
     }

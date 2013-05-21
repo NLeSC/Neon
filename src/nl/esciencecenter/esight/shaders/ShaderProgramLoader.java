@@ -10,6 +10,21 @@ import nl.esciencecenter.esight.exceptions.CompilationFailedException;
 import nl.esciencecenter.esight.math.MatrixF;
 import nl.esciencecenter.esight.math.VectorF;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * Loader/convenience class for {@link ShaderProgram} instances. Different
  * formats for shader source inclusion are possible (files, strings). Shader
@@ -51,17 +66,13 @@ public class ShaderProgramLoader {
      * @throws CompilationFailedException
      *             if one of the source compilations generates an error.
      */
-    public ShaderProgram createProgram(GL3 gl, String programName,
-            File vsSourceFile, File gsSourceFile, File fsSourceFile)
-            throws FileNotFoundException, CompilationFailedException {
-        VertexShader vs = new VertexShader(programName + " : Vertex Shader",
-                vsSourceFile);
+    public ShaderProgram createProgram(GL3 gl, String programName, File vsSourceFile, File gsSourceFile,
+            File fsSourceFile) throws FileNotFoundException, CompilationFailedException {
+        VertexShader vs = new VertexShader(programName + " : Vertex Shader", vsSourceFile);
         vs.init(gl);
-        GeometryShader gs = new GeometryShader(programName
-                + " : Geometry Shader", gsSourceFile);
+        GeometryShader gs = new GeometryShader(programName + " : Geometry Shader", gsSourceFile);
         gs.init(gl);
-        FragmentShader fs = new FragmentShader(programName
-                + " : Fragment Shader", fsSourceFile);
+        FragmentShader fs = new FragmentShader(programName + " : Fragment Shader", fsSourceFile);
         fs.init(gl);
 
         ShaderProgram program = new ShaderProgram(vs, gs, fs);
@@ -90,14 +101,11 @@ public class ShaderProgramLoader {
      * @throws CompilationFailedException
      *             if one of the source compilations generates an error.
      */
-    public ShaderProgram createProgram(GL3 gl, String programName,
-            File vsSourceFile, File fsSourceFile) throws FileNotFoundException,
-            CompilationFailedException {
-        VertexShader vs = new VertexShader(programName + " : Vertex Shader",
-                vsSourceFile);
+    public ShaderProgram createProgram(GL3 gl, String programName, File vsSourceFile, File fsSourceFile)
+            throws FileNotFoundException, CompilationFailedException {
+        VertexShader vs = new VertexShader(programName + " : Vertex Shader", vsSourceFile);
         vs.init(gl);
-        FragmentShader fs = new FragmentShader(programName
-                + " : Fragment Shader", fsSourceFile);
+        FragmentShader fs = new FragmentShader(programName + " : Fragment Shader", fsSourceFile);
         fs.init(gl);
 
         ShaderProgram program = new ShaderProgram(vs, fs);
@@ -126,14 +134,11 @@ public class ShaderProgramLoader {
      * @throws CompilationFailedException
      *             if one of the source compilations generates an error.
      */
-    public ShaderProgram createProgram(GL3 gl, String programName,
-            String vsSourceCode, File fsSourceFile)
+    public ShaderProgram createProgram(GL3 gl, String programName, String vsSourceCode, File fsSourceFile)
             throws FileNotFoundException, CompilationFailedException {
-        VertexShader vs = new VertexShader(programName + " : Vertex Shader",
-                vsSourceCode);
+        VertexShader vs = new VertexShader(programName + " : Vertex Shader", vsSourceCode);
         vs.init(gl);
-        FragmentShader fs = new FragmentShader(programName
-                + " : Fragment Shader", fsSourceFile);
+        FragmentShader fs = new FragmentShader(programName + " : Fragment Shader", fsSourceFile);
         fs.init(gl);
 
         ShaderProgram program = new ShaderProgram(vs, fs);
@@ -162,14 +167,11 @@ public class ShaderProgramLoader {
      * @throws CompilationFailedException
      *             if one of the source compilations generates an error.
      */
-    public ShaderProgram createProgram(GL3 gl, String programName,
-            File vsSourceFile, String fsSourceCode)
+    public ShaderProgram createProgram(GL3 gl, String programName, File vsSourceFile, String fsSourceCode)
             throws FileNotFoundException, CompilationFailedException {
-        VertexShader vs = new VertexShader(programName + " : Vertex Shader",
-                vsSourceFile);
+        VertexShader vs = new VertexShader(programName + " : Vertex Shader", vsSourceFile);
         vs.init(gl);
-        FragmentShader fs = new FragmentShader(programName
-                + " : Fragment Shader", fsSourceCode);
+        FragmentShader fs = new FragmentShader(programName + " : Fragment Shader", fsSourceCode);
         fs.init(gl);
 
         ShaderProgram program = new ShaderProgram(vs, fs);
@@ -198,14 +200,11 @@ public class ShaderProgramLoader {
      * @throws CompilationFailedException
      *             if one of the source compilations generates an error.
      */
-    public ShaderProgram createProgram(GL3 gl, String programName,
-            String vsSourceCode, String fsSourceCode)
+    public ShaderProgram createProgram(GL3 gl, String programName, String vsSourceCode, String fsSourceCode)
             throws FileNotFoundException, CompilationFailedException {
-        VertexShader vs = new VertexShader(programName + " : Vertex Shader",
-                vsSourceCode);
+        VertexShader vs = new VertexShader(programName + " : Vertex Shader", vsSourceCode);
         vs.init(gl);
-        FragmentShader fs = new FragmentShader(programName
-                + " : Fragment Shader", fsSourceCode);
+        FragmentShader fs = new FragmentShader(programName + " : Fragment Shader", fsSourceCode);
         fs.init(gl);
 
         ShaderProgram program = new ShaderProgram(vs, fs);
@@ -227,8 +226,7 @@ public class ShaderProgramLoader {
      *            A predefined {@link FragmentShader}
      * @return The shader program just created.
      */
-    public ShaderProgram createProgram(GL3 gl, VertexShader vs,
-            FragmentShader fs) {
+    public ShaderProgram createProgram(GL3 gl, VertexShader vs, FragmentShader fs) {
         ShaderProgram program = new ShaderProgram(vs, fs);
         program.init(gl);
         programs.add(program);

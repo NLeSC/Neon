@@ -22,6 +22,21 @@ import org.slf4j.LoggerFactory;
 
 import com.jogamp.common.nio.Buffers;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * This library's interpretation of a Shader program. Different formats for
  * shader source inclusion are possible (files, strings). Shader programs can be
@@ -53,8 +68,7 @@ import com.jogamp.common.nio.Buffers;
  * 
  */
 public class ShaderProgram {
-    private final static Logger logger = LoggerFactory
-            .getLogger(ShaderProgram.class);
+    private final static Logger logger = LoggerFactory.getLogger(ShaderProgram.class);
 
     public int pointer;
     private final VertexShader vs;
@@ -172,28 +186,22 @@ public class ShaderProgram {
             for (Map.Entry<String, Class> outEntry : outs.entrySet()) {
                 if (!ins.containsKey(outEntry.getKey())) {
                     compatible = false;
-                    logger.warn("SHADER WARNING: " + vs.getName()
-                            + " output variable " + outEntry.getKey()
+                    logger.warn("SHADER WARNING: " + vs.getName() + " output variable " + outEntry.getKey()
                             + " has no matching input variable.");
-                } else if (!ins.get(outEntry.getKey()).equals(
-                        outs.get(outEntry.getKey()))) {
+                } else if (!ins.get(outEntry.getKey()).equals(outs.get(outEntry.getKey()))) {
                     compatible = false;
-                    logger.warn("SHADER WARNING: " + vs.getName()
-                            + " Type of output variable " + outEntry.getKey()
+                    logger.warn("SHADER WARNING: " + vs.getName() + " Type of output variable " + outEntry.getKey()
                             + " does not match with type of input variable");
                 }
             }
             for (Map.Entry<String, Class> inEntry : ins.entrySet()) {
                 if (!outs.containsKey(inEntry.getKey())) {
                     compatible = false;
-                    logger.warn("SHADER WARNING: " + fs.getName()
-                            + " input variable " + inEntry.getKey()
+                    logger.warn("SHADER WARNING: " + fs.getName() + " input variable " + inEntry.getKey()
                             + " has no matching output variable.");
-                } else if (!ins.get(inEntry.getKey()).equals(
-                        outs.get(inEntry.getKey()))) {
+                } else if (!ins.get(inEntry.getKey()).equals(outs.get(inEntry.getKey()))) {
                     compatible = false;
-                    logger.warn("SHADER WARNING: " + fs.getName()
-                            + " Type of input variable " + inEntry.getKey()
+                    logger.warn("SHADER WARNING: " + fs.getName() + " Type of input variable " + inEntry.getKey()
                             + " does not match with type of output variable");
                 }
             }
@@ -224,15 +232,13 @@ public class ShaderProgram {
             neededUniforms.putAll(vsUniforms);
             neededUniforms.putAll(fsUniforms);
 
-            for (Map.Entry<String, Class> uniformEntry : neededUniforms
-                    .entrySet()) {
+            for (Map.Entry<String, Class> uniformEntry : neededUniforms.entrySet()) {
                 boolean thisEntryAvailable = false;
                 if (uniformFloatMatrices.containsKey(uniformEntry.getKey())) {
                     thisEntryAvailable = true;
                 } else if (uniformFloats.containsKey(uniformEntry.getKey())) {
                     thisEntryAvailable = true;
-                } else if (uniformFloatVectors.containsKey(uniformEntry
-                        .getKey())) {
+                } else if (uniformFloatVectors.containsKey(uniformEntry.getKey())) {
                     thisEntryAvailable = true;
                 } else if (uniformInts.containsKey(uniformEntry.getKey())) {
                     thisEntryAvailable = true;
@@ -242,8 +248,7 @@ public class ShaderProgram {
 
                 if (!thisEntryAvailable) {
                     allPresent = false;
-                    logger.warn("SHADER WARNING: " + fs.getName()
-                            + " uniform variable " + uniformEntry.getKey()
+                    logger.warn("SHADER WARNING: " + fs.getName() + " uniform variable " + uniformEntry.getKey()
                             + " not present at use.");
                 }
             }
@@ -278,8 +283,7 @@ public class ShaderProgram {
 
                 if (!thisEntryAvailable) {
                     allPresent = false;
-                    logger.warn("SHADER WARNING: " + vs.getName()
-                            + " input variable " + inEntry.getKey()
+                    logger.warn("SHADER WARNING: " + vs.getName() + " input variable " + inEntry.getKey()
                             + " not present at use.");
                 }
             }
@@ -375,8 +379,7 @@ public class ShaderProgram {
         int nextStart = 0;
         for (GLSLAttrib attrib : attribs) {
             int ptr = gl.glGetAttribLocation(pointer, attrib.name);
-            gl.glVertexAttribPointer(ptr, attrib.vectorSize, GL3.GL_FLOAT,
-                    false, 0, nextStart);
+            gl.glVertexAttribPointer(ptr, attrib.vectorSize, GL3.GL_FLOAT, false, 0, nextStart);
             gl.glEnableVertexAttribArray(ptr);
 
             nextStart += attrib.buffer.capacity() * Buffers.SIZEOF_FLOAT;
@@ -518,8 +521,7 @@ public class ShaderProgram {
      * @param var
      *            The uniform variable to pas to the shader.
      */
-    public void passUniformVec(GL3 gl, String pointerNameInShader,
-            FloatBuffer var) {
+    public void passUniformVec(GL3 gl, String pointerNameInShader, FloatBuffer var) {
         int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
 
         int vecSize = var.capacity();
@@ -548,8 +550,7 @@ public class ShaderProgram {
      * @param var
      *            The uniform variable to pas to the shader.
      */
-    public void passUniformVecArray(GL3 gl, String pointerNameInShader,
-            FloatBuffer var, int vecSize, int count) {
+    public void passUniformVecArray(GL3 gl, String pointerNameInShader, FloatBuffer var, int vecSize, int count) {
         int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
 
         if (vecSize == 1) {
@@ -577,8 +578,7 @@ public class ShaderProgram {
      * @param var
      *            The uniform variable to pas to the shader.
      */
-    public void passUniformVecArray(GL3 gl, String pointerNameInShader,
-            IntBuffer var, int vecSize, int count) {
+    public void passUniformVecArray(GL3 gl, String pointerNameInShader, IntBuffer var, int vecSize, int count) {
         int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
 
         if (vecSize == 1) {
@@ -606,8 +606,7 @@ public class ShaderProgram {
      * @param var
      *            The uniform variable to pas to the shader.
      */
-    public void passUniformMat(GL3 gl, String pointerNameInShader,
-            FloatBuffer var) {
+    public void passUniformMat(GL3 gl, String pointerNameInShader, FloatBuffer var) {
         int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
 
         int matSize = var.capacity();

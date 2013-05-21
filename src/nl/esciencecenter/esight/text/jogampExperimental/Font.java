@@ -1,5 +1,7 @@
 package nl.esciencecenter.esight.text.jogampExperimental;
 
+import com.jogamp.opengl.math.geom.AABBox;
+
 /**
  * Copyright 2010 JogAmp Community. All rights reserved.
  *
@@ -27,8 +29,6 @@ package nl.esciencecenter.esight.text.jogampExperimental;
  * authors and should not be interpreted as representing official policies, either expressed
  * or implied, of JogAmp Community.
  */
-
-import com.jogamp.graph.geom.AABBox;
 
 /**
  * Interface wrapper for font implementation.
@@ -121,5 +121,6 @@ public interface Font {
     public boolean isPrintableChar(char c);
 
     /** Shall return {@link #getFullFamilyName()} */
+    @Override
     public String toString();
 }

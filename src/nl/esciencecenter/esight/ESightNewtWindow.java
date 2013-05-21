@@ -11,10 +11,24 @@ import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Screen;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
-import com.jogamp.newt.event.WindowListener;
 import com.jogamp.newt.event.WindowUpdateEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.util.Animator;
+
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /**
  * Common (extendible) class for a stand alone native supported OpenGL window.
@@ -45,12 +59,13 @@ public class ESightNewtWindow {
      * @param windowTitle
      *            The window title.
      */
-    public ESightNewtWindow(boolean forceGL2ES2, InputHandler inputHandler, final GLEventListener glEventListener, int width,
-            int height, String windowTitle) {
+    public ESightNewtWindow(boolean forceGL2ES2, InputHandler inputHandler, final GLEventListener glEventListener,
+            int width, int height, String windowTitle) {
         final GLProfile glp;
         // if (forceGL2ES2) {
         // glp = GLProfile.get(GLProfile.GL2ES2);
         // } else {
+        GLProfile.initSingleton();
         glp = GLProfile.get(GLProfile.GL3);
         // }
 
@@ -66,55 +81,63 @@ public class ESightNewtWindow {
         caps.setNumSamples(4);
 
         // Create the Newt Window
-        Display dpy = NewtFactory.createDisplay(null);
+        Display dpy = NewtFactory.createDisplay("decon");
         Screen screen = NewtFactory.createScreen(dpy, screenIdx);
         final GLWindow glWindow = GLWindow.create(screen, caps);
-
         glWindow.setTitle(windowTitle);
+
+        // Set to automatically swap front and back buffers once the display
+        // cycle is done.
+        glWindow.setAutoSwapBufferMode(true);
 
         // Add listeners
         glWindow.addMouseListener(inputHandler);
         glWindow.addKeyListener(inputHandler);
         // glWindow.setFullscreen(true);
 
-        WindowListener[] listeners = glWindow.getWindowListeners();
-        final WindowListener original = listeners[0];
-        glWindow.addWindowListener(0, new WindowAdapter() {
+        // WindowListener[] listeners = glWindow.getWindowListeners();
+        // final WindowListener original = listeners[0];
+        // glWindow.removeWindowListener(original);
+
+        glWindow.addWindowListener(new WindowAdapter() {
             @Override
             public void windowDestroyNotify(WindowEvent arg0) {
-                glWindow.getAnimator().stop();
+                // glWindow.getAnimator().stop();
+                // original.windowDestroyNotify(arg0);
                 System.exit(0);
             }
 
             @Override
             public void windowDestroyed(WindowEvent arg0) {
-                glWindow.getAnimator().stop();
+                // glWindow.getAnimator().stop();
+                // original.windowDestroyed(arg0);
+                // glWindow.destroy();
                 System.exit(0);
             }
 
             @Override
             public void windowGainedFocus(WindowEvent arg0) {
-                original.windowGainedFocus(arg0);
+                // original.windowGainedFocus(arg0);
             }
 
             @Override
             public void windowLostFocus(WindowEvent arg0) {
-                original.windowLostFocus(arg0);
+                // original.windowLostFocus(arg0);
             }
 
             @Override
             public void windowMoved(WindowEvent arg0) {
-                original.windowMoved(arg0);
+                // original.windowMoved(arg0);
             }
 
             @Override
             public void windowRepaint(WindowUpdateEvent arg0) {
-                original.windowRepaint(arg0);
+                // original.windowRepaint(arg0);
             }
 
             @Override
             public void windowResized(WindowEvent arg0) {
-                original.windowResized(arg0);
+                // original.windowResized(arg0);
             }
         });
 

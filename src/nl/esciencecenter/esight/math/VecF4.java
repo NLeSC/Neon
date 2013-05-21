@@ -1,5 +1,26 @@
 package nl.esciencecenter.esight.math;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * A 4-place float vector implementation.
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
 public class VecF4 extends VectorF {
     /**
      * Creates a new vector, initialized to 0.
@@ -47,9 +68,9 @@ public class VecF4 extends VectorF {
      * Creates a new vector by copying the given vector, supplemented by the
      * scalar.
      * 
-     * @param v
+     * @param vector
      *            The vector to be copied.
-     * @param v3
+     * @param f
      *            The additional value to be put into the fourth index.
      */
     public VecF4(Vector vector, float f) {
@@ -211,8 +232,7 @@ public class VecF4 extends VectorF {
 
     @Override
     public int hashCode() {
-        int hashCode = (int) (v[0] + 23 * 6833 + v[1] + 7 * 7207 + v[2] + 11
-                * 7919 + v[3] + 3 * 3);
+        int hashCode = (int) (v[0] + 23 * 6833 + v[1] + 7 * 7207 + v[2] + 11 * 7919 + v[3] + 3 * 3);
         return hashCode;
     }
 

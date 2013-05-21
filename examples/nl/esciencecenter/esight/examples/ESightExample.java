@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 
 import nl.esciencecenter.esight.ESightNewtWindow;
 
-/* Copyright [2013] [Netherlands eScience Center]
+/* Copyright 2013 Netherlands eScience Center
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,7 @@ public class ESightExample {
     // global settings are useable throughout the application. This settings
     // class reads from a file named "settings.properties" to allow default
     // settings to be changed by the user.
-    private final static ESightExampleSettings settings = ESightExampleSettings
-            .getInstance();
+    private final static ESightExampleSettings settings = ESightExampleSettings.getInstance();
 
     // This is an implementation of a 'loose' interface window. This is done to
     // allow java swing components as user interface elements. It is in a
@@ -59,9 +58,8 @@ public class ESightExample {
         exampleGLEventListener = new ESightExampleGLEventListener();
 
         // Create the default ESight OpenGL window.
-        new ESightNewtWindow(true, ESightExampleInputHandler.getInstance(),
-                exampleGLEventListener, settings.getDefaultScreenWidth(),
-                settings.getDefaultScreenHeight(),
+        new ESightNewtWindow(true, ESightExampleInputHandler.getInstance(), exampleGLEventListener,
+                settings.getDefaultScreenWidth(), settings.getDefaultScreenHeight(),
                 "ESightExample - example Visualization Tool");
 
         // Create the interface frame
@@ -76,8 +74,7 @@ public class ESightExample {
         });
 
         // Set the interface size according to the settings.
-        frame.setSize(settings.getInterfaceWidth(),
-                settings.getInterfaceHeight());
+        frame.setSize(settings.getInterfaceWidth(), settings.getInterfaceHeight());
 
         // Lock the interface size.
         frame.setResizable(false);

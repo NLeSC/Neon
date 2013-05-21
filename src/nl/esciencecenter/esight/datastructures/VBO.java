@@ -7,6 +7,21 @@ import javax.media.opengl.GL3;
 
 import com.jogamp.common.nio.Buffers;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * A class representing a Vertex Buffer Object.
  * 
@@ -20,12 +35,11 @@ public class VBO {
     private final IntBuffer bufferPointer;
 
     /** The array of GLSL attributes associated with this VBO */
-    private GLSLAttrib[]    attribs;
+    private GLSLAttrib[] attribs;
 
     /**
      * Constructor that creates a Vertex Buffer Object with the specified GLSL
-     * attributes.
-     * (typically location, texture coordinates, normals, etc.)
+     * attributes. (typically location, texture coordinates, normals, etc.)
      * 
      * @param gl
      *            The global openGL instance.
@@ -52,14 +66,12 @@ public class VBO {
             size += attrib.buffer.capacity() * Buffers.SIZEOF_FLOAT;
         }
 
-        gl.glBufferData(GL3.GL_ARRAY_BUFFER, size, (Buffer) null,
-                GL3.GL_STATIC_DRAW);
+        gl.glBufferData(GL3.GL_ARRAY_BUFFER, size, (Buffer) null, GL3.GL_STATIC_DRAW);
 
         // Copy the GLSL Attribute data into the internal OpenGL buffer
         int nextStart = 0;
         for (final GLSLAttrib attrib : attribs) {
-            gl.glBufferSubData(GL3.GL_ARRAY_BUFFER, nextStart,
-                    attrib.buffer.capacity() * Buffers.SIZEOF_FLOAT,
+            gl.glBufferSubData(GL3.GL_ARRAY_BUFFER, nextStart, attrib.buffer.capacity() * Buffers.SIZEOF_FLOAT,
                     attrib.buffer);
             nextStart += attrib.buffer.capacity() * Buffers.SIZEOF_FLOAT;
         }
@@ -119,14 +131,12 @@ public class VBO {
             size += attrib.buffer.capacity() * Buffers.SIZEOF_FLOAT;
         }
 
-        gl.glBufferData(GL3.GL_ARRAY_BUFFER, size, (Buffer) null,
-                GL3.GL_STATIC_DRAW);
+        gl.glBufferData(GL3.GL_ARRAY_BUFFER, size, (Buffer) null, GL3.GL_STATIC_DRAW);
 
         // Copy the GLSL Attribute data into the internal OpenGL buffer
         int nextStart = 0;
         for (final GLSLAttrib attrib : attribs) {
-            gl.glBufferSubData(GL3.GL_ARRAY_BUFFER, nextStart,
-                    attrib.buffer.capacity() * Buffers.SIZEOF_FLOAT,
+            gl.glBufferSubData(GL3.GL_ARRAY_BUFFER, nextStart, attrib.buffer.capacity() * Buffers.SIZEOF_FLOAT,
                     attrib.buffer);
             nextStart += attrib.buffer.capacity() * Buffers.SIZEOF_FLOAT;
         }

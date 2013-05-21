@@ -28,6 +28,21 @@ import javax.swing.event.ChangeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * Utility class for various static Swing components, for use in GUIs.
  * 
@@ -35,8 +50,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class GoggleSwing {
-    private final static Logger logger = LoggerFactory
-                                               .getLogger(GoggleSwing.class);
+    private final static Logger logger = LoggerFactory.getLogger(GoggleSwing.class);
 
     /**
      * A single item for a ButtonBox, to be used in conjuction with
@@ -45,11 +59,10 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class ButtonBoxItem {
-        public String         label;
+        public String label;
         public ActionListener listener;
 
-        public ButtonBoxItem(String label,
-                ActionListener listener) {
+        public ButtonBoxItem(String label, ActionListener listener) {
             this.label = label;
             this.listener = listener;
         }
@@ -62,11 +75,10 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class RadioBoxItem {
-        public String         label;
+        public String label;
         public ActionListener listener;
 
-        public RadioBoxItem(String label,
-                ActionListener listener) {
+        public RadioBoxItem(String label, ActionListener listener) {
             this.label = label;
             this.listener = listener;
         }
@@ -79,13 +91,12 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class CheckBoxItem {
-        public String       label;
+        public String label;
 
-        public boolean      selection;
+        public boolean selection;
         public ItemListener listener;
 
-        public CheckBoxItem(String label, boolean selection,
-                ItemListener listener) {
+        public CheckBoxItem(String label, boolean selection, ItemListener listener) {
             this.label = label;
             this.selection = selection;
             this.listener = listener;
@@ -99,13 +110,12 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class ColoredCheckBoxItem {
-        public String       label;
-        public Color        color;
-        public boolean      selection;
+        public String label;
+        public Color color;
+        public boolean selection;
         public ItemListener listener;
 
-        public ColoredCheckBoxItem(String label, Color color, boolean selection,
-                ItemListener listener) {
+        public ColoredCheckBoxItem(String label, Color color, boolean selection, ItemListener listener) {
             this.label = label;
             this.color = color;
             this.selection = selection;
@@ -120,7 +130,7 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class DropdownBoxItem {
-        public String         label;
+        public String label;
         public ActionListener listener;
 
         public DropdownBoxItem(String itemLabel, ActionListener listener) {
@@ -136,8 +146,8 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class DropdownBoxesBoxItem {
-        public String            label;
-        public String            selectedOption;
+        public String label;
+        public String selectedOption;
         public DropdownBoxItem[] items;
 
         public DropdownBoxesBoxItem(String boxLabel, String selectedOption, DropdownBoxItem... items) {
@@ -222,8 +232,7 @@ public class GoggleSwing {
      *            The alt-text for this button.
      * @return the newly created button with image.
      */
-    public static JButton createImageButton(String path, String fileName,
-            String buttonText) {
+    public static JButton createImageButton(String path, String fileName, String buttonText) {
         final ImageIcon icon = GoggleSwing.createImageIcon(path, fileName);
         if (icon == null) {
             logger.warn("Icon for " + buttonText + ", with file name: " + path + fileName + ", could not be found.");
@@ -252,13 +261,11 @@ public class GoggleSwing {
      *            The new height for this {@link ImageIcon}
      * @return The newly resized {@link ImageIcon}
      */
-    public static ImageIcon createResizedImageIcon(String path,
-            String fileName, int width, int height) {
+    public static ImageIcon createResizedImageIcon(String path, String fileName, int width, int height) {
         ImageIcon icon = createImageIcon(path, fileName);
         Image img = icon.getImage();
 
-        Image newimg = img.getScaledInstance(width, height,
-                java.awt.Image.SCALE_SMOOTH);
+        Image newimg = img.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
         ImageIcon newIcon = new ImageIcon(newimg);
 
         return newIcon;
@@ -321,8 +328,7 @@ public class GoggleSwing {
      * @return The strut.
      */
     public static Component horizontalStrut(int size) {
-        final Component verticalStrut = Box.createRigidArea(new Dimension(size,
-                0));
+        final Component verticalStrut = Box.createRigidArea(new Dimension(size, 0));
         return verticalStrut;
     }
 
@@ -447,8 +453,8 @@ public class GoggleSwing {
      *            The {@link JLabel} to set when the slider value changes.
      * @return the {@link Box} containing the slider.
      */
-    public static Box sliderBox(String label, ChangeListener listener, int min,
-            int max, int spacing, int norm, JLabel dynamicLabel) {
+    public static Box sliderBox(String label, ChangeListener listener, int min, int max, int spacing, int norm,
+            JLabel dynamicLabel) {
         final ArrayList<Component> components = new ArrayList<Component>();
         final JLabel thresholdlabel = new JLabel(label);
         components.add(thresholdlabel);
@@ -487,9 +493,8 @@ public class GoggleSwing {
      *            The {@link JLabel} to set when the slider value changes.
      * @return the {@link Box} containing the slider.
      */
-    public static Box sliderBox(String label, ChangeListener listener,
-            float fmin, float fmax, float fspacing, float fnorm,
-            JLabel dynamicLabel) {
+    public static Box sliderBox(String label, ChangeListener listener, float fmin, float fmax, float fspacing,
+            float fnorm, JLabel dynamicLabel) {
         int min = 0;
         int max = (int) ((fmax - fmin) / fspacing);
         if (fmin < 0 && fmax > 0) {
@@ -562,8 +567,7 @@ public class GoggleSwing {
      *            option to have a bevel border yes/no.
      * @return the vertically boxed components.
      */
-    public static Box vBoxedComponents(ArrayList<Component> components,
-            boolean bordered) {
+    public static Box vBoxedComponents(ArrayList<Component> components, boolean bordered) {
         final Box hrzBox = Box.createHorizontalBox();
         hrzBox.add(GoggleSwing.horizontalStrut(2));
 
@@ -592,8 +596,7 @@ public class GoggleSwing {
      *            option to have a bevel border yes/no.
      * @return the horizontally boxed components.
      */
-    public static Box hBoxedComponents(ArrayList<Component> components,
-            boolean bordered) {
+    public static Box hBoxedComponents(ArrayList<Component> components, boolean bordered) {
         final Box vrtBox = Box.createVerticalBox();
         vrtBox.add(GoggleSwing.verticalStrut(2));
 
@@ -621,8 +624,7 @@ public class GoggleSwing {
      * @return The strut.
      */
     public static Component verticalStrut(int size) {
-        final Component verticalStrut = Box.createRigidArea(new Dimension(0,
-                size));
+        final Component verticalStrut = Box.createRigidArea(new Dimension(0, size));
         return verticalStrut;
     }
 }

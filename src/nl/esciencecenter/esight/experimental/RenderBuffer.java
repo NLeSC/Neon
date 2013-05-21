@@ -7,7 +7,7 @@ import javax.media.opengl.GL3;
 import nl.esciencecenter.esight.datastructures.FBO;
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 
-/* Copyright [2013] [Netherlands eScience Center]
+/* Copyright 2013 Netherlands eScience Center
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,8 @@ import nl.esciencecenter.esight.exceptions.UninitializedException;
  */
 
 /**
- * Renderbuffer data construct for Renderbuffer and Framebuffer objects.
+ * Experimental class, use at your own risk. Renderbuffer data construct for
+ * Renderbuffer and Framebuffer objects.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  */
@@ -60,10 +61,8 @@ public class RenderBuffer {
             e.printStackTrace();
         }
         bind(gl);
-        gl.glRenderbufferStorage(GL3.GL_RENDERBUFFER, GL3.GL_RGBA, width,
-                height);
-        gl.glFramebufferRenderbuffer(GL3.GL_FRAMEBUFFER, GL3.GL_RGBA,
-                GL3.GL_RENDERBUFFER, pointer.get(0));
+        gl.glRenderbufferStorage(GL3.GL_RENDERBUFFER, GL3.GL_RGBA, width, height);
+        gl.glFramebufferRenderbuffer(GL3.GL_FRAMEBUFFER, GL3.GL_RGBA, GL3.GL_RENDERBUFFER, pointer.get(0));
         unBind(gl);
         fbo.unBind(gl);
     }
