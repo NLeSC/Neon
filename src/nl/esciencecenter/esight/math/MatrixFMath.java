@@ -2,6 +2,28 @@ package nl.esciencecenter.esight.math;
 
 import nl.esciencecenter.esight.exceptions.InverseNotAvailableException;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Utility class for the more abstract Computer Graphics - related Matrix
+ * calculations.
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
 public class MatrixFMath {
     public static double degreesToRadians = Math.PI / 180.0;
     public static float EPSILON = 0.0000001f;
@@ -14,8 +36,8 @@ public class MatrixFMath {
      * @return The Normal Matrix for this Modelview Matrix.
      */
     public static MatF3 getNormalMatrix(MatF4 mv) {
-        MatF3 upper3x3 = new MatF3(mv.get(0), mv.get(1), mv.get(2), mv.get(4),
-                mv.get(5), mv.get(6), mv.get(8), mv.get(9), mv.get(10));
+        MatF3 upper3x3 = new MatF3(mv.get(0), mv.get(1), mv.get(2), mv.get(4), mv.get(5), mv.get(6), mv.get(8),
+                mv.get(9), mv.get(10));
 
         MatF3 inverse;
         try {
@@ -45,8 +67,7 @@ public class MatrixFMath {
      *            The far clipping plane
      * @return An orthogonal matrix
      */
-    public static MatF4 ortho(float left, float right, float bottom, float top,
-            float zNear, float zFar) {
+    public static MatF4 ortho(float left, float right, float bottom, float top, float zNear, float zFar) {
         float dX = right - left;
         float dY = top - bottom;
         float dZ = zFar - zNear;
@@ -57,8 +78,8 @@ public class MatrixFMath {
         float r = right;
         float l = left;
 
-        MatF4 m = new MatF4(2 / dX, 0, 0, -(l + r) / dX, 0, 2 / dY, 0, -(t + b)
-                / dY, 0, 0, -2 / (f - n), -(f + n) / dZ, 0, 0, 0, 1);
+        MatF4 m = new MatF4(2 / dX, 0, 0, -(l + r) / dX, 0, 2 / dY, 0, -(t + b) / dY, 0, 0, -2 / (f - n),
+                -(f + n) / dZ, 0, 0, 0, 1);
         return m;
     }
 
@@ -96,8 +117,7 @@ public class MatrixFMath {
      *            The far clipping plane
      * @return An frustum matrix
      */
-    public static MatF4 frustum(float left, float right, float bottom,
-            float top, float zNear, float zFar) {
+    public static MatF4 frustum(float left, float right, float bottom, float top, float zNear, float zFar) {
         float dX = right - left;
         float dY = top - bottom;
         float dZ = zFar - zNear;
@@ -108,9 +128,8 @@ public class MatrixFMath {
         float r = right;
         float l = left;
 
-        MatF4 m = new MatF4(2 * n / dX, 0, (r + l) / dX, 0, 0, 2 * n / dY,
-                (t + b) / dY, 0, 0, 0, -(f + n) / dZ, -2 * f * n / dZ, 0, 0,
-                -1, 0);
+        MatF4 m = new MatF4(2 * n / dX, 0, (r + l) / dX, 0, 0, 2 * n / dY, (t + b) / dY, 0, 0, 0, -(f + n) / dZ, -2 * f
+                * n / dZ, 0, 0, -1, 0);
         return m;
     }
 
@@ -128,16 +147,14 @@ public class MatrixFMath {
      *            The far clipping plane
      * @return A perspective matrix
      */
-    public static MatF4 perspective(float fovy, float aspect, float zNear,
-            float zFar) {
+    public static MatF4 perspective(float fovy, float aspect, float zNear, float zFar) {
         float t = (float) (Math.tan(fovy * degreesToRadians / 2) * zNear);
         float r = t * aspect;
         float n = zNear;
         float f = zFar;
         float dZ = zFar - zNear;
 
-        MatF4 m = new MatF4((n / r), 0, 0, 0, 0, (n / t), 0, 0, 0, 0, -(f + n)
-                / dZ, -2 * f * n / dZ, 0, 0, -1, 0);
+        MatF4 m = new MatF4((n / r), 0, 0, 0, 0, (n / t), 0, 0, 0, 0, -(f + n) / dZ, -2 * f * n / dZ, 0, 0, -1, 0);
 
         return m;
     }
@@ -343,10 +360,8 @@ public class MatrixFMath {
         y = n.v[1];
         z = n.v[2];
 
-        MatF4 R = new MatF4(t * x * x + c, t * x * y - s * z,
-                t * x * z + s * y, 0f, t * x * y + s * z, t * y * y + c, t * y
-                        * z - s * x, 0f, t * x * z - s * y, t * y * z + s * x,
-                t * z * z + c, 0f, 0f, 0f, 0f, 1f
+        MatF4 R = new MatF4(t * x * x + c, t * x * y - s * z, t * x * z + s * y, 0f, t * x * y + s * z, t * y * y + c,
+                t * y * z - s * x, 0f, t * x * z - s * y, t * y * z + s * x, t * z * z + c, 0f, 0f, 0f, 0f, 1f
 
         );
 
@@ -424,8 +439,7 @@ public class MatrixFMath {
         float minor02 = determinant(exclude(m, 0, 2));
         float minor03 = determinant(exclude(m, 0, 3));
 
-        return m.m[0] * minor00 - m.m[4] * minor01 + m.m[8] * minor02 + m.m[12]
-                * minor03;
+        return m.m[0] * minor00 - m.m[4] * minor01 + m.m[8] * minor02 + m.m[12] * minor03;
     }
 
     /**
@@ -455,8 +469,7 @@ public class MatrixFMath {
      * @return the cofactors
      */
     public static MatF4 cofactors(MatF4 m) {
-        MatF4 checkerboard = new MatF4(1f, -1f, 1f, -1f, -1f, 1f, -1f, 1f, 1f,
-                -1f, 1f, -1f, -1f, 1f, -1f, 1f);
+        MatF4 checkerboard = new MatF4(1f, -1f, 1f, -1f, -1f, 1f, -1f, 1f, 1f, -1f, 1f, -1f, -1f, 1f, -1f, 1f);
         MatF4 minors = minors(m);
         MatF4 result = new MatF4();
 

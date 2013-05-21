@@ -16,6 +16,21 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * Utility to extract and check typed properties.
  * 
@@ -104,11 +119,9 @@ public class TypedProperties extends Properties {
                 // this will be something of the form ${...}
                 String fullSystemVar = matcher.group();
                 // remove the prefix '${' and the postfix '}'
-                String strippedSystemVar = fullSystemVar.substring(2,
-                        fullSystemVar.length() - 1);
+                String strippedSystemVar = fullSystemVar.substring(2, fullSystemVar.length() - 1);
                 if (System.getenv(strippedSystemVar) != null) {
-                    put(key, ((String) get(key)).replace(fullSystemVar, System
-                            .getenv(strippedSystemVar)));
+                    put(key, ((String) get(key)).replace(fullSystemVar, System.getenv(strippedSystemVar)));
                     // update the matcher
                     matcher = pattern.matcher((String) get(key));
                 }
@@ -156,8 +169,7 @@ public class TypedProperties extends Properties {
      *            name of file to load from.
      */
     public void loadFromHomeFile(String fileName) {
-        loadFromFile(System.getProperty("user.home") + File.separator
-                + fileName);
+        loadFromFile(System.getProperty("user.home") + File.separator + fileName);
     }
 
     /**
@@ -189,8 +201,8 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value != null) {
-            return value.equals("1") || value.equals("on") || value.equals("")
-                    || value.equals("true") || value.equals("yes");
+            return value.equals("1") || value.equals("on") || value.equals("") || value.equals("true")
+                    || value.equals("yes");
         }
 
         return defaultValue;
@@ -215,8 +227,7 @@ public class TypedProperties extends Properties {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Integer expected for property "
-                    + key + ", not \"" + value + "\"");
+            throw new NumberFormatException("Integer expected for property " + key + ", not \"" + value + "\"");
         }
     }
 
@@ -241,8 +252,7 @@ public class TypedProperties extends Properties {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Integer expected for property "
-                    + key + ", not \"" + value + "\"");
+            throw new NumberFormatException("Integer expected for property " + key + ", not \"" + value + "\"");
         }
     }
 
@@ -265,8 +275,7 @@ public class TypedProperties extends Properties {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Long expected for property " + key
-                    + ", not \"" + value + "\"");
+            throw new NumberFormatException("Long expected for property " + key + ", not \"" + value + "\"");
         }
     }
 
@@ -291,8 +300,7 @@ public class TypedProperties extends Properties {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Long expected for property " + key
-                    + ", not \"" + value + "\"");
+            throw new NumberFormatException("Long expected for property " + key + ", not \"" + value + "\"");
         }
     }
 
@@ -315,8 +323,7 @@ public class TypedProperties extends Properties {
         try {
             return Short.parseShort(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Short expected for property "
-                    + key + ", not \"" + value + "\"");
+            throw new NumberFormatException("Short expected for property " + key + ", not \"" + value + "\"");
         }
     }
 
@@ -341,8 +348,7 @@ public class TypedProperties extends Properties {
         try {
             return Short.parseShort(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Short expected for property "
-                    + key + ", not \"" + value + "\"");
+            throw new NumberFormatException("Short expected for property " + key + ", not \"" + value + "\"");
         }
     }
 
@@ -365,8 +371,7 @@ public class TypedProperties extends Properties {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Double expected for property "
-                    + key + ", not \"" + value + "\"");
+            throw new NumberFormatException("Double expected for property " + key + ", not \"" + value + "\"");
         }
     }
 
@@ -391,8 +396,7 @@ public class TypedProperties extends Properties {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Double expected for property "
-                    + key + ", not \"" + value + "\"");
+            throw new NumberFormatException("Double expected for property " + key + ", not \"" + value + "\"");
         }
     }
 
@@ -415,8 +419,7 @@ public class TypedProperties extends Properties {
         try {
             return Float.parseFloat(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Float expected for property "
-                    + key + ", not \"" + value + "\"");
+            throw new NumberFormatException("Float expected for property " + key + ", not \"" + value + "\"");
         }
     }
 
@@ -441,8 +444,7 @@ public class TypedProperties extends Properties {
         try {
             return Float.parseFloat(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Float expected for property "
-                    + key + ", not \"" + value + "\"");
+            throw new NumberFormatException("Float expected for property " + key + ", not \"" + value + "\"");
         }
     }
 
@@ -506,9 +508,8 @@ public class TypedProperties extends Properties {
             return Long.parseLong(value);
 
         } catch (NumberFormatException e) {
-            throw new NumberFormatException(
-                    "Long[G|g|M|m|K|k] expected for property " + key
-                            + ", not \"" + value + "\"");
+            throw new NumberFormatException("Long[G|g|M|m|K|k] expected for property " + key + ", not \"" + value
+                    + "\"");
         }
     }
 
@@ -557,8 +558,7 @@ public class TypedProperties extends Properties {
      *            the default value
      * @return the split-up property value.
      */
-    public String[] getStringList(String key, String delim,
-            String[] defaultValue) {
+    public String[] getStringList(String key, String delim, String[] defaultValue) {
         String value = getProperty(key);
 
         if (value == null) {
@@ -640,8 +640,8 @@ public class TypedProperties extends Properties {
      *            if true, a warning is printed to standard error for each
      *            unknown property
      */
-    public TypedProperties checkProperties(String prefix, String[] validKeys,
-            String[] validSubPrefixes, boolean printWarning) {
+    public TypedProperties checkProperties(String prefix, String[] validKeys, String[] validSubPrefixes,
+            boolean printWarning) {
         TypedProperties result = new TypedProperties();
 
         if (prefix == null) {
@@ -655,11 +655,9 @@ public class TypedProperties extends Properties {
                 String suffix = key.substring(prefix.length());
                 String value = getProperty(key);
 
-                if (!startsWith(suffix, validSubPrefixes)
-                        && !contains(validKeys, key)) {
+                if (!startsWith(suffix, validSubPrefixes) && !contains(validKeys, key)) {
                     if (printWarning) {
-                        System.err.println("Warning, unknown property: " + key
-                                + " with value: " + value);
+                        System.err.println("Warning, unknown property: " + key + " with value: " + value);
                     }
                     result.put(key, value);
                 }
@@ -680,8 +678,7 @@ public class TypedProperties extends Properties {
      *            should the returned properties be removed from the current
      *            properties?
      */
-    public TypedProperties filter(String prefix, boolean removePrefix,
-            boolean removeProperties) {
+    public TypedProperties filter(String prefix, boolean removePrefix, boolean removeProperties) {
 
         TypedProperties result = new TypedProperties();
 

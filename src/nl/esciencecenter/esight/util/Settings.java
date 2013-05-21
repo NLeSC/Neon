@@ -1,5 +1,20 @@
 package nl.esciencecenter.esight.util;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * A singleton pattern generic Settings File reader for use in OpenGL
  * applications. Pair this with a settings.properties file in your project root.
@@ -39,8 +54,7 @@ public class Settings {
     // can be found if necessary
     private final int MAX_EXPECTED_MODELS = 1000;
 
-    protected String SCREENSHOT_PATH = System.getProperty("user.dir")
-            + System.getProperty("path.separator");
+    protected String SCREENSHOT_PATH = System.getProperty("user.dir") + System.getProperty("path.separator");
 
     private final String[] ACCEPTABLE_NETCDF_EXTENSTIONS = { ".nc" };
 
@@ -66,24 +80,19 @@ public class Settings {
             STEREO_RENDERING = props.getBooleanProperty("STEREO_RENDERING");
             STEREO_SWITCHED = props.getBooleanProperty("STEREO_SWITCHED");
 
-            STEREO_OCULAR_DISTANCE_MIN = props
-                    .getFloatProperty("STEREO_OCULAR_DISTANCE_MIN");
-            STEREO_OCULAR_DISTANCE_MAX = props
-                    .getFloatProperty("STEREO_OCULAR_DISTANCE_MAX");
-            STEREO_OCULAR_DISTANCE_DEF = props
-                    .getFloatProperty("STEREO_OCULAR_DISTANCE_DEF");
+            STEREO_OCULAR_DISTANCE_MIN = props.getFloatProperty("STEREO_OCULAR_DISTANCE_MIN");
+            STEREO_OCULAR_DISTANCE_MAX = props.getFloatProperty("STEREO_OCULAR_DISTANCE_MAX");
+            STEREO_OCULAR_DISTANCE_DEF = props.getFloatProperty("STEREO_OCULAR_DISTANCE_DEF");
 
             // Size settings for default startup and screenshots
             DEFAULT_SCREEN_WIDTH = props.getIntProperty("DEFAULT_SCREEN_WIDTH");
-            DEFAULT_SCREEN_HEIGHT = props
-                    .getIntProperty("DEFAULT_SCREEN_HEIGHT");
+            DEFAULT_SCREEN_HEIGHT = props.getIntProperty("DEFAULT_SCREEN_HEIGHT");
 
             INTERFACE_WIDTH = props.getIntProperty("INTERFACE_WIDTH");
             INTERFACE_HEIGHT = props.getIntProperty("INTERFACE_HEIGHT");
 
             // Settings for the initial view
-            INITIAL_SIMULATION_FRAME = props
-                    .getIntProperty("INITIAL_SIMULATION_FRAME");
+            INITIAL_SIMULATION_FRAME = props.getIntProperty("INITIAL_SIMULATION_FRAME");
             INITIAL_ROTATION_X = props.getFloatProperty("INITIAL_ROTATION_X");
             INITIAL_ROTATION_Y = props.getFloatProperty("INITIAL_ROTATION_Y");
             INITIAL_ZOOM = props.getFloatProperty("INITIAL_ZOOM");

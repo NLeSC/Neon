@@ -8,6 +8,21 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSliderUI;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * A {@link JSlider} customization that allows us to click the track and jump to
  * that position. Also allows for a second Thumb, for use in {@link RangeSlider}
@@ -21,8 +36,7 @@ public class CustomJSlider extends JSlider {
 
     /**
      * Default constructor for the {@link JSlider}, but overrides the normal
-     * mouselisteners.
-     * Commonly used like:
+     * mouselisteners. Commonly used like:
      * "timeBar = new CustomJSlider(new BasicSliderUI(timeBar));"
      * 
      * @param ui
@@ -76,8 +90,7 @@ public class CustomJSlider extends JSlider {
         // Compute new extent.
         int lowerValue = getValue();
         // Set extent to set upper value.
-        int newExtent = Math.min(Math.max(0, value - lowerValue), getMaximum()
-                - lowerValue);
+        int newExtent = Math.min(Math.max(0, value - lowerValue), getMaximum() - lowerValue);
         setExtent(newExtent);
     }
 }

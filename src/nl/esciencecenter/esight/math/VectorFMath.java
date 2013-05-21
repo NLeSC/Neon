@@ -3,6 +3,27 @@ package nl.esciencecenter.esight.math;
 import java.nio.FloatBuffer;
 import java.util.List;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Utility class for float vector calculations.
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
 public class VectorFMath {
 
     /**
@@ -41,14 +62,13 @@ public class VectorFMath {
      * @return The dot product of the two vectors.
      */
     public static float dot(VecF4 u, VecF4 v) {
-        return u.v[0] * v.v[0] + u.v[1] * v.v[1] + u.v[2] * v.v[2] + u.v[3]
-                * v.v[3];
+        return u.v[0] * v.v[0] + u.v[1] * v.v[1] + u.v[2] * v.v[2] + u.v[3] * v.v[3];
     }
 
     /**
      * Helper method to calculate the length of a vector.
      * 
-     * @param u
+     * @param v
      *            The vector.
      * @return The length of the vector.
      */
@@ -59,7 +79,7 @@ public class VectorFMath {
     /**
      * Helper method to calculate the length of a vector.
      * 
-     * @param u
+     * @param v
      *            The vector.
      * @return The length of the vector.
      */
@@ -70,7 +90,7 @@ public class VectorFMath {
     /**
      * Helper method to calculate the length of a vector.
      * 
-     * @param u
+     * @param v
      *            The vector.
      * @return The length of the vector.
      */
@@ -81,7 +101,7 @@ public class VectorFMath {
     /**
      * Helper method to normalize a vector.
      * 
-     * @param u
+     * @param v
      *            The vector.
      * @return The normal of the vector.
      */
@@ -92,7 +112,7 @@ public class VectorFMath {
     /**
      * Helper method to normalize a vector.
      * 
-     * @param u
+     * @param v
      *            The vector.
      * @return The normal of the vector.
      */
@@ -103,7 +123,7 @@ public class VectorFMath {
     /**
      * Helper method to normalize a vector.
      * 
-     * @param u
+     * @param v
      *            The vector.
      * @return The normal of the vector.
      */
@@ -121,8 +141,8 @@ public class VectorFMath {
      * @return The new vector, which is the cross product of the two vectors.
      */
     public static VecF3 cross(VecF3 u, VecF3 v) {
-        return new VecF3(u.v[1] * v.v[2] - u.v[2] * v.v[1], u.v[2] * v.v[0]
-                - u.v[0] * v.v[2], u.v[0] * v.v[1] - u.v[1] * v.v[0]);
+        return new VecF3(u.v[1] * v.v[2] - u.v[2] * v.v[1], u.v[2] * v.v[0] - u.v[0] * v.v[2], u.v[0] * v.v[1] - u.v[1]
+                * v.v[0]);
     }
 
     /**
@@ -135,8 +155,8 @@ public class VectorFMath {
      * @return The new vector, which is the cross product of the two vectors.
      */
     public static VecF4 cross(VecF4 u, VecF4 v) {
-        return new VecF4(u.v[1] * v.v[2] - u.v[2] * v.v[1], u.v[2] * v.v[0]
-                - u.v[0] * v.v[2], u.v[0] * v.v[1] - u.v[1] * v.v[0], 0.0f);
+        return new VecF4(u.v[1] * v.v[2] - u.v[2] * v.v[1], u.v[2] * v.v[0] - u.v[0] * v.v[2], u.v[0] * v.v[1] - u.v[1]
+                * v.v[0], 0.0f);
     }
 
     /**
@@ -216,7 +236,7 @@ public class VectorFMath {
     }
 
     /**
-     * Helper method to create a FloatBuffer from an array of vectors.
+     * Helper method to create a FloatBuffer from an list of vectors.
      * 
      * @param array
      *            The List of vectors.
@@ -235,9 +255,9 @@ public class VectorFMath {
     }
 
     /**
-     * Helper method to create a FloatBuffer from an array of vectors.
+     * Helper method to create a FloatBuffer from an list of vectors.
      * 
-     * @param array
+     * @param list
      *            The List of vectors.
      * @return The new FloatBuffer
      */
@@ -254,9 +274,9 @@ public class VectorFMath {
     }
 
     /**
-     * Helper method to create a FloatBuffer from an array of vectors.
+     * Helper method to create a FloatBuffer from an list of vectors.
      * 
-     * @param array
+     * @param list
      *            The List of vectors.
      * @return The new FloatBuffer
      */
@@ -273,9 +293,9 @@ public class VectorFMath {
     }
 
     /**
-     * Helper method to create a FloatBuffer from an array of vectors.
+     * Helper method to create a FloatBuffer from an list of vectors.
      * 
-     * @param array
+     * @param list
      *            The List of vectors.
      * @return The new FloatBuffer
      */
@@ -307,8 +327,8 @@ public class VectorFMath {
      *            The end point's control vector.
      * @return The array of points on the new bezier curve.
      */
-    public static VecF4[] bezierCurve(int steps, VecF4 startLocation,
-            VecF3 startControl, VecF3 endControl, VecF4 endLocation) {
+    public static VecF4[] bezierCurve(int steps, VecF4 startLocation, VecF3 startControl, VecF3 endControl,
+            VecF4 endLocation) {
         VecF4[] newBezierPoints = new VecF4[steps];
         for (int i = 0; i < steps; i++) {
             newBezierPoints[i] = new VecF4();
@@ -370,8 +390,8 @@ public class VectorFMath {
      *            The end point's control vector.
      * @return The array of points on the new bezier curve.
      */
-    public static VecF3[] degreesBezierCurve(int steps, VecF3 startLocation,
-            VecF3 startControl, VecF3 endControl, VecF3 endLocation) {
+    public static VecF3[] degreesBezierCurve(int steps, VecF3 startLocation, VecF3 startControl, VecF3 endControl,
+            VecF3 endLocation) {
         VecF3[] newBezierPoints = new VecF3[steps];
         for (int i = 0; i < steps; i++) {
             newBezierPoints[i] = new VecF3();
@@ -423,8 +443,7 @@ public class VectorFMath {
         return newBezierPoints;
     }
 
-    public static VecF4[] interpolateColors(int steps, VecF4 startColor,
-            VecF4 endColor) {
+    public static VecF4[] interpolateColors(int steps, VecF4 startColor, VecF4 endColor) {
         VecF4[] newColors = new VecF4[steps];
 
         float rstep = (endColor.get(0) - startColor.get(0)) / steps;

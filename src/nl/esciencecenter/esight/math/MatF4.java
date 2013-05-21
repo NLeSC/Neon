@@ -2,6 +2,27 @@ package nl.esciencecenter.esight.math;
 
 import java.util.Arrays;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * 4x4 float matrix implementation
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
 public class MatF4 extends MatrixF {
     /** The number of elements in this matrix */
     public static final int SIZE = 16;
@@ -90,9 +111,8 @@ public class MatF4 extends MatrixF {
      * @param m33
      *            The parameter on position 3x3.
      */
-    public MatF4(float m00, float m01, float m02, float m03, float m10,
-            float m11, float m12, float m13, float m20, float m21, float m22,
-            float m23, float m30, float m31, float m32, float m33) {
+    public MatF4(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20,
+            float m21, float m22, float m23, float m30, float m31, float m32, float m33) {
         super(SIZE);
         m[0] = m00;
         m[1] = m01;
@@ -264,11 +284,9 @@ public class MatF4 extends MatrixF {
      * @return The new vector that is the result of the multiplication.
      */
     public VecF4 mul(VecF4 v) {
-        return new VecF4(m[0] * v.v[0] + m[1] * v.v[1] + m[2] * v.v[2] + m[3]
-                * v.v[3], m[4] * v.v[0] + m[5] * v.v[1] + m[6] * v.v[2] + m[7]
-                * v.v[3], m[8] * v.v[0] + m[9] * v.v[1] + m[10] * v.v[2]
-                + m[11] * v.v[3], m[12] * v.v[0] + m[13] * v.v[1] + m[14]
-                * v.v[2] + m[15] * v.v[3]);
+        return new VecF4(m[0] * v.v[0] + m[1] * v.v[1] + m[2] * v.v[2] + m[3] * v.v[3], m[4] * v.v[0] + m[5] * v.v[1]
+                + m[6] * v.v[2] + m[7] * v.v[3], m[8] * v.v[0] + m[9] * v.v[1] + m[10] * v.v[2] + m[11] * v.v[3], m[12]
+                * v.v[0] + m[13] * v.v[1] + m[14] * v.v[2] + m[15] * v.v[3]);
     }
 
     @Override

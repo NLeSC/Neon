@@ -33,7 +33,7 @@ import java.util.HashMap;
 import jogamp.graph.geom.plane.AffineTransform;
 import jogamp.graph.geom.plane.Path2D;
 
-import com.jogamp.graph.geom.AABBox;
+import com.jogamp.opengl.math.geom.AABBox;
 
 public class TypecastGlyph implements FontInt.Glyph {
     public class Advance {
@@ -75,8 +75,7 @@ public class TypecastGlyph implements FontInt.Glyph {
 
         @Override
         public String toString() {
-            return "\nAdvance:" + "\n  advance: " + this.advance
-                    + "\n advances: \n" + size2advance;
+            return "\nAdvance:" + "\n  advance: " + this.advance + "\n advances: \n" + size2advance;
         }
     }
 
@@ -134,8 +133,7 @@ public class TypecastGlyph implements FontInt.Glyph {
         this.symbol = symbol;
     }
 
-    protected TypecastGlyph(Font font, char symbol, short id, AABBox bbox,
-            int advance, Path2D path) {
+    protected TypecastGlyph(Font font, char symbol, short id, AABBox bbox, int advance, Path2D path) {
         this.font = font;
         this.symbol = symbol;
         this.advance = advance;
@@ -158,10 +156,12 @@ public class TypecastGlyph implements FontInt.Glyph {
         this.metrics.reset();
     }
 
+    @Override
     public Font getFont() {
         return this.font;
     }
 
+    @Override
     public char getSymbol() {
         return this.symbol;
     }
@@ -186,6 +186,7 @@ public class TypecastGlyph implements FontInt.Glyph {
         return this.metrics.getScale(pixelSize);
     }
 
+    @Override
     public AABBox getBBox(float pixelSize) {
         final float size = getScale(pixelSize);
         AABBox newBox = getBBox().clone();
@@ -197,21 +198,23 @@ public class TypecastGlyph implements FontInt.Glyph {
         this.metrics.addAdvance(advance, size);
     }
 
+    @Override
     public float getAdvance(float pixelSize, boolean useFrationalMetrics) {
         return this.metrics.getAdvance(pixelSize, useFrationalMetrics);
     }
 
+    @Override
     public Path2D getPath() {
         return this.path;
     }
 
+    @Override
     public Path2D getPath(float pixelSize) {
         final float size = getScale(pixelSize);
 
         if (this.numberSized != size) {
             this.numberSized = size;
-            this.pathSized = AffineTransform.getScaleInstance(null, size, size)
-                    .createTransformedShape(getPath());
+            this.pathSized = AffineTransform.getScaleInstance(null, size, size).createTransformedShape(getPath());
         }
         return this.pathSized;
     }

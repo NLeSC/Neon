@@ -14,6 +14,21 @@ import nl.esciencecenter.esight.exceptions.UninitializedException;
 
 import com.jogamp.common.nio.Buffers;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * Generic abstract shader class with most of the implementation specifics
  * shared by all shaders.
@@ -58,8 +73,7 @@ public abstract class Shader {
         // Read file
         StringBuffer buf = new StringBuffer();
         Scanner scan;
-        scan = new Scanner(ClassLoader.getSystemClassLoader()
-                .getResourceAsStream(path.getPath()));
+        scan = new Scanner(ClassLoader.getSystemClassLoader().getResourceAsStream(path.getPath()));
 
         ins = new HashMap<String, Class>();
         outs = new HashMap<String, Class>();
@@ -225,8 +239,7 @@ public abstract class Shader {
             // Get additional information
             gl.glGetShaderInfoLog(shaderPointer, logLength, null, 0, reason, 0);
 
-            throw new CompilationFailedException("Compilation of " + filename
-                    + " failed, " + new String(reason));
+            throw new CompilationFailedException("Compilation of " + filename + " failed, " + new String(reason));
         }
     }
 

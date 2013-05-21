@@ -6,7 +6,7 @@ import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
 
-/* Copyright [2013] [Netherlands eScience Center]
+/* Copyright 2013 Netherlands eScience Center
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,12 @@ import com.jogamp.newt.event.MouseListener;
  * Example {@link InputHandler} class implementation, that overrides the default
  * mousePressed event. This class uses the Singleton design pattern found here:
  * 
- * @link{http://en.wikipedia.org/wiki/Singleton_pattern
+ * http://en.wikipedia.org/wiki/Singleton_pattern
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class ESightExampleInputHandler extends InputHandler implements
-        MouseListener, KeyListener {
+public class ESightExampleInputHandler extends InputHandler implements MouseListener, KeyListener {
 
     private static class SingletonHolder {
         public static final ESightExampleInputHandler instance = new ESightExampleInputHandler();

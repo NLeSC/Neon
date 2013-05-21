@@ -30,9 +30,10 @@ package nl.esciencecenter.esight.text.jogampExperimental;
 
 import java.util.ArrayList;
 
-import com.jogamp.graph.geom.AABBox;
+import com.jogamp.graph.curve.opengl.GLRegion;
 import com.jogamp.graph.geom.Triangle;
 import com.jogamp.graph.geom.Vertex;
+import com.jogamp.opengl.math.geom.AABBox;
 
 /**
  * Abstract Outline shape GL representation define the method an OutlineShape(s)

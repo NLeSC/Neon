@@ -3,6 +3,7 @@
 out vec4 fragColor;
 
 uniform sampler2D axesTexture;
+uniform sampler2D hudTexture;
 
 uniform int scrWidth;
 uniform int scrHeight;
@@ -19,7 +20,10 @@ void main() {
 	
 	vec2 tCoord = vec2(x,y);
 	
-	vec4 texColor = vec4(texture(axesTexture, tCoord).rgb, 1.0);
+	vec4 axesTexColor = vec4(texture(axesTexture, tCoord).rgb, 1.0);
+	vec4 hudTexColor = vec4(texture(hudTexture, tCoord).rgb, 1.0);
+		
+	vec4 finalColor = vec4(normalize(axesTexColor.xyz + hudTexColor.xyz), 1.0);
     
-    fragColor = mix(texColor, mixingColor, 0.1);
+    fragColor = mix(finalColor, mixingColor, 0.1);
 }

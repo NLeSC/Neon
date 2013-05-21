@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import com.jogamp.graph.geom.Triangle;
 import com.jogamp.graph.geom.Vertex;
 import com.jogamp.graph.geom.Vertex.Factory;
-import com.jogamp.graph.math.Quaternion;
+import com.jogamp.opengl.math.Quaternion;
 
 public class GlyphShape {
 
@@ -55,12 +55,10 @@ public class GlyphShape {
      * @param shape
      *            {@link OutlineShape} representation of the Glyph
      */
-    public GlyphShape(Vertex.Factory<? extends Vertex> factory,
-            OutlineShape shape) {
+    public GlyphShape(Vertex.Factory<? extends Vertex> factory, OutlineShape shape) {
         this(factory);
         this.shape = shape;
-        this.shape
-                .transformOutlines(OutlineShape.VerticesState.QUADRATIC_NURBS);
+        this.shape.transformOutlines(OutlineShape.VerticesState.QUADRATIC_NURBS);
     }
 
     public final Vertex.Factory<? extends Vertex> vertexFactory() {

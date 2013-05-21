@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GLException;
 
-/* Copyright [2013] [Netherlands eScience Center]
+/* Copyright 2013 Netherlands eScience Center
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,9 +71,7 @@ public class TextEditorKeyboardHandler extends InputHandler {
 
         if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
             if (isAnythingSelected()) {
-                deleteSection(selectionLineStartPosition,
-                        selectionLineStopPosition,
-                        selectionCursorStartPosition,
+                deleteSection(selectionLineStartPosition, selectionLineStopPosition, selectionCursorStartPosition,
                         selectionCursorStopPosition);
             } else {
                 if (cursorPosition == 0) {
@@ -81,8 +79,7 @@ public class TextEditorKeyboardHandler extends InputHandler {
                         linePosition -= 1;
 
                         cursorPosition = textLines.get(linePosition).length();
-                        String start = textLines.get(linePosition).substring(0,
-                                cursorPosition);
+                        String start = textLines.get(linePosition).substring(0, cursorPosition);
                         String finish = textLines.get(linePosition + 1);
 
                         textLines.set(linePosition, start + finish);
@@ -95,9 +92,7 @@ public class TextEditorKeyboardHandler extends InputHandler {
             }
         } else if (e.getKeyCode() == KeyEvent.VK_DELETE) {
             if (isAnythingSelected()) {
-                deleteSection(selectionLineStartPosition,
-                        selectionLineStopPosition,
-                        selectionCursorStartPosition,
+                deleteSection(selectionLineStartPosition, selectionLineStopPosition, selectionCursorStartPosition,
                         selectionCursorStopPosition);
             } else {
                 if (cursorPosition < textLines.get(linePosition).length()) {
@@ -116,9 +111,7 @@ public class TextEditorKeyboardHandler extends InputHandler {
             }
         } else if (e.getKeyCode() == KeyEvent.VK_TAB) {
             if (isAnythingSelected()) {
-                deleteSection(selectionLineStartPosition,
-                        selectionLineStopPosition,
-                        selectionCursorStartPosition,
+                deleteSection(selectionLineStartPosition, selectionLineStopPosition, selectionCursorStartPosition,
                         selectionCursorStopPosition);
             }
 
@@ -126,15 +119,11 @@ public class TextEditorKeyboardHandler extends InputHandler {
             cursorPosition += 4;
         } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             if (isAnythingSelected()) {
-                deleteSection(selectionLineStartPosition,
-                        selectionLineStopPosition,
-                        selectionCursorStartPosition,
+                deleteSection(selectionLineStartPosition, selectionLineStopPosition, selectionCursorStartPosition,
                         selectionCursorStopPosition);
             }
-            String start = textLines.get(linePosition).substring(0,
-                    cursorPosition);
-            String finish = textLines.get(linePosition).substring(
-                    cursorPosition);
+            String start = textLines.get(linePosition).substring(0, cursorPosition);
+            String finish = textLines.get(linePosition).substring(cursorPosition);
 
             textLines.set(linePosition, start);
             textLines.add(linePosition + 1, finish);
@@ -169,18 +158,14 @@ public class TextEditorKeyboardHandler extends InputHandler {
         } else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
             linePosition += MAX_SCREEN_POSITION;
         } else if (!e.isActionKey()) {
-            if (e.getKeyCode() != KeyEvent.VK_SHIFT
-                    && e.getKeyCode() != KeyEvent.VK_CONTROL
+            if (e.getKeyCode() != KeyEvent.VK_SHIFT && e.getKeyCode() != KeyEvent.VK_CONTROL
                     && e.getKeyCode() != KeyEvent.VK_ALT && !e.isControlDown()) {
                 if (isAnythingSelected()) {
-                    deleteSection(selectionLineStartPosition,
-                            selectionLineStopPosition,
-                            selectionCursorStartPosition,
+                    deleteSection(selectionLineStartPosition, selectionLineStopPosition, selectionCursorStartPosition,
                             selectionCursorStopPosition);
                 }
 
-                insertStringAt(linePosition, cursorPosition,
-                        "" + e.getKeyChar());
+                insertStringAt(linePosition, cursorPosition, "" + e.getKeyChar());
                 cursorPosition += 1;
             }
         }
@@ -289,9 +274,7 @@ public class TextEditorKeyboardHandler extends InputHandler {
             } else if (e.getKeyCode() == KeyEvent.VK_X) {
                 if (isAnythingSelected()) {
                     clipBoard = getSelectedLines();
-                    deleteSection(selectionLineStartPosition,
-                            selectionLineStopPosition,
-                            selectionCursorStartPosition,
+                    deleteSection(selectionLineStartPosition, selectionLineStopPosition, selectionCursorStartPosition,
                             selectionCursorStopPosition);
                 }
             } else if (e.getKeyCode() == KeyEvent.VK_V) {
@@ -307,8 +290,7 @@ public class TextEditorKeyboardHandler extends InputHandler {
         } else if (e.isShiftDown() && isMovementKey(e)) {
             selectionCursorStopPosition = cursorPosition;
             selectionLineStopPosition = linePosition;
-        } else if (e.getKeyCode() != KeyEvent.VK_CONTROL
-                && !(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_C)) {
+        } else if (e.getKeyCode() != KeyEvent.VK_CONTROL && !(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_C)) {
             selectionCursorStartPosition = cursorPosition;
             selectionLineStartPosition = linePosition;
             selectionCursorStopPosition = cursorPosition;
@@ -340,8 +322,7 @@ public class TextEditorKeyboardHandler extends InputHandler {
                 pos++;
             }
             if (clipBoard.size() == 1) {
-                result.add(startCharactersCurrentline + clipBoard.get(0)
-                        + finishCharactersCurrentline);
+                result.add(startCharactersCurrentline + clipBoard.get(0) + finishCharactersCurrentline);
                 cursorPosition += clipBoard.get(clipBoard.size() - 1).length();
             } else {
                 result.add(startCharactersCurrentline + clipBoard.get(0));
@@ -354,8 +335,7 @@ public class TextEditorKeyboardHandler extends InputHandler {
                 // Add the remaining characters of the current line after the
                 // cursor
                 // position
-                result.add(clipBoard.get(clipBoard.size() - 1)
-                        + finishCharactersCurrentline);
+                result.add(clipBoard.get(clipBoard.size() - 1) + finishCharactersCurrentline);
             }
 
             // Add all of the lines after the current line position
@@ -607,17 +587,15 @@ public class TextEditorKeyboardHandler extends InputHandler {
 
     public boolean isMovementKey(KeyEvent e) {
         int code = e.getKeyCode();
-        if (code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN
-                || code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT
-                || code == KeyEvent.VK_PAGE_UP || code == KeyEvent.VK_PAGE_DOWN
-                || code == KeyEvent.VK_HOME || code == KeyEvent.VK_END) {
+        if (code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN || code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT
+                || code == KeyEvent.VK_PAGE_UP || code == KeyEvent.VK_PAGE_DOWN || code == KeyEvent.VK_HOME
+                || code == KeyEvent.VK_END) {
             return true;
         }
         return false;
     }
 
-    private void deleteSection(int startLineIndex, int stopLineIndex,
-            int startCursorindex, int stopCursorindex) {
+    private void deleteSection(int startLineIndex, int stopLineIndex, int startCursorindex, int stopCursorindex) {
         // swap order in weird selection cases
         int temp;
         if (stopLineIndex < startLineIndex) {
@@ -632,8 +610,7 @@ public class TextEditorKeyboardHandler extends InputHandler {
             }
         }
 
-        String start = textLines.get(startLineIndex).substring(0,
-                startCursorindex);
+        String start = textLines.get(startLineIndex).substring(0, startCursorindex);
         String finish = textLines.get(stopLineIndex).substring(stopCursorindex);
 
         for (int i = startLineIndex; i < stopLineIndex; i++) {

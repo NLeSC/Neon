@@ -15,7 +15,7 @@ import nl.esciencecenter.esight.exceptions.UninitializedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* Copyright [2013] [Netherlands eScience Center]
+/* Copyright 2013 Netherlands eScience Center
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,10 +82,8 @@ public class IntPBO {
         gl.glBindBuffer(GL3.GL_PIXEL_PACK_BUFFER, pboPointer.get(0));
         gl.glPixelStorei(GL3.GL_UNPACK_ALIGNMENT, 1);
 
-        gl.glBufferData(GL3.GL_PIXEL_PACK_BUFFER, width * height * 4, null,
-                GL3.GL_STREAM_READ);
-        gl.glReadPixels(0, 0, width, height, GL3.GL_BGRA, GL3.GL_UNSIGNED_BYTE,
-                0);
+        gl.glBufferData(GL3.GL_PIXEL_PACK_BUFFER, width * height * 4, null, GL3.GL_STREAM_READ);
+        gl.glReadPixels(0, 0, width, height, GL3.GL_BGRA, GL3.GL_UNSIGNED_BYTE, 0);
 
         checkNoError(gl, "POST: ", false);
 
@@ -107,8 +105,7 @@ public class IntPBO {
      *            only, or print all errors that are buffered by opengl.
      * @return true if there was no error.
      */
-    private boolean checkNoError(GL gl, String exceptionMessage,
-            boolean quietlyRemoveAllPreviousErrors) {
+    private boolean checkNoError(GL gl, String exceptionMessage, boolean quietlyRemoveAllPreviousErrors) {
         int error = gl.glGetError();
         if (!quietlyRemoveAllPreviousErrors) {
             if (GL.GL_NO_ERROR != error) {
@@ -140,8 +137,7 @@ public class IntPBO {
         if (initialized) {
             gl.glBindBuffer(GL3.GL_PIXEL_PACK_BUFFER, pboPointer.get(0));
 
-            gl.glReadPixels(0, 0, width, height, GL3.GL_BGRA,
-                    GL3.GL_UNSIGNED_BYTE, 0);
+            gl.glReadPixels(0, 0, width, height, GL3.GL_BGRA, GL3.GL_UNSIGNED_BYTE, 0);
             data = gl.glMapBuffer(GL3.GL_PIXEL_PACK_BUFFER, GL3.GL_WRITE_ONLY);
         } else {
             throw new UninitializedException("PBO not initialized.");
@@ -226,8 +222,7 @@ public class IntPBO {
                 dest.put(rowPix);
             }
 
-            BufferedImage bufIm = new BufferedImage(width, height,
-                    BufferedImage.TYPE_INT_RGB);
+            BufferedImage bufIm = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             bufIm.setRGB(0, 0, width, height, dest.array(), 0, width);
             try {
                 new File(filename).mkdirs();
