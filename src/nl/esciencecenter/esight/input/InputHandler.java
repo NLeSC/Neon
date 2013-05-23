@@ -149,9 +149,9 @@ public class InputHandler implements MouseListener, KeyListener {
         float newViewDist = this.viewDist;
 
         if (e.isShiftDown()) {
-            newViewDist -= e.getWheelRotation() * 2;
+            newViewDist -= e.getRotation()[1] * 2;
         } else {
-            newViewDist -= e.getWheelRotation() * 10;
+            newViewDist -= e.getRotation()[1] * 10;
         }
         viewDist = newViewDist;
     }
@@ -218,6 +218,7 @@ public class InputHandler implements MouseListener, KeyListener {
 
     }
 
+    @Deprecated
     @Override
     public void keyTyped(KeyEvent arg0) {
         // TODO Auto-generated method stub
