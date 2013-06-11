@@ -251,13 +251,14 @@ public class NetCDFUtil {
     }
 
     /**
-     * Debug method that prints some info about a NetcdfFile.
+     * Debug method that returns some info about a NetcdfFile.
      * 
      * @param ncfile
      *            the file to print info on.
+     * @return the detail info
      */
-    public static void printInfo(NetcdfFile ncfile) {
-        System.out.println(ncfile.getDetailInfo());
+    public static String printInfo(NetcdfFile ncfile) {
+        return ncfile.getDetailInfo();
     }
 
     /**

@@ -476,20 +476,11 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         axesFBO.delete(gl);
         hudFBO.delete(gl);
 
-        // TODO: DEBUG
-        System.out.println("Post delete, pre create");
-
         axesFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
         hudFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
 
-        // TODO: DEBUG
-        System.out.println("Post create, pre init");
-
         axesFBO.init(gl);
         hudFBO.init(gl);
-
-        // TODO: DEBUG
-        System.out.println("Post init");
 
         // Resize the PixelBuffer Object that can be used for screenshots.
         finalPBO.delete(gl);

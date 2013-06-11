@@ -273,7 +273,6 @@ public abstract class ESightGLEventListener implements GLEventListener {
         aspect = (float) width / (float) height;
 
         gl.glViewport(0, 0, width, height);
-        gl.glViewport(0, 0, w, h);
         // } else {
         // final GL2ES2 gl = drawable.getContext().getGL().getGL2ES2();
         //

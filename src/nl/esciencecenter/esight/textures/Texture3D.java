@@ -59,7 +59,7 @@ public abstract class Texture3D extends Texture {
             }
 
             gl.glActiveTexture(glMultiTexUnit);
-            gl.glEnable(GL3.GL_TEXTURE_3D);
+            // gl.glEnable(GL3.GL_TEXTURE_3D);
 
             // Create new texture pointer and bind it so we can manipulate it.
 
@@ -94,7 +94,7 @@ public abstract class Texture3D extends Texture {
         }
 
         gl.glActiveTexture(glMultiTexUnit);
-        gl.glEnable(GL3.GL_TEXTURE_3D);
+        // gl.glEnable(GL3.GL_TEXTURE_3D);
         gl.glBindTexture(GL3.GL_TEXTURE_3D, getPointer());
     }
 }

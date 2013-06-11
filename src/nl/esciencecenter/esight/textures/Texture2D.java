@@ -1,10 +1,10 @@
 package nl.esciencecenter.esight.textures;
 
+import java.nio.IntBuffer;
+
 import javax.media.opengl.GL3;
 
 import nl.esciencecenter.esight.exceptions.UninitializedException;
-
-import com.jogamp.common.nio.Buffers;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
@@ -59,11 +59,11 @@ public abstract class Texture2D extends Texture {
             }
 
             // Tell OpenGL we want to use 2D textures
-            gl.glEnable(GL3.GL_TEXTURE_2D);
-            gl.glActiveTexture(this.glMultiTexUnit);
+            // gl.glEnable(GL3.GL_TEXTURE_2D);
+            gl.glActiveTexture(glMultiTexUnit);
 
             // Create a Texture Object
-            pointer = Buffers.newDirectIntBuffer(1);
+            pointer = IntBuffer.allocate(1);
             gl.glGenTextures(1, pointer);
 
             // Tell OpenGL that this texture is 2D and we want to use it
@@ -95,7 +95,7 @@ public abstract class Texture2D extends Texture {
             init(gl);
         }
 
-        gl.glEnable(GL3.GL_TEXTURE_2D);
+        // gl.glEnable(GL3.GL_TEXTURE_2D);
         gl.glActiveTexture(glMultiTexUnit);
         gl.glBindTexture(GL3.GL_TEXTURE_2D, getPointer());
     }

@@ -157,6 +157,7 @@ public class ColormapInterpreter {
 
     private final static int LEGEND_WIDTH = 150;
     private final static int LEGEND_HEIGHT = 150;
+    private static final float EPSILON = 0.000001f;
 
     static {
         rebuild();
@@ -350,6 +351,93 @@ public class ColormapInterpreter {
         float alpha;
 
         if (var < -1E33) {
+            color = Color.BLACK;
+        } else if (var < dim.min) {
+            if (result > -1f) {
+                alpha = 1 - result;
+            } else {
+                alpha = 0f;
+            }
+            color = colorMap.get(0);
+            color.alpha = alpha;
+        } else if (var > dim.max) {
+            if (result < 2f) {
+                alpha = 1f - (result - 1f);
+            } else {
+                alpha = 0f;
+            }
+            color = colorMap.get(cmEntries - 1);
+            color.alpha = alpha;
+        } else {
+            float red = 0;
+            float green = 0;
+            float blue = 0;
+
+            int iLow = (int) Math.floor(rawIndex);
+            int iHigh = (int) Math.ceil(rawIndex);
+
+            Color cLow;
+            if (iLow == cmEntries) {
+                cLow = colorMap.get(cmEntries - 1);
+            } else if (iLow < 0) {
+                cLow = colorMap.get(0);
+            } else {
+                cLow = colorMap.get(iLow);
+            }
+
+            Color cHigh;
+            if (iHigh == cmEntries) {
+                cHigh = colorMap.get(cmEntries - 1);
+            } else if (iHigh < 0) {
+                cHigh = colorMap.get(0);
+            } else {
+                cHigh = colorMap.get(iHigh);
+            }
+
+            float colorInterval = rawIndex - iLow;
+
+            red = getInterpolatedColor(cHigh.red, cLow.red, colorInterval);
+            green = getInterpolatedColor(cHigh.green, cLow.green, colorInterval);
+            blue = getInterpolatedColor(cHigh.blue, cLow.blue, colorInterval);
+
+            color = new Color(red, green, blue, 1f);
+        }
+
+        return color;
+    }
+
+    /**
+     * Function to return a color from the colormap with linear scaling between
+     * endpoints.
+     * 
+     * @param colorMapName
+     *            The name of the colormap to use
+     * @param dim
+     *            The dimensions in the dataset to pick a color value between.
+     * @param var
+     *            The value to use.
+     * @param var
+     *            The 'fill value' of the dataset, where no actual data exists.
+     *            this will become black.
+     * @return The color.
+     */
+    public synchronized static Color getColor(String colorMapName, Dimensions dim, float var, float fillValue) {
+        if (!colorMaps.containsKey(colorMapName)) {
+            System.err.println("Unregistered color map requested: " + colorMapName);
+            colorMaps.get("default");
+        }
+
+        ArrayList<Color> colorMap = colorMaps.get(colorMapName);
+
+        int cmEntries = colorMap.size();
+
+        Color color = null;
+
+        float result = (var - dim.min) / dim.getDiff();
+        float rawIndex = result * cmEntries;
+        float alpha;
+
+        if (var == fillValue || (var > fillValue - EPSILON) && (var < fillValue + EPSILON)) {
             color = Color.BLACK;
         } else if (var < dim.min) {
             if (result > -1f) {
