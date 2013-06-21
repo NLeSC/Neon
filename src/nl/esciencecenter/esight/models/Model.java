@@ -81,16 +81,14 @@ public abstract class Model {
      */
     public void init(GL3 gl) {
         if (!initialized) {
-            GLSLAttrib vAttrib = new GLSLAttrib(vertices, "MCvertex",
-                    GLSLAttrib.SIZE_FLOAT, 4);
-            GLSLAttrib nAttrib = new GLSLAttrib(normals, "MCnormal",
-                    GLSLAttrib.SIZE_FLOAT, 3);
-            GLSLAttrib tAttrib = new GLSLAttrib(texCoords, "MCtexCoord",
-                    GLSLAttrib.SIZE_FLOAT, 3);
+            GLSLAttrib vAttrib = new GLSLAttrib(vertices, "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
+            GLSLAttrib nAttrib = new GLSLAttrib(normals, "MCnormal", GLSLAttrib.SIZE_FLOAT, 3);
+            GLSLAttrib tAttrib = new GLSLAttrib(texCoords, "MCtexCoord", GLSLAttrib.SIZE_FLOAT, 3);
 
             vbo = new VBO(gl, vAttrib, nAttrib, tAttrib);
+
+            initialized = true;
         }
-        initialized = true;
     }
 
     /**
@@ -140,18 +138,23 @@ public abstract class Model {
      *            The global openGL instance.
      * @param program
      *            The shader program to be used for this drawing instance.
+     * @throws UninitializedException
      */
-    public void draw(GL3 gl, ShaderProgram program) {
-        vbo.bind(gl);
+    public void draw(GL3 gl, ShaderProgram program) throws UninitializedException {
+        if (initialized) {
+            vbo.bind(gl);
 
-        program.linkAttribs(gl, vbo.getAttribs());
+            program.linkAttribs(gl, vbo.getAttribs());
 
-        if (format == vertex_format.TRIANGLES) {
-            gl.glDrawArrays(GL3.GL_TRIANGLES, 0, numVertices);
-        } else if (format == vertex_format.POINTS) {
-            gl.glDrawArrays(GL3.GL_POINTS, 0, numVertices);
-        } else if (format == vertex_format.LINES) {
-            gl.glDrawArrays(GL3.GL_LINES, 0, numVertices);
+            if (format == vertex_format.TRIANGLES) {
+                gl.glDrawArrays(GL3.GL_TRIANGLES, 0, numVertices);
+            } else if (format == vertex_format.POINTS) {
+                gl.glDrawArrays(GL3.GL_POINTS, 0, numVertices);
+            } else if (format == vertex_format.LINES) {
+                gl.glDrawArrays(GL3.GL_LINES, 0, numVertices);
+            }
+        } else {
+            throw new UninitializedException();
         }
     }
 }

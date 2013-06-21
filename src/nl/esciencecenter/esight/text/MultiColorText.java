@@ -178,6 +178,7 @@ public class MultiColorText extends Model {
                 glyphs.put(index, glyphShape);
             }
 
+            initialized = false;
             makeVBO(gl);
             this.cachedString = str;
             this.cachedSize = size;
@@ -193,53 +194,55 @@ public class MultiColorText extends Model {
      *            The global openGL instance.
      */
     private void makeVBO(GL3 gl) {
-        // Create list of vertices based on the glyph shapes
-        ArrayList<Vertex> vertices = new ArrayList<Vertex>();
-        ArrayList<VecF4> vertexColors = new ArrayList<VecF4>();
-        for (int i = 0; i < glyphs.size(); i++) {
-            if (glyphs.get(i) != null) {
-                GlyphShape glyph = glyphs.get(i);
-                VecF4 glypColor = colors.get(i);
+        if (!initialized) {
+            // Create list of vertices based on the glyph shapes
+            ArrayList<Vertex> vertices = new ArrayList<Vertex>();
+            ArrayList<VecF4> vertexColors = new ArrayList<VecF4>();
+            for (int i = 0; i < glyphs.size(); i++) {
+                if (glyphs.get(i) != null) {
+                    GlyphShape glyph = glyphs.get(i);
+                    VecF4 glypColor = colors.get(i);
 
-                ArrayList<Triangle> gtris = glyph.triangulate();
-                for (Triangle t : gtris) {
-                    vertices.add(t.getVertices()[0]);
-                    vertices.add(t.getVertices()[1]);
-                    vertices.add(t.getVertices()[2]);
+                    ArrayList<Triangle> gtris = glyph.triangulate();
+                    for (Triangle t : gtris) {
+                        vertices.add(t.getVertices()[0]);
+                        vertices.add(t.getVertices()[1]);
+                        vertices.add(t.getVertices()[2]);
 
-                    vertexColors.add(glypColor);
-                    vertexColors.add(glypColor);
-                    vertexColors.add(glypColor);
+                        vertexColors.add(glypColor);
+                        vertexColors.add(glypColor);
+                        vertexColors.add(glypColor);
+                    }
                 }
             }
+
+            // Transform the vertices from Vertex objects to Vec4 objects
+            // and
+            // update BoundingBox.
+            VecF4[] myVertices = new VecF4[vertices.size()];
+            int i = 0;
+            for (Vertex v : vertices) {
+                VecF3 vec = new VecF3(v.getX(), v.getY(), v.getZ());
+                bbox.resize(vec);
+
+                myVertices[i] = new VecF4(vec, 1f);
+
+                i++;
+            }
+
+            if (vbo != null) {
+                vbo.delete(gl);
+            }
+            this.vertices = VectorFMath.toBuffer(myVertices);
+            this.vertexColors = VectorFMath.vec4ListToBuffer(vertexColors);
+            GLSLAttrib vAttrib = new GLSLAttrib(this.vertices, "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
+            GLSLAttrib cAttrib = new GLSLAttrib(this.vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
+            vbo = new VBO(gl, vAttrib, cAttrib);
+
+            this.numVertices = vertices.size();
+
+            initialized = true;
         }
-
-        // Transform the vertices from Vertex objects to Vec4 objects
-        // and
-        // update BoundingBox.
-        VecF4[] myVertices = new VecF4[vertices.size()];
-        int i = 0;
-        for (Vertex v : vertices) {
-            VecF3 vec = new VecF3(v.getX(), v.getY(), v.getZ());
-            bbox.resize(vec);
-
-            myVertices[i] = new VecF4(vec, 1f);
-
-            i++;
-        }
-
-        if (vbo != null) {
-            vbo.delete(gl);
-        }
-        this.vertices = VectorFMath.toBuffer(myVertices);
-        this.vertexColors = VectorFMath.vec4ListToBuffer(vertexColors);
-        GLSLAttrib vAttrib = new GLSLAttrib(this.vertices, "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
-        GLSLAttrib cAttrib = new GLSLAttrib(this.vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
-        vbo = new VBO(gl, vAttrib, cAttrib);
-
-        this.numVertices = vertices.size();
-
-        initialized = true;
     }
 
     /**
@@ -327,11 +330,12 @@ public class MultiColorText extends Model {
     }
 
     public void finalizeColorScheme(GL3 gl) {
+        initialized = false;
         makeVBO(gl);
     }
 
     public void draw(GL3 gl, ShaderProgram program, float canvasWidth, float canvasHeight, float RasterPosX,
-            float RasterPosY) {
+            float RasterPosY) throws UninitializedException {
         if (initialized) {
             program.setUniformMatrix("MVMatrix", getMVMatrixForHUD(canvasWidth, canvasHeight, RasterPosX, RasterPosY));
             program.setUniformMatrix("PMatrix", getPMatrixForHUD(canvasWidth, canvasHeight));
@@ -347,6 +351,8 @@ public class MultiColorText extends Model {
             program.linkAttribs(gl, vbo.getAttribs());
 
             gl.glDrawArrays(GL3.GL_TRIANGLES, 0, numVertices);
+        } else {
+            throw new UninitializedException();
         }
     }
 

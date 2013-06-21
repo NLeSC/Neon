@@ -1,6 +1,10 @@
 package nl.esciencecenter.esight.noise;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jogamp.common.nio.Buffers;
 
@@ -28,32 +32,45 @@ import com.jogamp.common.nio.Buffers;
  * 
  */
 public class Noise {
+    private final static Logger logger = LoggerFactory.getLogger(Noise.class);
     public ByteBuffer pixelBuffer;
+    public FloatBuffer tempBuf;
 
     public Noise(int channels, int width, int height, int depth) {
         int pixels = width * height * depth;
         pixelBuffer = Buffers.newDirectByteBuffer(pixels * 4);
 
-        for (int x = 0; x < width; x++) {
-            // System.out.print(".");
+        tempBuf = Buffers.newDirectFloatBuffer(pixels);
+
+        if (depth == 0 || depth == 1) {
             for (int y = 0; y < height; y++) {
-                for (int z = 0; z < depth; z++) {
-                    PerlinNoise_3D(channels, x, y, z);
+                for (int x = 0; x < width; x++) {
+                    float noise = PerlinNoise_2D(channels, x, y);
+                    tempBuf.put(noise);
+                }
+            }
+
+        } else {
+            for (int x = 0; x < width; x++) {
+                // System.out.print(".");
+                for (int y = 0; y < height; y++) {
+                    for (int z = 0; z < depth; z++) {
+                        PerlinNoise_3D(pixelBuffer, channels, x, y, z);
+                    }
                 }
             }
         }
         pixelBuffer.rewind();
     }
 
-    double PerlinNoise_3D(int channels, int x, int y, int z) {
+    double PerlinNoise_3D(ByteBuffer buffer, int channels, int x, int y, int z) {
         double total = 0;
         double p = .25;
 
         double amplitude = 128.0;
         double frequency = 0.1;
         for (int i = 0; i < channels; i++) {
-            pixelBuffer
-                    .put((byte) (ImprovedPerlinNoise.noise(x * frequency, y * frequency, z * frequency) * amplitude));
+            buffer.put((byte) (ImprovedPerlinNoise.noise(x * frequency, y * frequency, z * frequency) * amplitude));
 
             amplitude *= p;
             frequency *= 2;
@@ -61,8 +78,26 @@ public class Noise {
         return total;
     }
 
+    float PerlinNoise_2D(int channels, int x, int y) {
+        float total = 0f;
+        for (int i = 0; i < channels; i++) {
+            float amplitude = (float) Math.pow(2.0, i);
+            float frequency = (float) Math.pow(0.5, i);
+
+            float noise = interpolatedNoise(x * frequency, y * frequency) * amplitude;
+
+            total += noise;
+        }
+
+        return total;
+    }
+
     public ByteBuffer getImage() {
         return pixelBuffer;
+    }
+
+    public FloatBuffer getFloats() {
+        return tempBuf;
     }
 
     // 3D Noise map
@@ -118,67 +153,96 @@ public class Noise {
     }
 
     // 2D Noise maps
-    @SuppressWarnings("unused")
-    private float interpolatedNoise(int octave, float xf, float yf) {
+    private float interpolatedNoise(float xf, float yf) {
         int x = (int) xf;
         int y = (int) yf;
         float fracX = xf - x;
         float fracY = yf - y;
 
-        float v1 = smoothNoise(octave, x, y);
-        float v2 = smoothNoise(octave, x + 1, y);
-        float v3 = smoothNoise(octave, x, y + 1);
-        float v4 = smoothNoise(octave, x + 1, y + 1);
+        float noiseCurvePoint00 = smoothNoise(x, y);
+        float noiseCurvePoint10 = smoothNoise(x + 1, y);
 
-        float i1 = cosInterpolate(v1, v2, fracX);
-        float i2 = cosInterpolate(v3, v4, fracX);
+        float noiseCurvePoint01 = smoothNoise(x, y + 1);
+        float noiseCurvePoint11 = smoothNoise(x + 1, y + 1);
+
+        float i1 = cosInterpolate(noiseCurvePoint00, noiseCurvePoint10, fracX);
+        float i2 = cosInterpolate(noiseCurvePoint01, noiseCurvePoint11, fracX);
 
         return cosInterpolate(i1, i2, fracY);
     }
 
-    private float smoothNoise(int octave, int x, int y) {
-        float corners = (noise2(octave, x - 1, y - 1) + noise2(octave, x + 1, y - 1) + noise2(octave, x - 1, y + 1) + noise2(
-                octave, x + 1, y + 1)) / 16;
+    // private float cubicInterpolatedNoise(float xf, float yf) {
+    // int x = (int) xf;
+    // int y = (int) yf;
+    // float fracX = xf - x;
+    // float fracY = yf - y;
+    //
+    // float noiseCurvePointX0Y0 = smoothNoise(x, y);
+    // float noiseCurvePointX1Y0 = smoothNoise(x + 1, y);
+    // float noiseCurvePointX2Y0 = smoothNoise(x + 2, y);
+    // float noiseCurvePointX3Y0 = smoothNoise(x + 3, y);
+    //
+    // float noiseCurvePointX0Y1 = smoothNoise(x, y + 1);
+    // float noiseCurvePointX1Y1 = smoothNoise(x + 1, y + 1);
+    // float noiseCurvePointX2Y1 = smoothNoise(x + 2, y + 1);
+    // float noiseCurvePointX3Y1 = smoothNoise(x + 3, y + 1);
+    //
+    // float noiseCurvePointX0Y2 = smoothNoise(x, y + 2);
+    // float noiseCurvePointX1Y2 = smoothNoise(x + 1, y + 2);
+    // float noiseCurvePointX2Y2 = smoothNoise(x + 2, y + 2);
+    // float noiseCurvePointX3Y2 = smoothNoise(x + 3, y + 2);
+    //
+    // float noiseCurvePointX0Y3 = smoothNoise(x, y + 3);
+    // float noiseCurvePointX1Y3 = smoothNoise(x + 1, y + 3);
+    // float noiseCurvePointX2Y3 = smoothNoise(x + 2, y + 3);
+    // float noiseCurvePointX3Y3 = smoothNoise(x + 3, y + 3);
+    //
+    // float iY0 = cubicInterpolate(noiseCurvePointX0Y0, noiseCurvePointX1Y0,
+    // noiseCurvePointX2Y0,
+    // noiseCurvePointX3Y0, fracX);
+    // float iY1 = cubicInterpolate(noiseCurvePointX0Y1, noiseCurvePointX1Y1,
+    // noiseCurvePointX2Y1,
+    // noiseCurvePointX3Y1, fracX);
+    // float iY2 = cubicInterpolate(noiseCurvePointX0Y2, noiseCurvePointX1Y2,
+    // noiseCurvePointX2Y2,
+    // noiseCurvePointX3Y2, fracX);
+    // float iY3 = cubicInterpolate(noiseCurvePointX0Y3, noiseCurvePointX1Y3,
+    // noiseCurvePointX2Y3,
+    // noiseCurvePointX3Y3, fracX);
+    //
+    // float iX0 = cubicInterpolate(noiseCurvePointX0Y0, noiseCurvePointX1Y0,
+    // noiseCurvePointX2Y0,
+    // noiseCurvePointX3Y0, fracX);
+    //
+    // float i1 = cosInterpolate(noiseCurvePointx0, noiseCurvePointx1, fracX);
+    // float i2 = cosInterpolate(noiseCurvePoint01, noiseCurvePoint11, fracX);
+    //
+    // return cosInterpolate(i1, i2, fracY);
+    // }
 
-        float sides = (noise2(octave, x - 1, y) + noise2(octave, x + 1, y) + noise2(octave, x, y - 1) + noise2(octave,
-                x, y + 1)) / 8;
-
-        float center = noise2(octave, x, y) / 4;
+    private float smoothNoise(int x, int y) {
+        float corners = (noise2(x - 1, y - 1) + noise2(x + 1, y - 1) + noise2(x - 1, y + 1) + noise2(x + 1, y + 1)) / 16f;
+        float sides = (noise2(x - 1, y) + noise2(x + 1, y) + noise2(x, y - 1) + noise2(x, y + 1)) / 8f;
+        float center = noise2(x, y) / 4f;
 
         return corners + sides + center;
     }
 
-    private float noise2(int octave, int x, int y) {
-        int[] primes = new int[4];
-        if (octave == 0) {
-            primes[0] = 15731;
-            primes[1] = 789221;
-            primes[2] = 1376312589;
-            primes[3] = 1073741824;
-        } else if (octave == 1) {
-            primes[0] = 15733;
-            primes[1] = 789227;
-            primes[2] = 1376312627;
-            primes[3] = 1073741827;
-        } else if (octave == 2) {
-            primes[0] = 15737;
-            primes[1] = 789251;
-            primes[2] = 1376312629;
-            primes[3] = 1073741831;
-        } else if (octave == 3) {
-            primes[0] = 15739;
-            primes[1] = 789311;
-            primes[2] = 1376312657;
-            primes[3] = 1073741833;
-        }
-
+    private float noise2(int x, int y) {
         int n = x + y * 57;
         n = (n << 13) ^ n;
 
-        float noise = (1.0f - ((n * (n * n * primes[0] + primes[1]) + primes[2]) & 0x7fffffff) / primes[3]);
-
-        System.out.println("noise: " + noise);
+        float noise = (1.0f - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824);
         return noise;
+    }
+
+    private float cubicInterpolate(float v0, float v1, float v2, float v3, float x) {
+        float P = (v3 - v2) - (v0 - v1);
+        float Q = (v0 - v1) - P;
+        float R = v2 - v0;
+        float S = v1;
+
+        return (float) (P * Math.pow(x, 3) + Q * Math.pow(x, 2) + R * x + S);
     }
 
     private float cosInterpolate(float a, float b, float x) {
@@ -186,6 +250,11 @@ public class Noise {
         float f = (1f - (float) Math.cos(ft)) * .5f;
 
         return a * (1 - f) + b * f;
+    }
+
+    @SuppressWarnings("unused")
+    private float linearInterpolate(float a, float b, float x) {
+        return (b - a) * x + a;
     }
 
 }

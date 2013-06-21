@@ -16,6 +16,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /* Copyright 2013 Netherlands eScience Center
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,6 +40,7 @@ import java.util.regex.Pattern;
  * @author Niels Drost <n.drost@esciencecenter.nl>
  */
 public class TypedProperties extends Properties {
+    private final static Logger logger = LoggerFactory.getLogger(TypedProperties.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -92,6 +96,7 @@ public class TypedProperties extends Properties {
         if (inputStream != null) {
             try {
                 load(inputStream);
+                logger.debug("Opened properties file: " + resourceName);
             } catch (Exception e) {
                 // IGNORE
             } finally {
@@ -146,6 +151,7 @@ public class TypedProperties extends Properties {
 
             try {
                 load(inputStream);
+                logger.debug("Loading from properties file: " + fileName);
             } catch (IOException e) {
                 // IGNORE
             }
@@ -201,9 +207,12 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value != null) {
+            logger.debug("Boolean property loaded: " + key + "->" + value);
             return value.equals("1") || value.equals("on") || value.equals("") || value.equals("true")
                     || value.equals("yes");
         }
+
+        logger.debug("Boolean property default: " + key + "->" + defaultValue);
 
         return defaultValue;
     }
@@ -223,6 +232,7 @@ public class TypedProperties extends Properties {
         if (value == null) {
             throw new NumberFormatException("property undefined: " + key);
         }
+        logger.debug("Integer property loaded: " + key + "->" + value);
 
         try {
             return Integer.parseInt(value);
@@ -246,8 +256,10 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value == null) {
+            logger.debug("Integer property default: " + key + "->" + defaultValue);
             return defaultValue;
         }
+        logger.debug("Integer property loaded: " + key + "->" + value);
 
         try {
             return Integer.parseInt(value);
@@ -271,6 +283,7 @@ public class TypedProperties extends Properties {
         if (value == null) {
             throw new NumberFormatException("property undefined: " + key);
         }
+        logger.debug("Long property loaded: " + key + "->" + value);
 
         try {
             return Long.parseLong(value);
@@ -294,8 +307,10 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value == null) {
+            logger.debug("Long property default: " + key + "->" + defaultValue);
             return defaultValue;
         }
+        logger.debug("Long property loaded: " + key + "->" + value);
 
         try {
             return Long.parseLong(value);
@@ -319,6 +334,7 @@ public class TypedProperties extends Properties {
         if (value == null) {
             throw new NumberFormatException("property undefined: " + key);
         }
+        logger.debug("Short property loaded: " + key + "->" + value);
 
         try {
             return Short.parseShort(value);
@@ -342,8 +358,10 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value == null) {
+            logger.debug("Short property default: " + key + "->" + defaultValue);
             return defaultValue;
         }
+        logger.debug("Short property loaded: " + key + "->" + value);
 
         try {
             return Short.parseShort(value);
@@ -367,6 +385,7 @@ public class TypedProperties extends Properties {
         if (value == null) {
             throw new NumberFormatException("property undefined: " + key);
         }
+        logger.debug("Double property loaded: " + key + "->" + value);
 
         try {
             return Double.parseDouble(value);
@@ -390,8 +409,10 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value == null) {
+            logger.debug("Double property default: " + key + "->" + defaultValue);
             return defaultValue;
         }
+        logger.debug("Double property loaded: " + key + "->" + value);
 
         try {
             return Double.parseDouble(value);
@@ -415,6 +436,7 @@ public class TypedProperties extends Properties {
         if (value == null) {
             throw new NumberFormatException("property undefined: " + key);
         }
+        logger.debug("Float property loaded: " + key + "->" + value);
 
         try {
             return Float.parseFloat(value);
@@ -438,14 +460,56 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value == null) {
+            logger.debug("Float property default: " + key + "->" + defaultValue);
             return defaultValue;
         }
+        logger.debug("Float property loaded: " + key + "->" + value);
 
         try {
             return Float.parseFloat(value);
         } catch (NumberFormatException e) {
             throw new NumberFormatException("Float expected for property " + key + ", not \"" + value + "\"");
         }
+    }
+
+    /**
+     * Returns the string value of property.
+     * 
+     * @return the string value of property
+     * @param key
+     *            property name
+     */
+    @Override
+    public String getProperty(String key) {
+        String value = super.getProperty(key);
+
+        logger.debug("String property loaded: " + key + "->" + value);
+
+        return value;
+    }
+
+    /**
+     * Returns the float value of property.
+     * 
+     * @return the float value of property
+     * @param key
+     *            property name
+     * @param defaultValue
+     *            default value if the property is undefined
+     * @throws NumberFormatException
+     *             if the property defined and not an Float
+     */
+    @Override
+    public String getProperty(String key, String defaultValue) {
+        String value = getProperty(key);
+
+        if (value == null) {
+            logger.debug("String property default: " + key + "->" + defaultValue);
+            return defaultValue;
+        }
+        logger.debug("String property loaded: " + key + "->" + value);
+
+        return value;
     }
 
     /**
@@ -466,6 +530,7 @@ public class TypedProperties extends Properties {
         if (value == null) {
             throw new NumberFormatException("property undefined: " + key);
         }
+        logger.debug("Size property loaded: " + key + "->" + value);
 
         return getSizeProperty(key, 0);
     }
@@ -488,8 +553,10 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value == null) {
+            logger.debug("Size property default: " + key + "->" + defaultValue);
             return defaultValue;
         }
+        logger.debug("Size property loaded: " + key + "->" + value);
 
         try {
 

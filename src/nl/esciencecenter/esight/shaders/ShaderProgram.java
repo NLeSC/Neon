@@ -84,6 +84,7 @@ public class ShaderProgram {
 
     private boolean geometry_enabled = false;
     private boolean warningsGiven = false;
+    private boolean initialized = false;
 
     /**
      * Basic constructor for ShaderProgram with Vertex and Fragment shaders.
@@ -137,31 +138,35 @@ public class ShaderProgram {
      *            The opengl instance.
      */
     public void init(GL3 gl) {
-        pointer = gl.glCreateProgram();
+        if (!initialized) {
+            pointer = gl.glCreateProgram();
 
-        try {
-            gl.glAttachShader(pointer, vs.getShaderPointer());
-            if (geometry_enabled) {
-                gl.glAttachShader(pointer, gs.getShaderPointer());
+            try {
+                gl.glAttachShader(pointer, vs.getShaderPointer());
+                if (geometry_enabled) {
+                    gl.glAttachShader(pointer, gs.getShaderPointer());
+                }
+                gl.glAttachShader(pointer, fs.getShaderPointer());
+            } catch (UninitializedException e) {
+                System.out.println("Shaders not initialized properly");
+                System.exit(0);
             }
-            gl.glAttachShader(pointer, fs.getShaderPointer());
-        } catch (UninitializedException e) {
-            System.out.println("Shaders not initialized properly");
-            System.exit(0);
+
+            gl.glLinkProgram(pointer);
+
+            // Check for errors
+            IntBuffer buf = Buffers.newDirectIntBuffer(1);
+            gl.glGetProgramiv(pointer, GL3.GL_LINK_STATUS, buf);
+            if (buf.get(0) == 0) {
+                logger.error("Link error");
+                printError(gl);
+            }
+
+            warningsGiven = false;
+            checkCompatibility(vs, fs);
+
+            initialized = true;
         }
-
-        gl.glLinkProgram(pointer);
-
-        // Check for errors
-        IntBuffer buf = Buffers.newDirectIntBuffer(1);
-        gl.glGetProgramiv(pointer, GL3.GL_LINK_STATUS, buf);
-        if (buf.get(0) == 0) {
-            logger.error("Link error");
-            printError(gl);
-        }
-
-        warningsGiven = false;
-        checkCompatibility(vs, fs);
     }
 
     /**
@@ -297,30 +302,35 @@ public class ShaderProgram {
      * 
      * @param gl
      *            The openGL instance.
+     * @throws UninitializedException
      */
-    public void detachShaders(GL3 gl) {
-        try {
-            gl.glDetachShader(pointer, vs.getShaderPointer());
-            gl.glDeleteShader(vs.getShaderPointer());
+    public void detachShaders(GL3 gl) throws UninitializedException {
+        if (initialized) {
+            try {
+                gl.glDetachShader(pointer, vs.getShaderPointer());
+                gl.glDeleteShader(vs.getShaderPointer());
 
-            if (geometry_enabled) {
-                gl.glDetachShader(pointer, gs.getShaderPointer());
-                gl.glDeleteShader(gs.getShaderPointer());
+                if (geometry_enabled) {
+                    gl.glDetachShader(pointer, gs.getShaderPointer());
+                    gl.glDeleteShader(gs.getShaderPointer());
+                }
+
+                gl.glDetachShader(pointer, fs.getShaderPointer());
+                gl.glDeleteShader(fs.getShaderPointer());
+
+                // Check for errors
+                IntBuffer buf = Buffers.newDirectIntBuffer(1);
+                gl.glGetProgramiv(pointer, GL3.GL_LINK_STATUS, buf);
+                if (buf.get(0) == 0) {
+                    logger.error("Link error");
+                    printError(gl);
+                }
+            } catch (UninitializedException e) {
+                System.out.println("Shaders not initialized properly");
+                System.exit(0);
             }
-
-            gl.glDetachShader(pointer, fs.getShaderPointer());
-            gl.glDeleteShader(fs.getShaderPointer());
-
-            // Check for errors
-            IntBuffer buf = Buffers.newDirectIntBuffer(1);
-            gl.glGetProgramiv(pointer, GL3.GL_LINK_STATUS, buf);
-            if (buf.get(0) == 0) {
-                logger.error("Link error");
-                printError(gl);
-            }
-        } catch (UninitializedException e) {
-            System.out.println("Shaders not initialized properly");
-            System.exit(0);
+        } else {
+            throw new UninitializedException();
         }
     }
 
@@ -335,35 +345,37 @@ public class ShaderProgram {
      *             if this ShaderProgram was used without initialization.
      */
     public void use(GL3 gl) throws UninitializedException {
-        if (pointer == 0)
+        if (pointer != 0 && initialized) {
+
+            gl.glUseProgram(pointer);
+
+            for (Entry<String, FloatBuffer> var : uniformFloatMatrices.entrySet()) {
+                passUniformMat(gl, var.getKey(), var.getValue());
+            }
+            for (Entry<String, FloatBuffer> var : uniformFloatVectors.entrySet()) {
+                passUniformVec(gl, var.getKey(), var.getValue());
+            }
+            for (Entry<String, Boolean> var : uniformBooleans.entrySet()) {
+                passUniform(gl, var.getKey(), var.getValue());
+            }
+            for (Entry<String, Integer> var : uniformInts.entrySet()) {
+                passUniform(gl, var.getKey(), var.getValue());
+            }
+            for (Entry<String, Float> var : uniformFloats.entrySet()) {
+                passUniform(gl, var.getKey(), var.getValue());
+            }
+
+            checkUniforms(vs, fs);
+
+            // Check for errors
+            IntBuffer buf = Buffers.newDirectIntBuffer(1);
+            gl.glGetProgramiv(pointer, GL3.GL_LINK_STATUS, buf);
+            if (buf.get(0) == 0) {
+                logger.error("Use error");
+                printError(gl);
+            }
+        } else {
             throw new UninitializedException();
-
-        gl.glUseProgram(pointer);
-
-        for (Entry<String, FloatBuffer> var : uniformFloatMatrices.entrySet()) {
-            passUniformMat(gl, var.getKey(), var.getValue());
-        }
-        for (Entry<String, FloatBuffer> var : uniformFloatVectors.entrySet()) {
-            passUniformVec(gl, var.getKey(), var.getValue());
-        }
-        for (Entry<String, Boolean> var : uniformBooleans.entrySet()) {
-            passUniform(gl, var.getKey(), var.getValue());
-        }
-        for (Entry<String, Integer> var : uniformInts.entrySet()) {
-            passUniform(gl, var.getKey(), var.getValue());
-        }
-        for (Entry<String, Float> var : uniformFloats.entrySet()) {
-            passUniform(gl, var.getKey(), var.getValue());
-        }
-
-        checkUniforms(vs, fs);
-
-        // Check for errors
-        IntBuffer buf = Buffers.newDirectIntBuffer(1);
-        gl.glGetProgramiv(pointer, GL3.GL_LINK_STATUS, buf);
-        if (buf.get(0) == 0) {
-            logger.error("Use error");
-            printError(gl);
         }
     }
 
@@ -374,20 +386,25 @@ public class ShaderProgram {
      *            The opengl instance.
      * @param attribs
      *            The list of attributes to link.
+     * @throws UninitializedException
      */
-    public void linkAttribs(GL3 gl, GLSLAttrib... attribs) {
-        int nextStart = 0;
-        for (GLSLAttrib attrib : attribs) {
-            int ptr = gl.glGetAttribLocation(pointer, attrib.name);
-            gl.glVertexAttribPointer(ptr, attrib.vectorSize, GL3.GL_FLOAT, false, 0, nextStart);
-            gl.glEnableVertexAttribArray(ptr);
+    public void linkAttribs(GL3 gl, GLSLAttrib... attribs) throws UninitializedException {
+        if (initialized) {
+            int nextStart = 0;
+            for (GLSLAttrib attrib : attribs) {
+                int ptr = gl.glGetAttribLocation(pointer, attrib.name);
+                gl.glVertexAttribPointer(ptr, attrib.vectorSize, GL3.GL_FLOAT, false, 0, nextStart);
+                gl.glEnableVertexAttribArray(ptr);
 
-            nextStart += attrib.buffer.capacity() * Buffers.SIZEOF_FLOAT;
+                nextStart += attrib.buffer.capacity() * Buffers.SIZEOF_FLOAT;
+            }
+
+            checkIns(vs, attribs);
+
+            warningsGiven = true;
+        } else {
+            throw new UninitializedException();
         }
-
-        checkIns(vs, attribs);
-
-        warningsGiven = true;
     }
 
     /**

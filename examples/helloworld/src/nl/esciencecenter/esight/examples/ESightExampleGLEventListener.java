@@ -379,7 +379,7 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
      */
     private void renderHUDText(GL3 gl, MatF4 mv, ShaderProgram program, FBO target) throws UninitializedException {
         // Set a new text for the string
-        String randomString = "Random: " + Math.random();
+        String randomString = "Basic Test, random: " + Math.random();
         hudText.setString(gl, randomString, Color4.white, fontSize);
 
         // Bind the FrameBufferObject so we can start rendering to it
@@ -520,7 +520,12 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
 
         // Let the ShaderProgramLoader clean up. This deletes all of the
         // ShaderProgram instances as well.
-        loader.cleanup(gl);
+        try {
+            loader.cleanup(gl);
+        } catch (UninitializedException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
 
         // Release the context.
         try {

@@ -25,7 +25,7 @@ import nl.esciencecenter.esight.ESightNewtWindow;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class ESightExample {
+public class HelloWorldExample {
     // This static definition (singleton) of a settings class ensures that these
     // global settings are useable throughout the application. This settings
     // class reads from a file named "settings.properties" to allow default
@@ -47,10 +47,10 @@ public class ESightExample {
     // for animation etc. Therefore, even though we do not use the new Object,
     // the program will not terminate.
     public static void main(String[] args) {
-        new ESightExample();
+        new HelloWorldExample();
     }
 
-    public ESightExample() {
+    public HelloWorldExample() {
         // Create the Swing interface elements
         examplePanel = new ESightExampleInterfaceWindow();
 

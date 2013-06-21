@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javax.media.opengl.GL3;
 
 import nl.esciencecenter.esight.exceptions.CompilationFailedException;
+import nl.esciencecenter.esight.exceptions.UninitializedException;
 import nl.esciencecenter.esight.math.MatrixF;
 import nl.esciencecenter.esight.math.VectorF;
 
@@ -241,8 +242,9 @@ public class ShaderProgramLoader {
      *            The global openGL instance.
      * @param program
      *            The program to be deleted.
+     * @throws UninitializedException
      */
-    public void deleteProgram(GL3 gl, ShaderProgram program) {
+    public void deleteProgram(GL3 gl, ShaderProgram program) throws UninitializedException {
         ArrayList<ShaderProgram> temp = new ArrayList<ShaderProgram>();
         for (ShaderProgram entry : programs) {
             if (entry == program) {
@@ -261,8 +263,9 @@ public class ShaderProgramLoader {
      * 
      * @param gl
      *            The global openGL instance.
+     * @throws UninitializedException
      */
-    public void cleanup(GL3 gl) {
+    public void cleanup(GL3 gl) throws UninitializedException {
         for (ShaderProgram entry : programs) {
             entry.detachShaders(gl);
             entry.delete(gl);

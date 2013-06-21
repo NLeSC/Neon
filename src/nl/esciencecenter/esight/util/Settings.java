@@ -23,46 +23,46 @@ package nl.esciencecenter.esight.util;
  * @see TypedProperties
  */
 public class Settings {
-    private boolean STEREO_RENDERING = true;
-    private boolean STEREO_SWITCHED = true;
+    protected boolean STEREO_RENDERING = true;
+    protected boolean STEREO_SWITCHED = true;
 
-    private float STEREO_OCULAR_DISTANCE_MIN = 0f;
-    private float STEREO_OCULAR_DISTANCE_DEF = .2f;
-    private float STEREO_OCULAR_DISTANCE_MAX = 1f;
+    protected float STEREO_OCULAR_DISTANCE_MIN = 0f;
+    protected float STEREO_OCULAR_DISTANCE_DEF = .2f;
+    protected float STEREO_OCULAR_DISTANCE_MAX = 1f;
 
     // Size settings for default startup and screenshots
-    private int DEFAULT_SCREEN_WIDTH = 1920;
-    private int DEFAULT_SCREEN_HEIGHT = 720;
+    protected int DEFAULT_SCREEN_WIDTH = 1920;
+    protected int DEFAULT_SCREEN_HEIGHT = 720;
 
     // Settings for the initial view
-    private int INITIAL_SIMULATION_FRAME = 0;
-    private float INITIAL_ROTATION_X = 17f;
-    private float INITIAL_ROTATION_Y = -25f;
-    private float INITIAL_ZOOM = -390.0f;
+    protected int INITIAL_SIMULATION_FRAME = 0;
+    protected float INITIAL_ROTATION_X = 17f;
+    protected float INITIAL_ROTATION_Y = -25f;
+    protected float INITIAL_ZOOM = -390.0f;
 
     // Setting per movie frame
-    private boolean MOVIE_ROTATE = true;
-    private final float MOVIE_ROTATION_SPEED_MIN = -1f;
-    private final float MOVIE_ROTATION_SPEED_MAX = 1f;
-    private float MOVIE_ROTATION_SPEED_DEF = -0.25f;
+    protected boolean MOVIE_ROTATE = true;
+    protected final float MOVIE_ROTATION_SPEED_MIN = -1f;
+    protected final float MOVIE_ROTATION_SPEED_MAX = 1f;
+    protected float MOVIE_ROTATION_SPEED_DEF = -0.25f;
 
     // Settings for the gas cloud octree
-    private final int MAX_OCTREE_DEPTH = 25;
-    private final float OCTREE_EDGES = 800f;
+    protected final int MAX_OCTREE_DEPTH = 25;
+    protected final float OCTREE_EDGES = 800f;
 
     // Settings that should never change, but are listed here to make sure they
     // can be found if necessary
-    private final int MAX_EXPECTED_MODELS = 1000;
+    protected final int MAX_EXPECTED_MODELS = 1000;
 
     protected String SCREENSHOT_PATH = System.getProperty("user.dir") + System.getProperty("path.separator");
 
-    private final String[] ACCEPTABLE_NETCDF_EXTENSTIONS = { ".nc" };
+    protected final String[] ACCEPTABLE_NETCDF_EXTENSTIONS = { ".nc" };
 
-    private final String CURRENT_NETCDF_EXTENSTION = "nc";
+    protected final String CURRENT_NETCDF_EXTENSTION = "nc";
 
-    private static final boolean TOUCH_CONNECTION_ENABLED = false;
-    private static int INTERFACE_WIDTH = 240;
-    private static int INTERFACE_HEIGHT = 720;
+    protected static final boolean TOUCH_CONNECTION_ENABLED = false;
+    protected static int INTERFACE_WIDTH = 240;
+    protected static int INTERFACE_HEIGHT = 720;
 
     private static class SingletonHolder {
         public final static Settings instance = new Settings();

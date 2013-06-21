@@ -6,6 +6,7 @@ import javax.media.opengl.GLContext;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
 
+import nl.esciencecenter.esight.exceptions.UninitializedException;
 import nl.esciencecenter.esight.input.InputHandler;
 import nl.esciencecenter.esight.math.MatF4;
 import nl.esciencecenter.esight.math.MatrixFMath;
@@ -300,7 +301,12 @@ public abstract class ESightGLEventListener implements GLEventListener {
         // if (drawable.getGLProfile().isGL3()) {
         final GL3 gl = drawable.getGL().getGL3();
 
-        loader.cleanup(gl);
+        try {
+            loader.cleanup(gl);
+        } catch (UninitializedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         // } else {
         // GL2ES2 gl = drawable.getGL().getGL2ES2();
         //

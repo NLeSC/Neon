@@ -1,6 +1,5 @@
-package nl.esciencecenter.esight.input;
+package nl.esciencecenter.esight.examples.shadertest;
 
-import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -14,28 +13,12 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GLException;
 
-/* Copyright 2013 Netherlands eScience Center
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+import nl.esciencecenter.esight.input.InputHandler;
 
-/**
- * Keyboard input handler for a text editor interface.
- * 
- * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
- * 
- */
-public class TextEditorKeyboardHandler extends InputHandler {
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.KeyListener;
+
+public class TextEditorKeyboardHandler extends InputHandler implements KeyListener {
     private ArrayList<String> textLines = new ArrayList<String>();
     private ArrayList<String> clipBoard = new ArrayList<String>();
     private final ArrayList<ArrayList<String>> undoSave = new ArrayList<ArrayList<String>>();
@@ -59,6 +42,7 @@ public class TextEditorKeyboardHandler extends InputHandler {
         return SingletonHolder.instance;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void keyPressed(KeyEvent e) {
         if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_Z) {
@@ -361,10 +345,8 @@ public class TextEditorKeyboardHandler extends InputHandler {
         return result;
     }
 
+    @Override
     public void keyReleased(KeyEvent e) {
-    }
-
-    public void keyTyped(KeyEvent e) {
     }
 
     public void setText(File textFile) throws FileNotFoundException {
