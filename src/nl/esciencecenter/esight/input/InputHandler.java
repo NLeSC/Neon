@@ -218,13 +218,6 @@ public class InputHandler implements MouseListener, KeyListener {
 
     }
 
-    @Deprecated
-    @Override
-    public void keyTyped(KeyEvent arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
     /**
      * 
      * @return the current OpenGL ModelView rotation variable

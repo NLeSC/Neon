@@ -65,12 +65,11 @@ public class TypecastFontConstructor {
                 int len = 0;
                 Font f = null;
                 try {
-                    tf = IOUtil.createTempFile("joglfont", ".ttf", false, null);
+                    tf = IOUtil.createTempFile("joglfont", ".ttf", false);
                     len = IOUtil.copyURLConn2File(furl, tf);
                     if (len == 0) {
                         tf.delete();
-                        throw new GLException("Font of stream " + furl
-                                + " was zero bytes");
+                        throw new GLException("Font of stream " + furl + " was zero bytes");
                     }
                     f = create(tf);
                     tf.delete();
