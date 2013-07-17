@@ -6,7 +6,6 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLContext;
-import javax.media.opengl.GLException;
 
 import nl.esciencecenter.esight.ESightGLEventListener;
 import nl.esciencecenter.esight.datastructures.FBO;
@@ -103,15 +102,7 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         // Get the Opengl context from the drawable, and make it current, so
         // we can see it and draw on it. I've never seen this fail, but there is
         // error checking anyway.
-        try {
-            final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
-                System.err.println("Error swapping context to onscreen.");
-            }
-        } catch (final GLException e) {
-            System.err.println("Exception while swapping context to onscreen.");
-            e.printStackTrace();
-        }
+        contextOn(drawable);
 
         // Once we have the context current, we can extract the OpenGL instance
         // from it. We have defined a OpenGL 3.0 instance in the
@@ -213,6 +204,9 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         // screenshots.
         finalPBO = new IntPBO(canvasWidth, canvasHeight);
         finalPBO.init(gl);
+
+        // Release the context.
+        contextOff(drawable);
     }
 
     // Display method, this is called by the animator thread to render a single
@@ -223,15 +217,7 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         // Get the Opengl context from the drawable, and make it current, so
         // we can see it and draw on it. I've never seen this fail, but there is
         // error checking anyway.
-        try {
-            final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
-                System.err.println("Error swapping context to onscreen.");
-            }
-        } catch (final GLException e) {
-            System.err.println("Exception while swapping context to onscreen.");
-            e.printStackTrace();
-        }
+        contextOn(drawable);
 
         // Once we have the context current, we can extract the OpenGL instance
         // from it. We have defined a OpenGL 3.0 instance in the
@@ -283,12 +269,7 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
             screenshotWanted = false;
         }
 
-        // Release the context.
-        try {
-            drawable.getContext().release();
-        } catch (final GLException e) {
-            e.printStackTrace();
-        }
+        contextOff(drawable);
     }
 
     private MatF4 makePerspectiveMatrix() {
@@ -448,15 +429,7 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         // Get the Opengl context from the drawable, and make it current, so
         // we can see it and draw on it. I've never seen this fail, but there is
         // error checking anyway.
-        try {
-            final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
-                System.err.println("Error swapping context to onscreen.");
-            }
-        } catch (final GLException e) {
-            System.err.println("Exception while swapping context to onscreen.");
-            e.printStackTrace();
-        }
+        contextOn(drawable);
 
         // Once we have the context current, we can extract the OpenGL instance
         // from it. We have defined a OpenGL 3.0 instance in the
@@ -486,6 +459,9 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         finalPBO.delete(gl);
         finalPBO = new IntPBO(w, h);
         finalPBO.init(gl);
+
+        // Release the context.
+        contextOff(drawable);
     }
 
     // This dispose method is called when the OpenGL 'canvas' is destroyed. It
@@ -495,15 +471,7 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         // Get the Opengl context from the drawable, and make it current, so
         // we can see it and draw on it. I've never seen this fail, but there is
         // error checking anyway.
-        try {
-            final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
-                System.err.println("Error swapping context to onscreen.");
-            }
-        } catch (final GLException e) {
-            System.err.println("Exception while swapping context to onscreen.");
-            e.printStackTrace();
-        }
+        contextOn(drawable);
 
         // Once we have the context current, we can extract the OpenGL instance
         // from it. We have defined a OpenGL 3.0 instance in the
@@ -528,11 +496,7 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         }
 
         // Release the context.
-        try {
-            drawable.getContext().release();
-        } catch (final GLException e) {
-            e.printStackTrace();
-        }
+        contextOff(drawable);
     }
 
     public InputHandler getInputHandler() {

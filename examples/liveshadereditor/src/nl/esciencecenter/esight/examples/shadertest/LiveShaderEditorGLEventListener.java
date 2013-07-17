@@ -7,7 +7,6 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLContext;
-import javax.media.opengl.GLException;
 
 import nl.esciencecenter.esight.ESightGLEventListener;
 import nl.esciencecenter.esight.datastructures.FBO;
@@ -83,15 +82,7 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
 
     @Override
     public void display(GLAutoDrawable drawable) {
-        try {
-            final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
-                System.err.println("Error swapping context to onscreen.");
-            }
-        } catch (final GLException e) {
-            System.err.println("Exception while swapping context to onscreen.");
-            e.printStackTrace();
-        }
+        contextOn(drawable);
 
         canvasWidth = drawable.getWidth();
         canvasHeight = drawable.getHeight();
@@ -109,11 +100,7 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
 
         displayContext();
 
-        try {
-            drawable.getContext().release();
-        } catch (final GLException e) {
-            e.printStackTrace();
-        }
+        contextOff(drawable);
     }
 
     private synchronized void displayContext() {
@@ -174,6 +161,8 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
 
     @Override
     public void dispose(GLAutoDrawable drawable) {
+        contextOn(drawable);
+
         final GL3 gl = drawable.getGL().getGL3();
 
         noiseTex.delete(gl);
@@ -184,19 +173,13 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
 
         FSQ_postprocess.delete(gl);
         testModel.delete(gl);
+
+        contextOff(drawable);
     }
 
     @Override
     public void init(GLAutoDrawable drawable) {
-        try {
-            final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
-                System.err.println("Error swapping context to onscreen.");
-            }
-        } catch (final GLException e) {
-            System.err.println("Exception while swapping context to onscreen.");
-            e.printStackTrace();
-        }
+        contextOn(drawable);
 
         canvasWidth = drawable.getWidth();
         canvasHeight = drawable.getHeight();
@@ -293,6 +276,8 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
         starFBO.init(gl);
         hudFBO.init(gl);
         axesFBO.init(gl);
+
+        contextOff(drawable);
     }
 
     private void renderHUDText(GL3 gl, MatF4 mv) throws UninitializedException {
@@ -375,15 +360,7 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
-        try {
-            final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
-                System.err.println("Error swapping context to onscreen.");
-            }
-        } catch (final GLException e) {
-            System.err.println("Exception while swapping context to onscreen.");
-            e.printStackTrace();
-        }
+        contextOn(drawable);
 
         canvasWidth = drawable.getWidth();
         canvasHeight = drawable.getHeight();
@@ -397,6 +374,8 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
         starFBO.init(gl);
         hudFBO.init(gl);
         axesFBO.init(gl);
+
+        contextOff(drawable);
     }
 
     private void setLiveFragmentShader(GL3 gl, ShaderProgram target, File vertexShaderFile,

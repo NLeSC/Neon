@@ -120,8 +120,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
         this.inputHandler = inputHandler;
     }
 
-    @Override
-    public void init(GLAutoDrawable drawable) {
+    public static void contextOn(GLAutoDrawable drawable) {
         try {
             final int status = drawable.getContext().makeCurrent();
             if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
@@ -131,8 +130,20 @@ public abstract class ESightGLEventListener implements GLEventListener {
             System.err.println("Exception while swapping context to onscreen.");
             e.printStackTrace();
         }
+    }
 
-        // if (drawable.getGLProfile().isGL3()) {
+    public static void contextOff(GLAutoDrawable drawable) {
+        // Release the context.
+        try {
+            drawable.getContext().release();
+        } catch (final GLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void init(GLAutoDrawable drawable) {
+        contextOn(drawable);
 
         final GL3 gl = drawable.getGL().getGL3();
 
@@ -161,54 +172,18 @@ public abstract class ESightGLEventListener implements GLEventListener {
         // Set black background
         gl.glClearColor(0f, 0f, 0f, 0f);
 
-        // } else {
-        // // First, init the 'normal' context
-        // GL2ES2 gl = drawable.getGL().getGL2ES2();
-        //
-        // // Enable Anti-Aliasing
-        // gl.glEnable(GL2ES2.GL_LINE_SMOOTH);
-        // gl.glHint(GL2ES2.GL_LINE_SMOOTH_HINT, GL2ES2.GL_NICEST);
-        //
-        // // Enable Depth testing
-        // gl.glEnable(GL2ES2.GL_DEPTH_TEST);
-        // gl.glDepthFunc(GL2ES2.GL_LEQUAL);
-        // gl.glClearDepth(1.0f);
-        //
-        // // Enable Culling
-        // gl.glEnable(GL2ES2.GL_CULL_FACE);
-        // gl.glCullFace(GL2ES2.GL_BACK);
-        //
-        // // Enable Blending (needed for both Transparency and Anti-Aliasing
-        // gl.glBlendFunc(GL2ES2.GL_SRC_ALPHA, GL2ES2.GL_ONE_MINUS_SRC_ALPHA);
-        // gl.glEnable(GL2ES2.GL_BLEND);
-        //
-        // // Enable Vertical Sync
-        // gl.setSwapInterval(1);
-        //
-        // // Set black background
-        // gl.glClearColor(0f, 0f, 0f, 0f);
-        // }
+        contextOff(drawable);
     }
 
     @Override
     public void display(GLAutoDrawable drawable) {
-        try {
-            final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
-                System.err.println("Error swapping context to onscreen.");
-            }
-        } catch (final GLException e) {
-            System.err.println("Exception while swapping context to onscreen.");
-            e.printStackTrace();
-        }
+        contextOn(drawable);
 
         // if (drawable.getGLProfile().isGL3()) {
         final GL3 gl = drawable.getContext().getGL().getGL3();
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
-        // } else {
-        // final GL2ES2 gl = drawable.getContext().getGL().getGL2ES2();
-        // gl.glClear(GL2ES2.GL_COLOR_BUFFER_BIT | GL2ES2.GL_DEPTH_BUFFER_BIT);
-        // }
+
+        contextOff(drawable);
     }
 
     /**
@@ -256,17 +231,8 @@ public abstract class ESightGLEventListener implements GLEventListener {
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
-        try {
-            final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
-                System.err.println("Error swapping context to onscreen.");
-            }
-        } catch (final GLException e) {
-            System.err.println("Exception while swapping context to onscreen.");
-            e.printStackTrace();
-        }
+        contextOn(drawable);
 
-        // if (drawable.getGLProfile().isGL3()) {
         final GL3 gl = drawable.getContext().getGL().getGL3();
 
         int width = drawable.getWidth();
@@ -274,29 +240,13 @@ public abstract class ESightGLEventListener implements GLEventListener {
         aspect = (float) width / (float) height;
 
         gl.glViewport(0, 0, width, height);
-        // } else {
-        // final GL2ES2 gl = drawable.getContext().getGL().getGL2ES2();
-        //
-        // int width = drawable.getWidth();
-        // int height = drawable.getHeight();
-        // aspect = (float) width / (float) height;
-        //
-        // gl.glViewport(0, 0, width, height);
-        // gl.glViewport(0, 0, w, h);
-        // }
+
+        contextOff(drawable);
     }
 
     @Override
     public void dispose(GLAutoDrawable drawable) {
-        try {
-            final int status = drawable.getContext().makeCurrent();
-            if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
-                System.err.println("Error swapping context to onscreen.");
-            }
-        } catch (final GLException e) {
-            System.err.println("Exception while swapping context to onscreen.");
-            e.printStackTrace();
-        }
+        contextOn(drawable);
 
         // if (drawable.getGLProfile().isGL3()) {
         final GL3 gl = drawable.getGL().getGL3();
@@ -307,11 +257,8 @@ public abstract class ESightGLEventListener implements GLEventListener {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        // } else {
-        // GL2ES2 gl = drawable.getGL().getGL2ES2();
-        //
-        // loader.cleanup(gl);
-        // }
+
+        contextOff(drawable);
     }
 
     /**
