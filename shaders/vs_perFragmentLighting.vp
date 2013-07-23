@@ -1,0 +1,25 @@
+#version 140
+
+in vec4 MCvertex;
+in vec3 MCnormal;
+in vec3 MCtexCoord;
+
+uniform mat4 MVMatrix;
+uniform mat4 PMatrix;
+uniform mat3 NMatrix;
+
+uniform sampler2D bumpTex;
+
+out vec2 vTextureCoord;
+out vec3 vTransformedNormal;
+out vec4 vPosition;
+
+void main(void) {
+    vTextureCoord = MCtexCoord.xy;
+    
+	float heightOffset = 0.2 * texture2D(bumpTex, vTextureCoord).r;
+    vTransformedNormal = NMatrix * MCnormal;
+	
+    vPosition = (MVMatrix * MCvertex) + vec4(heightOffset * MCnormal, 1.0);
+    gl_Position = PMatrix * vPosition;
+}
