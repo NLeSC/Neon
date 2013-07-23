@@ -48,6 +48,11 @@
 			<compilerarg value="-Xlint" />
 		</javac>
 
+		<javac srcdir="examples/goggleSwing/src" destdir="build/classes" debug="on">
+			<classpath refid="lib.jars" />
+			<compilerarg value="-Xlint" />
+		</javac>
+
 		<javac srcdir="examples/colormap/src" destdir="build/classes" debug="on">
 			<classpath refid="lib.jars" />
 			<compilerarg value="-Xlint" />

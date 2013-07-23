@@ -44,6 +44,9 @@ public class ColormapExampleInputHandler extends InputHandler implements MouseLi
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
+        int x = e.getX();
+        int y = e.getY();
+
         // Do something that is different than the standard
     }
 }

@@ -230,23 +230,25 @@ public class VecF4 extends VectorF {
         return new VecF4(this);
     }
 
-    @Override
-    public int hashCode() {
-        int hashCode = (int) (v[0] + 23 * 6833 + v[1] + 7 * 7207 + v[2] + 11 * 7919 + v[3] + 3 * 3);
-        return hashCode;
-    }
-
-    @Override
-    public boolean equals(Object thatObject) {
-        if (this == thatObject)
-            return true;
-        if (!(thatObject instanceof VecF4))
-            return false;
-
-        // cast to native object is now safe
-        VecF4 that = (VecF4) thatObject;
-
-        // now a proper field-by-field evaluation can be made
-        return (v[0] == that.v[0] && v[1] == that.v[1] && v[2] == that.v[2] && v[3] == that.v[3]);
-    }
+    // @Override
+    // public int hashCode() {
+    // int hashCode = (int) (v[0] + 23 * 6833 + v[1] + 7 * 7207 + v[2] + 11 *
+    // 7919 + v[3] + 3 * 3);
+    // return hashCode;
+    // }
+    //
+    // @Override
+    // public boolean equals(Object thatObject) {
+    // if (this == thatObject)
+    // return true;
+    // if (!(thatObject instanceof VecF4))
+    // return false;
+    //
+    // // cast to native object is now safe
+    // VecF4 that = (VecF4) thatObject;
+    //
+    // // now a proper field-by-field evaluation can be made
+    // return (v[0] == that.v[0] && v[1] == that.v[1] && v[2] == that.v[2] &&
+    // v[3] == that.v[3]);
+    // }
 }

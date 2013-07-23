@@ -409,7 +409,7 @@ public class GoggleSwing {
     public static Box horizontalDropdownBoxesBox(String name, DropdownBoxesBoxItem... boxItems) {
         final ArrayList<Component> vcomponents = new ArrayList<Component>();
         vcomponents.add(new JLabel(name));
-        vcomponents.add(Box.createHorizontalGlue());
+        // vcomponents.add(Box.createHorizontalGlue());
 
         final ArrayList<Component> hcomponents = new ArrayList<Component>();
 

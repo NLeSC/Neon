@@ -15,7 +15,6 @@ import nl.esciencecenter.esight.datastructures.VBO;
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 import nl.esciencecenter.esight.math.MatrixF;
 import nl.esciencecenter.esight.math.VectorF;
-import nl.esciencecenter.esight.math.VectorS;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -441,22 +440,23 @@ public class ShaderProgram {
 
     }
 
-    /**
-     * Staging method for a Uniform Short Vector variable. This will be given to
-     * the GPU upon {@link ShaderProgram#use(GL3 gl)} of this ShaderProgram.
-     * 
-     * @param name
-     *            The name in the GLSL code for this uniform variable.
-     * @param var
-     *            The Vector to stage.
-     */
-    public void setUniformVector(String name, VectorS var) {
-        if (!uniformFloatVectors.containsKey(name)) {
-            warningsGiven = false;
-        }
-        uniformShortVectors.put(name, var.asBuffer());
-
-    }
+    // /**
+    // * Staging method for a Uniform Short Vector variable. This will be given
+    // to
+    // * the GPU upon {@link ShaderProgram#use(GL3 gl)} of this ShaderProgram.
+    // *
+    // * @param name
+    // * The name in the GLSL code for this uniform variable.
+    // * @param var
+    // * The Vector to stage.
+    // */
+    // public void setUniformVector(String name, VectorS var) {
+    // if (!uniformFloatVectors.containsKey(name)) {
+    // warningsGiven = false;
+    // }
+    // uniformShortVectors.put(name, var.asBuffer());
+    //
+    // }
 
     /**
      * Staging method for a Uniform Float Matrix variable. This will be given to

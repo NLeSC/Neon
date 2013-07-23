@@ -4,15 +4,18 @@ in vec4 MCvertex;
 in vec3 MCnormal;
 in vec3 MCtexCoord;
 
-out vec3 vertex_normal;
-
 uniform mat4 MVMatrix;
 uniform mat4 PMatrix;
-uniform mat3 NormalMatrix;
+uniform mat3 NMatrix;
 
-void main() 
-{	 
-    vertex_normal = normalize(NormalMatrix * MCnormal);
-    
-    gl_Position = PMatrix * MVMatrix * MCvertex;
- } 
+out vec2 vTextureCoord;
+out vec3 vTransformedNormal;
+out vec4 vPosition;
+
+void main(void) {
+    vTextureCoord = MCtexCoord.xy;
+    vTransformedNormal = NMatrix * MCnormal;
+	
+    vPosition = MVMatrix * MCvertex;
+    gl_Position = PMatrix * vPosition;
+}

@@ -127,9 +127,9 @@ public class GeoSphere extends Model {
                     tCoords3List.add(VectorFMath.normalize(new VecF3((x11 * radius / 2 * radius),
                             (y11 * radius / 2 * radius), (z11 * radius / 2 * radius))));
                 } else {
-                    tCoords3List.add(new VecF3(1 - (flon / flonribs), (flat / flatribs), 0));
-                    tCoords3List.add(new VecF3(1 - ((flon + 1) / flonribs), (flat / flatribs), 0));
-                    tCoords3List.add(new VecF3(1 - ((flon + 1) / flonribs), ((flat + 1) / flatribs), 0));
+                    tCoords3List.add(new VecF3((flon / flonribs), (flat / flatribs), 0));
+                    tCoords3List.add(new VecF3(((flon + 1f) / flonribs), (flat / flatribs), 0));
+                    tCoords3List.add(new VecF3(((flon + 1f) / flonribs), ((flat + 1f) / flatribs), 0));
                 }
 
                 pointsList.add(new VecF4(new VecF3(x00, y00, z00).mul(radius), 1));
@@ -148,9 +148,9 @@ public class GeoSphere extends Model {
                     tCoords3List.add(VectorFMath.normalize(new VecF3((x10 * radius / 2 * radius),
                             (y10 * radius / 2 * radius), (z10 * radius / 2 * radius))));
                 } else {
-                    tCoords3List.add(new VecF3(1 - (flon / flonribs), ((flat / flatribs)), 0));
-                    tCoords3List.add(new VecF3(1 - ((flon + 1) / flonribs), ((flat + 1) / flatribs), 0));
-                    tCoords3List.add(new VecF3(1 - (flon / flonribs), ((flat + 1) / flatribs), 0));
+                    tCoords3List.add(new VecF3((flon / flonribs), ((flat / flatribs)), 0));
+                    tCoords3List.add(new VecF3(((flon + 1f) / flonribs), ((flat + 1f) / flatribs), 0));
+                    tCoords3List.add(new VecF3((flon / flonribs), ((flat + 1f) / flatribs), 0));
                 }
             }
         }
