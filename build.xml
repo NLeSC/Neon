@@ -63,6 +63,11 @@
 			<compilerarg value="-Xlint" />
 		</javac>
 
+		<javac srcdir="examples/realisticearth/src" destdir="build/classes" debug="on">
+			<classpath refid="lib.jars" />
+			<compilerarg value="-Xlint" />
+		</javac>
+
 		<!-- Put everything in classes into the jar file -->
 		<jar jarfile="dist/${ant.project.name}${version}.jar" basedir="build/classes" />
 
