@@ -55,7 +55,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
     /** General Near clipping plane variable needed for a default perspective */
     protected final float zNear = 0.1f;
     /** General Far clipping plane variable needed for a default perspective */
-    protected final float zFar = 3000.0f;
+    protected final float zFar = 30000.0f;
 
     /**
      * A default implementation of the ProgramLoader, needed for programmable

@@ -7,9 +7,11 @@ in vec4 vPosition;
 uniform sampler2D cloudTex;
 uniform sampler2D cloudTransparencyTex;
 
+uniform vec4 lightPos;
+
 void main(void) {
 	vec3 AmbientColor = vec3(0.25,0.25,0.25);
-	vec3 PointLightingLocation = vec3(-30.0,4.0,-20.0);
+	vec3 PointLightingLocation = lightPos.xyz; //vec3(-30.0,4.0,-20.0);
 	vec3 PointLightingDiffuseColor = vec3(0.8,0.8,0.8);
 
     vec3 lightWeighting;
