@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -300,38 +300,9 @@ public class ColormapInterpreter {
             color = colorMap.get(cmEntries - 1);
             color.alpha = alpha;
         } else {
-            float red = 0;
-            float green = 0;
-            float blue = 0;
+            java.awt.Color swingColor = computeInterpolatedColor(colorMap, cmEntries, rawIndex);
 
-            int iLow = (int) Math.floor(rawIndex);
-            int iHigh = (int) Math.ceil(rawIndex);
-
-            Color cLow;
-            if (iLow == cmEntries) {
-                cLow = colorMap.get(cmEntries - 1);
-            } else if (iLow < 0) {
-                cLow = colorMap.get(0);
-            } else {
-                cLow = colorMap.get(iLow);
-            }
-
-            Color cHigh;
-            if (iHigh == cmEntries) {
-                cHigh = colorMap.get(cmEntries - 1);
-            } else if (iHigh < 0) {
-                cHigh = colorMap.get(0);
-            } else {
-                cHigh = colorMap.get(iHigh);
-            }
-
-            float colorInterval = rawIndex - iLow;
-
-            red = getInterpolatedColor(cHigh.red, cLow.red, colorInterval);
-            green = getInterpolatedColor(cHigh.green, cLow.green, colorInterval);
-            blue = getInterpolatedColor(cHigh.blue, cLow.blue, colorInterval);
-
-            color = new Color(red, green, blue, 1f);
+            color = new Color(swingColor.getRed() / 255f, swingColor.getGreen() / 255f, swingColor.getBlue() / 255f, 1f);
         }
 
         return color;
@@ -364,6 +335,13 @@ public class ColormapInterpreter {
         float result = (var - dim.min) / dim.getDiff();
         float rawIndex = result * cmEntries;
 
+        color = computeInterpolatedColor(colorMap, cmEntries, rawIndex);
+
+        return color;
+    }
+
+    private static java.awt.Color computeInterpolatedColor(ArrayList<Color> colorMap, int cmEntries, float rawIndex) {
+        java.awt.Color color;
         float red = 0;
         float green = 0;
         float blue = 0;
@@ -396,7 +374,6 @@ public class ColormapInterpreter {
         blue = getInterpolatedColor(cHigh.blue, cLow.blue, colorInterval);
 
         color = new java.awt.Color(red, green, blue);
-
         return color;
     }
 

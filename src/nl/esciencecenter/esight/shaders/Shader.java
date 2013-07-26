@@ -17,7 +17,7 @@ import com.jogamp.common.nio.Buffers;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -133,83 +133,48 @@ public abstract class Shader {
         String[] words = trimmedLine[0].split("[\\s,;]+");
         if (words[0].compareTo("in") == 0) {
             for (int i = 2; i < words.length; i++) {
-
                 @SuppressWarnings("rawtypes")
-                Class clazz = null;
-                if (words[1].compareTo("vec2") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("vec3") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("vec4") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("float") == 0) {
-                    clazz = Float.class;
-                } else if (words[1].compareTo("sampler2D") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("sampler3D") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("int") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("mat3") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("mat4") == 0) {
-                    clazz = FloatBuffer.class;
-                }
+                Class clazz = extractShaderParameterType(words[1]);
                 ins.put(words[i], clazz);
             }
         } else if (words[0].compareTo("out") == 0) {
             for (int i = 2; i < words.length; i++) {
-
                 @SuppressWarnings("rawtypes")
-                Class clazz = null;
-                if (words[1].compareTo("vec2") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("vec3") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("vec4") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("float") == 0) {
-                    clazz = Float.class;
-                } else if (words[1].compareTo("int") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("sampler2D") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("sampler3D") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("mat3") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("mat4") == 0) {
-                    clazz = FloatBuffer.class;
-                }
+                Class clazz = extractShaderParameterType(words[1]);
                 outs.put(words[i], clazz);
             }
         } else if (words[0].compareTo("uniform") == 0) {
             for (int i = 2; i < words.length; i++) {
-
                 @SuppressWarnings("rawtypes")
-                Class clazz = null;
-                if (words[1].compareTo("vec2") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("vec3") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("vec4") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("float") == 0) {
-                    clazz = Float.class;
-                } else if (words[1].compareTo("int") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("sampler2D") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("sampler3D") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("mat3") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("mat4") == 0) {
-                    clazz = FloatBuffer.class;
-                }
+                Class clazz = extractShaderParameterType(words[1]);
                 uniforms.put(words[i], clazz);
             }
         }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private Class extractShaderParameterType(String word) {
+        Class clazz = null;
+        if (word.compareTo("vec2") == 0) {
+            clazz = FloatBuffer.class;
+        } else if (word.compareTo("vec3") == 0) {
+            clazz = FloatBuffer.class;
+        } else if (word.compareTo("vec4") == 0) {
+            clazz = FloatBuffer.class;
+        } else if (word.compareTo("float") == 0) {
+            clazz = Float.class;
+        } else if (word.compareTo("sampler2D") == 0) {
+            clazz = Integer.class;
+        } else if (word.compareTo("sampler3D") == 0) {
+            clazz = Integer.class;
+        } else if (word.compareTo("int") == 0) {
+            clazz = Integer.class;
+        } else if (word.compareTo("mat3") == 0) {
+            clazz = FloatBuffer.class;
+        } else if (word.compareTo("mat4") == 0) {
+            clazz = FloatBuffer.class;
+        }
+        return clazz;
     }
 
     /**
