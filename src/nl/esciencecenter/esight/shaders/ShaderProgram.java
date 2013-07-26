@@ -74,12 +74,12 @@ public class ShaderProgram {
     private GeometryShader gs;
     private final FragmentShader fs;
 
-    private final HashMap<String, FloatBuffer> uniformFloatMatrices;
-    private final HashMap<String, FloatBuffer> uniformFloatVectors;
-    private final HashMap<String, ShortBuffer> uniformShortVectors;
-    private final HashMap<String, Boolean> uniformBooleans;
-    private final HashMap<String, Integer> uniformInts;
-    private final HashMap<String, Float> uniformFloats;
+    private final Map<String, FloatBuffer> uniformFloatMatrices;
+    private final Map<String, FloatBuffer> uniformFloatVectors;
+    private final Map<String, ShortBuffer> uniformShortVectors;
+    private final Map<String, Boolean> uniformBooleans;
+    private final Map<String, Integer> uniformInts;
+    private final Map<String, Float> uniformFloats;
 
     private boolean geometry_enabled = false;
     private boolean warningsGiven = false;
@@ -181,8 +181,8 @@ public class ShaderProgram {
      */
     @SuppressWarnings("rawtypes")
     private boolean checkCompatibility(Shader vs, Shader fs) {
-        HashMap<String, Class> outs = vs.getOuts();
-        HashMap<String, Class> ins = fs.getIns();
+        Map<String, Class> outs = vs.getOuts();
+        Map<String, Class> ins = fs.getIns();
 
         boolean compatible = true;
 
@@ -226,8 +226,8 @@ public class ShaderProgram {
      */
     @SuppressWarnings("rawtypes")
     private boolean checkUniforms(Shader vs, Shader fs) {
-        HashMap<String, Class> vsUniforms = vs.getUniforms();
-        HashMap<String, Class> fsUniforms = fs.getUniforms();
+        Map<String, Class> vsUniforms = vs.getUniforms();
+        Map<String, Class> fsUniforms = fs.getUniforms();
 
         boolean allPresent = true;
 
@@ -273,7 +273,7 @@ public class ShaderProgram {
      */
     @SuppressWarnings("rawtypes")
     private boolean checkIns(Shader vs, GLSLAttrib... attribs) {
-        HashMap<String, Class> vsIns = vs.getIns();
+        Map<String, Class> vsIns = vs.getIns();
         boolean allPresent = true;
 
         if (!warningsGiven || logger.isDebugEnabled()) {

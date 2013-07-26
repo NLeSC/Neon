@@ -171,55 +171,6 @@ public class Noise {
         return cosInterpolate(i1, i2, fracY);
     }
 
-    // private float cubicInterpolatedNoise(float xf, float yf) {
-    // int x = (int) xf;
-    // int y = (int) yf;
-    // float fracX = xf - x;
-    // float fracY = yf - y;
-    //
-    // float noiseCurvePointX0Y0 = smoothNoise(x, y);
-    // float noiseCurvePointX1Y0 = smoothNoise(x + 1, y);
-    // float noiseCurvePointX2Y0 = smoothNoise(x + 2, y);
-    // float noiseCurvePointX3Y0 = smoothNoise(x + 3, y);
-    //
-    // float noiseCurvePointX0Y1 = smoothNoise(x, y + 1);
-    // float noiseCurvePointX1Y1 = smoothNoise(x + 1, y + 1);
-    // float noiseCurvePointX2Y1 = smoothNoise(x + 2, y + 1);
-    // float noiseCurvePointX3Y1 = smoothNoise(x + 3, y + 1);
-    //
-    // float noiseCurvePointX0Y2 = smoothNoise(x, y + 2);
-    // float noiseCurvePointX1Y2 = smoothNoise(x + 1, y + 2);
-    // float noiseCurvePointX2Y2 = smoothNoise(x + 2, y + 2);
-    // float noiseCurvePointX3Y2 = smoothNoise(x + 3, y + 2);
-    //
-    // float noiseCurvePointX0Y3 = smoothNoise(x, y + 3);
-    // float noiseCurvePointX1Y3 = smoothNoise(x + 1, y + 3);
-    // float noiseCurvePointX2Y3 = smoothNoise(x + 2, y + 3);
-    // float noiseCurvePointX3Y3 = smoothNoise(x + 3, y + 3);
-    //
-    // float iY0 = cubicInterpolate(noiseCurvePointX0Y0, noiseCurvePointX1Y0,
-    // noiseCurvePointX2Y0,
-    // noiseCurvePointX3Y0, fracX);
-    // float iY1 = cubicInterpolate(noiseCurvePointX0Y1, noiseCurvePointX1Y1,
-    // noiseCurvePointX2Y1,
-    // noiseCurvePointX3Y1, fracX);
-    // float iY2 = cubicInterpolate(noiseCurvePointX0Y2, noiseCurvePointX1Y2,
-    // noiseCurvePointX2Y2,
-    // noiseCurvePointX3Y2, fracX);
-    // float iY3 = cubicInterpolate(noiseCurvePointX0Y3, noiseCurvePointX1Y3,
-    // noiseCurvePointX2Y3,
-    // noiseCurvePointX3Y3, fracX);
-    //
-    // float iX0 = cubicInterpolate(noiseCurvePointX0Y0, noiseCurvePointX1Y0,
-    // noiseCurvePointX2Y0,
-    // noiseCurvePointX3Y0, fracX);
-    //
-    // float i1 = cosInterpolate(noiseCurvePointx0, noiseCurvePointx1, fracX);
-    // float i2 = cosInterpolate(noiseCurvePoint01, noiseCurvePoint11, fracX);
-    //
-    // return cosInterpolate(i1, i2, fracY);
-    // }
-
     private float smoothNoise(int x, int y) {
         float corners = (noise2(x - 1, y - 1) + noise2(x + 1, y - 1) + noise2(x - 1, y + 1) + noise2(x + 1, y + 1)) / 16f;
         float sides = (noise2(x - 1, y) + noise2(x + 1, y) + noise2(x, y - 1) + noise2(x, y + 1)) / 8f;

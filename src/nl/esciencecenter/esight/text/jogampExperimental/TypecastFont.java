@@ -54,14 +54,14 @@ public class TypecastFont implements FontInt {
     final CmapFormat cmapFormat;
     int cmapentries;
 
-    // FIXME: Add cache size to limit memory usage ??
+    // Add cache size to limit memory usage ??
     IntObjectHashMap char2Glyph;
 
     public TypecastFont(OTFontCollection fontset) {
         this.fontset = fontset;
         this.font = fontset.getFont(0);
 
-        // FIXME: Generic attempt to find the best CmapTable,
+        // Generic attempt to find the best CmapTable,
         // which is assumed to be the one with the most entries (stupid 'eh?)
         CmapTable cmapTable = font.getCmapTable();
         CmapFormat[] _cmapFormatP = { null, null, null, null };
@@ -93,11 +93,7 @@ public class TypecastFont implements FontInt {
             }
         } else {
             CmapFormat _cmapFormat = null;
-            /*
-             * if(null == _cmapFormat) { platform = ID.platformMacintosh;
-             * encoding = ID.encodingASCII; _cmapFormat =
-             * cmapTable.getCmapFormat(platform, encoding); }
-             */
+
             if (null == _cmapFormat) {
                 // default unicode
                 platform = ID.platformMicrosoft;
@@ -212,17 +208,9 @@ public class TypecastFont implements FontInt {
             }
             final HdmxTable hdmx = font.getHdmxTable();
             if (null != result && null != hdmx) {
-                /*
-                 * if(DEBUG) { System.err.println("hdmx "+hdmx); }
-                 */
                 for (int i = 0; i < hdmx.getNumberOfRecords(); i++) {
                     final HdmxTable.DeviceRecord dr = hdmx.getRecord(i);
                     result.addAdvance(dr.getWidth(code), dr.getPixelSize());
-                    /*
-                     * if(DEBUG) {
-                     * System.err.println("hdmx advance : pixelsize = "
-                     * +dr.getWidth(code)+" : "+ dr.getPixelSize()); }
-                     */
                 }
             }
             char2Glyph.put(symbol, result);

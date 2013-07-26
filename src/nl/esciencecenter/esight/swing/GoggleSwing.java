@@ -59,8 +59,8 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class ButtonBoxItem {
-        public String label;
-        public ActionListener listener;
+        private final String label;
+        private final ActionListener listener;
 
         public ButtonBoxItem(String label, ActionListener listener) {
             this.label = label;
@@ -75,8 +75,8 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class RadioBoxItem {
-        public String label;
-        public ActionListener listener;
+        private final String label;
+        private final ActionListener listener;
 
         public RadioBoxItem(String label, ActionListener listener) {
             this.label = label;
@@ -91,10 +91,10 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class CheckBoxItem {
-        public String label;
+        private final String label;
 
-        public boolean selection;
-        public ItemListener listener;
+        private final boolean selection;
+        private final ItemListener listener;
 
         public CheckBoxItem(String label, boolean selection, ItemListener listener) {
             this.label = label;
@@ -110,10 +110,10 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class ColoredCheckBoxItem {
-        public String label;
-        public Color color;
-        public boolean selection;
-        public ItemListener listener;
+        private final String label;
+        private final Color color;
+        private final boolean selection;
+        private final ItemListener listener;
 
         public ColoredCheckBoxItem(String label, Color color, boolean selection, ItemListener listener) {
             this.label = label;
@@ -130,8 +130,8 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class DropdownBoxItem {
-        public String label;
-        public ActionListener listener;
+        private final String label;
+        private final ActionListener listener;
 
         public DropdownBoxItem(String itemLabel, ActionListener listener) {
             this.label = itemLabel;
@@ -146,9 +146,9 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class DropdownBoxesBoxItem {
-        public String label;
-        public String selectedOption;
-        public DropdownBoxItem[] items;
+        private final String label;
+        private final String selectedOption;
+        private final DropdownBoxItem[] items;
 
         public DropdownBoxesBoxItem(String boxLabel, String selectedOption, DropdownBoxItem... items) {
             this.label = boxLabel;

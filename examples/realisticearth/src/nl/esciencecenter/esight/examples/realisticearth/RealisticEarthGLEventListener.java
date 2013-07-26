@@ -75,8 +75,9 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
     private int canvasWidth, canvasHeight;
 
     // Variables needed to calculate the viewpoint and camera angle.
-    final Point4 eye = new Point4((float) (radius * Math.sin(ftheta) * Math.cos(phi)), (float) (radius
-            * Math.sin(ftheta) * Math.sin(phi)), (float) (radius * Math.cos(ftheta)), 1.0f);
+    final Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())),
+            (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
+            (float) (getRadius() * Math.cos(getFtheta())), 1.0f);
     final Point4 at = new Point4(0.0f, 0.0f, 0.0f, 1.0f);
     final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -89,12 +90,12 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
     public RealisticEarthGLEventListener() {
         super();
 
-        inputRotationX = settings.getInitialRotationX();
-        inputRotationY = settings.getInitialRotationY();
-        inputViewDistance = settings.getInitialZoom();
+        setInputRotationX(settings.getInitialRotationX());
+        setInputRotationY(settings.getInitialRotationY());
+        setInputViewDistance(settings.getInitialZoom());
 
-        inputHandler.setRotation(new VecF3(inputRotationX, inputRotationY, 0.0f));
-        inputHandler.setViewDist(inputViewDistance);
+        inputHandler.setRotation(new VecF3(getInputRotationX(), getInputRotationY(), 0.0f));
+        inputHandler.setViewDist(getInputViewDistance());
 
     }
 
@@ -120,7 +121,7 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         // set the canvas size and aspect ratio in the global variables.
         canvasWidth = GLContext.getCurrent().getGLDrawable().getWidth();
         canvasHeight = GLContext.getCurrent().getGLDrawable().getHeight();
-        aspect = (float) canvasWidth / (float) canvasHeight;
+        setAspect((float) canvasWidth / (float) canvasHeight);
 
         // Enable Anti-Aliasing (smoothing of jagged edges on the edges of
         // objects).
@@ -159,17 +160,17 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
             // Create the ShaderProgram that we're going to use for the Example
             // Axes. The source code for the VertexShader: shaders/vs_axes.vp,
             // and the source code for the FragmentShader: shaders/fs_axes.fp
-            shaderProgram_Universe = loader.createProgram(gl, "shaderProgram_Universe", new File(
+            shaderProgram_Universe = getLoader().createProgram(gl, "shaderProgram_Universe", new File(
                     "shaders/vs_texture.vp"), new File("shaders/fs_texture.fp"));
 
-            shaderProgram_Earth = loader.createProgram(gl, "shaderProgram_Earth", new File(
+            shaderProgram_Earth = getLoader().createProgram(gl, "shaderProgram_Earth", new File(
                     "shaders/vs_perFragmentLighting.vp"), new File("shaders/fs_perFragmentLighting.fp"));
 
-            shaderProgram_Atmosphere = loader.createProgram(gl, "shaderProgram_Atmosphere", new File(
+            shaderProgram_Atmosphere = getLoader().createProgram(gl, "shaderProgram_Atmosphere", new File(
                     "shaders/vs_atmosphere.vp"), new File("shaders/fs_atmosphere.fp"));
 
             // Same for the postprocessing shader.
-            postprocessShader = loader.createProgram(gl, "postProcess", new File("shaders/vs_postprocess.vp"),
+            postprocessShader = getLoader().createProgram(gl, "postProcess", new File("shaders/vs_postprocess.vp"),
                     new File("shaders/fs_ColormapExamplePostprocess.fp"));
         } catch (final Exception e) {
             // If compilation fails, we will output the error message and quit
@@ -280,7 +281,7 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
     }
 
     private MatF4 makePerspectiveMatrix() {
-        return MatrixFMath.perspective(fovy, aspect, zNear, zFar);
+        return MatrixFMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
     }
 
     /**
@@ -532,7 +533,7 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         // set the new canvas size and aspect ratio in the global variables.
         canvasWidth = GLContext.getCurrent().getGLDrawable().getWidth();
         canvasHeight = GLContext.getCurrent().getGLDrawable().getHeight();
-        aspect = (float) canvasWidth / (float) canvasHeight;
+        setAspect((float) canvasWidth / (float) canvasHeight);
 
         // Resize the FrameBuffer Objects that we use for intermediate stages.
         sceneFBO.delete(gl);
@@ -577,7 +578,7 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         // Let the ShaderProgramLoader clean up. This deletes all of the
         // ShaderProgram instances as well.
         try {
-            loader.cleanup(gl);
+            getLoader().cleanup(gl);
         } catch (UninitializedException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();

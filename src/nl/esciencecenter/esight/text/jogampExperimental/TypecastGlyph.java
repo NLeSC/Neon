@@ -37,9 +37,9 @@ import com.jogamp.opengl.math.geom.AABBox;
 
 public class TypecastGlyph implements FontInt.Glyph {
     public class Advance {
-        final Font font;
-        final float advance;
-        HashMap<Float, Float> size2advance = new HashMap<Float, Float>();
+        private final Font font;
+        private final float advance;
+        private final HashMap<Float, Float> size2advance = new HashMap<Float, Float>();
 
         public Advance(Font font, float advance) {
             this.font = font;
@@ -80,8 +80,8 @@ public class TypecastGlyph implements FontInt.Glyph {
     }
 
     public class Metrics {
-        AABBox bbox;
-        Advance advance;
+        private final AABBox bbox;
+        private final Advance advance;
 
         public Metrics(Font font, AABBox bbox, float advance) {
             this.bbox = bbox;
@@ -119,14 +119,14 @@ public class TypecastGlyph implements FontInt.Glyph {
 
     private final Font font;
 
-    char symbol;
-    short id;
-    int advance;
-    Metrics metrics;
+    private final char symbol;
+    private short id;
+    private int advance;
+    private Metrics metrics;
 
-    protected Path2D path; // in EM units
-    protected Path2D pathSized;
-    protected float numberSized;
+    private Path2D path; // in EM units
+    private Path2D pathSized;
+    private float numberSized;
 
     protected TypecastGlyph(Font font, char symbol) {
         this.font = font;

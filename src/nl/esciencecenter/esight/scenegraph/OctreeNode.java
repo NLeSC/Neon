@@ -49,32 +49,32 @@ public class OctreeNode {
      * The maximum number of elements this node may contain before subdivision
      * occurs.
      */
-    protected final int maxElements;
+    private final int maxElements;
     /** The stored elements. */
-    protected final ArrayList<OctreeElement> elements;
+    private final ArrayList<OctreeElement> elements;
     /** The center location for this node. */
-    protected final VecF3 center;
+    private final VecF3 center;
     /** The size of the ribs of the cube this node represents. */
-    protected final float ribSize;
+    private final float ribSize;
     /** The depth of this node in the octree. */
-    protected final int depth;
+    private final int depth;
     /** The model to be used if this node is drawn. */
-    protected final Model model;
+    private final Model model;
     /** The translation matrix for this node. */
-    protected final MatF4 TMatrix;
+    private final MatF4 TMatrix;
     /** The scale for this node's graphical representation. */
-    protected final float scale;
+    private final float scale;
 
     /** The (potential) child nodes. */
-    protected OctreeNode ppp, ppn, pnp, pnn, npp, npn, nnp, nnn;
+    private OctreeNode ppp, ppn, pnp, pnn, npp, npn, nnp, nnn;
     /** Subdivision state holder. */
-    protected boolean subdivided = false;
+    private boolean subdivided = false;
     /** OpenGL initialization state holder. */
-    protected boolean initialized = false;
+    private boolean initialized = false;
     /** State holder for finalization step. */
-    protected boolean drawable = false;
+    private boolean drawable = false;
     /** The color for the drawable model. */
-    protected VecF4 color;
+    private VecF4 color;
 
     /**
      * Basic constructor for OctreeNode
@@ -186,7 +186,7 @@ public class OctreeNode {
      * the proper children. After this method is called, this Node only acts as
      * a throughput, delegating all calls to its children.
      */
-    protected void subdivide() {
+    private void subdivide() {
         float childRibSize = ribSize / 2f;
         int newDepth = depth + 1;
 
@@ -376,7 +376,7 @@ public class OctreeNode {
      * @param MVMatrix
      *            the global Modelview Matrix.
      */
-    protected void draw_sorted(GL3 gl, ShaderProgram program, MatF4 MVMatrix) {
+    private void draw_sorted(GL3 gl, ShaderProgram program, MatF4 MVMatrix) {
         InputHandler inputHandler = InputHandler.getInstance();
 
         try {

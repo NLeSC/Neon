@@ -149,24 +149,4 @@ public class VecF2 extends VectorF {
     public VecF2 clone() {
         return new VecF2(this);
     }
-
-    // @Override
-    // public int hashCode() {
-    // int hashCode = (int) (v[0] + 23 * 6833 + v[1] + 7 * 7207);
-    // return hashCode;
-    // }
-    //
-    // @Override
-    // public boolean equals(Object thatObject) {
-    // if (this == thatObject)
-    // return true;
-    // if (!(thatObject instanceof VecF2))
-    // return false;
-    //
-    // // cast to native object is now safe
-    // VecF2 that = (VecF2) thatObject;
-    //
-    // // now a proper field-by-field evaluation can be made
-    // return (v[0] == that.v[0] && v[1] == that.v[1]);
-    // }
 }

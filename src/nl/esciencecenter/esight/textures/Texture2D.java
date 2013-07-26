@@ -59,7 +59,6 @@ public abstract class Texture2D extends Texture {
             }
 
             // Tell OpenGL we want to use 2D textures
-            // gl.glEnable(GL3.GL_TEXTURE_2D);
             gl.glActiveTexture(glMultiTexUnit);
 
             // Create a Texture Object
@@ -95,7 +94,6 @@ public abstract class Texture2D extends Texture {
             init(gl);
         }
 
-        // gl.glEnable(GL3.GL_TEXTURE_2D);
         gl.glActiveTexture(glMultiTexUnit);
         gl.glBindTexture(GL3.GL_TEXTURE_2D, getPointer());
     }
@@ -103,13 +101,4 @@ public abstract class Texture2D extends Texture {
     public void unBind(GL3 gl) {
         gl.glBindTexture(GL3.GL_TEXTURE_2D, 0);
     }
-
-    // public Texture2D copy(GL3 gl, int glMultitexUnit) {
-    // Texture2D result = new Texture2D(glMultitexUnit);
-    // result.pixelBuffer = pixelBuffer.duplicate();
-    // result.init(gl);
-    //
-    // return result;
-    // }
-
 }

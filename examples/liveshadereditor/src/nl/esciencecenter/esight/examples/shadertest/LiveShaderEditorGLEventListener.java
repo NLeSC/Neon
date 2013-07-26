@@ -254,10 +254,10 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
 
         // TEXT
         myText = new MultiColorText(font);
-        baseColor = Color4.green;
+        baseColor = Color4.GREEN;
 
         final String text = "";
-        myText.setString(gl, text, Color4.white, fontSize);
+        myText.setString(gl, text, Color4.WHITE, fontSize);
         myText.init(gl);
 
         // FULL SCREEN QUADS
@@ -301,7 +301,7 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
         String selection = myInputHandler.getSelectedText();
         int selectionIndex = myInputHandler.getSelectedTextIndex();
         myText.setSubstringColors(gl, inputHandler.getSyntaxColors());
-        myText.setSubstringAtIndexColor(gl, selectionIndex, selection, Color4.cyan);
+        myText.setSubstringAtIndexColor(gl, selectionIndex, selection, Color4.CYAN);
         myText.finalizeColorScheme(gl);
     }
 
@@ -312,7 +312,7 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
 
         reCompile(gl);
 
-        liveShader.setUniformVector("Color", Color4.red);
+        liveShader.setUniformVector("Color", Color4.RED);
 
         noiseTex.use(gl);
         liveShader.setUniform("Noise", noiseTex.getMultitexNumber());
@@ -425,7 +425,7 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
                 editedShader = liveShader;
                 newCompilerMessage = e.getMessage();
 
-                baseColor = Color4.yellow;
+                baseColor = Color4.YELLOW;
             }
             if (editedShader != liveShader) {
                 newCompilerMessage = "New Shader compiled succesfully!";
@@ -439,7 +439,7 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
                 liveShader.setUniformMatrix("SMatrix", MatrixFMath.scale(1));
                 temp.delete(gl);
 
-                baseColor = Color4.green;
+                baseColor = Color4.GREEN;
             }
             if (newCompilerMessage.compareTo(compilerMessage) != 0) {
                 System.out.println(newCompilerMessage);

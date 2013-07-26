@@ -99,8 +99,9 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
     private int canvasWidth, canvasHeight;
 
     // Variables needed to calculate the viewpoint and camera angle.
-    final Point4 eye = new Point4((float) (radius * Math.sin(ftheta) * Math.cos(phi)), (float) (radius
-            * Math.sin(ftheta) * Math.sin(phi)), (float) (radius * Math.cos(ftheta)), 1.0f);
+    final Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())),
+            (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
+            (float) (getRadius() * Math.cos(getFtheta())), 1.0f);
     final Point4 at = new Point4(0.0f, 0.0f, 0.0f, 1.0f);
     final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -116,12 +117,12 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
     public ColormapExampleGLEventListener() {
         super();
 
-        inputRotationX = settings.getInitialRotationX();
-        inputRotationY = settings.getInitialRotationY();
-        inputViewDistance = settings.getInitialZoom();
+        setInputRotationX(settings.getInitialRotationX());
+        setInputRotationY(settings.getInitialRotationY());
+        setInputViewDistance(settings.getInitialZoom());
 
-        inputHandler.setRotation(new VecF3(inputRotationX, inputRotationY, 0.0f));
-        inputHandler.setViewDist(inputViewDistance);
+        inputHandler.setRotation(new VecF3(getInputRotationX(), getInputRotationY(), 0.0f));
+        inputHandler.setViewDist(getInputViewDistance());
 
     }
 
@@ -147,7 +148,7 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
         // set the canvas size and aspect ratio in the global variables.
         canvasWidth = GLContext.getCurrent().getGLDrawable().getWidth();
         canvasHeight = GLContext.getCurrent().getGLDrawable().getHeight();
-        aspect = (float) canvasWidth / (float) canvasHeight;
+        setAspect((float) canvasWidth / (float) canvasHeight);
 
         // Enable Anti-Aliasing (smoothing of jagged edges on the edges of
         // objects).
@@ -186,14 +187,14 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
             // Create the ShaderProgram that we're going to use for the Example
             // Axes. The source code for the VertexShader: shaders/vs_axes.vp,
             // and the source code for the FragmentShader: shaders/fs_axes.fp
-            textureShaderProgram = loader.createProgram(gl, "texture", new File("shaders/vs_texture.vp"), new File(
-                    "shaders/fs_texture.fp"));
+            textureShaderProgram = getLoader().createProgram(gl, "texture", new File("shaders/vs_texture.vp"),
+                    new File("shaders/fs_texture.fp"));
             // Do the same for the text shader
-            textShaderProgram = loader.createProgram(gl, "text", new File("shaders/vs_multiColorTextShader.vp"),
+            textShaderProgram = getLoader().createProgram(gl, "text", new File("shaders/vs_multiColorTextShader.vp"),
                     new File("shaders/fs_multiColorTextShader.fp"));
 
             // Same for the postprocessing shader.
-            postprocessShader = loader.createProgram(gl, "postProcess", new File("shaders/vs_postprocess.vp"),
+            postprocessShader = getLoader().createProgram(gl, "postProcess", new File("shaders/vs_postprocess.vp"),
                     new File("shaders/fs_ColormapExamplePostprocess.fp"));
         } catch (final Exception e) {
             // If compilation fails, we will output the error message and quit
@@ -224,7 +225,7 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
         // which is another term for an interface that doesn't move with the
         // scene.
         String text = "Example text";
-        hudText = new MultiColorText(gl, font, text, Color4.white, fontSize);
+        hudText = new MultiColorText(gl, getFont(), text, Color4.WHITE, fontSize);
         hudText.init(gl);
 
         // Here we define the Full screen quad model (for postprocessing), and
@@ -316,7 +317,7 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
     }
 
     private MatF4 makePerspectiveMatrix() {
-        return MatrixFMath.perspective(fovy, aspect, zNear, zFar);
+        return MatrixFMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
     }
 
     /**
@@ -480,7 +481,7 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
     private void renderHUDText(GL3 gl, MatF4 mv, ShaderProgram program, FBO target) throws UninitializedException {
         // Set a new text for the string
         String randomString = "Colormap test, random: " + Math.random();
-        hudText.setString(gl, randomString, Color4.white, fontSize);
+        hudText.setString(gl, randomString, Color4.WHITE, fontSize);
 
         // Bind the FrameBufferObject so we can start rendering to it
         target.bind(gl);
@@ -562,7 +563,7 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
         // set the new canvas size and aspect ratio in the global variables.
         canvasWidth = GLContext.getCurrent().getGLDrawable().getWidth();
         canvasHeight = GLContext.getCurrent().getGLDrawable().getHeight();
-        aspect = (float) canvasWidth / (float) canvasHeight;
+        setAspect((float) canvasWidth / (float) canvasHeight);
 
         // Resize the FrameBuffer Objects that we use for intermediate stages.
         sceneFBO.delete(gl);
@@ -614,7 +615,7 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
         // Let the ShaderProgramLoader clean up. This deletes all of the
         // ShaderProgram instances as well.
         try {
-            loader.cleanup(gl);
+            getLoader().cleanup(gl);
         } catch (UninitializedException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();

@@ -96,18 +96,6 @@ public class VectorList extends ArrayList<Vector> {
             result.rewind();
 
             return result;
-            // } else if (type == Vector.Type.SHORT) {
-            // ShortBuffer result = Buffers.newDirectShortBuffer(size() *
-            // vectorSize);
-            //
-            // while (iterator().hasNext()) {
-            // VectorS vs = (VectorS) iterator().next();
-            // result.put(vs.asBuffer());
-            // }
-            //
-            // result.rewind();
-            //
-            // return result;
         } else {
             logger.error("ERROR: unimplemented VectorList toBuffer type.");
             return null;

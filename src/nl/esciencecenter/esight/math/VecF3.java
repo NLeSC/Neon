@@ -167,25 +167,4 @@ public class VecF3 extends VectorF {
     public VecF3 clone() {
         return new VecF3(this);
     }
-
-    // @Override
-    // public int hashCode() {
-    // int hashCode = (int) (v[0] + 23 * 6833 + v[1] + 7 * 7207 + v[2] + 11 *
-    // 7919);
-    // return hashCode;
-    // }
-    //
-    // @Override
-    // public boolean equals(Object thatObject) {
-    // if (this == thatObject)
-    // return true;
-    // if (!(thatObject instanceof VecF3))
-    // return false;
-    //
-    // // cast to native object is now safe
-    // VecF3 that = (VecF3) thatObject;
-    //
-    // // now a proper field-by-field evaluation can be made
-    // return (v[0] == that.v[0] && v[1] == that.v[1] && v[2] == that.v[2]);
-    // }
 }

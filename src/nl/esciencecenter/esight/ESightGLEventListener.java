@@ -41,62 +41,62 @@ import nl.esciencecenter.esight.text.jogampExperimental.FontFactory;
  */
 public abstract class ESightGLEventListener implements GLEventListener {
     /** General radius variable needed for lookAt method */
-    protected final float radius = 1.0f;
+    private final float radius = 1.0f;
     /** General ftheta variable needed for lookAt method */
-    protected final float ftheta = 0.0f;
+    private final float ftheta = 0.0f;
     /** General phi variable needed for lookAt method */
-    protected final float phi = 0.0f;
+    private final float phi = 0.0f;
 
     /**
      * General Field of View Y-direction variable needed for a default
      * perspective
      */
-    protected final float fovy = 45.0f;
+    private final float fovy = 45.0f;
     /** General Near clipping plane variable needed for a default perspective */
-    protected final float zNear = 0.1f;
+    private final float zNear = 0.1f;
     /** General Far clipping plane variable needed for a default perspective */
-    protected final float zFar = 30000.0f;
+    private final float zFar = 30000.0f;
 
     /**
      * A default implementation of the ProgramLoader, needed for programmable
      * shader functionality
      */
-    protected final ShaderProgramLoader loader;
+    private final ShaderProgramLoader loader;
 
     /**
      * Aspect ratio variable, normally set by the reshape function
      */
-    protected float aspect;
+    private float aspect;
 
     /** Ubuntu fontset is used for HUD elements */
-    protected int fontSet = FontFactory.UBUNTU;
+    private final int fontSet = FontFactory.UBUNTU;
     /** font is used for HUD elements @see fontSet */
-    protected Font font;
+    private final Font font;
 
     /**
      * This variable is used (among others) in the lookAt helper function to
      * define the ModelView matrix, if no inputHandler was specified when
      * constructing this class.
      */
-    protected float inputRotationX;
+    private float inputRotationX;
     /**
      * This variable is used (among others) in the lookAt helper function to
      * define the ModelView matrix, if no inputHandler was specified when
      * constructing this class.
      */
-    protected float inputRotationY;
+    private float inputRotationY;
     /**
      * This variable is used (among others) in the lookAt helper function to
      * define the ModelView matrix, if no inputHandler was specified when
      * constructing this class.
      */
-    protected float inputViewDistance;
+    private float inputViewDistance;
 
     /**
      * This inputHandler is used to define the Modelview Matrix in the lookAt
      * helper function if it is specified upon constructing this class.
      */
-    protected InputHandler inputHandler;
+    private InputHandler inputHandler;
 
     /**
      * Creates a new GLEventListener
@@ -197,8 +197,8 @@ public abstract class ESightGLEventListener implements GLEventListener {
      *         at coordinates (0,0,0).
      */
     public MatF4 lookAt() {
-        Point4 eye = new Point4((float) (radius * Math.sin(ftheta) * Math.cos(phi)),
-                (float) (radius * Math.sin(ftheta) * Math.sin(phi)), (float) (radius * Math.cos(ftheta)), 1.0f);
+        Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())),
+                (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())), (float) (getRadius() * Math.cos(getFtheta())), 1.0f);
         Point4 at = new Point4(0.0f, 0.0f, 0.0f, 1.0f);
         VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -225,7 +225,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
      *         frustum.
      */
     public MatF4 perspective() {
-        return MatrixFMath.perspective(fovy, aspect, zNear, zFar);
+        return MatrixFMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
 
     }
 
@@ -237,7 +237,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
 
         int width = drawable.getWidth();
         int height = drawable.getHeight();
-        aspect = (float) width / (float) height;
+        setAspect((float) width / (float) height);
 
         gl.glViewport(0, 0, width, height);
 
@@ -252,7 +252,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
         final GL3 gl = drawable.getGL().getGL3();
 
         try {
-            loader.cleanup(gl);
+            getLoader().cleanup(gl);
         } catch (UninitializedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -328,5 +328,45 @@ public abstract class ESightGLEventListener implements GLEventListener {
      */
     public void setInputViewDistance(float inputViewDistance) {
         this.inputViewDistance = inputViewDistance;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public float getFtheta() {
+        return ftheta;
+    }
+
+    public float getPhi() {
+        return phi;
+    }
+
+    public float getAspect() {
+        return aspect;
+    }
+
+    public void setAspect(float aspect) {
+        this.aspect = aspect;
+    }
+
+    public ShaderProgramLoader getLoader() {
+        return loader;
+    }
+
+    public float getFovy() {
+        return fovy;
+    }
+
+    public float getzNear() {
+        return zNear;
+    }
+
+    public float getzFar() {
+        return zFar;
+    }
+
+    public Font getFont() {
+        return font;
     }
 }

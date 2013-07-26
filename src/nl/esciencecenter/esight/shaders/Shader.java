@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import javax.media.opengl.GL3;
@@ -47,7 +48,7 @@ public abstract class Shader {
     private final String[] source;
 
     @SuppressWarnings("rawtypes")
-    private final HashMap<String, Class> ins, outs, uniforms;
+    private final Map<String, Class> ins, outs, uniforms;
 
     /**
      * The OpenGL-internal pointer of this shader, set by initializing said
@@ -264,7 +265,7 @@ public abstract class Shader {
      *         types) of this shader.
      */
     @SuppressWarnings("rawtypes")
-    public HashMap<String, Class> getIns() {
+    public Map<String, Class> getIns() {
         return ins;
     }
 
@@ -275,7 +276,7 @@ public abstract class Shader {
      *         types) of this shader.
      */
     @SuppressWarnings("rawtypes")
-    public HashMap<String, Class> getOuts() {
+    public Map<String, Class> getOuts() {
         return outs;
     }
 
@@ -286,7 +287,7 @@ public abstract class Shader {
      *         this shader.
      */
     @SuppressWarnings("rawtypes")
-    public HashMap<String, Class> getUniforms() {
+    public Map<String, Class> getUniforms() {
         return uniforms;
     }
 

@@ -9,7 +9,7 @@ import nl.esciencecenter.esight.math.VectorFMath;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -63,8 +63,8 @@ public class GeoSphere extends Model {
             for (int lat = 0; lat < latRibs; lat++) {
                 VecF3[] quad = makeQuad(lat, lon, radius);
 
-                points4List.addAll(makeVertices(quad, lat, lon));
-                normals3List.addAll(makeNormals(quad, lat, lon));
+                points4List.addAll(makeVertices(quad));
+                normals3List.addAll(makeNormals(quad));
                 tCoords3List.addAll(makeTexCoords(quad, lat, lon));
             }
         }
@@ -135,7 +135,7 @@ public class GeoSphere extends Model {
      *            The radius of the sphere.
      * @return The vertex coordinates corresponding to the given quad.
      */
-    private List<VecF4> makeVertices(VecF3[] quad, int latRib, int lonRib) {
+    private List<VecF4> makeVertices(VecF3[] quad) {
         List<VecF4> vertices = new ArrayList<VecF4>();
 
         vertices.add(new VecF4(quad[0], 1f));
@@ -162,7 +162,7 @@ public class GeoSphere extends Model {
      *            The radius of the sphere.
      * @return The normals corresponding to the given quad.
      */
-    private List<VecF3> makeNormals(VecF3[] quad, int latRib, int lonRib) {
+    private List<VecF3> makeNormals(VecF3[] quad) {
         List<VecF3> normals = new ArrayList<VecF3>();
 
         normals.add(VectorFMath.normalize(quad[0]));
