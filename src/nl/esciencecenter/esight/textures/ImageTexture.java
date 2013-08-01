@@ -57,10 +57,15 @@ public class ImageTexture extends Texture2D {
             e.printStackTrace();
         }
 
-        int x = 0, y = 0, width = bi.getWidth(), height = bi.getHeight();
+        int x = 0, y = 0;
 
-        this.width = width;
-        this.height = height;
+        if (bi != null) {
+            this.width = bi.getWidth();
+            this.height = bi.getHeight();
+        } else {
+            this.width = 1;
+            this.height = 1;
+        }
 
         // Grab pixels
         int[] pixels = new int[width * height];

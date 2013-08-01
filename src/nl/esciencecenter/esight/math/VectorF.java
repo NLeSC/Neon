@@ -1,6 +1,7 @@
 package nl.esciencecenter.esight.math;
 
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
@@ -78,45 +79,57 @@ public abstract class VectorF extends Vector {
 
     @Override
     public String toString() {
-        String result = "";
+        StringBuffer buf = new StringBuffer();
         for (int i = 0; i < v.length; i++) {
-            result += (v[i] + " ");
+            buf.append(v[i] + " ");
         }
+        String s = buf.toString();
 
+        return buf.toString();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((buf == null) ? 0 : buf.hashCode());
+        result = prime * result + Arrays.hashCode(v);
         return result;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
-    public int hashCode() {
-        int cols = size;
-
-        int hashCode = 1;
-        for (int i = 0; i < cols; ++i) {
-            int val = Float.floatToIntBits(v[i]);
-            int valHash = val ^ (val >>> 32);
-            hashCode = 31 * hashCode + valHash;
-
-        }
-        return hashCode;
-    }
-
-    @Override
-    public boolean equals(Object thatObject) {
-        if (this == thatObject)
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        if (!(thatObject instanceof VectorF))
-            return false;
-
-        // cast to native object is now safe
-        VectorF that = (VectorF) thatObject;
-
-        // now a proper field-by-field evaluation can be made
-        boolean same = true;
-        for (int i = 0; i < size; i++) {
-            if (v[i] < that.v[i] - MatrixFMath.EPSILON || v[i] > that.v[i] + MatrixFMath.EPSILON) {
-                same = false;
-            }
         }
-        return same;
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        VectorF other = (VectorF) obj;
+        if (buf == null) {
+            if (other.buf != null) {
+                return false;
+            }
+        } else if (!buf.equals(other.buf)) {
+            return false;
+        }
+        if (!Arrays.equals(v, other.v)) {
+            return false;
+        }
+        return true;
     }
+
 }

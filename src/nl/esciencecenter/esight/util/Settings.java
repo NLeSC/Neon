@@ -61,8 +61,8 @@ public class Settings {
     private final String currentNetcdfExtenstion = "nc";
 
     private static final boolean touch_connection_enabled = false;
-    private static int interfaceWidth = 240;
-    private static int interfaceHeight = 720;
+    private int interfaceWidth = 240;
+    private int interfaceHeight = 720;
 
     private static class SingletonHolder {
         public final static Settings instance = new Settings();

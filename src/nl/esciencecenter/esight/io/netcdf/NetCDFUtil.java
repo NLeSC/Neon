@@ -325,10 +325,11 @@ public class NetCDFUtil {
             }
         }
         if (!success) {
-            String perms = "";
-            for (String s : permutations) {
-                perms += s + "; ";
+            StringBuffer buf = new StringBuffer();
+            for (int j = 0; j < permutations.length; ++j) {
+                buf.append(permutations[j]);
             }
+            String perms = buf.toString();
 
             throw new NetCDFNoSuchVariableException("Dimension finder: All permutations (" + perms + ") failed");
         }

@@ -57,7 +57,7 @@ public class Quad extends Model {
             normals[i] = new VecF3(0, 0, -1);
         }
 
-        arrayindex = newQuad(points, arrayindex, vertices, tCoords, 1, 0, 3, 2); // FRONT
+        newQuad(points, arrayindex, vertices, tCoords, 1, 0, 3, 2); // FRONT
 
         this.numVertices = numVertices;
         this.vertices = VectorFMath.toBuffer(points);

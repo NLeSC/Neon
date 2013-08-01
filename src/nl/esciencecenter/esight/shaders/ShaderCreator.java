@@ -37,9 +37,11 @@ public class ShaderCreator {
     public String generatePostProcessShader(int rows, int columns) {
         String shaderText = "#version " + glslVersion + "\n\n";
 
-        for (int i = 0; i < rows * columns; i++) {
-            shaderText += "uniform sampler2D sphereTexture_" + i + ";\n";
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < rows * columns; ++i) {
+            buf.append("uniform sampler2D sphereTexture_" + i + ";\n");
         }
+        shaderText += buf.toString();
 
         shaderText += "uniform float sphereBrightness;\n";
         shaderText += "uniform int scrWidth;\n";

@@ -668,38 +668,6 @@ public class OutlineShape implements Comparable<OutlineShape> {
     }
 
     /**
-     * @param obj
-     *            the Object to compare this OutlineShape with
-     * @return true if {@code obj} is an OutlineShape, not null, same
-     *         outlineState, equal bounds and equal outlines in the same order
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (null == obj || !(obj instanceof OutlineShape)) {
-            return false;
-        }
-        final OutlineShape o = (OutlineShape) obj;
-        if (getOutlineState() != o.getOutlineState()) {
-            return false;
-        }
-        if (getOutlineNumber() != o.getOutlineNumber()) {
-            return false;
-        }
-        if (!getBounds().equals(o.getBounds())) {
-            return false;
-        }
-        for (int i = getOutlineNumber() - 1; i >= 0; i--) {
-            if (!getOutline(i).equals(o.getOutline(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * @return deep clone of this OutlineShape w/o Region
      */
     @Override
@@ -716,5 +684,61 @@ public class OutlineShape implements Comparable<OutlineShape> {
             o.outlines.add(outlines.get(i).clone());
         }
         return o;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((bbox == null) ? 0 : bbox.hashCode());
+        result = prime * result + dirtyBits;
+        result = prime * result + ((outlineState == null) ? 0 : outlineState.hashCode());
+        result = prime * result + ((outlines == null) ? 0 : outlines.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        OutlineShape other = (OutlineShape) obj;
+        if (bbox == null) {
+            if (other.bbox != null) {
+                return false;
+            }
+        } else if (!bbox.equals(other.bbox)) {
+            return false;
+        }
+        if (dirtyBits != other.dirtyBits) {
+            return false;
+        }
+        if (outlineState != other.outlineState) {
+            return false;
+        }
+        if (outlines == null) {
+            if (other.outlines != null) {
+                return false;
+            }
+        } else if (!outlines.equals(other.outlines)) {
+            return false;
+        }
+        return true;
     }
 }

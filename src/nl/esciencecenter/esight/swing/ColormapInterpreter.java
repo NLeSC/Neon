@@ -397,7 +397,7 @@ public class ColormapInterpreter {
             String name = entry.getKey();
             Color[][] legendImageBuffer = makeLegendImage(width, height, colorMaps.get(name));
 
-            intArray[i] = new Integer(i);
+            intArray[i] = Integer.valueOf(i);
             BufferedImage legend = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
             WritableRaster raster = legend.getRaster();
 
@@ -442,7 +442,7 @@ public class ColormapInterpreter {
             float index = col / (float) width;
 
             int cmEntries = colorMap.size();
-            int rawIndex = (int) (index * cmEntries);
+            float rawIndex = index * cmEntries;
 
             float red = 0;
             float green = 0;

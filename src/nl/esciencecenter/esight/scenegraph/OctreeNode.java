@@ -285,7 +285,7 @@ public class OctreeNode {
             nnp.finalizeAdding();
             nnn.finalizeAdding();
         } else {
-            color = new VecF4(1f, 1f, 1f, (elements.size() / maxElements));
+            color = new VecF4(1f, 1f, 1f, ((float) elements.size() / (float) maxElements));
             drawable = true;
         }
 

@@ -205,7 +205,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
 
         MatF4 mv = MatrixFMath.lookAt(eye, at, up);
 
-        if (inputHandler != null) {
+        if (inputHandler == null) {
             mv = mv.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputViewDistance)));
             mv = mv.mul(MatrixFMath.rotationX(inputRotationX));
             mv = mv.mul(MatrixFMath.rotationY(inputRotationY));

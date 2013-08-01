@@ -10,12 +10,12 @@ class ByteBufferView {
     private int offset;
 
     public ByteBufferView(byte[] buffer) {
-        this.buffer = buffer;
+        this.buffer = buffer.clone();
         offset = 0;
     }
 
     public void initialize(byte[] buffer) {
-        this.buffer = buffer;
+        this.buffer = buffer.clone();
         offset = 0;
     }
 
@@ -26,18 +26,6 @@ class ByteBufferView {
     public byte getByte() {
         byte value = buffer[offset];
         offset++;
-        return value;
-    }
-
-    public short getShort() {
-        short value = (short) (buffer[offset] | (buffer[offset + 1] << 8));
-        offset += 2;
-        return value;
-    }
-
-    public int getUnsignedShort() {
-        int value = buffer[offset] | (buffer[offset + 1] << 8);
-        offset += 2;
         return value;
     }
 

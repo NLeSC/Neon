@@ -819,14 +819,16 @@ public class TypedProperties extends Properties {
     public String toString() {
         String result = "";
 
+        StringBuffer buf = new StringBuffer();
+
         for (Enumeration<?> e = propertyNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
             String value = getProperty(key);
 
-            result += key + " = " + value + "\n";
+            buf.append(key + " = " + value + "\n");
         }
 
-        return result;
+        return buf.toString();
     }
 
     String[] getPropertyNames() {
@@ -838,47 +840,6 @@ public class TypedProperties extends Properties {
         String[] result = list.toArray(new String[list.size()]);
         Arrays.sort(result);
         return result;
-    }
-
-    /**
-     * Compares this object to the specified object. They are equal if they have
-     * the same property names and values.
-     * 
-     * @param object
-     *            object to compare to.
-     * @return <code>true</code> if equal.
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof TypedProperties)) {
-            return false;
-        }
-
-        TypedProperties other = (TypedProperties) object;
-
-        String[] myProps = getPropertyNames();
-        String[] otherProps = other.getPropertyNames();
-
-        if (myProps.length != otherProps.length) {
-            return false;
-        }
-
-        int i = 0;
-
-        for (String key : myProps) {
-            if (!key.equals(otherProps[i])) {
-                return false;
-            }
-            i++;
-            String value = getProperty(key);
-
-            String otherValue = other.getProperty(key);
-
-            if (otherValue == null || !otherValue.equals(value)) {
-                return false;
-            }
-        }
-        return true;
     }
 
 }

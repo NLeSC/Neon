@@ -120,16 +120,17 @@ public abstract class MatrixF {
     @Override
     public String toString() {
         int rowSize = (int) Math.sqrt(m.length);
-        String result = "";
 
+        StringBuffer buf = new StringBuffer();
         for (int i = 0; i < m.length; i++) {
-            if (i != 0 && i % rowSize == 0)
-                result += "\n";
-
-            result += m[i] + " ";
+            if (i != 0 && i % rowSize == 0) {
+                buf.append("\n");
+            }
+            buf.append(m[i] + " ");
         }
+        String s = buf.toString();
 
-        return result;
+        return buf.toString();
     }
 
     /*
