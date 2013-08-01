@@ -198,7 +198,8 @@ public abstract class ESightGLEventListener implements GLEventListener {
      */
     public MatF4 lookAt() {
         Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())),
-                (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())), (float) (getRadius() * Math.cos(getFtheta())), 1.0f);
+                (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
+                (float) (getRadius() * Math.cos(getFtheta())), 1.0f);
         Point4 at = new Point4(0.0f, 0.0f, 0.0f, 1.0f);
         VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -254,7 +255,6 @@ public abstract class ESightGLEventListener implements GLEventListener {
         try {
             getLoader().cleanup(gl);
         } catch (UninitializedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

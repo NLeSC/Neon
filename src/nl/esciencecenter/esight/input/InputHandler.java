@@ -208,14 +208,12 @@ public class InputHandler implements MouseListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent arg0) {
-        // TODO Auto-generated method stub
-
+        // We could add something useful here
     }
 
     @Override
     public void keyReleased(KeyEvent arg0) {
-        // TODO Auto-generated method stub
-
+        // We could add something useful here
     }
 
     /**

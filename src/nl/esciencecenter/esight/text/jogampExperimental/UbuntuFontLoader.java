@@ -45,7 +45,7 @@ public class UbuntuFontLoader implements FontSet {
     }
 
     final static String availableFontFileNames[] = {
-                                                 /* 00 */"Ubuntu-R.ttf", // regular
+    /* 00 */"Ubuntu-R.ttf", // regular
             /* 01 */"Ubuntu-RI.ttf", // regular italic
             /* 02 */"Ubuntu-B.ttf", // bold
             /* 03 */"Ubuntu-BI.ttf", // bold italic
@@ -54,15 +54,14 @@ public class UbuntuFontLoader implements FontSet {
             /* 06 */"Ubuntu-M.ttf", // medium
             /* 07 */"Ubuntu-MI.ttf", // medium italic
 
-                                                 };
+    };
 
-    final static String relPath                  = "fonts/"; // "fonts/ubuntu/"
-                                                             // ;
+    final static String relPath = "fonts/"; // "fonts/ubuntu/"
+                                            // ;
 
     private UbuntuFontLoader() {
     }
 
-    // FIXME: Add cache size to limit memory usage
     static final IntObjectHashMap fontMap = new IntObjectHashMap();
 
     static boolean is(int bits, int bit) {
@@ -119,11 +118,9 @@ public class UbuntuFontLoader implements FontSet {
     }
 
     Font abspath(String fname, int family, int style) {
-        final String err = "Problem loading font " + fname + ", stream "
-                + relPath + fname;
+        final String err = "Problem loading font " + fname + ", stream " + relPath + fname;
         try {
-            URLConnection urlc = IOUtil.getResource(UbuntuFontLoader.class,
-                    relPath + fname);
+            URLConnection urlc = IOUtil.getResource(UbuntuFontLoader.class, relPath + fname);
             if (null == urlc) {
                 throw new GLException(err);
             }

@@ -33,7 +33,8 @@ public class MatrixFMath {
      * 
      * @param mv
      *            The Modelview matrix to extract the Normal Matrix from.
-     * @return The Normal Matrix for this Modelview Matrix.
+     * @return The Normal Matrix for this Modelview Matrix. If the inverse
+     *         cannot be calculated this will return an identity matrix instead.
      */
     public static MatF3 getNormalMatrix(MatF4 mv) {
         MatF3 upper3x3 = new MatF3(mv.get(0), mv.get(1), mv.get(2), mv.get(4), mv.get(5), mv.get(6), mv.get(8),
@@ -71,16 +72,18 @@ public class MatrixFMath {
         float dX = right - left;
         float dY = top - bottom;
         float dZ = zFar - zNear;
-        float n = zNear;
-        float f = zFar;
-        float t = top;
-        float b = bottom;
-        float r = right;
-        float l = left;
 
-        MatF4 m = new MatF4(2 / dX, 0, 0, -(l + r) / dX, 0, 2 / dY, 0, -(t + b) / dY, 0, 0, -2 / (f - n),
-                -(f + n) / dZ, 0, 0, 0, 1);
-        return m;
+        if (dX <= 0f) {
+            throw new IllegalArgumentException("left cannot be greater than or equal to right");
+        } else if (dY <= 0f) {
+            throw new IllegalArgumentException("bottom cannot be greater than or equal to top");
+        } else if (dZ <= 0f) {
+            throw new IllegalArgumentException("zNear cannot be greater than or equal to zFar");
+        }
+
+        MatF4 result = new MatF4(2f / dX, 0f, 0f, -(left + right) / dX, 0f, 2f / dY, 0f, -(top + bottom) / dY, 0f, 0f,
+                -2f / (zFar - zNear), -(zFar + zNear) / dZ, 0f, 0f, 0f, 1f);
+        return result;
     }
 
     /**
@@ -97,7 +100,7 @@ public class MatrixFMath {
      * @return An orthogonal matrix
      */
     public static MatF4 ortho2D(float left, float right, float bottom, float top) {
-        return ortho(left, right, bottom, top, -1, 1);
+        return ortho(left, right, bottom, top, -1f, 1f);
     }
 
     /**
@@ -121,16 +124,18 @@ public class MatrixFMath {
         float dX = right - left;
         float dY = top - bottom;
         float dZ = zFar - zNear;
-        float n = zNear;
-        float f = zFar;
-        float t = top;
-        float b = bottom;
-        float r = right;
-        float l = left;
 
-        MatF4 m = new MatF4(2 * n / dX, 0, (r + l) / dX, 0, 0, 2 * n / dY, (t + b) / dY, 0, 0, 0, -(f + n) / dZ, -2 * f
-                * n / dZ, 0, 0, -1, 0);
-        return m;
+        if (dX <= 0f) {
+            throw new IllegalArgumentException("left cannot be greater than or equal to right");
+        } else if (dY <= 0f) {
+            throw new IllegalArgumentException("bottom cannot be greater than or equal to top");
+        } else if (dZ <= 0f) {
+            throw new IllegalArgumentException("zNear cannot be greater than or equal to zFar");
+        }
+
+        MatF4 result = new MatF4(2f * zNear / dX, 0f, (right + left) / dX, 0f, 0f, 2f * zNear / dY,
+                (top + bottom) / dY, 0f, 0f, 0f, -(zFar + zNear) / dZ, -2f * zFar * zNear / dZ, 0f, 0f, -1f, 0f);
+        return result;
     }
 
     /**
@@ -148,20 +153,31 @@ public class MatrixFMath {
      * @return A perspective matrix
      */
     public static MatF4 perspective(float fovy, float aspect, float zNear, float zFar) {
-        float t = (float) (Math.tan(fovy * degreesToRadians / 2) * zNear);
-        float r = t * aspect;
-        float n = zNear;
-        float f = zFar;
+        if (fovy <= 0f || fovy > 180f) {
+            throw new IllegalArgumentException("fovy cannot be smaller than or equal to 0 or greater than 180f");
+        } else if (aspect <= 0f) {
+            throw new IllegalArgumentException("aspect cannot be smaller than or equal to 0");
+        }
+
+        float top = (float) (Math.tan(fovy * degreesToRadians / 2) * zNear);
+        float right = top * aspect;
         float dZ = zFar - zNear;
 
-        MatF4 m = new MatF4((n / r), 0, 0, 0, 0, (n / t), 0, 0, 0, 0, -(f + n) / dZ, -2 * f * n / dZ, 0, 0, -1, 0);
+        if (dZ <= 0f) {
+            throw new IllegalArgumentException("zNear cannot be greater than or equal to zFar");
+        }
 
-        return m;
+        MatF4 result = new MatF4((zNear / right), 0, 0, 0, 0, (zNear / top), 0, 0, 0, 0, -(zFar + zNear) / dZ, -2
+                * zFar * zNear / dZ, 0, 0, -1, 0);
+
+        return result;
     }
 
     /**
-     * Helper method that supplies a rotation matrix that allows us to look at
-     * the indicated point
+     * Helper method that supplies a viewing transformation that allows us to
+     * look at the indicated point,
+     * 
+     * @see http://www.opengl.org/sdk/docs/man2/xhtml/gluLookAt.xml
      * 
      * @param eye
      *            The coordinates of the eye (camera)
@@ -169,19 +185,18 @@ public class MatrixFMath {
      *            The coordinates of the object we want to look at
      * @param up
      *            The vector indicating the up direction for the camera
-     * @return A rotation matrix suitable for multiplication with the
+     * @return A viewing transformation suitable for multiplication with the
      *         perspective matrix
      */
     public static MatF4 lookAt(VecF4 eye, VecF4 at, VecF4 up) {
-        VecF4 eyeneg = eye.clone().neg();
+        VecF4 norm = VectorFMath.normalize(eye.sub(at));
+        VecF4 crossUpNorm = VectorFMath.normalize(VectorFMath.cross(VectorFMath.normalize(up), norm));
+        VecF4 crossNormUpNorm = VectorFMath.normalize(VectorFMath.cross(norm, crossUpNorm));
+        VecF4 pointIndicator = new VecF4(0f, 0f, 0f, 1f);
 
-        VecF4 n = VectorFMath.normalize(eye.sub(at));
-        VecF4 u = VectorFMath.normalize(VectorFMath.cross(up, n));
-        VecF4 v = VectorFMath.normalize(VectorFMath.cross(n, u));
-        VecF4 t = new VecF4(0, 0, 0, 1);
-        MatF4 c = new MatF4(u, v, n, t);
+        MatF4 matrix = new MatF4(crossUpNorm, crossNormUpNorm, norm, pointIndicator);
 
-        return c.mul(translate(eyeneg));
+        return matrix.mul(translate(eye.neg()));
     }
 
     /**
@@ -196,8 +211,8 @@ public class MatrixFMath {
      * @return A translation matrix
      */
     public static MatF4 translate(float x, float y, float z) {
-        MatF4 m = new MatF4(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
-        return m;
+        MatF4 result = new MatF4(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
+        return result;
     }
 
     /**
@@ -234,8 +249,8 @@ public class MatrixFMath {
      * @return A scaling matrix
      */
     public static MatF4 scale(float x, float y, float z) {
-        MatF4 m = new MatF4(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
-        return m;
+        MatF4 result = new MatF4(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
+        return result;
     }
 
     /**
@@ -281,11 +296,11 @@ public class MatrixFMath {
      */
     public static MatF4 rotationX(float angleDeg) {
         double angleRad = degreesToRadians * angleDeg;
-        float ca = (float) Math.cos(angleRad);
-        float sa = (float) Math.sin(angleRad);
+        float cosa = (float) Math.cos(angleRad);
+        float sina = (float) Math.sin(angleRad);
 
-        MatF4 m = new MatF4(1, 0, 0, 0, 0, ca, -sa, 0, 0, sa, ca, 0, 0, 0, 0, 1);
-        return m;
+        MatF4 result = new MatF4(1, 0, 0, 0, 0, cosa, -sina, 0, 0, sina, cosa, 0, 0, 0, 0, 1);
+        return result;
     }
 
     /**
@@ -298,10 +313,10 @@ public class MatrixFMath {
      */
     public static MatF4 rotationY(float angleDeg) {
         double angleRad = degreesToRadians * angleDeg;
-        float ca = (float) Math.cos(angleRad);
-        float sa = (float) Math.sin(angleRad);
+        float cosa = (float) Math.cos(angleRad);
+        float sina = (float) Math.sin(angleRad);
 
-        MatF4 m = new MatF4(ca, 0, sa, 0, 0, 1, 0, 0, -sa, 0, ca, 0, 0, 0, 0, 1);
+        MatF4 m = new MatF4(cosa, 0, sina, 0, 0, 1, 0, 0, -sina, 0, cosa, 0, 0, 0, 0, 1);
 
         return m;
     }
@@ -316,18 +331,10 @@ public class MatrixFMath {
      */
     public static MatF4 rotationZ(float angleDeg) {
         double angleRad = degreesToRadians * angleDeg;
-        float ca = (float) Math.cos(angleRad);
-        float sa = (float) Math.sin(angleRad);
+        float cosa = (float) Math.cos(angleRad);
+        float sina = (float) Math.sin(angleRad);
 
-        MatF4 m = new MatF4(ca, -sa, 0, 0, sa, ca, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-
-        // System.err.println("------a------");
-        // System.err.println();
-        // System.err.println("------b------");
-        // System.err.println();
-        // System.err.println("------result------");
-        // System.err.println(m);
-        // System.err.println("-------------");
+        MatF4 m = new MatF4(cosa, -sina, 0, 0, sina, cosa, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
         return m;
     }
@@ -351,17 +358,18 @@ public class MatrixFMath {
      */
     public static MatF4 rotate(float angleDeg, float x, float y, float z) {
         double angleRad = degreesToRadians * angleDeg;
-        float c = (float) Math.cos(angleRad);
-        float s = (float) Math.sin(angleRad);
-        float t = 1 - c;
+        float cosa = (float) Math.cos(angleRad);
+        float sina = (float) Math.sin(angleRad);
+        float invc = 1 - cosa;
 
         VecF3 n = VectorFMath.normalize(new VecF3(x, y, z));
         x = n.v[0];
         y = n.v[1];
         z = n.v[2];
 
-        MatF4 R = new MatF4(t * x * x + c, t * x * y - s * z, t * x * z + s * y, 0f, t * x * y + s * z, t * y * y + c,
-                t * y * z - s * x, 0f, t * x * z - s * y, t * y * z + s * x, t * z * z + c, 0f, 0f, 0f, 0f, 1f
+        MatF4 R = new MatF4(invc * x * x + cosa, invc * x * y - sina * z, invc * x * z + sina * y, 0f, invc * x * y
+                + sina * z, invc * y * y + cosa, invc * y * z - sina * x, 0f, invc * x * z - sina * y, invc * y * z
+                + sina * x, invc * z * z + cosa, 0f, 0f, 0f, 0f, 1f
 
         );
 
@@ -379,9 +387,9 @@ public class MatrixFMath {
      * @return The rotation matrix
      */
     public static MatF4 rotate(float angleDeg, VecF3 axis) {
-        MatF4 R = rotate(angleDeg, axis.get(0), axis.get(1), axis.get(2));
+        MatF4 result = rotate(angleDeg, axis.get(0), axis.get(1), axis.get(2));
 
-        return R;
+        return result;
     }
 
     /**
@@ -395,9 +403,9 @@ public class MatrixFMath {
      * @return The rotation matrix
      */
     public static MatF4 rotate(float angleDeg, VecF4 axis) {
-        MatF4 R = rotate(angleDeg, axis.get(0), axis.get(1), axis.get(2));
+        MatF4 result = rotate(angleDeg, axis.get(0), axis.get(1), axis.get(2));
 
-        return R;
+        return result;
     }
 
     /**
@@ -574,15 +582,15 @@ public class MatrixFMath {
      * @return the transposed matrix
      */
     public static MatF2 transpose(MatF2 m) {
-        MatF2 r = new MatF2();
+        MatF2 result = new MatF2();
 
-        r.m[0] = m.m[0];
-        r.m[1] = m.m[2];
+        result.m[0] = m.m[0];
+        result.m[1] = m.m[2];
 
-        r.m[2] = m.m[1];
-        r.m[3] = m.m[3];
+        result.m[2] = m.m[1];
+        result.m[3] = m.m[3];
 
-        return r;
+        return result;
     }
 
     /**
@@ -593,21 +601,21 @@ public class MatrixFMath {
      * @return the transposed matrix
      */
     public static MatF3 transpose(MatF3 m) {
-        MatF3 r = new MatF3();
+        MatF3 result = new MatF3();
 
-        r.m[0] = m.m[0];
-        r.m[1] = m.m[3];
-        r.m[2] = m.m[6];
+        result.m[0] = m.m[0];
+        result.m[1] = m.m[3];
+        result.m[2] = m.m[6];
 
-        r.m[3] = m.m[1];
-        r.m[4] = m.m[4];
-        r.m[5] = m.m[7];
+        result.m[3] = m.m[1];
+        result.m[4] = m.m[4];
+        result.m[5] = m.m[7];
 
-        r.m[6] = m.m[2];
-        r.m[7] = m.m[5];
-        r.m[8] = m.m[8];
+        result.m[6] = m.m[2];
+        result.m[7] = m.m[5];
+        result.m[8] = m.m[8];
 
-        return r;
+        return result;
     }
 
     /**
@@ -618,29 +626,29 @@ public class MatrixFMath {
      * @return the transposed matrix
      */
     public static MatF4 transpose(MatF4 m) {
-        MatF4 r = new MatF4();
+        MatF4 result = new MatF4();
 
-        r.m[0] = m.m[0];
-        r.m[1] = m.m[4];
-        r.m[2] = m.m[8];
-        r.m[3] = m.m[12];
+        result.m[0] = m.m[0];
+        result.m[1] = m.m[4];
+        result.m[2] = m.m[8];
+        result.m[3] = m.m[12];
 
-        r.m[4] = m.m[1];
-        r.m[5] = m.m[5];
-        r.m[6] = m.m[9];
-        r.m[7] = m.m[13];
+        result.m[4] = m.m[1];
+        result.m[5] = m.m[5];
+        result.m[6] = m.m[9];
+        result.m[7] = m.m[13];
 
-        r.m[8] = m.m[2];
-        r.m[9] = m.m[6];
-        r.m[10] = m.m[10];
-        r.m[11] = m.m[14];
+        result.m[8] = m.m[2];
+        result.m[9] = m.m[6];
+        result.m[10] = m.m[10];
+        result.m[11] = m.m[14];
 
-        r.m[12] = m.m[3];
-        r.m[13] = m.m[7];
-        r.m[14] = m.m[11];
-        r.m[15] = m.m[15];
+        result.m[12] = m.m[3];
+        result.m[13] = m.m[7];
+        result.m[14] = m.m[11];
+        result.m[15] = m.m[15];
 
-        return r;
+        return result;
     }
 
     /**
@@ -651,14 +659,14 @@ public class MatrixFMath {
      * @return the adjoint matrix
      */
     public static MatF2 adjoint(MatF2 m) {
-        MatF2 r = new MatF2();
+        MatF2 result = new MatF2();
 
-        r.m[0] = m.m[3];
-        r.m[1] = -m.m[1];
-        r.m[2] = -m.m[2];
-        r.m[3] = m.m[0];
+        result.m[0] = m.m[3];
+        result.m[1] = -m.m[1];
+        result.m[2] = -m.m[2];
+        result.m[3] = m.m[0];
 
-        return r;
+        return result;
 
     }
 

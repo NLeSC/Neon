@@ -229,7 +229,6 @@ public class IntPBO {
                 ImageIO.write(bufIm, "png", new File(filename));
                 System.out.println("Saved screenshot: " + filename);
             } catch (IOException e2) {
-                // TODO Auto-generated catch block
                 e2.printStackTrace();
             }
 

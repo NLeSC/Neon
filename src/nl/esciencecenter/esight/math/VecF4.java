@@ -81,7 +81,6 @@ public class VecF4 extends VectorF {
             this.v[2] = ((VecF3) vector).v[2];
 
         }
-        // TODO Auto-generated constructor stub
     }
 
     /**

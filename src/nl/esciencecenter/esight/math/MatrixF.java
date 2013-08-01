@@ -1,6 +1,7 @@
 package nl.esciencecenter.esight.math;
 
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
@@ -131,38 +132,52 @@ public abstract class MatrixF {
         return result;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode() {
-        int rowsAndCols = (int) Math.sqrt(size);
-
-        int hashCode = 1;
-        for (int i = 0; i < rowsAndCols; ++i) {
-            for (int j = 0; j < rowsAndCols; ++j) {
-                int v = Float.floatToIntBits(m[i * rowsAndCols + j]);
-                int valHash = v ^ (v >>> 32);
-                hashCode = 31 * hashCode + valHash;
-            }
-        }
-        return hashCode;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((buf == null) ? 0 : buf.hashCode());
+        result = prime * result + Arrays.hashCode(m);
+        result = prime * result + size;
+        return result;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
-    public boolean equals(Object thatObject) {
-        if (this == thatObject)
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        if (!(thatObject instanceof MatrixF))
-            return false;
-
-        // cast to native object is now safe
-        MatrixF that = (MatrixF) thatObject;
-
-        // now a proper field-by-field evaluation can be made
-        boolean same = true;
-        for (int i = 0; i < size; i++) {
-            if (m[i] < that.m[i] - MatrixFMath.EPSILON || m[i] > that.m[i] + MatrixFMath.EPSILON) {
-                same = false;
-            }
         }
-        return same;
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        MatrixF other = (MatrixF) obj;
+        if (buf == null) {
+            if (other.buf != null) {
+                return false;
+            }
+        } else if (!buf.equals(other.buf)) {
+            return false;
+        }
+        if (!Arrays.equals(m, other.m)) {
+            return false;
+        }
+        if (size != other.size) {
+            return false;
+        }
+        return true;
     }
+
 }

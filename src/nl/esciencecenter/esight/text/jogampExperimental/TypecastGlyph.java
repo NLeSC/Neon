@@ -63,9 +63,7 @@ public class TypecastGlyph implements FontInt.Glyph {
             if (null == fo) {
                 float value = (this.advance * getScale(size));
                 if (useFrationalMetrics == false) {
-                    // value = (float)Math.ceil(value);
-                    // value = (int)value;
-                    value = (int) (value + 0.5f); // TODO: check
+                    value = (int) (value + 0.5f);
                 }
                 size2advance.put(size, value);
                 return value;
