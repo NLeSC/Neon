@@ -43,64 +43,59 @@ public class ImageTexture extends Texture2D {
      * @param glMultiTexUnit
      *            The OpenGL-internal MultitexUnit (GL.GL_TEXTUREX) this texture
      *            uses.
+     * @throws IOException
+     * @throws FileNotFoundException
      */
-    public ImageTexture(String filename, int w_offSet, int h_offSet, int glMultiTexUnit) {
+    public ImageTexture(String filename, int w_offSet, int h_offSet, int glMultiTexUnit) throws FileNotFoundException,
+            IOException {
         super(glMultiTexUnit);
 
         // Read the file
         BufferedImage bi = null;
-        try {
-            bi = ImageIO.read(new FileInputStream(filename));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        bi = ImageIO.read(new FileInputStream(filename));
 
         int x = 0, y = 0;
 
         if (bi != null) {
             this.width = bi.getWidth();
             this.height = bi.getHeight();
-        } else {
-            this.width = 1;
-            this.height = 1;
-        }
 
-        // Grab pixels
-        int[] pixels = new int[width * height];
-        PixelGrabber pg = new PixelGrabber(bi, x, y, width, height, pixels, 0, width);
-        try {
-            pg.grabPixels();
-        } catch (InterruptedException e) {
-            System.err.println("interrupted waiting for pixels!");
-            return;
-        }
-
-        // Allocate ByteBuffer and fill it with pixel data.
-        ByteBuffer tempBuffer = ByteBuffer.allocate(width * height * 4);
-
-        for (int row = (height + h_offSet) - 1; row >= h_offSet; row--) {
-            int i = row;
-            if (row >= height) {
-                i = row - height;
+            // Grab pixels
+            int[] pixels = new int[width * height];
+            PixelGrabber pg = new PixelGrabber(bi, x, y, width, height, pixels, 0, width);
+            try {
+                pg.grabPixels();
+            } catch (InterruptedException e) {
+                System.err.println("interrupted waiting for pixels!");
+                return;
             }
 
-            for (int col = w_offSet; col < (width + w_offSet); col++) {
-                int j = col;
-                if (col >= width) {
-                    j = col - width;
+            // Allocate ByteBuffer and fill it with pixel data.
+            ByteBuffer tempBuffer = ByteBuffer.allocate(width * height * 4);
+
+            for (int row = (height + h_offSet) - 1; row >= h_offSet; row--) {
+                int i = row;
+                if (row >= height) {
+                    i = row - height;
                 }
 
-                tempBuffer.put((byte) ((pixels[i * width + j]) & 0xff)); // blue
-                tempBuffer.put((byte) ((pixels[i * width + j] >> 8) & 0xff)); // green
-                tempBuffer.put((byte) ((pixels[i * width + j] >> 16) & 0xff)); // red
-                tempBuffer.put((byte) ((pixels[i * width + j] >> 24) & 0xff)); // alpha
+                for (int col = w_offSet; col < (width + w_offSet); col++) {
+                    int j = col;
+                    if (col >= width) {
+                        j = col - width;
+                    }
+
+                    tempBuffer.put((byte) ((pixels[i * width + j]) & 0xff)); // blue
+                    tempBuffer.put((byte) ((pixels[i * width + j] >> 8) & 0xff)); // green
+                    tempBuffer.put((byte) ((pixels[i * width + j] >> 16) & 0xff)); // red
+                    tempBuffer.put((byte) ((pixels[i * width + j] >> 24) & 0xff)); // alpha
+                }
             }
+
+            tempBuffer.rewind();
+
+            pixelBuffer = tempBuffer;
         }
-
-        tempBuffer.rewind();
-
-        pixelBuffer = tempBuffer;
     }
 }

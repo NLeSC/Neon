@@ -128,7 +128,6 @@ public abstract class MatrixF {
             }
             buf.append(m[i] + " ");
         }
-        String s = buf.toString();
 
         return buf.toString();
     }

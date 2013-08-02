@@ -22,7 +22,6 @@ class ConnectionHandler implements Runnable {
 
     @Override
     public void run() {
-        // InputStream.read(buf, offs, len)
         InputStream is;
 
         byte[] length_buffer = new byte[4];
@@ -37,7 +36,6 @@ class ConnectionHandler implements Runnable {
 
         TouchPoint[] points;
 
-        // XXX nicely hardcoded :)
         points = new TouchPoint[MAX_TOUCH_EVENTS];
         for (int i = 0; i < MAX_TOUCH_EVENTS; i++)
             points[i] = new TouchPoint();
@@ -47,30 +45,26 @@ class ConnectionHandler implements Runnable {
 
             is = socket.getInputStream();
 
-            // readFully(is, header_buffer, 6);
-
             while (true) {
                 if (!readFully(is, length_buffer, INITIAL_MESSAGE_LENGTH))
                     return;
 
                 view.initialize(length_buffer);
                 message_length = view.getInt();
-                // System.out.println("message_length: "+message_length);
 
                 if (!readFully(is, message_buffer, message_length))
                     return;
 
                 view.initialize(message_buffer);
                 timestamp = view.getDouble();
-                // System.out.println("timestamp "+timestamp);
+
                 num_touches = view.getInt();
-                // System.out.println("num touches "+num_touches);
 
                 for (int i = 0; i < num_touches; i++) {
-                    points[i].id = view.getInt();
-                    points[i].state = view.getInt();
-                    points[i].tx = view.getFloat();
-                    points[i].ty = view.getFloat();
+                    points[i].setId(view.getInt());
+                    points[i].setState(view.getInt());
+                    points[i].setTx(view.getFloat());
+                    points[i].setTy(view.getFloat());
                 }
 
                 if (handler != null)
@@ -83,8 +77,7 @@ class ConnectionHandler implements Runnable {
         }
     }
 
-    private boolean readFully(InputStream is, byte[] buffer, int n)
-            throws IOException {
+    private boolean readFully(InputStream is, byte[] buffer, int n) throws IOException {
         int read;
         int offset = 0;
 

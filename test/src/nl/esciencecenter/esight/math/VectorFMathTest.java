@@ -1,7 +1,10 @@
 package nl.esciencecenter.esight.math;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -360,42 +363,131 @@ public class VectorFMathTest {
 
     @Test
     public final void testToBufferFloatArray() {
-        fail("Not yet implemented"); // TODO
+        float[] input = new float[] { 0f, 1f, 2f, 3f, 4f, 5f, 6f };
+
+        FloatBuffer expected = FloatBuffer.allocate(input.length);
+        expected.put(input);
+        expected.rewind();
+
+        assertEquals(expected, VectorFMath.toBuffer(input));
     }
 
     @Test
     public final void testToBufferVecF2Array() {
-        fail("Not yet implemented"); // TODO
+        VecF2[] input = new VecF2[] { new VecF2(0f, 1f), new VecF2(2f, 3f), new VecF2(4f, 5f) };
+
+        float[] expectedArray = new float[] { 0f, 1f, 2f, 3f, 4f, 5f };
+        FloatBuffer expected = FloatBuffer.allocate(expectedArray.length);
+        expected.put(expectedArray);
+        expected.rewind();
+
+        assertEquals(expected, VectorFMath.toBuffer(input));
     }
 
     @Test
     public final void testToBufferVecF3Array() {
-        fail("Not yet implemented"); // TODO
+        VecF3[] input = new VecF3[] { new VecF3(0f, 1f, 2f), new VecF3(3f, 4f, 5f) };
+
+        float[] expectedArray = new float[] { 0f, 1f, 2f, 3f, 4f, 5f };
+        FloatBuffer expected = FloatBuffer.allocate(expectedArray.length);
+        expected.put(expectedArray);
+        expected.rewind();
+
+        assertEquals(expected, VectorFMath.toBuffer(input));
     }
 
     @Test
     public final void testToBufferVecF4Array() {
-        fail("Not yet implemented"); // TODO
+        VecF4[] input = new VecF4[] { new VecF4(0f, 1f, 2f, 3f), new VecF4(3f, 4f, 5f, 6f) };
+
+        float[] expectedArray = new float[] { 0f, 1f, 2f, 3f, 3f, 4f, 5f, 6f };
+        FloatBuffer expected = FloatBuffer.allocate(expectedArray.length);
+        expected.put(expectedArray);
+        expected.rewind();
+
+        assertEquals(expected, VectorFMath.toBuffer(input));
     }
 
     @Test
     public final void testListToBuffer() {
-        fail("Not yet implemented"); // TODO
+        List<Float> input = new ArrayList<Float>();
+        input.add(0f);
+        input.add(1f);
+        input.add(2f);
+        input.add(3f);
+        input.add(4f);
+        input.add(5f);
+        input.add(6f);
+
+        float[] expectedArray = new float[] { 0f, 1f, 2f, 3f, 4f, 5f, 6f };
+
+        FloatBuffer expected = FloatBuffer.allocate(expectedArray.length);
+        expected.put(expectedArray);
+        expected.rewind();
+
+        assertEquals(expected, VectorFMath.listToBuffer(input));
     }
 
     @Test
     public final void testVec2ListToBuffer() {
-        fail("Not yet implemented"); // TODO
+        List<VecF2> input = new ArrayList<VecF2>();
+        input.add(new VecF2(0f, 0f));
+        input.add(new VecF2(1f, 0f));
+        input.add(new VecF2(2f, 0f));
+        input.add(new VecF2(3f, 0f));
+        input.add(new VecF2(4f, 0f));
+        input.add(new VecF2(5f, 0f));
+        input.add(new VecF2(6f, 0f));
+
+        float[] expectedArray = new float[] { 0f, 0f, 1f, 0f, 2f, 0f, 3f, 0f, 4f, 0f, 5f, 0f, 6f, 0f };
+
+        FloatBuffer expected = FloatBuffer.allocate(expectedArray.length);
+        expected.put(expectedArray);
+        expected.rewind();
+
+        assertEquals(expected, VectorFMath.vec2ListToBuffer(input));
     }
 
     @Test
     public final void testVec3ListToBuffer() {
-        fail("Not yet implemented"); // TODO
+        List<VecF3> input = new ArrayList<VecF3>();
+        input.add(new VecF3(0f, 0f, 0f));
+        input.add(new VecF3(1f, 0f, 0f));
+        input.add(new VecF3(2f, 0f, 0f));
+        input.add(new VecF3(3f, 0f, 0f));
+        input.add(new VecF3(4f, 0f, 0f));
+        input.add(new VecF3(5f, 0f, 0f));
+        input.add(new VecF3(6f, 0f, 0f));
+
+        float[] expectedArray = new float[] { 0f, 0f, 0f, 1f, 0f, 0f, 2f, 0f, 0f, 3f, 0f, 0f, 4f, 0f, 0f, 5f, 0f, 0f,
+                6f, 0f, 0f };
+
+        FloatBuffer expected = FloatBuffer.allocate(expectedArray.length);
+        expected.put(expectedArray);
+        expected.rewind();
+
+        assertEquals(expected, VectorFMath.vec3ListToBuffer(input));
     }
 
     @Test
     public final void testVec4ListToBuffer() {
-        fail("Not yet implemented"); // TODO
+        List<VecF4> input = new ArrayList<VecF4>();
+        input.add(new VecF4(0f, 0f, 0f, 0f));
+        input.add(new VecF4(1f, 0f, 0f, 0f));
+        input.add(new VecF4(2f, 0f, 0f, 0f));
+        input.add(new VecF4(3f, 0f, 0f, 0f));
+        input.add(new VecF4(4f, 0f, 0f, 0f));
+        input.add(new VecF4(5f, 0f, 0f, 0f));
+        input.add(new VecF4(6f, 0f, 0f, 0f));
+
+        float[] expectedArray = new float[] { 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 2f, 0f, 0f, 0f, 3f, 0f, 0f, 0f, 4f, 0f,
+                0f, 0f, 5f, 0f, 0f, 0f, 6f, 0f, 0f, 0f };
+
+        FloatBuffer expected = FloatBuffer.allocate(expectedArray.length);
+        expected.put(expectedArray);
+        expected.rewind();
+
+        assertEquals(expected, VectorFMath.vec4ListToBuffer(input));
     }
 
     @Test

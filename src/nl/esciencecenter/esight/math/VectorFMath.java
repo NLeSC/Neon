@@ -168,13 +168,9 @@ public class VectorFMath {
      */
     public static FloatBuffer toBuffer(float[] array) {
         FloatBuffer result = FloatBuffer.allocate(array.length);
-
-        for (int i = 0; i < array.length; i++) {
-            result.put(array[i]);
-        }
+        result.put(array);
 
         result.rewind();
-
         return result;
     }
 

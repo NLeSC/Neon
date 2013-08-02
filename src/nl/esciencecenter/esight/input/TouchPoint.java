@@ -22,9 +22,83 @@ package nl.esciencecenter.esight.input;
  * 
  */
 class TouchPoint {
-    public int id;
-    public int state;
-    public float tx, ty; // Touch coordinates
-    public float nx, ny; // Screen coordinates (normalized)
-    public int si, sj; // Screen coordinates (pixels)
+    private int id;
+    private int state;
+    private float tx, ty; // Touch coordinates
+
+    /**
+     * Getter for id.
+     * 
+     * @return the id.
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Setter for id.
+     * 
+     * @param id
+     *            the id to set
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
+     * Getter for state.
+     * 
+     * @return the state.
+     */
+    public int getState() {
+        return state;
+    }
+
+    /**
+     * Setter for state.
+     * 
+     * @param state
+     *            the state to set
+     */
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    /**
+     * Getter for tx.
+     * 
+     * @return the tx.
+     */
+    public float getTx() {
+        return tx;
+    }
+
+    /**
+     * Setter for tx.
+     * 
+     * @param tx
+     *            the tx to set
+     */
+    public void setTx(float tx) {
+        this.tx = tx;
+    }
+
+    /**
+     * Getter for ty.
+     * 
+     * @return the ty.
+     */
+    public float getTy() {
+        return ty;
+    }
+
+    /**
+     * Setter for ty.
+     * 
+     * @param ty
+     *            the ty to set
+     */
+    public void setTy(float ty) {
+        this.ty = ty;
+    }
 }

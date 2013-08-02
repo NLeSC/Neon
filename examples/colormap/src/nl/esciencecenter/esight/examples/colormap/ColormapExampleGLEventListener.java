@@ -1,6 +1,8 @@
 package nl.esciencecenter.esight.examples.colormap;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
@@ -211,14 +213,13 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
         sphere = new Sphere(5, false);
         sphere.init(gl);
 
-        // randomdata = new float[2000][1000];
-        // for (int x = 0; x < 2000; x++) {
-        // for (int y = 0; y < 1000; y++) {
-        // randomdata[x][y] = (float) Math.random();
-        // }
-        // }
-
-        sphereTex = new ImageTexture("images/MoonMap_2500x1250.jpg", 0, 0, GL3.GL_TEXTURE2);
+        try {
+            sphereTex = new ImageTexture("images/MoonMap_2500x1250.jpg", 0, 0, GL3.GL_TEXTURE2);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         sphereTex.init(gl);
 
         // Here we implement some text to show on the Heads-Up-Display (HUD),

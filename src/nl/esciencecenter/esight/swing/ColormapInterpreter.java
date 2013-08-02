@@ -442,41 +442,19 @@ public class ColormapInterpreter {
             float index = col / (float) width;
 
             int cmEntries = colorMap.size();
-            float rawIndex = index * cmEntries;
+            int cmIndex = (int) (index * cmEntries);
 
-            float red = 0;
-            float green = 0;
-            float blue = 0;
-
-            int iLow = (int) Math.floor(rawIndex);
-            int iHigh = (int) Math.ceil(rawIndex);
-
-            Color cLow;
-            if (iLow == cmEntries) {
-                cLow = colorMap.get(cmEntries - 1);
-            } else if (iLow < 0) {
-                cLow = colorMap.get(0);
+            Color color;
+            if (cmIndex == cmEntries) {
+                color = colorMap.get(cmEntries - 1);
+            } else if (cmIndex < 0) {
+                color = colorMap.get(0);
             } else {
-                cLow = colorMap.get(iLow);
+                color = colorMap.get(cmIndex);
             }
-
-            Color cHigh;
-            if (iHigh == cmEntries) {
-                cHigh = colorMap.get(cmEntries - 1);
-            } else if (iHigh < 0) {
-                cHigh = colorMap.get(0);
-            } else {
-                cHigh = colorMap.get(iHigh);
-            }
-
-            float colorInterval = index - iLow;
-
-            red = getInterpolatedColor(cHigh.red, cLow.red, colorInterval);
-            green = getInterpolatedColor(cHigh.green, cLow.green, colorInterval);
-            blue = getInterpolatedColor(cHigh.blue, cLow.blue, colorInterval);
 
             for (int row = 0; row < height; row++) {
-                outBuf[col][row] = new Color(blue, green, red, 1f);
+                outBuf[col][row] = new Color(color.blue, color.green, color.red, 1f);
             }
         }
 

@@ -72,7 +72,10 @@ public class ImageComboBoxRenderer extends JLabel implements ListCellRenderer {
         setHorizontalAlignment(CENTER);
         setVerticalAlignment(CENTER);
 
-        this.descriptions = descriptions;
+        this.descriptions = new String[descriptions.length];
+        for (int i = 0; i < descriptions.length; i++) {
+            this.descriptions[i] = descriptions[i];
+        }
         this.images = new ImageIcon[images.length];
         for (int i = 0; i < images.length; i++) {
             this.images[i] = images[i];

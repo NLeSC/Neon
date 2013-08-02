@@ -3,6 +3,7 @@
  */
 package nl.esciencecenter.esight.math;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import nl.esciencecenter.esight.exceptions.InverseNotAvailableException;
@@ -282,7 +283,25 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testLookAt() {
-        fail("Not yet implemented"); // TODO
+        // Default (correct) case
+        VecF4 eye = new VecF4(0f, 0f, 1f, 1f);
+        VecF4 at = new VecF4(0f, 0f, 0f, 1f);
+        VecF4 up = new VecF4(0f, 1f, 0f, 0f);
+
+        MatF4 expected = new MatF4(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,
+                0.0f, 1.0f);
+
+        assertEquals(expected, MatrixFMath.lookAt(eye, at, up));
+
+        // Another correct case (there are no faulty cases)
+        eye = new VecF4(0f, 0f, 1f, 1f);
+        at = new VecF4(0f, 0f, 1f, 1f);
+        up = new VecF4(0f, 0f, 1f, 0f);
+
+        expected = new MatF4(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                1.0f);
+
+        assertEquals(expected, MatrixFMath.lookAt(eye, at, up));
     }
 
     /**
@@ -292,7 +311,11 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testTranslateFloatFloatFloat() {
-        fail("Not yet implemented"); // TODO
+        // Regression test, there are no cases where this could fail.
+        float x = 1f, y = 1f, z = 1f;
+        MatF4 expected = new MatF4(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
+
+        assertEquals(expected, MatrixFMath.translate(x, y, z));
     }
 
     /**
@@ -302,7 +325,11 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testTranslateVecF3() {
-        fail("Not yet implemented"); // TODO
+        // Regression test, there are no cases where this could fail.
+        float x = 1f, y = 1f, z = 1f;
+        MatF4 expected = new MatF4(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
+
+        assertEquals(expected, MatrixFMath.translate(new VecF3(x, y, z)));
     }
 
     /**
@@ -312,7 +339,11 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testTranslateVecF4() {
-        fail("Not yet implemented"); // TODO
+        // Regression test, there are no cases where this could fail.
+        float x = 1f, y = 1f, z = 1f;
+        MatF4 expected = new MatF4(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
+
+        assertEquals(expected, MatrixFMath.translate(new VecF4(x, y, z, 0f)));
     }
 
     /**
@@ -322,7 +353,11 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testScaleFloatFloatFloat() {
-        fail("Not yet implemented"); // TODO
+        // Regression test, there are no cases where this could fail.
+        float x = 1f, y = 1f, z = 1f;
+        MatF4 expected = new MatF4(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
+
+        assertEquals(expected, MatrixFMath.scale(x, y, z));
     }
 
     /**
@@ -331,7 +366,11 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testScaleFloat() {
-        fail("Not yet implemented"); // TODO
+        // Regression test, there are no cases where this could fail.
+        float x = 1f;
+        MatF4 expected = new MatF4(x, 0, 0, 0, 0, x, 0, 0, 0, 0, x, 0, 0, 0, 0, 1);
+
+        assertEquals(expected, MatrixFMath.scale(x));
     }
 
     /**
@@ -341,7 +380,11 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testScaleVecF3() {
-        fail("Not yet implemented"); // TODO
+        // Regression test, there are no cases where this could fail.
+        float x = 1f, y = 1f, z = 1f;
+        MatF4 expected = new MatF4(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
+
+        assertEquals(expected, MatrixFMath.scale(new VecF3(x, y, z)));
     }
 
     /**
@@ -351,7 +394,11 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testScaleVecF4() {
-        fail("Not yet implemented"); // TODO
+        // Regression test, there are no cases where this could fail.
+        float x = 1f, y = 1f, z = 1f;
+        MatF4 expected = new MatF4(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
+
+        assertEquals(expected, MatrixFMath.scale(new VecF4(x, y, z, 0f)));
     }
 
     /**
@@ -360,15 +407,16 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testRotationX() {
+        // Regression test, there are no cases where this could fail.
         float deg = 90f;
         MatF4 expected = new MatF4(1f, 0f, 0f, 0f, 0f, 0f, -1f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 0f, 1f);
 
-        assertEquals(expected, MatrixFMath.rotationX(deg));
+        assertArrayEquals(expected.m, MatrixFMath.rotationX(deg).m, MatrixFMath.EPSILON);
 
         deg = 0f;
         expected = new MatF4();
 
-        assertEquals(expected, MatrixFMath.rotationX(deg));
+        assertArrayEquals(expected.m, MatrixFMath.rotationX(deg).m, MatrixFMath.EPSILON);
     }
 
     /**
@@ -377,15 +425,16 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testRotationY() {
+        // Regression test, there are no cases where this could fail.
         float deg = 90f;
         MatF4 expected = new MatF4(0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, -1f, 0f, 0f, 0f, 0f, 0f, 0f, 1f);
 
-        assertEquals(expected, MatrixFMath.rotationY(deg));
+        assertArrayEquals(expected.m, MatrixFMath.rotationY(deg).m, MatrixFMath.EPSILON);
 
         deg = 0f;
         expected = new MatF4();
 
-        assertEquals(expected, MatrixFMath.rotationY(deg));
+        assertArrayEquals(expected.m, MatrixFMath.rotationY(deg).m, MatrixFMath.EPSILON);
     }
 
     /**
@@ -394,15 +443,16 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testRotationZ() {
+        // Regression test, there are no cases where this could fail.
         float deg = 90f;
         MatF4 expected = new MatF4(0f, -1f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f);
 
-        assertEquals(expected, MatrixFMath.rotationZ(deg));
+        assertArrayEquals(expected.m, MatrixFMath.rotationZ(deg).m, MatrixFMath.EPSILON);
 
         deg = 0f;
         expected = new MatF4();
 
-        assertEquals(expected, MatrixFMath.rotationZ(deg));
+        assertArrayEquals(expected.m, MatrixFMath.rotationZ(deg).m, MatrixFMath.EPSILON);
     }
 
     /**
@@ -412,6 +462,7 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testRotateFloatFloatFloatFloat() {
+        // Regression test, there are no cases where this could fail.
         float deg = 0.3f;
         VecF3 axis = new VecF3(0.5f, 0f, 0.5f);
         MatF4 expected = new MatF4(0.99999315f, -0.0037023856f, 6.8545337E-6f, 0.0f, 0.0037023856f, 0.9999863f,
@@ -427,6 +478,7 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testRotateFloatVecF3() {
+        // Regression test, there are no cases where this could fail.
         float deg = 0.3f;
         VecF3 axis = new VecF3(0.5f, 0f, 0.5f);
         MatF4 expected = new MatF4(0.99999315f, -0.0037023856f, 6.8545337E-6f, 0.0f, 0.0037023856f, 0.9999863f,
@@ -442,6 +494,7 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testRotateFloatVecF4() {
+        // Regression test, there are no cases where this could fail.
         float deg = 0.3f;
         VecF4 axis = new VecF4(0.5f, 0f, 0.5f, 0.5f);
 
@@ -458,6 +511,7 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testDeterminantMatF2() {
+        // Regression test, there are no cases where this could fail.
         MatF2 input = new MatF2(0.5f, 1f, 0f, 3f);
         float expected = 1.5f;
         assertEquals(expected, MatrixFMath.determinant(input), MatrixFMath.EPSILON);
@@ -475,6 +529,7 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testDeterminantMatF3() {
+        // Regression test, there are no cases where this could fail.
         MatF3 input = new MatF3(0.5f, 0f, 0.5f, 0.5f, 0.5f, 0f, 0f, 0.5f, 0.5f);
         float expected = .25f;
         assertEquals(expected, MatrixFMath.determinant(input), MatrixFMath.EPSILON);
@@ -492,6 +547,7 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testDeterminantMatF4() {
+        // Regression test, there are no cases where this could fail.
         MatF4 input = new MatF4(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f, 0.000f,
                 0.330f, 0.000f, 0.330f, 0.330f, 0.330f);
         float expected = -0.0355776f;
@@ -510,10 +566,11 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testCofactorsMatF3() {
+        // Regression test, there are no cases where this could fail.
         MatF3 input = new MatF3(3f, 0f, 2f, 2f, 0f, -2f, 0f, 1f, 1f);
         MatF3 expected = new MatF3(2f, -2f, 2f, 2f, 3f, -3f, 0f, 10f, 0f);
 
-        assertEquals(expected, MatrixFMath.cofactors(input));
+        assertArrayEquals(expected.m, MatrixFMath.cofactors(input).m, MatrixFMath.EPSILON);
     }
 
     /**
@@ -523,10 +580,11 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testCofactorsMatF4() {
+        // Regression test, there are no cases where this could fail.
         MatF4 input = new MatF4(1f, 0f, 0f, 1f, 0f, 2f, 1f, 2f, 2f, 1f, 0f, 1f, 2f, 0f, 1f, 4f);
         MatF4 expected = new MatF4(-4f, 2f, -16f, 6f, -1f, 1f, -2f, 1f, 2f, 0f, 4f, -2f, 1f, -1f, 4f, -1f);
 
-        assertEquals(expected, MatrixFMath.cofactors(input));
+        assertArrayEquals(expected.m, MatrixFMath.cofactors(input).m, MatrixFMath.EPSILON);
     }
 
     /**
@@ -536,10 +594,11 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testMinorsMatF3() {
+        // Regression test, there are no cases where this could fail.
         MatF3 input = new MatF3(3f, 0f, 2f, 2f, 0f, -2f, 0f, 1f, 1f);
         MatF3 expected = new MatF3(2f, 2f, 2f, -2f, 3f, 3f, 0f, -10f, 0f);
 
-        assertEquals(expected, MatrixFMath.minors(input));
+        assertArrayEquals(expected.m, MatrixFMath.minors(input).m, MatrixFMath.EPSILON);
     }
 
     /**
@@ -549,11 +608,12 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testMinorsMatF4() {
+        // Regression test, there are no cases where this could fail.
         MatF4 input = new MatF4(1f, 0f, 0f, 1f, 0f, 2f, 1f, 2f, 2f, 1f, 0f, 1f, 2f, 0f, 1f, 4f);
         MatF4 expected = new MatF4(-4.0f, -2.0f, -16.0f, -6.0f, 1.0f, 1.0f, 2.0f, 1.0f, 2.0f, 0.0f, 4.0f, 2.0f, -1.0f,
                 -1.0f, -4.0f, -1.0f);
 
-        assertEquals(expected, MatrixFMath.minors(input));
+        assertArrayEquals(expected.m, MatrixFMath.minors(input).m, MatrixFMath.EPSILON);
     }
 
     /**
@@ -563,24 +623,25 @@ public class MatrixFMathTest {
      */
     @Test
     public final void testExcludeMatF3() {
+        // Regression test, there are no cases where this could fail.
         MatF3 input = new MatF3(0.5f, 0f, 0.5f, 0.5f, 0.5f, 0f, 0f, 0.5f, 0.5f);
         int col = 0;
         int row = 0;
         MatF2 expected = new MatF2(0.5f, 0f, 0.5f, 0.5f);
 
-        assertEquals(expected, MatrixFMath.exclude(input, col, row));
+        assertArrayEquals(expected.m, MatrixFMath.exclude(input, col, row).m, MatrixFMath.EPSILON);
 
         col = 1;
         row = 0;
         expected = new MatF2(0.5f, 0f, 0f, 0.5f);
 
-        assertEquals(expected, MatrixFMath.exclude(input, col, row));
+        assertArrayEquals(expected.m, MatrixFMath.exclude(input, col, row).m, MatrixFMath.EPSILON);
 
         col = 2;
         row = 0;
         expected = new MatF2(0.5f, 0.5f, 0f, 0.5f);
 
-        assertEquals(expected, MatrixFMath.exclude(input, col, row));
+        assertArrayEquals(expected.m, MatrixFMath.exclude(input, col, row).m, MatrixFMath.EPSILON);
 
     }
 
@@ -597,13 +658,13 @@ public class MatrixFMathTest {
         int row = 0;
         MatF3 expected = new MatF3(0.330f, 0.330f, 0.000f, 0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f);
 
-        assertEquals(expected, MatrixFMath.exclude(input, col, row));
+        assertArrayEquals(expected.m, MatrixFMath.exclude(input, col, row).m, MatrixFMath.EPSILON);
 
         col = 1;
         row = 0;
         expected = new MatF3(0.330f, 0.330f, 0.000f, 0.330f, 0.000f, 0.330f, 0.000f, 0.330f, 0.330f);
 
-        assertEquals(expected, MatrixFMath.exclude(input, col, row));
+        assertArrayEquals(expected.m, MatrixFMath.exclude(input, col, row).m, MatrixFMath.EPSILON);
 
     }
 
@@ -617,11 +678,12 @@ public class MatrixFMathTest {
         MatF2 input = new MatF2(0.5f, 1f, 0f, 3f);
         MatF2 expected = new MatF2(0.5f, 0f, 1f, 3f);
 
-        assertEquals(expected, MatrixFMath.transpose(input));
+        assertArrayEquals(expected.m, MatrixFMath.transpose(input).m, MatrixFMath.EPSILON);
 
         input = new MatF2(1f, 0f, 0f, 1f);
+        expected = new MatF2(1f, 0f, 0f, 1f);
 
-        assertEquals(input, MatrixFMath.transpose(input));
+        assertArrayEquals(expected.m, MatrixFMath.transpose(input).m, MatrixFMath.EPSILON);
     }
 
     /**
@@ -634,11 +696,12 @@ public class MatrixFMathTest {
         MatF3 input = new MatF3(0.5f, 0f, 0.5f, 0.5f, 0.5f, 0f, 0f, 0.5f, 0.5f);
         MatF3 expected = new MatF3(0.5f, 0.5f, 0.0f, 0f, 0.5f, 0.5f, 0.5f, 0f, 0.5f);
 
-        assertEquals(expected, MatrixFMath.transpose(input));
+        assertArrayEquals(expected.m, MatrixFMath.transpose(input).m, MatrixFMath.EPSILON);
 
         input = new MatF3(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f);
+        expected = new MatF3(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f);
 
-        assertEquals(input, MatrixFMath.transpose(input));
+        assertArrayEquals(expected.m, MatrixFMath.transpose(input).m, MatrixFMath.EPSILON);
     }
 
     /**
@@ -653,11 +716,12 @@ public class MatrixFMathTest {
         MatF4 expected = new MatF4(0.330f, 0.330f, 0.330f, 0.000f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f,
                 0.000f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f);
 
-        assertEquals(expected, MatrixFMath.transpose(input));
+        assertArrayEquals(expected.m, MatrixFMath.transpose(input).m, MatrixFMath.EPSILON);
 
         input = new MatF4(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f);
+        expected = new MatF4(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f);
 
-        assertEquals(input, MatrixFMath.transpose(input));
+        assertArrayEquals(expected.m, MatrixFMath.transpose(input).m, MatrixFMath.EPSILON);
     }
 
     /**
@@ -670,7 +734,7 @@ public class MatrixFMathTest {
         MatF2 input = new MatF2(0.5f, 1f, 0f, 3f);
         MatF2 expected = new MatF2(3f, -1f, 0f, 0.5f);
 
-        assertEquals(expected, MatrixFMath.adjoint(input));
+        assertArrayEquals(expected.m, MatrixFMath.adjoint(input).m, MatrixFMath.EPSILON);
 
     }
 
@@ -684,15 +748,17 @@ public class MatrixFMathTest {
         MatF3 input = new MatF3(0.5f, 0f, 0.5f, 0.5f, 0.5f, 0f, 0f, 0.5f, 0.5f);
         MatF3 expected = new MatF3(0.25f, 0.25f, -0.25f, -0.25f, 0.25f, 0.25f, 0.25f, -0.25f, 0.25f);
 
-        assertEquals(expected, MatrixFMath.adjoint(input));
+        assertArrayEquals(expected.m, MatrixFMath.adjoint(input).m, MatrixFMath.EPSILON);
 
         input = new MatF3(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f);
         expected = new MatF3(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f);
-        assertEquals(expected, MatrixFMath.adjoint(input));
+
+        assertArrayEquals(expected.m, MatrixFMath.adjoint(input).m, MatrixFMath.EPSILON);
 
         input = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
         expected = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
-        assertEquals(expected, MatrixFMath.adjoint(input));
+
+        assertArrayEquals(expected.m, MatrixFMath.adjoint(input).m, MatrixFMath.EPSILON);
     }
 
     /**
@@ -705,22 +771,22 @@ public class MatrixFMathTest {
         MatF4 input = new MatF4(0f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f, 11f, 12f, 13f, 14f, 15f, 16f);
         MatF4 expected = new MatF4(0f, 0f, 0f, 0f, 0f, 4f, -8f, 4f, 0f, -8f, 16f, -8f, 0f, 4f, -8f, 4f);
 
-        assertEquals(expected, MatrixFMath.adjoint(input));
+        assertArrayEquals(expected.m, MatrixFMath.adjoint(input).m, MatrixFMath.EPSILON);
 
         input = new MatF4(1f, 0f, 0f, 1f, 0f, 2f, 1f, 2f, 2f, 1f, 0f, 1f, 2f, 0f, 1f, 4f);
         expected = new MatF4(-4f, -1f, 2f, 1f, 2f, 1f, 0f, -1f, -16f, -2f, 4f, 4f, 6f, 1f, -2f, -1f);
 
-        assertEquals(expected, MatrixFMath.adjoint(input));
+        assertArrayEquals(expected.m, MatrixFMath.adjoint(input).m, MatrixFMath.EPSILON);
 
         input = new MatF4(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f);
         expected = new MatF4(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f);
 
-        assertEquals(expected, MatrixFMath.adjoint(input));
+        assertArrayEquals(expected.m, MatrixFMath.adjoint(input).m, MatrixFMath.EPSILON);
 
         input = new MatF4(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 1f);
         expected = new MatF4(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
-        assertEquals(expected, MatrixFMath.adjoint(input));
+        assertArrayEquals(expected.m, MatrixFMath.adjoint(input).m, MatrixFMath.EPSILON);
 
     }
 
@@ -734,9 +800,16 @@ public class MatrixFMathTest {
         MatF2 input = new MatF2(0.5f, 1f, 0f, 3f);
         MatF2 expected = new MatF2(2f, -2f / 3f, 0f, 1f / 3f);
         try {
-            assertEquals(expected, MatrixFMath.inverse(input));
+            assertArrayEquals(expected.m, MatrixFMath.inverse(input).m, MatrixFMath.EPSILON);
         } catch (InverseNotAvailableException e) {
             fail("determinant should not be 0 here, but it is.");
+        }
+
+        input = new MatF2(0f, 0f, 0f, 0f);
+        try {
+            assertArrayEquals(expected.m, MatrixFMath.inverse(input).m, MatrixFMath.EPSILON);
+            fail("determinant should be 0 here, but it is not.");
+        } catch (InverseNotAvailableException e) {
         }
 
     }
@@ -751,7 +824,7 @@ public class MatrixFMathTest {
         MatF3 input = new MatF3(0.5f, 0f, 0.5f, 0.5f, 0.5f, 0f, 0f, 0.5f, 0.5f);
         MatF3 expected = new MatF3(1f, 1f, -1f, -1f, 1f, 1f, 1f, -1f, 1f);
         try {
-            assertEquals(expected, MatrixFMath.inverse(input));
+            assertArrayEquals(expected.m, MatrixFMath.inverse(input).m, MatrixFMath.EPSILON);
         } catch (InverseNotAvailableException e) {
             fail("determinant should not be 0 here, but it is.");
         }
@@ -759,14 +832,14 @@ public class MatrixFMathTest {
         input = new MatF3(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f);
         expected = new MatF3(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f);
         try {
-            assertEquals(expected, MatrixFMath.inverse(input));
+            assertArrayEquals(expected.m, MatrixFMath.inverse(input).m, MatrixFMath.EPSILON);
         } catch (InverseNotAvailableException e) {
             fail("determinant should not be 0 here, but it is.");
         }
 
         input = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
         try {
-            assertEquals(expected, MatrixFMath.inverse(input));
+            assertArrayEquals(expected.m, MatrixFMath.inverse(input).m, MatrixFMath.EPSILON);
             fail("determinant should be 0 here, but it is not.");
         } catch (InverseNotAvailableException e) {
         }
@@ -784,7 +857,7 @@ public class MatrixFMathTest {
         MatF4 expected = new MatF4(1.010101f, 1.010101f, 1.010101f, -2.020202f, -2.020202f, 1.010101f, 1.010101f,
                 1.010101f, 1.010101f, 1.010101f, -2.020202f, 1.010101f, 1.010101f, -2.020202f, 1.010101f, 1.010101f);
         try {
-            assertEquals(expected, MatrixFMath.inverse(input));
+            assertArrayEquals(expected.m, MatrixFMath.inverse(input).m, MatrixFMath.EPSILON);
         } catch (InverseNotAvailableException e) {
             fail("determinant should not be 0 here, but it is.");
         }
@@ -792,14 +865,14 @@ public class MatrixFMathTest {
         input = new MatF4(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f);
         expected = new MatF4(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f);
         try {
-            assertEquals(expected, MatrixFMath.inverse(input));
+            assertArrayEquals(expected.m, MatrixFMath.inverse(input).m, MatrixFMath.EPSILON);
         } catch (InverseNotAvailableException e) {
             fail("determinant should not be 0 here, but it is.");
         }
 
         input = new MatF4(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
         try {
-            assertEquals(expected, MatrixFMath.inverse(input));
+            assertArrayEquals(expected.m, MatrixFMath.inverse(input).m, MatrixFMath.EPSILON);
             fail("determinant should be 0 here, but it is not.");
         } catch (InverseNotAvailableException e) {
         }

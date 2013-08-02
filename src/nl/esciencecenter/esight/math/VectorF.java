@@ -83,7 +83,6 @@ public abstract class VectorF extends Vector {
         for (int i = 0; i < v.length; i++) {
             buf.append(v[i] + " ");
         }
-        String s = buf.toString();
 
         return buf.toString();
     }

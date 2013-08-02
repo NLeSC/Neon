@@ -39,7 +39,9 @@ public class ShaderCreator {
 
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < rows * columns; ++i) {
-            buf.append("uniform sampler2D sphereTexture_" + i + ";\n");
+            buf.append("uniform sampler2D sphereTexture_");
+            buf.append(i);
+            buf.append(";\n");
         }
         shaderText += buf.toString();
 
