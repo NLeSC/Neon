@@ -119,10 +119,16 @@ public class ShaderCreator {
         shaderText += "" + "    } else if (selection == 1) {\n" + "        vec2 tCoord = vec2(x,y);\n"
                 + "        sphereColor = vec4(texture(sphereTexture_0, tCoord).rgb, 1.0);\n";
 
-        for (int i = 1; i < rows * columns; i++) {
-            shaderText += "    } else if (selection == " + (i + 1) + ") {\n" + "        vec2 tCoord = vec2(x,y);\n"
-                    + "        sphereColor = vec4(texture(sphereTexture_" + (i) + ", tCoord).rgb, 1.0);\n";
+        buf = new StringBuffer();
+        for (int i = 0; i < rows * columns; ++i) {
+            buf.append("    } else if (selection == ");
+            buf.append(i + 1);
+            buf.append(") {\n" + "        vec2 tCoord = vec2(x,y);\n");
+            buf.append("        sphereColor = vec4(texture(sphereTexture_");
+            buf.append(i);
+            buf.append(", tCoord).rgb, 1.0);\n");
         }
+        shaderText += buf.toString();
 
         shaderText += "    }\n" + "    vec4 color = sphereColor;\n" + "    fragColor = vec4(color.rgb, 1.0);\n" + "}\n";
 
