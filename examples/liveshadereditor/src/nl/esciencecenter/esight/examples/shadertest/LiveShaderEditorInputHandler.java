@@ -139,16 +139,16 @@ public class LiveShaderEditorInputHandler extends TextEditorKeyboardHandler impl
                 rotationZ = 360f + rotationZ % 360;
             }
 
-            rotation.set(0, rotationY);
-            rotation.set(1, rotationX);
-            rotation.set(2, rotationZ);
+            rotation.setX(rotationY);
+            rotation.setY(rotationX);
+            rotation.setZ(rotationZ);
             setCurrentOctant(rotation);
         } else if (e.isButtonDown(MouseEvent.BUTTON3)) {
             translationX = (.01f * (e.getX() - dragLeftXorigin)) + translationXorigin;
             translationY = (-.01f * (e.getY() - dragLeftYorigin)) + translationYorigin;
 
-            translation.set(0, translationX);
-            translation.set(1, translationY);
+            translation.setX(translationX);
+            translation.setY(translationY);
         }
     }
 
@@ -176,9 +176,9 @@ public class LiveShaderEditorInputHandler extends TextEditorKeyboardHandler impl
      *            The rotation from which to calculate the viewing octant.
      */
     private void setCurrentOctant(VecF3 rotation) {
-        float x = rotation.get(0);
+        float x = rotation.getX();
         int qx = (int) Math.floor(x / 90f);
-        float y = rotation.get(1);
+        float y = rotation.getY();
         int qy = (int) Math.floor(y / 90f);
 
         if (qx == 0 && qy == 0) {

@@ -103,8 +103,8 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
     // Variables needed to calculate the viewpoint and camera angle.
     final Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())),
             (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
-            (float) (getRadius() * Math.cos(getFtheta())), 1.0f);
-    final Point4 at = new Point4(0.0f, 0.0f, 0.0f, 1.0f);
+            (float) (getRadius() * Math.cos(getFtheta())));
+    final Point4 at = new Point4(0.0f, 0.0f, 0.0f);
     final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
     private int cachedColormapIndex, cachedDataModeIndex, cachedVariableindex, cachedRangeSliderLowerValue,
@@ -283,8 +283,8 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
 
         // Rotate tha camera according to the rotation angles defined in the
         // inputhandler.
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().get(0)));
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().get(1)));
+        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
+        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
         // modelViewMatrix =
         // modelViewMatrix.mul(MatrixFMath.rotationZ(inputHandler.getRotation().get(2)));
 
@@ -340,8 +340,8 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
             // Clear the renderbuffer to start with a clean (black) slate
             gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
 
-            renderGeoSphere(gl, mv.clone(), textureShaderProgram);
-            renderSphere(gl, mv.clone(), textureShaderProgram);
+            renderGeoSphere(gl, new MatF4(mv), textureShaderProgram);
+            renderSphere(gl, new MatF4(mv), textureShaderProgram);
 
             // Unbind the FrameBufferObject, making it available for texture
             // extraction.

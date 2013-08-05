@@ -17,6 +17,9 @@ import nl.esciencecenter.esight.shaders.ShaderProgramLoader;
 import nl.esciencecenter.esight.text.jogampExperimental.Font;
 import nl.esciencecenter.esight.text.jogampExperimental.FontFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /* Copyright 2013 Netherlands eScience Center
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -40,22 +43,24 @@ import nl.esciencecenter.esight.text.jogampExperimental.FontFactory;
  * 
  */
 public abstract class ESightGLEventListener implements GLEventListener {
+    private static final Logger logger = LoggerFactory.getLogger(ESightGLEventListener.class);
+
     /** General radius variable needed for lookAt method */
-    private final float radius = 1.0f;
+    private static final float radius = 1.0f;
     /** General ftheta variable needed for lookAt method */
-    private final float ftheta = 0.0f;
+    private static final float ftheta = 0.0f;
     /** General phi variable needed for lookAt method */
-    private final float phi = 0.0f;
+    private static final float phi = 0.0f;
 
     /**
      * General Field of View Y-direction variable needed for a default
      * perspective
      */
-    private final float fovy = 45.0f;
+    private static final float fovy = 45.0f;
     /** General Near clipping plane variable needed for a default perspective */
-    private final float zNear = 0.1f;
+    private static final float zNear = 0.1f;
     /** General Far clipping plane variable needed for a default perspective */
-    private final float zFar = 30000.0f;
+    private static final float zFar = 30000.0f;
 
     /**
      * A default implementation of the ProgramLoader, needed for programmable
@@ -69,7 +74,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
     private float aspect;
 
     /** Ubuntu fontset is used for HUD elements */
-    private final int fontSet = FontFactory.UBUNTU;
+    private static final int fontSet = FontFactory.UBUNTU;
     /** font is used for HUD elements @see fontSet */
     private final Font font;
 
@@ -124,11 +129,11 @@ public abstract class ESightGLEventListener implements GLEventListener {
         try {
             final int status = drawable.getContext().makeCurrent();
             if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
-                System.err.println("Error swapping context to onscreen.");
+                logger.error("Error swapping context to onscreen.");
             }
         } catch (final GLException e) {
-            System.err.println("Exception while swapping context to onscreen.");
-            e.printStackTrace();
+            logger.error("Exception while swapping context to onscreen.");
+            logger.error(e.getMessage());
         }
     }
 
@@ -137,7 +142,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
         try {
             drawable.getContext().release();
         } catch (final GLException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 
@@ -179,7 +184,6 @@ public abstract class ESightGLEventListener implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
         contextOn(drawable);
 
-        // if (drawable.getGLProfile().isGL3()) {
         final GL3 gl = drawable.getContext().getGL().getGL3();
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
 
@@ -199,8 +203,8 @@ public abstract class ESightGLEventListener implements GLEventListener {
     public MatF4 lookAt() {
         Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())),
                 (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
-                (float) (getRadius() * Math.cos(getFtheta())), 1.0f);
-        Point4 at = new Point4(0.0f, 0.0f, 0.0f, 1.0f);
+                (float) (getRadius() * Math.cos(getFtheta())));
+        Point4 at = new Point4(0.0f, 0.0f, 0.0f);
         VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
         MatF4 mv = MatrixFMath.lookAt(eye, at, up);
@@ -211,8 +215,8 @@ public abstract class ESightGLEventListener implements GLEventListener {
             mv = mv.mul(MatrixFMath.rotationY(inputRotationY));
         } else {
             mv = mv.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputHandler.getViewDist())));
-            mv = mv.mul(MatrixFMath.rotationX(inputHandler.getRotation().get(0)));
-            mv = mv.mul(MatrixFMath.rotationY(inputHandler.getRotation().get(1)));
+            mv = mv.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
+            mv = mv.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
         }
 
         return mv;
@@ -249,13 +253,12 @@ public abstract class ESightGLEventListener implements GLEventListener {
     public void dispose(GLAutoDrawable drawable) {
         contextOn(drawable);
 
-        // if (drawable.getGLProfile().isGL3()) {
         final GL3 gl = drawable.getGL().getGL3();
 
         try {
             getLoader().cleanup(gl);
         } catch (UninitializedException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         contextOff(drawable);

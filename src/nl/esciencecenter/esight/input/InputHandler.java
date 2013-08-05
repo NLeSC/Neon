@@ -132,9 +132,9 @@ public class InputHandler implements MouseListener, KeyListener {
             if (rotationY < 0)
                 rotationY = 360f + rotationY % 360;
 
-            rotation.set(0, rotationY);
-            rotation.set(1, rotationX);
-            rotation.set(2, 0f); // We never rotate around the Z axis.
+            rotation.setX(rotationY);
+            rotation.setY(rotationX);
+            rotation.setZ(0f); // We never rotate around the Z axis.
             setCurrentOctant(rotation);
         }
     }
@@ -163,9 +163,9 @@ public class InputHandler implements MouseListener, KeyListener {
      *            The rotation from which to calculate the viewing octant.
      */
     private void setCurrentOctant(VecF3 rotation) {
-        float x = rotation.get(0);
+        float x = rotation.getX();
         int qx = (int) Math.floor(x / 90f);
-        float y = rotation.get(1);
+        float y = rotation.getY();
         int qy = (int) Math.floor(y / 90f);
 
         if (qx == 0 && qy == 0) {

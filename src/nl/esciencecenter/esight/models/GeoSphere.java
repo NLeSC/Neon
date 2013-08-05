@@ -69,11 +69,11 @@ public class GeoSphere extends Model {
             }
         }
 
-        numVertices = points4List.size();
+        setNumVertices(points4List.size());
 
-        vertices = VectorFMath.vec4ListToBuffer(points4List);
-        normals = VectorFMath.vec3ListToBuffer(normals3List);
-        texCoords = VectorFMath.vec3ListToBuffer(tCoords3List);
+        setVertices(VectorFMath.vec4ListToBuffer(points4List));
+        setNormals(VectorFMath.vec3ListToBuffer(normals3List));
+        setTexCoords(VectorFMath.vec3ListToBuffer(tCoords3List));
     }
 
     /**

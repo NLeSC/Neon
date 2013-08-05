@@ -546,16 +546,16 @@ public class VectorFMathTest {
 
     @Test
     public final void testInterpolateColors() {
-        VecF4 startColor = new VecF4(0f, 0f, 0f, 1f);
-        VecF4 endColor = new VecF4(1f, 1f, 1f, 1f);
+        Color4 startColor = new Color4(0f, 0f, 0f, 1f);
+        Color4 endColor = new Color4(1f, 1f, 1f, 1f);
 
-        VecF4[] expected = { new VecF4(0.0f, 0.0f, 0.0f, 1.0f), new VecF4(0.1f, 0.1f, 0.1f, 1.0f),
-                new VecF4(0.2f, 0.2f, 0.2f, 1.0f), new VecF4(0.3f, 0.3f, 0.3f, 1.0f),
-                new VecF4(0.4f, 0.4f, 0.4f, 1.0f), new VecF4(0.5f, 0.5f, 0.5f, 1.0f),
-                new VecF4(0.6f, 0.6f, 0.6f, 1.0f), new VecF4(0.7f, 0.7f, 0.7f, 1.0f),
-                new VecF4(0.8f, 0.8f, 0.8f, 1.0f), new VecF4(0.90000004f, 0.90000004f, 0.90000004f, 1.0f) };
+        Color4[] expected = { new Color4(0.0f, 0.0f, 0.0f, 1.0f), new Color4(0.1f, 0.1f, 0.1f, 1.0f),
+                new Color4(0.2f, 0.2f, 0.2f, 1.0f), new Color4(0.3f, 0.3f, 0.3f, 1.0f),
+                new Color4(0.4f, 0.4f, 0.4f, 1.0f), new Color4(0.5f, 0.5f, 0.5f, 1.0f),
+                new Color4(0.6f, 0.6f, 0.6f, 1.0f), new Color4(0.7f, 0.7f, 0.7f, 1.0f),
+                new Color4(0.8f, 0.8f, 0.8f, 1.0f), new Color4(0.90000004f, 0.90000004f, 0.90000004f, 1.0f) };
 
-        VecF4[] result = VectorFMath.interpolateColors(10, startColor, endColor);
+        Color4[] result = VectorFMath.interpolateColors(10, startColor, endColor);
 
         for (int i = 0; i < 10; i++) {
             assertEquals(expected[i], result[i]);

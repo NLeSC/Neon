@@ -66,9 +66,9 @@ public class Axis extends Model {
 
         VecF3 perpendicular;
         VecF3 vec = VectorFMath.normalize((end.sub(start)));
-        if (vec.get(0) > 0.5f) {
+        if (vec.getX() > 0.5f) {
             perpendicular = new VecF3(0f, 0f, 1f);
-        } else if (vec.get(1) > 0.5f) {
+        } else if (vec.getY() > 0.5f) {
             perpendicular = new VecF3(1f, 0f, 0f);
         } else {
             perpendicular = new VecF3(0f, 1f, 0f);
@@ -94,10 +94,10 @@ public class Axis extends Model {
 
         }
 
-        this.numVertices = numVertices;
-        this.vertices = VectorFMath.toBuffer(points);
-        this.normals = VectorFMath.toBuffer(normals);
-        this.texCoords = VectorFMath.toBuffer(tCoords);
+        this.setNumVertices(numVertices);
+        this.setVertices(VectorFMath.toBuffer(points));
+        this.setNormals(VectorFMath.toBuffer(normals));
+        this.setTexCoords(VectorFMath.toBuffer(tCoords));
     }
 
     /**
@@ -121,14 +121,15 @@ public class Axis extends Model {
      */
     private int addInterval(VecF4[] points, VecF3[] normals, VecF3[] tCoords, int offset, VecF3 center,
             VecF3 alignment, float size) {
-        points[offset] = new VecF4(center.add(alignment.mul(size)), 1f);
-        normals[offset] = VectorFMath.normalize(alignment);
-        tCoords[offset] = new VecF3(0, 0, 0);
-        offset++;
-        points[offset] = new VecF4(center.sub(alignment.mul(size)), 1f);
-        normals[offset] = VectorFMath.normalize(alignment).neg();
-        tCoords[offset] = new VecF3(1, 1, 1);
-        offset++;
-        return offset;
+        int tmpOffset = offset;
+        points[tmpOffset] = new VecF4(center.add(alignment.mul(size)), 1f);
+        normals[tmpOffset] = VectorFMath.normalize(alignment);
+        tCoords[tmpOffset] = new VecF3(0, 0, 0);
+        tmpOffset++;
+        points[tmpOffset] = new VecF4(center.sub(alignment.mul(size)), 1f);
+        normals[tmpOffset] = VectorFMath.normalize(alignment).neg();
+        tCoords[tmpOffset] = new VecF3(1, 1, 1);
+        tmpOffset++;
+        return tmpOffset;
     }
 }

@@ -8,7 +8,6 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLContext;
 
 import nl.esciencecenter.esight.ESightGLEventListener;
-import nl.esciencecenter.esight.datastructures.FBO;
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 import nl.esciencecenter.esight.input.InputHandler;
 import nl.esciencecenter.esight.math.MatF4;
@@ -18,7 +17,6 @@ import nl.esciencecenter.esight.math.VecF3;
 import nl.esciencecenter.esight.math.VecF4;
 import nl.esciencecenter.esight.models.GeoSphere;
 import nl.esciencecenter.esight.models.InvertedGeoSphere;
-import nl.esciencecenter.esight.models.Quad;
 import nl.esciencecenter.esight.shaders.ShaderProgram;
 import nl.esciencecenter.esight.textures.Texture2D;
 
@@ -46,14 +44,10 @@ import nl.esciencecenter.esight.textures.Texture2D;
  */
 public class RealisticEarthGLEventListener extends ESightGLEventListener {
     // Two example shader program definitions.
-    private ShaderProgram shaderProgram_Universe, shaderProgram_Earth, shaderProgram_Atmosphere, postprocessShader;
-
-    // Example framebuffer objects for rendering to textures.
-    private FBO geoSphereFBO, sceneFBO, hudFBO;
+    private ShaderProgram shaderProgram_Universe, shaderProgram_Earth, shaderProgram_Atmosphere;
 
     // Model definitions, the quad is necessary for Full-screen rendering. The
     // axes are the model we wish to render (example)
-    private Quad FSQ_postprocess;
     private GeoSphere geoSphere, atmSphere, moonSphere;
 
     private InvertedGeoSphere universeInvertedSphere;
@@ -77,8 +71,8 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
     // Variables needed to calculate the viewpoint and camera angle.
     final Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())),
             (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
-            (float) (getRadius() * Math.cos(getFtheta())), 1.0f);
-    final Point4 at = new Point4(0.0f, 0.0f, 0.0f, 1.0f);
+            (float) (getRadius() * Math.cos(getFtheta())));
+    final Point4 at = new Point4(0.0f, 0.0f, 0.0f);
     final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
     long time = System.currentTimeMillis();
@@ -160,18 +154,14 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
             // Create the ShaderProgram that we're going to use for the Example
             // Axes. The source code for the VertexShader: shaders/vs_axes.vp,
             // and the source code for the FragmentShader: shaders/fs_axes.fp
-            shaderProgram_Universe = getLoader().createProgram(gl, "shaderProgram_Universe", new File(
-                    "shaders/vs_texture.vp"), new File("shaders/fs_texture.fp"));
+            shaderProgram_Universe = getLoader().createProgram(gl, "shaderProgram_Universe",
+                    new File("shaders/vs_texture.vp"), new File("shaders/fs_texture.fp"));
 
-            shaderProgram_Earth = getLoader().createProgram(gl, "shaderProgram_Earth", new File(
-                    "shaders/vs_perFragmentLighting.vp"), new File("shaders/fs_perFragmentLighting.fp"));
+            shaderProgram_Earth = getLoader().createProgram(gl, "shaderProgram_Earth",
+                    new File("shaders/vs_perFragmentLighting.vp"), new File("shaders/fs_perFragmentLighting.fp"));
 
-            shaderProgram_Atmosphere = getLoader().createProgram(gl, "shaderProgram_Atmosphere", new File(
-                    "shaders/vs_atmosphere.vp"), new File("shaders/fs_atmosphere.fp"));
-
-            // Same for the postprocessing shader.
-            postprocessShader = getLoader().createProgram(gl, "postProcess", new File("shaders/vs_postprocess.vp"),
-                    new File("shaders/fs_ColormapExamplePostprocess.fp"));
+            shaderProgram_Atmosphere = getLoader().createProgram(gl, "shaderProgram_Atmosphere",
+                    new File("shaders/vs_atmosphere.vp"), new File("shaders/fs_atmosphere.fp"));
         } catch (final Exception e) {
             // If compilation fails, we will output the error message and quit
             // the application.
@@ -211,20 +201,6 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         universeTex.init(gl);
         moonTex.init(gl);
 
-        // Here we define the Full screen quad model (for postprocessing), and
-        // initialize it.
-        FSQ_postprocess = new Quad(2, 2, new VecF3(0, 0, 0.1f));
-        FSQ_postprocess.init(gl);
-
-        // Here we define some intermediate-step full screen textures (which are
-        // needed for post processing), done with FrameBufferObjects, so we can
-        // render directly to them.
-        hudFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
-        sceneFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
-
-        hudFBO.init(gl);
-        sceneFBO.init(gl);
-
         inputHandler.setViewDist(-40f);
 
         // Release the context.
@@ -262,19 +238,13 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
 
         // Rotate tha camera according to the rotation angles defined in the
         // inputhandler.
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().get(0)));
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().get(1)));
-        // modelViewMatrix =
-        // modelViewMatrix.mul(MatrixFMath.rotationZ(inputHandler.getRotation().get(2)));
+        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
+        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
 
         // Render the scene with these modelview settings. In this case, the end
         // result of this action will be that the AxesFBO has been filled with
         // the right pixels.
         renderScene(gl, modelViewMatrix);
-
-        // Render the FBO's to screen, doing any post-processing actions that
-        // might be wanted.
-        // renderTexturesToScreen(gl, canvasWidth, canvasHeight);
 
         // Release the context.
         contextOff(drawable);
@@ -296,7 +266,6 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
     private void renderScene(GL3 gl, MatF4 mv) {
         try {
             // Bind the FrameBufferObject so we can start rendering to it
-            // sceneFBO.bind(gl);
 
             // Clear the renderbuffer to start with a clean (black) slate
             gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
@@ -308,14 +277,13 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
             double minutesPassed = timePassed / 60000.0;
             totalMinutesPassed += minutesPassed;
 
-            renderUniverse(gl, mv.clone(), shaderProgram_Universe);
-            renderGeoSphere(gl, mv.clone(), shaderProgram_Earth);
-            renderMoon(gl, mv.clone(), shaderProgram_Universe);
-            renderAtmosphere(gl, mv.clone(), shaderProgram_Atmosphere);
+            renderUniverse(gl, new MatF4(mv), shaderProgram_Universe);
+            renderGeoSphere(gl, new MatF4(mv), shaderProgram_Earth);
+            renderMoon(gl, new MatF4(mv), shaderProgram_Universe);
+            renderAtmosphere(gl, new MatF4(mv), shaderProgram_Atmosphere);
 
             // Unbind the FrameBufferObject, making it available for texture
             // extraction.
-            // sceneFBO.unBind(gl);
         } catch (final UninitializedException e) {
             e.printStackTrace();
         }
@@ -467,51 +435,6 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         atmSphere.draw(gl, program);
     }
 
-    /**
-     * Final image composition and postprocessing method. makes use of the
-     * postprocessShader
-     * 
-     * @param gl
-     *            The current openGL instance.
-     * @param width
-     *            The width of the openGL 'canvas'
-     * @param height
-     *            The height of the openGL 'canvas'
-     */
-    private void renderTexturesToScreen(GL3 gl, int width, int height) {
-        // Clear the renderbuffer to start with a clean (black) slate
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-
-        // Stage a pointer to the Texture picturing the axes and hud
-        // (extracted from their FrameBufferObjects)
-        // in the postprocessing shaderprogram.
-        postprocessShader.setUniform("sceneTex", sceneFBO.getTexture().getMultitexNumber());
-        postprocessShader.setUniform("hudTexture", hudFBO.getTexture().getMultitexNumber());
-
-        // Stage the Perspective and Modelview matrixes in the ShaderProgram.
-        // Because we want to render at point-blank range in this stage, we set
-        // these to identity matrices.
-        postprocessShader.setUniformMatrix("MVMatrix", new MatF4());
-        postprocessShader.setUniformMatrix("PMatrix", new MatF4());
-
-        // Stage the width and height.
-        postprocessShader.setUniform("scrWidth", width);
-        postprocessShader.setUniform("scrHeight", height);
-
-        try {
-            // Load all staged variables into the GPU, check for errors and
-            // omissions.
-            postprocessShader.use(gl);
-
-            // Call the model's draw method, this links the model's VertexBuffer
-            // to
-            // the ShaderProgram and then calls the OpenGL draw method.
-            FSQ_postprocess.draw(gl, postprocessShader);
-        } catch (final UninitializedException e) {
-            e.printStackTrace();
-        }
-    }
-
     // The reshape method is automatically called by the openGL animator if the
     // window holding the OpenGL 'canvas' is resized.
     @Override
@@ -535,16 +458,6 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         canvasHeight = GLContext.getCurrent().getGLDrawable().getHeight();
         setAspect((float) canvasWidth / (float) canvasHeight);
 
-        // Resize the FrameBuffer Objects that we use for intermediate stages.
-        sceneFBO.delete(gl);
-        hudFBO.delete(gl);
-
-        hudFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
-        sceneFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
-
-        sceneFBO.init(gl);
-        hudFBO.init(gl);
-
         // Release the context.
         contextOff(drawable);
     }
@@ -567,13 +480,8 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         // version).
         final GL3 gl = GLContext.getCurrentGL().getGL3();
 
-        // Delete the FramBuffer Objects.
-        geoSphereFBO.delete(gl);
-        sceneFBO.delete(gl);
-
         // Delete Models
         geoSphere.delete(gl);
-        FSQ_postprocess.delete(gl);
 
         // Let the ShaderProgramLoader clean up. This deletes all of the
         // ShaderProgram instances as well.

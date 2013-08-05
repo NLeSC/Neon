@@ -114,21 +114,20 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
         final Point4 eye = new Point4((float) (radius * Math.sin(ftheta) * Math.cos(phi)), (float) (radius
-                * Math.sin(ftheta) * Math.sin(phi)), (float) (radius * Math.cos(ftheta)), 1.0f);
-        final Point4 at = new Point4(0.0f, 0.0f, 0.0f, 1.0f);
+                * Math.sin(ftheta) * Math.sin(phi)), (float) (radius * Math.cos(ftheta)));
+        final Point4 at = new Point4(0.0f, 0.0f, 0.0f);
         final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
         MatF4 mv = MatrixFMath.lookAt(eye, at, up);
         mv = mv.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputHandler.getViewDist())));
-        mv = mv.mul(MatrixFMath.rotationX(inputHandler.getRotation().get(0)));
-        mv = mv.mul(MatrixFMath.rotationY(inputHandler.getRotation().get(1)));
+        mv = mv.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
+        mv = mv.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
 
         // Vertex shader variables
 
         try {
-            renderScene(gl, mv.clone());
-            // renderAxes(gl, mv.clone());
-            renderHUDText(gl, mv.clone());
+            renderScene(gl, new MatF4(mv));
+            renderHUDText(gl, new MatF4(mv));
 
             renderTexturesToScreen(gl, width, height);
         } catch (final UninitializedException e) {

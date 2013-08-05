@@ -43,16 +43,20 @@ public abstract class Model {
      * The OpenGL-internal vertex format rules the vertexes in the VBO are going
      * to follow.
      */
-    protected vertex_format format;
+    private vertex_format format;
 
     /** The storage buffers for the standard elements of a model. */
-    protected FloatBuffer vertices, normals, texCoords;
+    private FloatBuffer vertices;
+
+    private FloatBuffer normals;
+
+    private FloatBuffer texCoords;
 
     /** The resulting {@link VBO}. */
-    protected VBO vbo;
+    private VBO vbo;
 
     /** The number of vertices stored in this model. */
-    protected int numVertices;
+    private int numVertices;
 
     /** The state of this model. */
     private boolean initialized = false;
@@ -65,11 +69,11 @@ public abstract class Model {
      *            The {@link vertex_format} used by this model.
      */
     public Model(vertex_format format) {
-        vertices = null;
-        normals = null;
-        texCoords = null;
-        numVertices = 0;
-        this.format = format;
+        setVertices(null);
+        setNormals(null);
+        setTexCoords(null);
+        setNumVertices(0);
+        this.setFormat(format);
     }
 
     /**
@@ -81,11 +85,11 @@ public abstract class Model {
      */
     public void init(GL3 gl) {
         if (!initialized) {
-            GLSLAttrib vAttrib = new GLSLAttrib(vertices, "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
-            GLSLAttrib nAttrib = new GLSLAttrib(normals, "MCnormal", GLSLAttrib.SIZE_FLOAT, 3);
-            GLSLAttrib tAttrib = new GLSLAttrib(texCoords, "MCtexCoord", GLSLAttrib.SIZE_FLOAT, 3);
+            GLSLAttrib vAttrib = new GLSLAttrib(getVertices(), "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
+            GLSLAttrib nAttrib = new GLSLAttrib(getNormals(), "MCnormal", GLSLAttrib.SIZE_FLOAT, 3);
+            GLSLAttrib tAttrib = new GLSLAttrib(getTexCoords(), "MCtexCoord", GLSLAttrib.SIZE_FLOAT, 3);
 
-            vbo = new VBO(gl, vAttrib, nAttrib, tAttrib);
+            setVbo(new VBO(gl, vAttrib, nAttrib, tAttrib));
 
             initialized = true;
         }
@@ -98,12 +102,12 @@ public abstract class Model {
      *            The global openGL instance.
      */
     public void delete(GL3 gl) {
-        vertices = null;
-        normals = null;
-        texCoords = null;
+        setVertices(null);
+        setNormals(null);
+        setTexCoords(null);
 
         if (initialized) {
-            vbo.delete(gl);
+            getVbo().delete(gl);
         }
     }
 
@@ -114,7 +118,7 @@ public abstract class Model {
      */
     public VBO getVBO() throws UninitializedException {
         if (initialized) {
-            return vbo;
+            return getVbo();
         } else {
             throw new UninitializedException();
         }
@@ -142,19 +146,107 @@ public abstract class Model {
      */
     public void draw(GL3 gl, ShaderProgram program) throws UninitializedException {
         if (initialized) {
-            vbo.bind(gl);
+            getVbo().bind(gl);
 
-            program.linkAttribs(gl, vbo.getAttribs());
+            program.linkAttribs(gl, getVbo().getAttribs());
 
-            if (format == vertex_format.TRIANGLES) {
-                gl.glDrawArrays(GL3.GL_TRIANGLES, 0, numVertices);
-            } else if (format == vertex_format.POINTS) {
-                gl.glDrawArrays(GL3.GL_POINTS, 0, numVertices);
-            } else if (format == vertex_format.LINES) {
-                gl.glDrawArrays(GL3.GL_LINES, 0, numVertices);
+            if (getFormat() == vertex_format.TRIANGLES) {
+                gl.glDrawArrays(GL3.GL_TRIANGLES, 0, getNumVertices());
+            } else if (getFormat() == vertex_format.POINTS) {
+                gl.glDrawArrays(GL3.GL_POINTS, 0, getNumVertices());
+            } else if (getFormat() == vertex_format.LINES) {
+                gl.glDrawArrays(GL3.GL_LINES, 0, getNumVertices());
             }
         } else {
             throw new UninitializedException();
         }
+    }
+
+    /** 
+     * Getter for format.
+     * @return the format.
+     */
+    public vertex_format getFormat() {
+        return format;
+    }
+
+    /**
+     * Setter for format.
+     * @param format the format to set
+     */
+    public void setFormat(vertex_format format) {
+        this.format = format;
+    }
+
+    /** 
+     * Getter for vertices.
+     * @return the vertices.
+     */
+    public FloatBuffer getVertices() {
+        return vertices;
+    }
+
+    /**
+     * Setter for vertices.
+     * @param vertices the vertices to set
+     */
+    public void setVertices(FloatBuffer vertices) {
+        this.vertices = vertices;
+    }
+
+    /** 
+     * Getter for normals.
+     * @return the normals.
+     */
+    public FloatBuffer getNormals() {
+        return normals;
+    }
+
+    /**
+     * Setter for normals.
+     * @param normals the normals to set
+     */
+    public void setNormals(FloatBuffer normals) {
+        this.normals = normals;
+    }
+
+    /** 
+     * Getter for texCoords.
+     * @return the texCoords.
+     */
+    public FloatBuffer getTexCoords() {
+        return texCoords;
+    }
+
+    /**
+     * Setter for texCoords.
+     * @param texCoords the texCoords to set
+     */
+    public void setTexCoords(FloatBuffer texCoords) {
+        this.texCoords = texCoords;
+    }
+
+    /** 
+     * Getter for vbo.
+     * @return the vbo.
+     */
+    public VBO getVbo() {
+        return vbo;
+    }
+
+    /**
+     * Setter for vbo.
+     * @param vbo the vbo to set
+     */
+    public void setVbo(VBO vbo) {
+        this.vbo = vbo;
+    }
+
+    /**
+     * Setter for numVertices.
+     * @param numVertices the numVertices to set
+     */
+    public void setNumVertices(int numVertices) {
+        this.numVertices = numVertices;
     }
 }

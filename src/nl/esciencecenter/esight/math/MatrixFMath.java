@@ -24,9 +24,13 @@ import nl.esciencecenter.esight.exceptions.InverseNotAvailableException;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class MatrixFMath {
-    public static double degreesToRadians = Math.PI / 180.0;
-    public static float EPSILON = 0.0000001f;
+public final class MatrixFMath {
+    private static final double DEGREESTORADIANS = Math.PI / 180.0;
+    private static final float EPSILON = 0.0000001f;
+
+    private MatrixFMath() {
+        // Only static access.
+    }
 
     /**
      * Get the normal matrix from the modelview matrix.
@@ -159,7 +163,7 @@ public class MatrixFMath {
             throw new IllegalArgumentException("aspect cannot be smaller than or equal to 0");
         }
 
-        float top = (float) (Math.tan(fovy * degreesToRadians / 2) * zNear);
+        float top = (float) (Math.tan(fovy * DEGREESTORADIANS / 2) * zNear);
         float right = top * aspect;
         float dZ = zFar - zNear;
 
@@ -211,8 +215,7 @@ public class MatrixFMath {
      * @return A translation matrix
      */
     public static MatF4 translate(float x, float y, float z) {
-        MatF4 result = new MatF4(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
-        return result;
+        return new MatF4(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
     }
 
     /**
@@ -223,7 +226,7 @@ public class MatrixFMath {
      * @return A translation matrix
      */
     public static MatF4 translate(VecF3 vec) {
-        return translate(vec.v[0], vec.v[1], vec.v[2]);
+        return translate(vec.getX(), vec.getY(), vec.getZ());
     }
 
     /**
@@ -234,7 +237,7 @@ public class MatrixFMath {
      * @return A translation matrix
      */
     public static MatF4 translate(VecF4 vec) {
-        return translate(vec.v[0], vec.v[1], vec.v[2]);
+        return translate(vec.getX(), vec.getY(), vec.getZ());
     }
 
     /**
@@ -249,8 +252,7 @@ public class MatrixFMath {
      * @return A scaling matrix
      */
     public static MatF4 scale(float x, float y, float z) {
-        MatF4 result = new MatF4(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
-        return result;
+        return new MatF4(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
     }
 
     /**
@@ -272,7 +274,7 @@ public class MatrixFMath {
      * @return A scaling matrix
      */
     public static MatF4 scale(VecF3 vec) {
-        return scale(vec.v[0], vec.v[1], vec.v[2]);
+        return scale(vec.getX(), vec.getY(), vec.getZ());
     }
 
     /**
@@ -283,7 +285,7 @@ public class MatrixFMath {
      * @return A scaling matrix
      */
     public static MatF4 scale(VecF4 vec) {
-        return scale(vec.v[0], vec.v[1], vec.v[2]);
+        return scale(vec.getX(), vec.getY(), vec.getZ());
     }
 
     /**
@@ -295,12 +297,11 @@ public class MatrixFMath {
      * @return The rotation matrix
      */
     public static MatF4 rotationX(float angleDeg) {
-        double angleRad = degreesToRadians * angleDeg;
+        double angleRad = DEGREESTORADIANS * angleDeg;
         float cosa = (float) Math.cos(angleRad);
         float sina = (float) Math.sin(angleRad);
 
-        MatF4 result = new MatF4(1, 0, 0, 0, 0, cosa, -sina, 0, 0, sina, cosa, 0, 0, 0, 0, 1);
-        return result;
+        return new MatF4(1, 0, 0, 0, 0, cosa, -sina, 0, 0, sina, cosa, 0, 0, 0, 0, 1);
     }
 
     /**
@@ -312,13 +313,11 @@ public class MatrixFMath {
      * @return The rotation matrix
      */
     public static MatF4 rotationY(float angleDeg) {
-        double angleRad = degreesToRadians * angleDeg;
+        double angleRad = DEGREESTORADIANS * angleDeg;
         float cosa = (float) Math.cos(angleRad);
         float sina = (float) Math.sin(angleRad);
 
-        MatF4 m = new MatF4(cosa, 0, sina, 0, 0, 1, 0, 0, -sina, 0, cosa, 0, 0, 0, 0, 1);
-
-        return m;
+        return new MatF4(cosa, 0, sina, 0, 0, 1, 0, 0, -sina, 0, cosa, 0, 0, 0, 0, 1);
     }
 
     /**
@@ -330,7 +329,7 @@ public class MatrixFMath {
      * @return The rotation matrix
      */
     public static MatF4 rotationZ(float angleDeg) {
-        double angleRad = degreesToRadians * angleDeg;
+        double angleRad = DEGREESTORADIANS * angleDeg;
         float cosa = (float) Math.cos(angleRad);
         float sina = (float) Math.sin(angleRad);
 
@@ -357,23 +356,23 @@ public class MatrixFMath {
      * @return The rotation matrix
      */
     public static MatF4 rotate(float angleDeg, float x, float y, float z) {
-        double angleRad = degreesToRadians * angleDeg;
+        double angleRad = DEGREESTORADIANS * angleDeg;
         float cosa = (float) Math.cos(angleRad);
         float sina = (float) Math.sin(angleRad);
         float invc = 1 - cosa;
 
         VecF3 n = VectorFMath.normalize(new VecF3(x, y, z));
-        x = n.v[0];
-        y = n.v[1];
-        z = n.v[2];
+        float nx = n.getX();
+        float ny = n.getY();
+        float nz = n.getZ();
 
-        MatF4 R = new MatF4(invc * x * x + cosa, invc * x * y - sina * z, invc * x * z + sina * y, 0f, invc * x * y
-                + sina * z, invc * y * y + cosa, invc * y * z - sina * x, 0f, invc * x * z - sina * y, invc * y * z
-                + sina * x, invc * z * z + cosa, 0f, 0f, 0f, 0f, 1f
+        MatF4 result = new MatF4(invc * nx * nx + cosa, invc * nx * ny - sina * nz, invc * nx * nz + sina * ny, 0f,
+                invc * nx * ny + sina * nz, invc * ny * ny + cosa, invc * ny * nz - sina * nx, 0f, invc * nx * nz
+                        - sina * ny, invc * ny * nz + sina * nx, invc * nz * nz + cosa, 0f, 0f, 0f, 0f, 1f
 
         );
 
-        return R;
+        return result;
     }
 
     /**
@@ -387,7 +386,7 @@ public class MatrixFMath {
      * @return The rotation matrix
      */
     public static MatF4 rotate(float angleDeg, VecF3 axis) {
-        MatF4 result = rotate(angleDeg, axis.get(0), axis.get(1), axis.get(2));
+        MatF4 result = rotate(angleDeg, axis.getX(), axis.getY(), axis.getZ());
 
         return result;
     }
@@ -403,7 +402,7 @@ public class MatrixFMath {
      * @return The rotation matrix
      */
     public static MatF4 rotate(float angleDeg, VecF4 axis) {
-        MatF4 result = rotate(angleDeg, axis.get(0), axis.get(1), axis.get(2));
+        MatF4 result = rotate(angleDeg, axis.getX(), axis.getY(), axis.getZ());
 
         return result;
     }
@@ -416,7 +415,7 @@ public class MatrixFMath {
      * @return the determinant
      */
     public static float determinant(MatF2 m) {
-        return m.m[0] * m.m[3] - m.m[2] * m.m[1];
+        return m.getMatrix()[0] * m.getMatrix()[3] - m.getMatrix()[2] * m.getMatrix()[1];
     }
 
     /**
@@ -431,7 +430,7 @@ public class MatrixFMath {
         float minor01 = determinant(exclude(m, 0, 1));
         float minor02 = determinant(exclude(m, 0, 2));
 
-        return m.m[0] * minor00 - m.m[3] * minor01 + m.m[6] * minor02;
+        return m.getMatrix()[0] * minor00 - m.getMatrix()[3] * minor01 + m.getMatrix()[6] * minor02;
     }
 
     /**
@@ -447,7 +446,8 @@ public class MatrixFMath {
         float minor02 = determinant(exclude(m, 0, 2));
         float minor03 = determinant(exclude(m, 0, 3));
 
-        return m.m[0] * minor00 - m.m[4] * minor01 + m.m[8] * minor02 + m.m[12] * minor03;
+        return m.getMatrix()[0] * minor00 - m.getMatrix()[4] * minor01 + m.getMatrix()[8] * minor02 + m.getMatrix()[12]
+                * minor03;
     }
 
     /**
@@ -462,8 +462,8 @@ public class MatrixFMath {
         MatF3 minors = minors(m);
         MatF3 result = new MatF3();
 
-        for (int i = 0; i < result.size; i++) {
-            result.m[i] = minors.m[i] * checkerboard.m[i];
+        for (int i = 0; i < result.getSize(); i++) {
+            result.getMatrix()[i] = minors.getMatrix()[i] * checkerboard.getMatrix()[i];
         }
 
         return result;
@@ -481,8 +481,8 @@ public class MatrixFMath {
         MatF4 minors = minors(m);
         MatF4 result = new MatF4();
 
-        for (int i = 0; i < result.size; i++) {
-            result.m[i] = minors.m[i] * checkerboard.m[i];
+        for (int i = 0; i < result.getSize(); i++) {
+            result.getMatrix()[i] = minors.getMatrix()[i] * checkerboard.getMatrix()[i];
         }
 
         return result;
@@ -502,7 +502,7 @@ public class MatrixFMath {
             for (int iCol = 0; iCol < 3; iCol++) {
                 MatF2 excluded = exclude(m, iCol, iRow);
                 float det = determinant(excluded);
-                result.buf.put(det);
+                result.getBuffer().put(det);
             }
         }
 
@@ -523,7 +523,7 @@ public class MatrixFMath {
             for (int iCol = 0; iCol < 4; iCol++) {
                 MatF3 excluded = exclude(m, iCol, iRow);
                 float det = determinant(excluded);
-                result.buf.put(det);
+                result.getBuffer().put(det);
             }
         }
 
@@ -544,7 +544,7 @@ public class MatrixFMath {
         for (int iRow = 0; iRow < 3; iRow++) {
             for (int iCol = 0; iCol < 3; iCol++) {
                 if (iRow != row && iCol != col) {
-                    result.buf.put(m.m[iRow * 3 + iCol]);
+                    result.getBuffer().put(m.getMatrix()[iRow * 3 + iCol]);
                 }
             }
         }
@@ -566,7 +566,7 @@ public class MatrixFMath {
         for (int iRow = 0; iRow < 4; iRow++) {
             for (int iCol = 0; iCol < 4; iCol++) {
                 if (iRow != row && iCol != col) {
-                    result.buf.put(m.m[iRow * 4 + iCol]);
+                    result.getBuffer().put(m.getMatrix()[iRow * 4 + iCol]);
                 }
             }
         }
@@ -584,11 +584,11 @@ public class MatrixFMath {
     public static MatF2 transpose(MatF2 m) {
         MatF2 result = new MatF2();
 
-        result.m[0] = m.m[0];
-        result.m[1] = m.m[2];
+        result.getMatrix()[0] = m.getMatrix()[0];
+        result.getMatrix()[1] = m.getMatrix()[2];
 
-        result.m[2] = m.m[1];
-        result.m[3] = m.m[3];
+        result.getMatrix()[2] = m.getMatrix()[1];
+        result.getMatrix()[3] = m.getMatrix()[3];
 
         return result;
     }
@@ -603,17 +603,17 @@ public class MatrixFMath {
     public static MatF3 transpose(MatF3 m) {
         MatF3 result = new MatF3();
 
-        result.m[0] = m.m[0];
-        result.m[1] = m.m[3];
-        result.m[2] = m.m[6];
+        result.getMatrix()[0] = m.getMatrix()[0];
+        result.getMatrix()[1] = m.getMatrix()[3];
+        result.getMatrix()[2] = m.getMatrix()[6];
 
-        result.m[3] = m.m[1];
-        result.m[4] = m.m[4];
-        result.m[5] = m.m[7];
+        result.getMatrix()[3] = m.getMatrix()[1];
+        result.getMatrix()[4] = m.getMatrix()[4];
+        result.getMatrix()[5] = m.getMatrix()[7];
 
-        result.m[6] = m.m[2];
-        result.m[7] = m.m[5];
-        result.m[8] = m.m[8];
+        result.getMatrix()[6] = m.getMatrix()[2];
+        result.getMatrix()[7] = m.getMatrix()[5];
+        result.getMatrix()[8] = m.getMatrix()[8];
 
         return result;
     }
@@ -628,25 +628,25 @@ public class MatrixFMath {
     public static MatF4 transpose(MatF4 m) {
         MatF4 result = new MatF4();
 
-        result.m[0] = m.m[0];
-        result.m[1] = m.m[4];
-        result.m[2] = m.m[8];
-        result.m[3] = m.m[12];
+        result.getMatrix()[0] = m.getMatrix()[0];
+        result.getMatrix()[1] = m.getMatrix()[4];
+        result.getMatrix()[2] = m.getMatrix()[8];
+        result.getMatrix()[3] = m.getMatrix()[12];
 
-        result.m[4] = m.m[1];
-        result.m[5] = m.m[5];
-        result.m[6] = m.m[9];
-        result.m[7] = m.m[13];
+        result.getMatrix()[4] = m.getMatrix()[1];
+        result.getMatrix()[5] = m.getMatrix()[5];
+        result.getMatrix()[6] = m.getMatrix()[9];
+        result.getMatrix()[7] = m.getMatrix()[13];
 
-        result.m[8] = m.m[2];
-        result.m[9] = m.m[6];
-        result.m[10] = m.m[10];
-        result.m[11] = m.m[14];
+        result.getMatrix()[8] = m.getMatrix()[2];
+        result.getMatrix()[9] = m.getMatrix()[6];
+        result.getMatrix()[10] = m.getMatrix()[10];
+        result.getMatrix()[11] = m.getMatrix()[14];
 
-        result.m[12] = m.m[3];
-        result.m[13] = m.m[7];
-        result.m[14] = m.m[11];
-        result.m[15] = m.m[15];
+        result.getMatrix()[12] = m.getMatrix()[3];
+        result.getMatrix()[13] = m.getMatrix()[7];
+        result.getMatrix()[14] = m.getMatrix()[11];
+        result.getMatrix()[15] = m.getMatrix()[15];
 
         return result;
     }
@@ -661,10 +661,10 @@ public class MatrixFMath {
     public static MatF2 adjoint(MatF2 m) {
         MatF2 result = new MatF2();
 
-        result.m[0] = m.m[3];
-        result.m[1] = -m.m[1];
-        result.m[2] = -m.m[2];
-        result.m[3] = m.m[0];
+        result.getMatrix()[0] = m.getMatrix()[3];
+        result.getMatrix()[1] = -m.getMatrix()[1];
+        result.getMatrix()[2] = -m.getMatrix()[2];
+        result.getMatrix()[3] = m.getMatrix()[0];
 
         return result;
 
@@ -751,5 +751,14 @@ public class MatrixFMath {
         MatF4 inverse = adj.mul(1f / det);
 
         return inverse;
+    }
+
+    /**
+     * Getter for epsilon.
+     * 
+     * @return the epsilon.
+     */
+    public static float getEpsilon() {
+        return EPSILON;
     }
 }

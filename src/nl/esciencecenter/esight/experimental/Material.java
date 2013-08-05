@@ -1,7 +1,6 @@
 package nl.esciencecenter.esight.experimental;
 
-import nl.esciencecenter.esight.math.VecF3;
-import nl.esciencecenter.esight.math.VecF4;
+import nl.esciencecenter.esight.math.Color4;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
@@ -25,44 +24,44 @@ import nl.esciencecenter.esight.math.VecF4;
  * 
  */
 public class Material {
-    public VecF4 ambient, diffuse, specular;
+    public Color4 ambient, diffuse, specular;
 
     public Material() {
-        this.ambient = new VecF4(0, 0, 0, 0);
-        this.diffuse = new VecF4(0, 0, 0, 0);
-        this.specular = new VecF4(0, 0, 0, 0);
+        this.ambient = new Color4(0, 0, 0, 0);
+        this.diffuse = new Color4(0, 0, 0, 0);
+        this.specular = new Color4(0, 0, 0, 0);
     }
 
-    public Material(VecF4 ambient, VecF4 diffuse, VecF4 specular) {
+    public Material(Color4 ambient, Color4 diffuse, Color4 specular) {
         this.ambient = ambient;
         this.diffuse = diffuse;
         this.specular = specular;
     }
 
     public static Material random() {
-        VecF4 ambient = new VecF4((float) Math.random(), (float) Math.random(), (float) Math.random(), 1f);
-        VecF4 diffuse = new VecF4((float) Math.random(), (float) Math.random(), (float) Math.random(), 1f);
-        VecF4 specular = new VecF4((float) Math.random(), (float) Math.random(), (float) Math.random(), 1f);
+        Color4 ambient = new Color4((float) Math.random(), (float) Math.random(), (float) Math.random(), 1f);
+        Color4 diffuse = new Color4((float) Math.random(), (float) Math.random(), (float) Math.random(), 1f);
+        Color4 specular = new Color4((float) Math.random(), (float) Math.random(), (float) Math.random(), 1f);
         return new Material(ambient, diffuse, specular);
     }
 
-    public void setColor(VecF4 newColor) {
+    public void setColor(Color4 newColor) {
         ambient = newColor;
         diffuse = newColor;
         specular = newColor;
     }
 
-    public VecF3 getColor() {
-        return new VecF3(diffuse.get(0), diffuse.get(1), diffuse.get(2));
+    public Color4 getColor() {
+        return new Color4(diffuse.getR(), diffuse.getG(), diffuse.getB(), diffuse.getA());
     }
 
     public float getAlpha() {
-        return diffuse.get(3);
+        return diffuse.getA();
     }
 
     public void setTransparency(float newTransparency) {
-        ambient.set(3, newTransparency);
-        diffuse.set(3, newTransparency);
-        specular.set(3, newTransparency);
+        ambient.setA(newTransparency);
+        diffuse.setA(newTransparency);
+        specular.setA(newTransparency);
     }
 }

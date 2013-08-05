@@ -25,7 +25,7 @@ import java.util.Arrays;
  */
 public class MatF4 extends MatrixF {
     /** The number of elements in this matrix */
-    public static final int SIZE = 16;
+    private static final int SIZE = 16;
 
     /**
      * Creates a new identity matrix.
@@ -36,8 +36,11 @@ public class MatF4 extends MatrixF {
     }
 
     private void identity() {
-        Arrays.fill(m, 0f);
-        m[0] = m[5] = m[10] = m[15] = 1.0f;
+        Arrays.fill(getMatrix(), 0f);
+        getMatrix()[0] = 1.0f;
+        getMatrix()[5] = 1.0f;
+        getMatrix()[10] = 1.0f;
+        getMatrix()[15] = 1.0f;
     }
 
     /**
@@ -52,7 +55,7 @@ public class MatF4 extends MatrixF {
      */
     public MatF4(float in) {
         super(SIZE);
-        Arrays.fill(m, in);
+        Arrays.fill(getMatrix(), in);
     }
 
     /**
@@ -69,10 +72,10 @@ public class MatF4 extends MatrixF {
      */
     public MatF4(VecF4 v0, VecF4 v1, VecF4 v2, VecF4 v3) {
         super(SIZE);
-        buf.put(v0.asBuffer());
-        buf.put(v1.asBuffer());
-        buf.put(v2.asBuffer());
-        buf.put(v3.asBuffer());
+        getBuffer().put(v0.asBuffer());
+        getBuffer().put(v1.asBuffer());
+        getBuffer().put(v2.asBuffer());
+        getBuffer().put(v3.asBuffer());
     }
 
     /**
@@ -114,22 +117,22 @@ public class MatF4 extends MatrixF {
     public MatF4(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20,
             float m21, float m22, float m23, float m30, float m31, float m32, float m33) {
         super(SIZE);
-        m[0] = m00;
-        m[1] = m01;
-        m[2] = m02;
-        m[3] = m03;
-        m[4] = m10;
-        m[5] = m11;
-        m[6] = m12;
-        m[7] = m13;
-        m[8] = m20;
-        m[9] = m21;
-        m[10] = m22;
-        m[11] = m23;
-        m[12] = m30;
-        m[13] = m31;
-        m[14] = m32;
-        m[15] = m33;
+        getMatrix()[0] = m00;
+        getMatrix()[1] = m01;
+        getMatrix()[2] = m02;
+        getMatrix()[3] = m03;
+        getMatrix()[4] = m10;
+        getMatrix()[5] = m11;
+        getMatrix()[6] = m12;
+        getMatrix()[7] = m13;
+        getMatrix()[8] = m20;
+        getMatrix()[9] = m21;
+        getMatrix()[10] = m22;
+        getMatrix()[11] = m23;
+        getMatrix()[12] = m30;
+        getMatrix()[13] = m31;
+        getMatrix()[14] = m32;
+        getMatrix()[15] = m33;
     }
 
     /**
@@ -142,7 +145,7 @@ public class MatF4 extends MatrixF {
         super(SIZE);
 
         for (int i = 0; i < SIZE; i++) {
-            m[i] = n.get(i);
+            getMatrix()[i] = n.get(i);
         }
     }
 
@@ -159,7 +162,7 @@ public class MatF4 extends MatrixF {
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
                 for (int k = 0; k < 4; ++k) {
-                    a.m[i * 4 + j] += m[i * 4 + k] * n.m[k * 4 + j];
+                    a.getMatrix()[i * 4 + j] += getMatrix()[i * 4 + k] * n.getMatrix()[k * 4 + j];
                 }
             }
         }
@@ -178,7 +181,7 @@ public class MatF4 extends MatrixF {
         MatF4 result = new MatF4(0f);
 
         for (int i = 0; i < SIZE; ++i) {
-            result.m[i] = m[i] + n.m[i];
+            result.getMatrix()[i] = getMatrix()[i] + n.getMatrix()[i];
         }
 
         return result;
@@ -195,7 +198,7 @@ public class MatF4 extends MatrixF {
         MatF4 result = new MatF4(0f);
 
         for (int i = 0; i < SIZE; ++i) {
-            result.m[i] = m[i] - n.m[i];
+            result.getMatrix()[i] = getMatrix()[i] - n.getMatrix()[i];
         }
 
         return result;
@@ -213,7 +216,7 @@ public class MatF4 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.m[i] = m[i] * fn;
+            result.getMatrix()[i] = getMatrix()[i] * fn;
         }
 
         return result;
@@ -231,7 +234,7 @@ public class MatF4 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.m[i] = m[i] + fn;
+            result.getMatrix()[i] = getMatrix()[i] + fn;
         }
 
         return result;
@@ -249,7 +252,7 @@ public class MatF4 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.m[i] = m[i] - fn;
+            result.getMatrix()[i] = getMatrix()[i] - fn;
         }
 
         return result;
@@ -270,7 +273,7 @@ public class MatF4 extends MatrixF {
         float fn = 1f / n.floatValue();
 
         for (int i = 0; i < SIZE; ++i) {
-            result.m[i] = m[i] * fn;
+            result.getMatrix()[i] = getMatrix()[i] * fn;
         }
 
         return result;
@@ -284,13 +287,10 @@ public class MatF4 extends MatrixF {
      * @return The new vector that is the result of the multiplication.
      */
     public VecF4 mul(VecF4 v) {
-        return new VecF4(m[0] * v.v[0] + m[1] * v.v[1] + m[2] * v.v[2] + m[3] * v.v[3], m[4] * v.v[0] + m[5] * v.v[1]
-                + m[6] * v.v[2] + m[7] * v.v[3], m[8] * v.v[0] + m[9] * v.v[1] + m[10] * v.v[2] + m[11] * v.v[3], m[12]
-                * v.v[0] + m[13] * v.v[1] + m[14] * v.v[2] + m[15] * v.v[3]);
-    }
-
-    @Override
-    public MatF4 clone() {
-        return new MatF4(this);
+        return new VecF4(getMatrix()[0] * v.getX() + getMatrix()[1] * v.getY() + getMatrix()[2] * v.getZ()
+                + getMatrix()[3] * v.getW(), getMatrix()[4] * v.getX() + getMatrix()[5] * v.getY() + getMatrix()[6]
+                * v.getZ() + getMatrix()[7] * v.getW(), getMatrix()[8] * v.getX() + getMatrix()[9] * v.getY()
+                + getMatrix()[10] * v.getZ() + getMatrix()[11] * v.getW(), getMatrix()[12] * v.getX() + getMatrix()[13]
+                * v.getY() + getMatrix()[14] * v.getZ() + getMatrix()[15] * v.getW());
     }
 }

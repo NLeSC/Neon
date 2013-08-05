@@ -52,9 +52,9 @@ public class Line extends Model {
         tCoords[0] = new VecF3(0, 0, 0);
         tCoords[1] = new VecF3(1, 1, 1);
 
-        this.numVertices = numVertices;
-        this.vertices = VectorFMath.toBuffer(points);
-        this.normals = VectorFMath.toBuffer(normals);
-        this.texCoords = VectorFMath.toBuffer(tCoords);
+        this.setNumVertices(numVertices);
+        this.setVertices(VectorFMath.toBuffer(points));
+        this.setNormals(VectorFMath.toBuffer(normals));
+        this.setTexCoords(VectorFMath.toBuffer(tCoords));
     }
 }

@@ -169,9 +169,9 @@ public class SGNode {
      *            The rotation to perform.
      */
     public void rotate(VecF3 rotation) {
-        this.TMatrix = TMatrix.mul(MatrixFMath.rotationX(rotation.get(0)));
-        this.TMatrix = TMatrix.mul(MatrixFMath.rotationY(rotation.get(1)));
-        this.TMatrix = TMatrix.mul(MatrixFMath.rotationZ(rotation.get(2)));
+        this.TMatrix = TMatrix.mul(MatrixFMath.rotationX(rotation.getX()));
+        this.TMatrix = TMatrix.mul(MatrixFMath.rotationY(rotation.getY()));
+        this.TMatrix = TMatrix.mul(MatrixFMath.rotationZ(rotation.getZ()));
     }
 
     /**

@@ -109,7 +109,7 @@ public class MultiColorText extends Model {
         colors = new HashMap<Integer, VecF4>();
         glyphs = new HashMap<Integer, GlyphShape>();
 
-        numVertices = 0;
+        setNumVertices(0);
     }
 
     public MultiColorText(GL3 gl, Font font, String text, Color4 initialColor, int fontSize) {
@@ -131,10 +131,10 @@ public class MultiColorText extends Model {
         // We override because we do not have the normals information.
 
         if (!initialized) {
-            GLSLAttrib vAttrib = new GLSLAttrib(vertices, "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
+            GLSLAttrib vAttrib = new GLSLAttrib(getVertices(), "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
             GLSLAttrib cAttrib = new GLSLAttrib(vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
 
-            vbo = new VBO(gl, vAttrib, cAttrib);
+            setVbo(new VBO(gl, vAttrib, cAttrib));
         }
         initialized = true;
     }
@@ -230,16 +230,16 @@ public class MultiColorText extends Model {
                 i++;
             }
 
-            if (vbo != null) {
-                vbo.delete(gl);
+            if (getVbo() != null) {
+                getVbo().delete(gl);
             }
-            this.vertices = VectorFMath.toBuffer(myVertices);
+            this.setVertices(VectorFMath.toBuffer(myVertices));
             this.vertexColors = VectorFMath.vec4ListToBuffer(vertexColors);
-            GLSLAttrib vAttrib = new GLSLAttrib(this.vertices, "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
+            GLSLAttrib vAttrib = new GLSLAttrib(this.getVertices(), "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
             GLSLAttrib cAttrib = new GLSLAttrib(this.vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
-            vbo = new VBO(gl, vAttrib, cAttrib);
+            setVbo(new VBO(gl, vAttrib, cAttrib));
 
-            this.numVertices = vertices.size();
+            this.setNumVertices(vertices.size());
 
             initialized = true;
         }
@@ -346,11 +346,11 @@ public class MultiColorText extends Model {
                 e.printStackTrace();
             }
 
-            vbo.bind(gl);
+            getVbo().bind(gl);
 
-            program.linkAttribs(gl, vbo.getAttribs());
+            program.linkAttribs(gl, getVbo().getAttribs());
 
-            gl.glDrawArrays(GL3.GL_TRIANGLES, 0, numVertices);
+            gl.glDrawArrays(GL3.GL_TRIANGLES, 0, getNumVertices());
         } else {
             throw new UninitializedException();
         }

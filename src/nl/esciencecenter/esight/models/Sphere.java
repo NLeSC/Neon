@@ -68,17 +68,17 @@ public class Sphere extends Model {
             points4List.add(new VecF4(points3List.get(i), 1f));
         }
 
-        normals = VectorFMath.vec3ListToBuffer(points3List);
+        setNormals(VectorFMath.vec3ListToBuffer(points3List));
         if (texCoordsIn3D) {
-            texCoords = VectorFMath.vec3ListToBuffer(points3List);
+            setTexCoords(VectorFMath.vec3ListToBuffer(points3List));
         } else {
             ArrayList<VecF3> texCoords2D = new ArrayList<VecF3>();
             float minPhi = 0f, maxPhi = 0f;
-            float minTheta = 0f, maxTheta = 0f;
+            float maxTheta = 0f;
             for (VecF3 point : points3List) {
-                double x = point.get(0);
-                double y = point.get(1);
-                double z = point.get(2);
+                double x = point.getX();
+                double y = point.getY();
+                double z = point.getZ();
 
                 float phi = (float) ((Math.atan(x / z) + (0.5 * Math.PI)) / Math.PI);
                 float theta = (float) (Math.atan(Math.sqrt(z * z + x * x) / y) / Math.PI);
@@ -98,11 +98,11 @@ public class Sphere extends Model {
                 texCoords2D.add(new VecF3(phi, theta, 0f));
             }
 
-            texCoords = VectorFMath.vec3ListToBuffer(texCoords2D);
+            setTexCoords(VectorFMath.vec3ListToBuffer(texCoords2D));
         }
-        vertices = VectorFMath.vec4ListToBuffer(points4List);
+        setVertices(VectorFMath.vec4ListToBuffer(points4List));
 
-        numVertices = points3List.size();
+        setNumVertices(points3List.size());
     }
 
     /**
@@ -130,11 +130,17 @@ public class Sphere extends Model {
             VecF3 ac = new VecF3();
             VecF3 bc = new VecF3();
 
-            for (int i = 0; i < 3; i++) {
-                ab.set(i, (a.get(i) + b.get(i)));
-                ac.set(i, (a.get(i) + c.get(i)));
-                bc.set(i, (b.get(i) + c.get(i)));
-            }
+            ab.setX((a.getX() + b.getX()));
+            ac.setX((a.getX() + c.getX()));
+            bc.setX((b.getX() + c.getX()));
+
+            ab.setY((a.getY() + b.getY()));
+            ac.setY((a.getY() + c.getY()));
+            bc.setY((b.getY() + c.getY()));
+
+            ab.setZ((a.getZ() + b.getZ()));
+            ac.setZ((a.getZ() + c.getZ()));
+            bc.setZ((b.getZ() + c.getZ()));
 
             ab = VectorFMath.normalize(ab);
             ac = VectorFMath.normalize(ac);

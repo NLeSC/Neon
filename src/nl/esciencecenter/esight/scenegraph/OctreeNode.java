@@ -221,11 +221,11 @@ public class OctreeNode {
     private boolean isInThisNodesSpace(VecF3 location) {
         float halfRibSize = ribSize * 0.5f;
 
-        if ((location.get(0) > (center.get(0) - halfRibSize)) && (location.get(1) > (center.get(1) - halfRibSize))
-                && (location.get(2) > (center.get(2) - halfRibSize))
-                && (location.get(0) < (center.get(0) + halfRibSize))
-                && (location.get(1) < (center.get(1) + halfRibSize))
-                && (location.get(2) < (center.get(2) + halfRibSize))) {
+        if ((location.getX() > (center.getX() - halfRibSize)) && (location.getY() > (center.getY() - halfRibSize))
+                && (location.getZ() > (center.getZ() - halfRibSize))
+                && (location.getX() < (center.getX() + halfRibSize))
+                && (location.getY() < (center.getY() + halfRibSize))
+                && (location.getZ() < (center.getZ() + halfRibSize))) {
             return true;
         } else {
             return false;
@@ -300,29 +300,29 @@ public class OctreeNode {
      */
     public void addElementSubdivided(OctreeElement element) {
         VecF3 location = element.getCenter();
-        if (location.get(0) < center.get(0)) {
-            if (location.get(1) < center.get(1)) {
-                if (location.get(2) < center.get(2)) {
+        if (location.getX() < center.getX()) {
+            if (location.getY() < center.getY()) {
+                if (location.getZ() < center.getZ()) {
                     nnn.addElement(element);
                 } else {
                     nnp.addElement(element);
                 }
             } else {
-                if (location.get(2) < center.get(2)) {
+                if (location.getZ() < center.getZ()) {
                     npn.addElement(element);
                 } else {
                     npp.addElement(element);
                 }
             }
         } else {
-            if (location.get(1) < center.get(1)) {
-                if (location.get(2) < center.get(2)) {
+            if (location.getY() < center.getY()) {
+                if (location.getZ() < center.getZ()) {
                     pnn.addElement(element);
                 } else {
                     pnp.addElement(element);
                 }
             } else {
-                if (location.get(2) < center.get(2)) {
+                if (location.getZ() < center.getZ()) {
                     ppn.addElement(element);
                 } else {
                     ppp.addElement(element);

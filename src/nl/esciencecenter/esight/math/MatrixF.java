@@ -26,12 +26,12 @@ import java.util.Arrays;
  */
 public abstract class MatrixF {
     /** The main storage array for this matrix. */
-    protected float m[];
+    private float m[];
 
     /** The same storage, but in FloatBuffer form. */
-    protected FloatBuffer buf;
+    private FloatBuffer buf;
 
-    protected int size;
+    private int size;
 
     /**
      * Basic constructor for MatrixF.
@@ -52,7 +52,7 @@ public abstract class MatrixF {
      * @return This matrix as a flat Array.
      */
     public float[] asArray() {
-        return m;
+        return getMatrix();
     }
 
     /**
@@ -61,8 +61,8 @@ public abstract class MatrixF {
      * @return This matrix as a FloatBuffer.
      */
     public FloatBuffer asBuffer() {
-        buf.rewind();
-        return buf;
+        getBuffer().rewind();
+        return getBuffer();
     }
 
     /**
@@ -75,8 +75,8 @@ public abstract class MatrixF {
      * @return The value at index i,j.
      */
     public float get(int i, int j) {
-        int rowSize = (int) Math.sqrt(m.length);
-        return m[i * rowSize + j];
+        int rowSize = (int) Math.sqrt(getMatrix().length);
+        return getMatrix()[i * rowSize + j];
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class MatrixF {
      * @return The value at index i.
      */
     public float get(int i) {
-        return m[i];
+        return getMatrix()[i];
     }
 
     /**
@@ -101,8 +101,8 @@ public abstract class MatrixF {
      *            The new value.
      */
     public void set(int i, int j, float f) {
-        int rowSize = (int) Math.sqrt(m.length);
-        m[i * rowSize + j] = f;
+        int rowSize = (int) Math.sqrt(getMatrix().length);
+        getMatrix()[i * rowSize + j] = f;
     }
 
     /**
@@ -114,22 +114,23 @@ public abstract class MatrixF {
      *            The new value.
      */
     public void set(int i, float f) {
-        m[i] = f;
+        getMatrix()[i] = f;
     }
 
     @Override
     public String toString() {
-        int rowSize = (int) Math.sqrt(m.length);
+        int rowSize = (int) Math.sqrt(getMatrix().length);
 
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < m.length; i++) {
+        StringBuffer tmpBuf = new StringBuffer();
+        for (int i = 0; i < getMatrix().length; i++) {
             if (i != 0 && i % rowSize == 0) {
-                buf.append("\n");
+                tmpBuf.append("\n");
             }
-            buf.append(m[i] + " ");
+            tmpBuf.append(getMatrix()[i]);
+            tmpBuf.append(" ");
         }
 
-        return buf.toString();
+        return tmpBuf.toString();
     }
 
     /*
@@ -141,9 +142,9 @@ public abstract class MatrixF {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((buf == null) ? 0 : buf.hashCode());
-        result = prime * result + Arrays.hashCode(m);
-        result = prime * result + size;
+        result = prime * result + ((getBuffer() == null) ? 0 : getBuffer().hashCode());
+        result = prime * result + Arrays.hashCode(getMatrix());
+        result = prime * result + getSize();
         return result;
     }
 
@@ -164,20 +165,80 @@ public abstract class MatrixF {
             return false;
         }
         MatrixF other = (MatrixF) obj;
-        if (buf == null) {
-            if (other.buf != null) {
+        if (getBuffer() == null) {
+            if (other.getBuffer() != null) {
                 return false;
             }
-        } else if (!buf.equals(other.buf)) {
+        } else if (!getBuffer().equals(other.getBuffer())) {
             return false;
         }
-        if (!Arrays.equals(m, other.m)) {
+        if (!Arrays.equals(getMatrix(), other.getMatrix())) {
             return false;
         }
-        if (size != other.size) {
+        if (getSize() != other.getSize()) {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Getter for m.
+     * 
+     * @return the m.
+     */
+    public float[] getMatrix() {
+        return m;
+    }
+
+    /**
+     * Setter for m.
+     * 
+     * @param m
+     *            the m to set
+     */
+    public void setMatrix(float m[]) {
+        this.m = new float[m.length];
+        for (int i = 0; i < m.length; i++) {
+            this.m[i] = m[i];
+        }
+    }
+
+    /**
+     * Getter for buf.
+     * 
+     * @return the buf.
+     */
+    public FloatBuffer getBuffer() {
+        return buf;
+    }
+
+    /**
+     * Setter for buf.
+     * 
+     * @param buf
+     *            the buf to set
+     */
+    public void setBuffer(FloatBuffer buf) {
+        this.buf = buf;
+    }
+
+    /**
+     * Getter for size.
+     * 
+     * @return the size.
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * Setter for size.
+     * 
+     * @param size
+     *            the size to set
+     */
+    public void setSize(int size) {
+        this.size = size;
     }
 
 }

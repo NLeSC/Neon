@@ -81,9 +81,10 @@ public class GoggleSwingGLEventListener extends ESightGLEventListener {
     private int canvasWidth, canvasHeight;
 
     // Variables needed to calculate the viewpoint and camera angle.
-    final Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())), (float) (getRadius()
-            * Math.sin(getFtheta()) * Math.sin(getPhi())), (float) (getRadius() * Math.cos(getFtheta())), 1.0f);
-    final Point4 at = new Point4(0.0f, 0.0f, 0.0f, 1.0f);
+    final Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())),
+            (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
+            (float) (getRadius() * Math.cos(getFtheta())));
+    final Point4 at = new Point4(0.0f, 0.0f, 0.0f);
     final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
     /**
@@ -155,8 +156,8 @@ public class GoggleSwingGLEventListener extends ESightGLEventListener {
             // Create the ShaderProgram that we're going to use for the Example
             // Axes. The source code for the VertexShader: shaders/vs_axes.vp,
             // and the source code for the FragmentShader: shaders/fs_axes.fp
-            axesShaderProgram = getLoader().createProgram(gl, "axes", new File("shaders/vs_axes.vp"), new File(
-                    "shaders/fs_axes.fp"));
+            axesShaderProgram = getLoader().createProgram(gl, "axes", new File("shaders/vs_axes.vp"),
+                    new File("shaders/fs_axes.fp"));
             // Do the same for the text shader
             textShaderProgram = getLoader().createProgram(gl, "text", new File("shaders/vs_multiColorTextShader.vp"),
                     new File("shaders/fs_multiColorTextShader.fp"));
@@ -240,9 +241,9 @@ public class GoggleSwingGLEventListener extends ESightGLEventListener {
 
         // Rotate tha camera according to the rotation angles defined in the
         // inputhandler.
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().get(0)));
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().get(1)));
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationZ(inputHandler.getRotation().get(2)));
+        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
+        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
+        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationZ(inputHandler.getRotation().getZ()));
 
         // Render the scene with these modelview settings. In this case, the end
         // result of this action will be that the AxesFBO has been filled with
@@ -287,7 +288,7 @@ public class GoggleSwingGLEventListener extends ESightGLEventListener {
      */
     private void renderScene(GL3 gl, MatF4 mv) {
         try {
-            renderAxes(gl, mv.clone(), axesShaderProgram, axesFBO);
+            renderAxes(gl, new MatF4(mv), axesShaderProgram, axesFBO);
         } catch (final UninitializedException e) {
             e.printStackTrace();
         }

@@ -20,7 +20,6 @@ import nl.esciencecenter.esight.math.VecF3;
 import nl.esciencecenter.esight.math.VecF4;
 import nl.esciencecenter.esight.models.Axis;
 import nl.esciencecenter.esight.models.Model;
-import nl.esciencecenter.esight.models.Quad;
 import nl.esciencecenter.esight.shaders.ShaderProgram;
 import nl.esciencecenter.esight.text.MultiColorText;
 
@@ -48,14 +47,10 @@ import nl.esciencecenter.esight.text.MultiColorText;
  */
 public class ESightExampleGLEventListener extends ESightGLEventListener {
     // Two example shader program definitions.
-    private ShaderProgram axesShaderProgram, textShaderProgram, postprocessShader;
-
-    // Example framebuffer objects for rendering to textures.
-    private FBO axesFBO, hudFBO;
+    private ShaderProgram axesShaderProgram, textShaderProgram;
 
     // Model definitions, the quad is necessary for Full-screen rendering. The
     // axes are the model we wish to render (example)
-    private Quad FSQ_postprocess;
     private Model xAxis, yAxis, zAxis;
 
     // Global (singleton) settings instance.
@@ -81,9 +76,10 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
     private int canvasWidth, canvasHeight;
 
     // Variables needed to calculate the viewpoint and camera angle.
-    final Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())), (float) (getRadius()
-            * Math.sin(getFtheta()) * Math.sin(getPhi())), (float) (getRadius() * Math.cos(getFtheta())), 1.0f);
-    final Point4 at = new Point4(0.0f, 0.0f, 0.0f, 1.0f);
+    final Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())),
+            (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
+            (float) (getRadius() * Math.cos(getFtheta())));
+    final Point4 at = new Point4(0.0f, 0.0f, 0.0f);
     final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
     /**
@@ -155,15 +151,16 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
             // Create the ShaderProgram that we're going to use for the Example
             // Axes. The source code for the VertexShader: shaders/vs_axes.vp,
             // and the source code for the FragmentShader: shaders/fs_axes.fp
-            axesShaderProgram = getLoader().createProgram(gl, "axes", new File("shaders/vs_axes.vp"), new File(
-                    "shaders/fs_axes.fp"));
+            axesShaderProgram = getLoader().createProgram(gl, "axes", new File("shaders/vs_axes.vp"),
+                    new File("shaders/fs_axes.fp"));
             // Do the same for the text shader
             textShaderProgram = getLoader().createProgram(gl, "text", new File("shaders/vs_multiColorTextShader.vp"),
                     new File("shaders/fs_multiColorTextShader.fp"));
 
             // Same for the postprocessing shader.
-            postprocessShader = getLoader().createProgram(gl, "postProcess", new File("shaders/vs_postprocess.vp"),
-                    new File("shaders/fs_examplePostprocess.fp"));
+            // postprocessShader = getLoader().createProgram(gl, "postProcess",
+            // new File("shaders/vs_postprocess.vp"),
+            // new File("shaders/fs_examplePostprocess.fp"));
         } catch (final Exception e) {
             // If compilation fails, we will output the error message and quit
             // the application.
@@ -186,19 +183,6 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         String text = "Example text";
         hudText = new MultiColorText(gl, getFont(), text, Color4.WHITE, fontSize);
         hudText.init(gl);
-
-        // Here we define the Full screen quad model (for postprocessing), and
-        // initialize it.
-        FSQ_postprocess = new Quad(2, 2, new VecF3(0, 0, 0.1f));
-        FSQ_postprocess.init(gl);
-
-        // Here we define some intermediate-step full screen textures (which are
-        // needed for post processing), done with FrameBufferObjects, so we can
-        // render directly to them.
-        axesFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
-        hudFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
-        axesFBO.init(gl);
-        hudFBO.init(gl);
 
         // Here we define a PixelBufferObject, which is used for getting
         // screenshots.
@@ -240,9 +224,9 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
 
         // Rotate tha camera according to the rotation angles defined in the
         // inputhandler.
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().get(0)));
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().get(1)));
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationZ(inputHandler.getRotation().get(2)));
+        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
+        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
+        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationZ(inputHandler.getRotation().getZ()));
 
         // Render the scene with these modelview settings. In this case, the end
         // result of this action will be that the AxesFBO has been filled with
@@ -251,14 +235,14 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
 
         // Render the text on the Heads-Up-Display
         try {
-            renderHUDText(gl, modelViewMatrix, textShaderProgram, hudFBO);
+            renderHUDText(gl, modelViewMatrix, textShaderProgram);
         } catch (UninitializedException e1) {
             e1.printStackTrace();
         }
 
         // Render the FBO's to screen, doing any post-processing actions that
         // might be wanted.
-        renderTexturesToScreen(gl, canvasWidth, canvasHeight);
+        // renderTexturesToScreen(gl, canvasWidth, canvasHeight);
 
         // Make a screenshot, when wanted. The PBO copies the current
         // framebuffer. We then set the state back because we dont want to make
@@ -287,7 +271,7 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
      */
     private void renderScene(GL3 gl, MatF4 mv) {
         try {
-            renderAxes(gl, mv.clone(), axesShaderProgram, axesFBO);
+            renderAxes(gl, new MatF4(mv), axesShaderProgram);
         } catch (final UninitializedException e) {
             e.printStackTrace();
         }
@@ -309,12 +293,7 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
      *             if either the shader Program or FBO used in this method are
      *             uninitialized before use.
      */
-    private void renderAxes(GL3 gl, MatF4 mv, ShaderProgram program, FBO target) throws UninitializedException {
-        // Bind the FrameBufferObject so we can start rendering to it
-        target.bind(gl);
-        // Clear the renderbuffer to start with a clean (black) slate
-        gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
-
+    private void renderAxes(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
         // Stage the Perspective and Modelview matrixes in the ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
         program.setUniformMatrix("MVMatrix", mv);
@@ -337,10 +316,6 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         program.setUniformVector("Color", new VecF4(0f, 0f, 1f, 1f));
         program.use(gl);
         zAxis.draw(gl, program);
-
-        // Unbind the FrameBufferObject, making it available for texture
-        // extraction.
-        target.unBind(gl);
     }
 
     /**
@@ -358,68 +333,14 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
      * @throws UninitializedException
      *             if the FBO used in this method is uninitialized before use.
      */
-    private void renderHUDText(GL3 gl, MatF4 mv, ShaderProgram program, FBO target) throws UninitializedException {
+    private void renderHUDText(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
         // Set a new text for the string
         String randomString = "Basic Test, random: " + Math.random();
         hudText.setString(gl, randomString, Color4.WHITE, fontSize);
 
-        // Bind the FrameBufferObject so we can start rendering to it
-        target.bind(gl);
-        // Clear the renderbuffer to start with a clean (black) slate
-        gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
-
         // Draw the text to the renderbuffer, to (arbitrary unit) location 30x
         // 30y counted from left bottom.
         hudText.draw(gl, program, canvasWidth, canvasHeight, 30f, 30f);
-
-        // Unbind the FrameBufferObject, making it available for texture
-        // extraction.
-        target.unBind(gl);
-    }
-
-    /**
-     * Final image composition and postprocessing method. makes use of the
-     * postprocessShader
-     * 
-     * @param gl
-     *            The current openGL instance.
-     * @param width
-     *            The width of the openGL 'canvas'
-     * @param height
-     *            The height of the openGL 'canvas'
-     */
-    private void renderTexturesToScreen(GL3 gl, int width, int height) {
-        // Clear the renderbuffer to start with a clean (black) slate
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-
-        // Stage a pointer to the Texture picturing the axes and hud
-        // (extracted from their FrameBufferObjects)
-        // in the postprocessing shaderprogram.
-        postprocessShader.setUniform("axesTexture", axesFBO.getTexture().getMultitexNumber());
-        postprocessShader.setUniform("hudTexture", hudFBO.getTexture().getMultitexNumber());
-
-        // Stage the Perspective and Modelview matrixes in the ShaderProgram.
-        // Because we want to render at point-blank range in this stage, we set
-        // these to identity matrices.
-        postprocessShader.setUniformMatrix("MVMatrix", new MatF4());
-        postprocessShader.setUniformMatrix("PMatrix", new MatF4());
-
-        // Stage the width and height.
-        postprocessShader.setUniform("scrWidth", width);
-        postprocessShader.setUniform("scrHeight", height);
-
-        try {
-            // Load all staged variables into the GPU, check for errors and
-            // omissions.
-            postprocessShader.use(gl);
-
-            // Call the model's draw method, this links the model's VertexBuffer
-            // to
-            // the ShaderProgram and then calls the OpenGL draw method.
-            FSQ_postprocess.draw(gl, postprocessShader);
-        } catch (final UninitializedException e) {
-            e.printStackTrace();
-        }
     }
 
     // The reshape method is automatically called by the openGL animator if the
@@ -434,7 +355,7 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         // Once we have the context current, we can extract the OpenGL instance
         // from it. We have defined a OpenGL 3.0 instance in the
         // ESightNewtWindow by adding the line
-        // glp = GLProfile.get(GLProfile.GL3);
+        // "glp = GLProfile.get(GLProfile.GL3);"
         // Therefore, we extract a GL3 instance, so we cannot make any
         // unfortunate mistakes (calls to methods that are undefined for this
         // version).
@@ -444,16 +365,6 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         canvasWidth = GLContext.getCurrent().getGLDrawable().getWidth();
         canvasHeight = GLContext.getCurrent().getGLDrawable().getHeight();
         setAspect((float) canvasWidth / (float) canvasHeight);
-
-        // Resize the FrameBuffer Objects that we use for intermediate stages.
-        axesFBO.delete(gl);
-        hudFBO.delete(gl);
-
-        axesFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
-        hudFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
-
-        axesFBO.init(gl);
-        hudFBO.init(gl);
 
         // Resize the PixelBuffer Object that can be used for screenshots.
         finalPBO.delete(gl);
@@ -476,14 +387,13 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         // Once we have the context current, we can extract the OpenGL instance
         // from it. We have defined a OpenGL 3.0 instance in the
         // ESightNewtWindow by adding the line
-        // glp = GLProfile.get(GLProfile.GL3);
+        // "glp = GLProfile.get(GLProfile.GL3);"
         // Therefore, we extract a GL3 instance, so we cannot make any
         // unfortunate mistakes (calls to methods that are undefined for this
         // version).
         final GL3 gl = GLContext.getCurrentGL().getGL3();
 
         // Delete the FramBuffer Objects.
-        axesFBO.delete(gl);
         finalPBO.delete(gl);
 
         // Let the ShaderProgramLoader clean up. This deletes all of the
@@ -491,7 +401,6 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         try {
             getLoader().cleanup(gl);
         } catch (UninitializedException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
 
