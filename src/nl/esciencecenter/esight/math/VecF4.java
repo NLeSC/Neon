@@ -169,23 +169,6 @@ public class VecF4 implements VectorF {
     }
 
     /**
-     * Multiplies the given vector with this vector.
-     * 
-     * @param u
-     *            The vector to be multiplied with this one.
-     * @return The new Vector, which is a result of the multiplication.
-     */
-    public VecF4 mul(VecF4 u) {
-        VecF4 result = new VecF4();
-        result.setX(x * u.getX());
-        result.setY(y * u.getY());
-        result.setZ(z * u.getZ());
-        result.setW(w * u.getW());
-
-        return result;
-    }
-
-    /**
      * Divides the current vector with the given scalar.
      * 
      * @param n
@@ -361,6 +344,10 @@ public class VecF4 implements VectorF {
     @Override
     public String toString() {
         return "VecF4 [x=" + x + ", y=" + y + ", z=" + z + ", w=" + w + "]";
+    }
+
+    public float[] asArray() {
+        return new float[] { x, y, z, w };
     }
 
 }

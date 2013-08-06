@@ -122,21 +122,6 @@ public class VecF2 implements VectorF {
     }
 
     /**
-     * Multiplies the given vector with this vector.
-     * 
-     * @param u
-     *            The vector to be multiplied with this one.
-     * @return The new Vector, which is a result of the multiplication.
-     */
-    public VecF2 mul(VecF2 u) {
-        VecF2 result = new VecF2();
-        result.setX(x * u.getX());
-        result.setY(y * u.getY());
-
-        return result;
-    }
-
-    /**
      * Divides the current vector with the given scalar.
      * 
      * @param n
@@ -259,6 +244,10 @@ public class VecF2 implements VectorF {
     @Override
     public String toString() {
         return "VecF2 [x=" + x + ", y=" + y + "]";
+    }
+
+    public float[] asArray() {
+        return new float[] { x, y };
     }
 
 }

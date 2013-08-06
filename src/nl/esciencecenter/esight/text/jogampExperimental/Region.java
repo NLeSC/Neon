@@ -29,6 +29,7 @@ package nl.esciencecenter.esight.text.jogampExperimental;
  */
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.jogamp.graph.curve.opengl.GLRegion;
 import com.jogamp.graph.geom.Triangle;
@@ -60,10 +61,10 @@ public abstract class Region {
 
     private final int renderModes;
     private boolean dirty = true;
-    protected int numVertices = 0;
-    protected final AABBox box = new AABBox();
-    public ArrayList<Triangle> triangles = new ArrayList<Triangle>();
-    protected ArrayList<Vertex> vertices = new ArrayList<Vertex>();
+    private int numVertices = 0;
+    private final AABBox box = new AABBox();
+    private final ArrayList<Triangle> triangles = new ArrayList<Triangle>();
+    private final ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 
     public static boolean isVBAA(int renderModes) {
         return 0 != (renderModes & Region.VBAA_RENDERING_BIT);
@@ -146,7 +147,7 @@ public abstract class Region {
      * 
      * @see update(GL2ES2)
      */
-    public void addTriangles(ArrayList<Triangle> tris) {
+    public void addTriangles(List<Triangle> tris) {
         triangles.addAll(tris);
         setDirty(true);
     }
@@ -175,7 +176,7 @@ public abstract class Region {
      * 
      * @see update(GL2ES2)
      */
-    public void addVertices(ArrayList<Vertex> verts) {
+    public void addVertices(List<Vertex> verts) {
         vertices.addAll(verts);
         numVertices = vertices.size();
         setDirty(true);

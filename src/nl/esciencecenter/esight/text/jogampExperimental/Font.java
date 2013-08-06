@@ -1,5 +1,7 @@
 package nl.esciencecenter.esight.text.jogampExperimental;
 
+import nl.esciencecenter.esight.exceptions.FontException;
+
 import com.jogamp.opengl.math.geom.AABBox;
 
 /**
@@ -108,7 +110,7 @@ public interface Font {
 
     public Metrics getMetrics();
 
-    public Glyph getGlyph(char symbol);
+    public Glyph getGlyph(char symbol) throws FontException;
 
     public int getNumGlyphs();
 

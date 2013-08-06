@@ -72,6 +72,11 @@
 						<include name="**/GoggleSwingExampleTest.java" />
 						<include name="**/ColormapExampleTest.java" />
 						<include name="**/LiveShaderEditorTest.java" />
+						<include name="**/MatF3Test.java" />
+						<include name="**/MatF4Test.java" />
+						<include name="**/VecF2Test.java" />
+						<include name="**/VecF3Test.java" />
+						<include name="**/VecF4Test.java" />
 						<include name="**/MatrixFMathTest.java" />
 						<include name="**/VectorFMathTest.java" />
 					</fileset>

@@ -333,8 +333,7 @@ public final class GoggleSwing {
      * @return The strut.
      */
     public static Component horizontalStrut(int size) {
-        final Component verticalStrut = Box.createRigidArea(new Dimension(size, 0));
-        return verticalStrut;
+        return Box.createRigidArea(new Dimension(size, 0));
     }
 
     /**

@@ -36,8 +36,7 @@ import javax.media.opengl.GLException;
 import com.jogamp.common.util.IOUtil;
 import com.jogamp.common.util.IntObjectHashMap;
 
-public class UbuntuFontLoader implements FontSet {
-
+public final class UbuntuFontLoader implements FontSet {
     final static FontSet fontLoader = new UbuntuFontLoader();
 
     public static FontSet get() {
@@ -56,10 +55,10 @@ public class UbuntuFontLoader implements FontSet {
 
     };
 
-    final static String relPath = "fonts/"; // "fonts/ubuntu/"
-                                            // ;
+    final static String relPath = "fonts/";
 
     private UbuntuFontLoader() {
+        // Utility class
     }
 
     static final IntObjectHashMap fontMap = new IntObjectHashMap();
@@ -112,6 +111,8 @@ public class UbuntuFontLoader implements FontSet {
                 font = abspath(availableFontFileNames[7], family, style);
             }
             break;
+        default:
+            font = abspath(availableFontFileNames[0], family, style);
         }
 
         return font;

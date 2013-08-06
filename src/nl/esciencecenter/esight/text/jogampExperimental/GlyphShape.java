@@ -28,7 +28,7 @@ package nl.esciencecenter.esight.text.jogampExperimental;
  * or implied, of JogAmp Community.
  */
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.jogamp.graph.geom.Triangle;
 import com.jogamp.graph.geom.Vertex;
@@ -96,7 +96,7 @@ public class GlyphShape {
      * 
      * @return ArrayList of triangles which define this shape
      */
-    public ArrayList<Triangle> triangulate() {
+    public List<Triangle> triangulate() {
         return shape.triangulate();
     }
 
@@ -105,7 +105,7 @@ public class GlyphShape {
      * 
      * @return arrayList of Vertices
      */
-    public ArrayList<Vertex> getVertices() {
+    public List<Vertex> getVertices() {
         return shape.getVertices();
     }
 }

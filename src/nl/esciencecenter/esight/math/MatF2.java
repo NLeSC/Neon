@@ -39,9 +39,9 @@ public class MatF2 extends MatrixF {
      * Helper method to create a new identity matrix.
      */
     private void identity() {
-        Arrays.fill(getMatrix(), 0f);
-        getMatrix()[0] = 1.0f;
-        getMatrix()[3] = 1.0f;
+        Arrays.fill(asArray(), 0f);
+        asArray()[0] = 1.0f;
+        asArray()[3] = 1.0f;
     }
 
     /**
@@ -52,7 +52,7 @@ public class MatF2 extends MatrixF {
      */
     public MatF2(float in) {
         super(SIZE);
-        Arrays.fill(getMatrix(), in);
+        Arrays.fill(asArray(), in);
     }
 
     /**
@@ -65,8 +65,11 @@ public class MatF2 extends MatrixF {
      */
     public MatF2(VecF2 v0, VecF2 v1) {
         super(SIZE);
-        getBuffer().put(v0.asBuffer());
-        getBuffer().put(v1.asBuffer());
+        asArray()[0] = v0.getX();
+        asArray()[1] = v0.getY();
+
+        asArray()[2] = v1.getX();
+        asArray()[3] = v1.getY();
     }
 
     /**
@@ -83,10 +86,10 @@ public class MatF2 extends MatrixF {
      */
     public MatF2(float m00, float m01, float m10, float m11) {
         super(SIZE);
-        getMatrix()[0] = m00;
-        getMatrix()[1] = m01;
-        getMatrix()[2] = m10;
-        getMatrix()[3] = m11;
+        asArray()[0] = m00;
+        asArray()[1] = m01;
+        asArray()[2] = m10;
+        asArray()[3] = m11;
     }
 
     /**
@@ -99,7 +102,7 @@ public class MatF2 extends MatrixF {
         super(SIZE);
 
         for (int i = 0; i < SIZE; i++) {
-            getMatrix()[i] = n.get(i);
+            asArray()[i] = n.get(i);
         }
     }
 
@@ -113,10 +116,10 @@ public class MatF2 extends MatrixF {
     public MatF2 mul(MatF2 n) {
         MatF2 a = new MatF2(0f);
 
-        a.getMatrix()[0] = getMatrix()[0] * n.getMatrix()[0] + getMatrix()[1] * n.getMatrix()[2];
-        a.getMatrix()[1] = getMatrix()[0] * n.getMatrix()[1] + getMatrix()[1] * n.getMatrix()[3];
-        a.getMatrix()[2] = getMatrix()[2] * n.getMatrix()[0] + getMatrix()[3] * n.getMatrix()[2];
-        a.getMatrix()[3] = getMatrix()[2] * n.getMatrix()[1] + getMatrix()[3] * n.getMatrix()[3];
+        a.asArray()[0] = asArray()[0] * n.asArray()[0] + asArray()[1] * n.asArray()[2];
+        a.asArray()[1] = asArray()[0] * n.asArray()[1] + asArray()[1] * n.asArray()[3];
+        a.asArray()[2] = asArray()[2] * n.asArray()[0] + asArray()[3] * n.asArray()[2];
+        a.asArray()[3] = asArray()[2] * n.asArray()[1] + asArray()[3] * n.asArray()[3];
 
         return a;
     }
@@ -132,7 +135,7 @@ public class MatF2 extends MatrixF {
         MatF2 result = new MatF2(0f);
 
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] + n.getMatrix()[i];
+            result.asArray()[i] = asArray()[i] + n.asArray()[i];
         }
 
         return result;
@@ -149,7 +152,7 @@ public class MatF2 extends MatrixF {
         MatF2 result = new MatF2(0f);
 
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] - n.getMatrix()[i];
+            result.asArray()[i] = asArray()[i] - n.asArray()[i];
         }
 
         return result;
@@ -167,7 +170,7 @@ public class MatF2 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] * fn;
+            result.asArray()[i] = asArray()[i] * fn;
         }
 
         return result;
@@ -185,7 +188,7 @@ public class MatF2 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] + fn;
+            result.asArray()[i] = asArray()[i] + fn;
         }
 
         return result;
@@ -203,7 +206,7 @@ public class MatF2 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] - fn;
+            result.asArray()[i] = asArray()[i] - fn;
         }
 
         return result;
@@ -224,7 +227,7 @@ public class MatF2 extends MatrixF {
         float fn = 1f / n.floatValue();
 
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] * fn;
+            result.asArray()[i] = asArray()[i] * fn;
         }
 
         return result;
@@ -238,7 +241,7 @@ public class MatF2 extends MatrixF {
      * @return The new vector that is the result of the multiplication.
      */
     public VecF2 mul(VecF2 v) {
-        return new VecF2(getMatrix()[0] * v.getX() + getMatrix()[1] * v.getY(), getMatrix()[2] * v.getX()
-                + getMatrix()[3] * v.getY());
+        return new VecF2(asArray()[0] * v.getX() + asArray()[1] * v.getY(), asArray()[2] * v.getX() + asArray()[3]
+                * v.getY());
     }
 }

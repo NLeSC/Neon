@@ -49,8 +49,8 @@ class TypecastHMetrics implements Metrics {
 
     public TypecastHMetrics(TypecastFont fontImpl) {
         this.fontImpl = fontImpl;
-        headTable = this.fontImpl.font.getHeadTable();
-        hheaTable = this.fontImpl.font.getHheaTable();
+        headTable = this.fontImpl.getFont().getHeadTable();
+        hheaTable = this.fontImpl.getFont().getHheaTable();
         // vheaTable = this.fontImpl.font.getVheaTable();
         unitsPerEM_Inv = 1.0f / (headTable.getUnitsPerEm());
 

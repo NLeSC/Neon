@@ -30,6 +30,7 @@ package nl.esciencecenter.esight.text.jogampExperimental;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import com.jogamp.graph.curve.tess.Triangulation;
 import com.jogamp.graph.curve.tess.Triangulator;
@@ -103,10 +104,19 @@ public class OutlineShape implements Comparable<OutlineShape> {
     public enum VerticesState {
         UNDEFINED(0), QUADRATIC_NURBS(1);
 
-        public final int state;
+        private final int state;
 
         VerticesState(int state) {
             this.state = state;
+        }
+
+        /**
+         * Getter for state.
+         * 
+         * @return the state.
+         */
+        public int getState() {
+            return state;
         }
     }
 
@@ -118,7 +128,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
     /**
      * The list of {@link Outline}s that are part of this outline shape.
      */
-    private ArrayList<Outline> outlines;
+    private List<Outline> outlines;
     private AABBox bbox;
 
     /** dirty bits DIRTY_BOUNDS */
@@ -215,7 +225,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
      */
     public void addOutline(int position, Outline outline) throws NullPointerException, IndexOutOfBoundsException {
         if (null == outline) {
-            throw new NullPointerException("outline is null");
+            throw new IllegalArgumentException("outline is null");
         }
         if (outlines.size() == position) {
             final Outline lastOutline = getLastOutline();
@@ -255,7 +265,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
      */
     public void addOutlineShape(OutlineShape outlineShape) throws NullPointerException {
         if (null == outlineShape) {
-            throw new NullPointerException("OutlineShape is null");
+            throw new IllegalArgumentException("OutlineShape is null");
         }
         closeLastOutline();
         for (int i = 0; i < outlineShape.getOutlineNumber(); i++) {
@@ -282,7 +292,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
      */
     public void setOutline(int position, Outline outline) throws NullPointerException, IndexOutOfBoundsException {
         if (null == outline) {
-            throw new NullPointerException("outline is null");
+            throw new IllegalArgumentException("outline is null");
         }
         outlines.set(position, outline);
         dirtyBits |= DIRTY_BOUNDS;
@@ -438,7 +448,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
      *            supported.
      */
     public void transformOutlines(VerticesState destinationType) {
-        if (outlineState != destinationType) {
+        if (!outlineState.equals(destinationType)) {
             if (destinationType == VerticesState.QUADRATIC_NURBS) {
                 transformOutlines2Quadratic();
                 checkOverlaps();
@@ -501,8 +511,9 @@ public class OutlineShape implements Comparable<OutlineShape> {
                             vertexCount += 2;
 
                             if (overlap != null && !overlap.isOnCurve()) {
-                                if (!overlaps.contains(overlap))
+                                if (!overlaps.contains(overlap)) {
                                     overlaps.add(overlap);
+                                }
                             }
                         }
                     }
@@ -519,14 +530,14 @@ public class OutlineShape implements Comparable<OutlineShape> {
             int vertexCount = outline.getVertexCount();
             for (int i = 0; i < vertexCount; i++) {
                 final Vertex current = outline.getVertex(i);
-                if (current.isOnCurve() || current == a || current == b || current == c) {
+                if (current.isOnCurve() || current.equals(a) || current.equals(b) || current.equals(c)) {
                     continue;
                 }
                 final Vertex nextV = outline.getVertex((i + 1) % vertexCount);
                 final Vertex prevV = outline.getVertex((i + vertexCount - 1) % vertexCount);
 
                 // skip neighboring triangles
-                if (prevV == c || nextV == a) {
+                if (prevV.equals(c) || nextV.equals(a)) {
                     continue;
                 }
 
@@ -595,7 +606,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
      * @return the list of concatenated vertices associated with all
      *         {@code Outline}s of this object
      */
-    public ArrayList<Vertex> getVertices() {
+    public List<Vertex> getVertices() {
         ArrayList<Vertex> vertices = new ArrayList<Vertex>();
         for (int i = 0; i < outlines.size(); i++) {
             vertices.addAll(outlines.get(i).getVertices());
@@ -609,7 +620,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
      * @return an arraylist of triangles representing the filled region which is
      *         produced by the combination of the outlines
      */
-    public ArrayList<Triangle> triangulate() {
+    public List<Triangle> triangulate() {
         if (outlines.size() == 0) {
             return null;
         }
@@ -671,13 +682,9 @@ public class OutlineShape implements Comparable<OutlineShape> {
      * @return deep clone of this OutlineShape w/o Region
      */
     @Override
-    public OutlineShape clone() {
+    public OutlineShape clone() throws CloneNotSupportedException {
         OutlineShape o;
-        try {
-            o = (OutlineShape) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError();
-        }
+        o = (OutlineShape) super.clone();
         o.bbox = bbox.clone();
         o.outlines = new ArrayList<Outline>(outlines.size());
         for (int i = 0; i < outlines.size(); i++) {

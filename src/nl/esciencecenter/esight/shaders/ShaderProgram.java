@@ -79,7 +79,7 @@ public class ShaderProgram {
     private final Map<String, Integer> uniformInts;
     private final Map<String, Float> uniformFloats;
 
-    private boolean geometry_enabled = false;
+    private boolean geometryEnabled = false;
     private boolean warningsGiven = false;
     private boolean initialized = false;
 
@@ -92,7 +92,8 @@ public class ShaderProgram {
      *            The fragment shader to use for this program.
      */
     public ShaderProgram(VertexShader vs, FragmentShader fs) {
-        setPointer(0);
+        pointer = 0;
+
         this.vs = vs;
         this.fs = fs;
         uniformFloatMatrices = new HashMap<String, FloatBuffer>();
@@ -113,7 +114,8 @@ public class ShaderProgram {
      *            The fragment shader to use for this program.
      */
     public ShaderProgram(VertexShader vs, GeometryShader gs, FragmentShader fs) {
-        setPointer(0);
+        pointer = 0;
+
         this.vs = vs;
         this.gs = gs;
         this.fs = fs;
@@ -123,7 +125,7 @@ public class ShaderProgram {
         uniformInts = new HashMap<String, Integer>();
         uniformFloats = new HashMap<String, Float>();
 
-        geometry_enabled = true;
+        geometryEnabled = true;
     }
 
     /**
@@ -138,7 +140,7 @@ public class ShaderProgram {
 
             try {
                 gl.glAttachShader(getPointer(), vs.getShaderPointer());
-                if (geometry_enabled) {
+                if (geometryEnabled) {
                     gl.glAttachShader(getPointer(), gs.getShaderPointer());
                 }
                 gl.glAttachShader(getPointer(), fs.getShaderPointer());
@@ -304,7 +306,7 @@ public class ShaderProgram {
                 gl.glDetachShader(getPointer(), vs.getShaderPointer());
                 gl.glDeleteShader(vs.getShaderPointer());
 
-                if (geometry_enabled) {
+                if (geometryEnabled) {
                     gl.glDetachShader(getPointer(), gs.getShaderPointer());
                     gl.glDeleteShader(gs.getShaderPointer());
                 }

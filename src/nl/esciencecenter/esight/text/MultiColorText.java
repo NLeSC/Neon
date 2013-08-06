@@ -3,6 +3,7 @@ package nl.esciencecenter.esight.text;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -128,7 +129,7 @@ public class MultiColorText extends Model {
         colors = new HashMap<Integer, VecF4>();
         glyphs = new HashMap<Integer, GlyphShape>();
 
-        setString(gl, text, initialColor, fontSize);
+        setFields(gl, text, initialColor, fontSize);
     }
 
     @Override
@@ -142,6 +143,37 @@ public class MultiColorText extends Model {
             setVbo(new VBO(gl, vAttrib, cAttrib));
         }
         initialized = true;
+    }
+
+    private void setFields(GL3 gl, String str, Color4 basicColor, int size) {
+        // Get the outline shapes for the current string in this font
+        List<OutlineShape> shapes = ((TypecastFont) font).getOutlineShapes(str, size, SVertex.factory());
+
+        // Make a set of glyph shapes from the outlines
+        int numGlyps = shapes.size();
+
+        for (int index = 0; index < numGlyps; index++) {
+            if (shapes.get(index) == null) {
+                colors.put(index, null);
+                glyphs.put(index, null);
+                continue;
+            }
+            GlyphShape glyphShape = new GlyphShape(SVertex.factory(), shapes.get(index));
+
+            if (glyphShape.getNumVertices() < 3) {
+                colors.put(index, null);
+                glyphs.put(index, null);
+                continue;
+            }
+            colors.put(index, basicColor);
+            glyphs.put(index, glyphShape);
+        }
+
+        initialized = false;
+        makeVBO(gl);
+        this.cachedString = str;
+        this.cachedSize = size;
+        this.cachedColor = basicColor;
     }
 
     /**
@@ -160,34 +192,7 @@ public class MultiColorText extends Model {
             colors.clear();
             glyphs.clear();
 
-            // Get the outline shapes for the current string in this font
-            ArrayList<OutlineShape> shapes = ((TypecastFont) font).getOutlineShapes(str, size, SVertex.factory());
-
-            // Make a set of glyph shapes from the outlines
-            int numGlyps = shapes.size();
-
-            for (int index = 0; index < numGlyps; index++) {
-                if (shapes.get(index) == null) {
-                    colors.put(index, null);
-                    glyphs.put(index, null);
-                    continue;
-                }
-                GlyphShape glyphShape = new GlyphShape(SVertex.factory(), shapes.get(index));
-
-                if (glyphShape.getNumVertices() < 3) {
-                    colors.put(index, null);
-                    glyphs.put(index, null);
-                    continue;
-                }
-                colors.put(index, basicColor);
-                glyphs.put(index, glyphShape);
-            }
-
-            initialized = false;
-            makeVBO(gl);
-            this.cachedString = str;
-            this.cachedSize = size;
-            this.cachedColor = basicColor;
+            setFields(gl, str, basicColor, size);
         }
     }
 
@@ -208,7 +213,7 @@ public class MultiColorText extends Model {
                     GlyphShape glyph = glyphs.get(i);
                     VecF4 glypColor = colors.get(i);
 
-                    ArrayList<Triangle> gtris = glyph.triangulate();
+                    List<Triangle> gtris = glyph.triangulate();
                     for (Triangle t : gtris) {
                         vertices.add(t.getVertices()[0]);
                         vertices.add(t.getVertices()[1]);

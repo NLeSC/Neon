@@ -34,9 +34,9 @@ public class Noise {
 
     public Noise(int channels, int width, int height, int depth) {
         int pixels = width * height * depth;
-        setPixelBuffer(Buffers.newDirectByteBuffer(pixels * 4));
+        pixelBuffer = Buffers.newDirectByteBuffer(pixels * 4);
 
-        setTempBuf(Buffers.newDirectFloatBuffer(pixels));
+        tempBuf = Buffers.newDirectFloatBuffer(pixels);
 
         if (depth == 0 || depth == 1) {
             for (int y = 0; y < height; y++) {

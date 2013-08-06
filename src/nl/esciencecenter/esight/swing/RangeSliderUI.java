@@ -540,7 +540,7 @@ public class RangeSliderUI extends BasicSliderUI {
                 case JSlider.VERTICAL:
                     offset = currentMouseY - upperThumbRect.y;
                     break;
-                case JSlider.HORIZONTAL:
+                default:
                     offset = currentMouseX - upperThumbRect.x;
                     break;
                 }

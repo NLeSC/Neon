@@ -34,25 +34,9 @@ import java.net.URLConnection;
 
 public class FontFactory {
     /** Ubuntu is the default font family */
-    public static final int                      UBUNTU     = 0;
+    public static final int UBUNTU = 0;
 
     private static final TypecastFontConstructor fontConstr = new TypecastFontConstructor();
-
-    // static {
-    // /**
-    // * For example: "jogamp.graph.font.typecast.TypecastFontFactory"
-    // * (default) "jogamp.graph.font.ttf.TTFFontImpl"
-    // */
-    // String fontImplName = Debug.getProperty("FontImpl", true,
-    // AccessController.getContext());
-    // if (null == fontImplName) {
-    // fontImplName =
-    // "ibis.amuse.visualization.openglCommon.text.TypecastFontConstructor";
-    // }
-    // fontConstr = (TypecastFontConstructor)
-    // ReflectionUtil.createInstance(
-    // fontImplName, FontFactory.class.getClassLoader());
-    // }
 
     public static final FontSet getDefault() {
         return get(UBUNTU);
@@ -72,7 +56,6 @@ public class FontFactory {
 
     public static boolean isPrintableChar(char c) {
         Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
-        return (!Character.isISOControl(c)) && c != 0 && block != null
-                && block != Character.UnicodeBlock.SPECIALS;
+        return (!Character.isISOControl(c)) && c != 0 && block != null && block != Character.UnicodeBlock.SPECIALS;
     }
 }

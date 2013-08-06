@@ -415,7 +415,7 @@ public final class MatrixFMath {
      * @return the determinant
      */
     public static float determinant(MatF2 m) {
-        return m.getMatrix()[0] * m.getMatrix()[3] - m.getMatrix()[2] * m.getMatrix()[1];
+        return m.asArray()[0] * m.asArray()[3] - m.asArray()[2] * m.asArray()[1];
     }
 
     /**
@@ -430,7 +430,7 @@ public final class MatrixFMath {
         float minor01 = determinant(exclude(m, 0, 1));
         float minor02 = determinant(exclude(m, 0, 2));
 
-        return m.getMatrix()[0] * minor00 - m.getMatrix()[3] * minor01 + m.getMatrix()[6] * minor02;
+        return m.asArray()[0] * minor00 - m.asArray()[3] * minor01 + m.asArray()[6] * minor02;
     }
 
     /**
@@ -446,7 +446,7 @@ public final class MatrixFMath {
         float minor02 = determinant(exclude(m, 0, 2));
         float minor03 = determinant(exclude(m, 0, 3));
 
-        return m.getMatrix()[0] * minor00 - m.getMatrix()[4] * minor01 + m.getMatrix()[8] * minor02 + m.getMatrix()[12]
+        return m.asArray()[0] * minor00 - m.asArray()[4] * minor01 + m.asArray()[8] * minor02 + m.asArray()[12]
                 * minor03;
     }
 
@@ -463,7 +463,7 @@ public final class MatrixFMath {
         MatF3 result = new MatF3();
 
         for (int i = 0; i < result.getSize(); i++) {
-            result.getMatrix()[i] = minors.getMatrix()[i] * checkerboard.getMatrix()[i];
+            result.asArray()[i] = minors.asArray()[i] * checkerboard.asArray()[i];
         }
 
         return result;
@@ -482,7 +482,7 @@ public final class MatrixFMath {
         MatF4 result = new MatF4();
 
         for (int i = 0; i < result.getSize(); i++) {
-            result.getMatrix()[i] = minors.getMatrix()[i] * checkerboard.getMatrix()[i];
+            result.asArray()[i] = minors.asArray()[i] * checkerboard.asArray()[i];
         }
 
         return result;
@@ -502,7 +502,7 @@ public final class MatrixFMath {
             for (int iCol = 0; iCol < 3; iCol++) {
                 MatF2 excluded = exclude(m, iCol, iRow);
                 float det = determinant(excluded);
-                result.getBuffer().put(det);
+                result.asArray()[iRow * 3 + iCol] = det;
             }
         }
 
@@ -523,7 +523,7 @@ public final class MatrixFMath {
             for (int iCol = 0; iCol < 4; iCol++) {
                 MatF3 excluded = exclude(m, iCol, iRow);
                 float det = determinant(excluded);
-                result.getBuffer().put(det);
+                result.asArray()[iRow * 4 + iCol] = det;
             }
         }
 
@@ -540,11 +540,13 @@ public final class MatrixFMath {
      */
     public static MatF2 exclude(MatF3 m, int col, int row) {
         MatF2 result = new MatF2();
+        int index = 0;
 
         for (int iRow = 0; iRow < 3; iRow++) {
             for (int iCol = 0; iCol < 3; iCol++) {
                 if (iRow != row && iCol != col) {
-                    result.getBuffer().put(m.getMatrix()[iRow * 3 + iCol]);
+                    result.asArray()[index] = m.asArray()[iRow * 3 + iCol];
+                    index++;
                 }
             }
         }
@@ -562,11 +564,13 @@ public final class MatrixFMath {
      */
     public static MatF3 exclude(MatF4 m, int col, int row) {
         MatF3 result = new MatF3();
+        int index = 0;
 
         for (int iRow = 0; iRow < 4; iRow++) {
             for (int iCol = 0; iCol < 4; iCol++) {
                 if (iRow != row && iCol != col) {
-                    result.getBuffer().put(m.getMatrix()[iRow * 4 + iCol]);
+                    result.asArray()[index] = m.asArray()[iRow * 4 + iCol];
+                    index++;
                 }
             }
         }
@@ -584,11 +588,11 @@ public final class MatrixFMath {
     public static MatF2 transpose(MatF2 m) {
         MatF2 result = new MatF2();
 
-        result.getMatrix()[0] = m.getMatrix()[0];
-        result.getMatrix()[1] = m.getMatrix()[2];
+        result.asArray()[0] = m.asArray()[0];
+        result.asArray()[1] = m.asArray()[2];
 
-        result.getMatrix()[2] = m.getMatrix()[1];
-        result.getMatrix()[3] = m.getMatrix()[3];
+        result.asArray()[2] = m.asArray()[1];
+        result.asArray()[3] = m.asArray()[3];
 
         return result;
     }
@@ -603,17 +607,17 @@ public final class MatrixFMath {
     public static MatF3 transpose(MatF3 m) {
         MatF3 result = new MatF3();
 
-        result.getMatrix()[0] = m.getMatrix()[0];
-        result.getMatrix()[1] = m.getMatrix()[3];
-        result.getMatrix()[2] = m.getMatrix()[6];
+        result.asArray()[0] = m.asArray()[0];
+        result.asArray()[1] = m.asArray()[3];
+        result.asArray()[2] = m.asArray()[6];
 
-        result.getMatrix()[3] = m.getMatrix()[1];
-        result.getMatrix()[4] = m.getMatrix()[4];
-        result.getMatrix()[5] = m.getMatrix()[7];
+        result.asArray()[3] = m.asArray()[1];
+        result.asArray()[4] = m.asArray()[4];
+        result.asArray()[5] = m.asArray()[7];
 
-        result.getMatrix()[6] = m.getMatrix()[2];
-        result.getMatrix()[7] = m.getMatrix()[5];
-        result.getMatrix()[8] = m.getMatrix()[8];
+        result.asArray()[6] = m.asArray()[2];
+        result.asArray()[7] = m.asArray()[5];
+        result.asArray()[8] = m.asArray()[8];
 
         return result;
     }
@@ -628,25 +632,25 @@ public final class MatrixFMath {
     public static MatF4 transpose(MatF4 m) {
         MatF4 result = new MatF4();
 
-        result.getMatrix()[0] = m.getMatrix()[0];
-        result.getMatrix()[1] = m.getMatrix()[4];
-        result.getMatrix()[2] = m.getMatrix()[8];
-        result.getMatrix()[3] = m.getMatrix()[12];
+        result.asArray()[0] = m.asArray()[0];
+        result.asArray()[1] = m.asArray()[4];
+        result.asArray()[2] = m.asArray()[8];
+        result.asArray()[3] = m.asArray()[12];
 
-        result.getMatrix()[4] = m.getMatrix()[1];
-        result.getMatrix()[5] = m.getMatrix()[5];
-        result.getMatrix()[6] = m.getMatrix()[9];
-        result.getMatrix()[7] = m.getMatrix()[13];
+        result.asArray()[4] = m.asArray()[1];
+        result.asArray()[5] = m.asArray()[5];
+        result.asArray()[6] = m.asArray()[9];
+        result.asArray()[7] = m.asArray()[13];
 
-        result.getMatrix()[8] = m.getMatrix()[2];
-        result.getMatrix()[9] = m.getMatrix()[6];
-        result.getMatrix()[10] = m.getMatrix()[10];
-        result.getMatrix()[11] = m.getMatrix()[14];
+        result.asArray()[8] = m.asArray()[2];
+        result.asArray()[9] = m.asArray()[6];
+        result.asArray()[10] = m.asArray()[10];
+        result.asArray()[11] = m.asArray()[14];
 
-        result.getMatrix()[12] = m.getMatrix()[3];
-        result.getMatrix()[13] = m.getMatrix()[7];
-        result.getMatrix()[14] = m.getMatrix()[11];
-        result.getMatrix()[15] = m.getMatrix()[15];
+        result.asArray()[12] = m.asArray()[3];
+        result.asArray()[13] = m.asArray()[7];
+        result.asArray()[14] = m.asArray()[11];
+        result.asArray()[15] = m.asArray()[15];
 
         return result;
     }
@@ -661,10 +665,10 @@ public final class MatrixFMath {
     public static MatF2 adjoint(MatF2 m) {
         MatF2 result = new MatF2();
 
-        result.getMatrix()[0] = m.getMatrix()[3];
-        result.getMatrix()[1] = -m.getMatrix()[1];
-        result.getMatrix()[2] = -m.getMatrix()[2];
-        result.getMatrix()[3] = m.getMatrix()[0];
+        result.asArray()[0] = m.asArray()[3];
+        result.asArray()[1] = -m.asArray()[1];
+        result.asArray()[2] = -m.asArray()[2];
+        result.asArray()[3] = m.asArray()[0];
 
         return result;
 

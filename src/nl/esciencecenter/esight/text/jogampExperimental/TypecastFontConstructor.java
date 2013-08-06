@@ -37,10 +37,16 @@ import java.security.PrivilegedAction;
 import javax.media.opengl.GLException;
 
 import jogamp.graph.font.typecast.ot.OTFontCollection;
+import nl.esciencecenter.esight.exceptions.FontException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jogamp.common.util.IOUtil;
 
 public class TypecastFontConstructor {
+    private static final Logger logger = LoggerFactory.getLogger(TypecastFontConstructor.class);
+
     public Font create(final File ffile) throws IOException {
         return AccessController.doPrivileged(new PrivilegedAction<Font>() {
             @Override
@@ -50,7 +56,9 @@ public class TypecastFontConstructor {
                     fontset = OTFontCollection.create(ffile);
                     return new TypecastFont(fontset);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage());
+                } catch (FontException e) {
+                    logger.error(e.getMessage());
                 }
                 return null;
             }
@@ -68,13 +76,14 @@ public class TypecastFontConstructor {
                     tf = IOUtil.createTempFile("joglfont", ".ttf", false);
                     len = IOUtil.copyURLConn2File(furl, tf);
                     if (len == 0) {
-                        tf.delete();
-                        throw new GLException("Font of stream " + furl + " was zero bytes");
+                        if (!tf.delete()) {
+                            throw new GLException("Font of stream " + furl + " was zero bytes");
+                        }
                     }
                     f = create(tf);
                     tf.delete();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage());
                 }
                 return f;
             }

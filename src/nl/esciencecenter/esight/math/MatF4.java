@@ -36,11 +36,11 @@ public class MatF4 extends MatrixF {
     }
 
     private void identity() {
-        Arrays.fill(getMatrix(), 0f);
-        getMatrix()[0] = 1.0f;
-        getMatrix()[5] = 1.0f;
-        getMatrix()[10] = 1.0f;
-        getMatrix()[15] = 1.0f;
+        Arrays.fill(asArray(), 0f);
+        asArray()[0] = 1.0f;
+        asArray()[5] = 1.0f;
+        asArray()[10] = 1.0f;
+        asArray()[15] = 1.0f;
     }
 
     /**
@@ -55,7 +55,7 @@ public class MatF4 extends MatrixF {
      */
     public MatF4(float in) {
         super(SIZE);
-        Arrays.fill(getMatrix(), in);
+        Arrays.fill(asArray(), in);
     }
 
     /**
@@ -72,10 +72,25 @@ public class MatF4 extends MatrixF {
      */
     public MatF4(VecF4 v0, VecF4 v1, VecF4 v2, VecF4 v3) {
         super(SIZE);
-        getBuffer().put(v0.asBuffer());
-        getBuffer().put(v1.asBuffer());
-        getBuffer().put(v2.asBuffer());
-        getBuffer().put(v3.asBuffer());
+        asArray()[0] = v0.getX();
+        asArray()[1] = v0.getY();
+        asArray()[2] = v0.getZ();
+        asArray()[3] = v0.getW();
+
+        asArray()[4] = v1.getX();
+        asArray()[5] = v1.getY();
+        asArray()[6] = v1.getZ();
+        asArray()[7] = v1.getW();
+
+        asArray()[8] = v2.getX();
+        asArray()[9] = v2.getY();
+        asArray()[10] = v2.getZ();
+        asArray()[11] = v2.getW();
+
+        asArray()[12] = v3.getX();
+        asArray()[13] = v3.getY();
+        asArray()[14] = v3.getZ();
+        asArray()[15] = v3.getW();
     }
 
     /**
@@ -117,22 +132,22 @@ public class MatF4 extends MatrixF {
     public MatF4(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20,
             float m21, float m22, float m23, float m30, float m31, float m32, float m33) {
         super(SIZE);
-        getMatrix()[0] = m00;
-        getMatrix()[1] = m01;
-        getMatrix()[2] = m02;
-        getMatrix()[3] = m03;
-        getMatrix()[4] = m10;
-        getMatrix()[5] = m11;
-        getMatrix()[6] = m12;
-        getMatrix()[7] = m13;
-        getMatrix()[8] = m20;
-        getMatrix()[9] = m21;
-        getMatrix()[10] = m22;
-        getMatrix()[11] = m23;
-        getMatrix()[12] = m30;
-        getMatrix()[13] = m31;
-        getMatrix()[14] = m32;
-        getMatrix()[15] = m33;
+        asArray()[0] = m00;
+        asArray()[1] = m01;
+        asArray()[2] = m02;
+        asArray()[3] = m03;
+        asArray()[4] = m10;
+        asArray()[5] = m11;
+        asArray()[6] = m12;
+        asArray()[7] = m13;
+        asArray()[8] = m20;
+        asArray()[9] = m21;
+        asArray()[10] = m22;
+        asArray()[11] = m23;
+        asArray()[12] = m30;
+        asArray()[13] = m31;
+        asArray()[14] = m32;
+        asArray()[15] = m33;
     }
 
     /**
@@ -145,7 +160,7 @@ public class MatF4 extends MatrixF {
         super(SIZE);
 
         for (int i = 0; i < SIZE; i++) {
-            getMatrix()[i] = n.get(i);
+            asArray()[i] = n.get(i);
         }
     }
 
@@ -162,7 +177,7 @@ public class MatF4 extends MatrixF {
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
                 for (int k = 0; k < 4; ++k) {
-                    a.getMatrix()[i * 4 + j] += getMatrix()[i * 4 + k] * n.getMatrix()[k * 4 + j];
+                    a.asArray()[i * 4 + j] += asArray()[i * 4 + k] * n.asArray()[k * 4 + j];
                 }
             }
         }
@@ -181,7 +196,7 @@ public class MatF4 extends MatrixF {
         MatF4 result = new MatF4(0f);
 
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] + n.getMatrix()[i];
+            result.asArray()[i] = asArray()[i] + n.asArray()[i];
         }
 
         return result;
@@ -198,7 +213,7 @@ public class MatF4 extends MatrixF {
         MatF4 result = new MatF4(0f);
 
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] - n.getMatrix()[i];
+            result.asArray()[i] = asArray()[i] - n.asArray()[i];
         }
 
         return result;
@@ -216,7 +231,7 @@ public class MatF4 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] * fn;
+            result.asArray()[i] = asArray()[i] * fn;
         }
 
         return result;
@@ -234,7 +249,7 @@ public class MatF4 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] + fn;
+            result.asArray()[i] = asArray()[i] + fn;
         }
 
         return result;
@@ -252,7 +267,7 @@ public class MatF4 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] - fn;
+            result.asArray()[i] = asArray()[i] - fn;
         }
 
         return result;
@@ -273,7 +288,7 @@ public class MatF4 extends MatrixF {
         float fn = 1f / n.floatValue();
 
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] * fn;
+            result.asArray()[i] = asArray()[i] * fn;
         }
 
         return result;
@@ -287,10 +302,10 @@ public class MatF4 extends MatrixF {
      * @return The new vector that is the result of the multiplication.
      */
     public VecF4 mul(VecF4 v) {
-        return new VecF4(getMatrix()[0] * v.getX() + getMatrix()[1] * v.getY() + getMatrix()[2] * v.getZ()
-                + getMatrix()[3] * v.getW(), getMatrix()[4] * v.getX() + getMatrix()[5] * v.getY() + getMatrix()[6]
-                * v.getZ() + getMatrix()[7] * v.getW(), getMatrix()[8] * v.getX() + getMatrix()[9] * v.getY()
-                + getMatrix()[10] * v.getZ() + getMatrix()[11] * v.getW(), getMatrix()[12] * v.getX() + getMatrix()[13]
-                * v.getY() + getMatrix()[14] * v.getZ() + getMatrix()[15] * v.getW());
+        return new VecF4(asArray()[0] * v.getX() + asArray()[1] * v.getY() + asArray()[2] * v.getZ() + asArray()[3]
+                * v.getW(), asArray()[4] * v.getX() + asArray()[5] * v.getY() + asArray()[6] * v.getZ() + asArray()[7]
+                * v.getW(), asArray()[8] * v.getX() + asArray()[9] * v.getY() + asArray()[10] * v.getZ()
+                + asArray()[11] * v.getW(), asArray()[12] * v.getX() + asArray()[13] * v.getY() + asArray()[14]
+                * v.getZ() + asArray()[15] * v.getW());
     }
 }

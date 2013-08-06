@@ -28,12 +28,17 @@ package nl.esciencecenter.esight.text.jogampExperimental;
  * or implied, of JogAmp Community.
  */
 import java.util.ArrayList;
+import java.util.List;
 
 import jogamp.graph.font.typecast.ot.OTGlyph;
 import jogamp.graph.font.typecast.ot.Point;
 import jogamp.graph.geom.plane.AffineTransform;
 import jogamp.graph.geom.plane.Path2D;
 import jogamp.graph.geom.plane.PathIterator;
+import nl.esciencecenter.esight.exceptions.FontException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jogamp.graph.geom.Vertex;
 import com.jogamp.graph.geom.Vertex.Factory;
@@ -42,10 +47,17 @@ import com.jogamp.graph.geom.Vertex.Factory;
  * Factory to build a {@link com.jogamp.graph.geom.Path2D Path2D} from
  * {@link jogamp.graph.font.typecast.ot.OTGlyph Glyph}s.
  */
-public class TypecastRenderer {
+public final class TypecastRenderer {
+    private static final Logger logger = LoggerFactory.getLogger(TypecastRenderer.class);
+
+    private TypecastRenderer() {
+        // Utility class
+    }
 
     private static void getPaths(TypecastFont font, CharSequence string, float pixelSize, AffineTransform transform,
             Path2D[] p) {
+        AffineTransform tmpTransform = transform;
+
         if (string == null) {
             return;
         }
@@ -54,8 +66,8 @@ public class TypecastRenderer {
         float lineGap = metrics.getLineGap(pixelSize);
         float ascent = metrics.getAscent(pixelSize);
         float descent = metrics.getDescent(pixelSize);
-        if (transform == null) {
-            transform = new AffineTransform();
+        if (tmpTransform == null) {
+            tmpTransform = new AffineTransform();
         }
         AffineTransform t = new AffineTransform();
 
@@ -64,28 +76,33 @@ public class TypecastRenderer {
         for (int i = 0; i < string.length(); i++) {
             p[i] = new Path2D();
             p[i].reset();
-            t.setTransform(transform);
+            t.setTransform(tmpTransform);
             char character = string.charAt(i);
             if (character == '\n') {
                 y += advanceY;
                 advanceTotal = 0;
                 continue;
             } else if (character == ' ') {
-                advanceTotal += font.font.getHmtxTable().getAdvanceWidth(TypecastGlyph.ID_SPACE)
+                advanceTotal += font.getFont().getHmtxTable().getAdvanceWidth(TypecastGlyph.ID_SPACE)
                         * metrics.getScale(pixelSize);
                 continue;
             }
-            TypecastGlyph glyph = (TypecastGlyph) font.getGlyph(character);
-            Path2D gp = glyph.getPath();
-            float scale = metrics.getScale(pixelSize);
-            t.translate(advanceTotal, y);
-            t.scale(scale, scale);
-            p[i].append(gp.iterator(t), false);
-            advanceTotal += glyph.getAdvance(pixelSize, true);
+            TypecastGlyph glyph;
+            try {
+                glyph = (TypecastGlyph) font.getGlyph(character);
+                Path2D gp = glyph.getPath();
+                float scale = metrics.getScale(pixelSize);
+                t.translate(advanceTotal, y);
+                t.scale(scale, scale);
+                p[i].append(gp.iterator(t), false);
+                advanceTotal += glyph.getAdvance(pixelSize, true);
+            } catch (FontException e) {
+                logger.error(e.getMessage());
+            }
         }
     }
 
-    public static ArrayList<OutlineShape> getOutlineShapes(TypecastFont font, CharSequence string, float pixelSize,
+    public static List<OutlineShape> getOutlineShapes(TypecastFont font, CharSequence string, float pixelSize,
             AffineTransform transform, Factory<? extends Vertex> vertexFactory) {
         Path2D[] paths = new Path2D[string.length()];
         getPaths(font, string, pixelSize, transform, paths);
@@ -171,33 +188,33 @@ public class TypecastRenderer {
         int offset = 0;
         while (offset < count) {
             Point point = glyph.getPoint(startIndex + offset % count);
-            Point point_plus1 = glyph.getPoint(startIndex + (offset + 1) % count);
-            Point point_plus2 = glyph.getPoint(startIndex + (offset + 2) % count);
+            Point pointPlus1 = glyph.getPoint(startIndex + (offset + 1) % count);
+            Point pointPlus2 = glyph.getPoint(startIndex + (offset + 2) % count);
             if (offset == 0) {
                 gp.moveTo(point.x, point.y);
             }
 
             if (point.onCurve) {
-                if (point_plus1.onCurve) {
-                    gp.lineTo(point_plus1.x, point_plus1.y);
+                if (pointPlus1.onCurve) {
+                    gp.lineTo(pointPlus1.x, pointPlus1.y);
                     offset++;
                 } else {
-                    if (point_plus2.onCurve) {
-                        gp.quadTo(point_plus1.x, point_plus1.y, point_plus2.x, point_plus2.y);
+                    if (pointPlus2.onCurve) {
+                        gp.quadTo(pointPlus1.x, pointPlus1.y, pointPlus2.x, pointPlus2.y);
                         offset += 2;
                     } else {
-                        gp.quadTo(point_plus1.x, point_plus1.y, midValue(point_plus1.x, point_plus2.x),
-                                midValue(point_plus1.y, point_plus2.y));
+                        gp.quadTo(pointPlus1.x, pointPlus1.y, midValue(pointPlus1.x, pointPlus2.x),
+                                midValue(pointPlus1.y, pointPlus2.y));
                         offset += 2;
                     }
                 }
             } else {
-                if (point_plus1.onCurve) {
-                    gp.quadTo(point.x, point.y, point_plus1.x, point_plus1.y);
+                if (pointPlus1.onCurve) {
+                    gp.quadTo(point.x, point.y, pointPlus1.x, pointPlus1.y);
                     offset++;
 
                 } else {
-                    gp.quadTo(point.x, point.y, midValue(point.x, point_plus1.x), midValue(point.y, point_plus1.y));
+                    gp.quadTo(point.x, point.y, midValue(point.x, pointPlus1.x), midValue(point.y, pointPlus1.y));
                     offset++;
                 }
             }

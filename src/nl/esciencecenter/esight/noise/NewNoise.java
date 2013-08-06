@@ -22,10 +22,10 @@ package nl.esciencecenter.esight.noise;
  * 
  */
 public class NewNoise {
-    final int NOISE_MAGIC_X = 1619;
-    final int NOISE_MAGIC_Y = 31337;
-    final int NOISE_MAGIC_Z = 52591;
-    final int NOISE_MAGIC_SEED = 1013;
+    private final int NOISE_MAGIC_X = 1619;
+    private final int NOISE_MAGIC_Y = 31337;
+    private final int NOISE_MAGIC_Z = 52591;
+    private final int NOISE_MAGIC_SEED = 1013;
 
     double triLinearInterpolation(double v000, double v100, double v010, double v110, double v001, double v101,
             double v011, double v111, double x, double y, double z) {

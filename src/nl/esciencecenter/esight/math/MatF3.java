@@ -39,10 +39,10 @@ public class MatF3 extends MatrixF {
      * Helper method to create a new identity matrix.
      */
     private void identity() {
-        Arrays.fill(getMatrix(), 0f);
-        getMatrix()[0] = 1.0f;
-        getMatrix()[4] = 1.0f;
-        getMatrix()[8] = 1.0f;
+        Arrays.fill(asArray(), 0f);
+        asArray()[0] = 1.0f;
+        asArray()[4] = 1.0f;
+        asArray()[8] = 1.0f;
     }
 
     /**
@@ -53,7 +53,7 @@ public class MatF3 extends MatrixF {
      */
     public MatF3(float in) {
         super(SIZE);
-        Arrays.fill(getMatrix(), in);
+        Arrays.fill(asArray(), in);
     }
 
     /**
@@ -68,9 +68,17 @@ public class MatF3 extends MatrixF {
      */
     public MatF3(VecF3 v0, VecF3 v1, VecF3 v2) {
         super(SIZE);
-        getBuffer().put(v0.asBuffer());
-        getBuffer().put(v1.asBuffer());
-        getBuffer().put(v2.asBuffer());
+        asArray()[0] = v0.getX();
+        asArray()[1] = v0.getY();
+        asArray()[2] = v0.getZ();
+
+        asArray()[3] = v1.getX();
+        asArray()[4] = v1.getY();
+        asArray()[5] = v1.getZ();
+
+        asArray()[6] = v2.getX();
+        asArray()[7] = v2.getY();
+        asArray()[8] = v2.getZ();
     }
 
     /**
@@ -97,15 +105,15 @@ public class MatF3 extends MatrixF {
      */
     public MatF3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) {
         super(SIZE);
-        getMatrix()[0] = m00;
-        getMatrix()[1] = m01;
-        getMatrix()[2] = m02;
-        getMatrix()[3] = m10;
-        getMatrix()[4] = m11;
-        getMatrix()[5] = m12;
-        getMatrix()[6] = m20;
-        getMatrix()[7] = m21;
-        getMatrix()[8] = m22;
+        asArray()[0] = m00;
+        asArray()[1] = m01;
+        asArray()[2] = m02;
+        asArray()[3] = m10;
+        asArray()[4] = m11;
+        asArray()[5] = m12;
+        asArray()[6] = m20;
+        asArray()[7] = m21;
+        asArray()[8] = m22;
     }
 
     /**
@@ -118,7 +126,7 @@ public class MatF3 extends MatrixF {
         super(SIZE);
 
         for (int i = 0; i < SIZE; i++) {
-            getMatrix()[i] = n.get(i);
+            asArray()[i] = n.get(i);
         }
     }
 
@@ -135,7 +143,7 @@ public class MatF3 extends MatrixF {
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 for (int k = 0; k < 3; ++k) {
-                    result.getMatrix()[i * 3 + j] += getMatrix()[i * 3 + k] * n.getMatrix()[k * 3 + j];
+                    result.asArray()[i * 3 + j] += asArray()[i * 3 + k] * n.asArray()[k * 3 + j];
                 }
             }
         }
@@ -154,7 +162,7 @@ public class MatF3 extends MatrixF {
         MatF3 result = new MatF3(0f);
 
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] + n.getMatrix()[i];
+            result.asArray()[i] = asArray()[i] + n.asArray()[i];
         }
 
         return result;
@@ -171,7 +179,7 @@ public class MatF3 extends MatrixF {
         MatF3 result = new MatF3(0f);
 
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] - n.getMatrix()[i];
+            result.asArray()[i] = asArray()[i] - n.asArray()[i];
         }
 
         return result;
@@ -189,7 +197,7 @@ public class MatF3 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] * fn;
+            result.asArray()[i] = asArray()[i] * fn;
         }
 
         return result;
@@ -207,7 +215,7 @@ public class MatF3 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] + fn;
+            result.asArray()[i] = asArray()[i] + fn;
         }
 
         return result;
@@ -225,7 +233,7 @@ public class MatF3 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] - fn;
+            result.asArray()[i] = asArray()[i] - fn;
         }
 
         return result;
@@ -246,7 +254,7 @@ public class MatF3 extends MatrixF {
         float fn = 1f / n.floatValue();
 
         for (int i = 0; i < SIZE; ++i) {
-            result.getMatrix()[i] = getMatrix()[i] * fn;
+            result.asArray()[i] = asArray()[i] * fn;
         }
 
         return result;
@@ -260,9 +268,9 @@ public class MatF3 extends MatrixF {
      * @return The new vector that is the result of the multiplication.
      */
     public VecF3 mul(VecF3 v) {
-        VecF3 result = new VecF3(getMatrix()[0] * v.getX() + getMatrix()[1] * v.getY() + getMatrix()[2] * v.getZ(),
-                getMatrix()[3] * v.getX() + getMatrix()[4] * v.getY() + getMatrix()[5] * v.getZ(), getMatrix()[6]
-                        * v.getX() + getMatrix()[7] * v.getY() + getMatrix()[8] * v.getZ());
+        VecF3 result = new VecF3(asArray()[0] * v.getX() + asArray()[1] * v.getY() + asArray()[2] * v.getZ(),
+                asArray()[3] * v.getX() + asArray()[4] * v.getY() + asArray()[5] * v.getZ(), asArray()[6] * v.getX()
+                        + asArray()[7] * v.getY() + asArray()[8] * v.getZ());
         return result;
     }
 }

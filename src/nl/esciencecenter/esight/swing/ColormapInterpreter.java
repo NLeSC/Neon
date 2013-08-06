@@ -98,8 +98,8 @@ public final class ColormapInterpreter {
          *            top end of the colormap).
          */
         public Dimensions(float min, float max) {
-            this.setMin(min);
-            this.setMax(max);
+            this.min = min;
+            this.max = max;
         }
 
         /**
@@ -206,17 +206,17 @@ public final class ColormapInterpreter {
         public static final Color BLACK = new Color(0f, 0f, 0f, 1f);
 
         public Color() {
-            this.setRed(0f);
-            this.setGreen(0f);
-            this.setBlue(0f);
-            this.setAlpha(0f);
+            this.red = 0f;
+            this.green = 0f;
+            this.blue = 0f;
+            this.alpha = 0f;
         }
 
         public Color(float r, float g, float b, float a) {
-            this.setRed(r);
-            this.setGreen(g);
-            this.setBlue(b);
-            this.setAlpha(a);
+            this.red = r;
+            this.green = g;
+            this.blue = b;
+            this.alpha = a;
         }
 
         /**

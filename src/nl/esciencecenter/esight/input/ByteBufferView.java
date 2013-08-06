@@ -30,17 +30,21 @@ class ByteBufferView {
     }
 
     public int getInt() {
+        // bytebuffer to integer representation conversion, not boolean
+        // complexity as sonar suggests.
         int value = (buffer[offset] & 0xff) | (buffer[offset + 1] & 0xff) << 8 | (buffer[offset + 2] & 0xff) << 16
-                | (buffer[offset + 3] & 0xff) << 24;
+                | (buffer[offset + 3] & 0xff) << 24; // NOSONAR
         offset += 4;
         return value;
     }
 
     public long getLong() {
+        // bytebuffer to long representation conversion, not boolean complexity
+        // as sonar suggests.
         long value = buffer[offset] & 0xff | (long) (buffer[offset + 1] & 0xff) << 8
                 | (long) (buffer[offset + 2] & 0xff) << 16 | (long) (buffer[offset + 3] & 0xff) << 24
                 | (long) (buffer[offset + 4] & 0xff) << 32 | (long) (buffer[offset + 5] & 0xff) << 40
-                | (long) (buffer[offset + 6] & 0xff) << 48 | (long) (buffer[offset + 7] & 0xff) << 56;
+                | (long) (buffer[offset + 6] & 0xff) << 48 | (long) (buffer[offset + 7] & 0xff) << 56; // NOSONAR
         offset += 8;
         return value;
     }

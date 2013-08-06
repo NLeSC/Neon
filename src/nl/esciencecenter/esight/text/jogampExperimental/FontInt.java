@@ -28,7 +28,7 @@ package nl.esciencecenter.esight.text.jogampExperimental;
  * or implied, of JogAmp Community.
  */
 
-import java.util.ArrayList;
+import java.util.List;
 
 import jogamp.graph.geom.plane.Path2D;
 
@@ -49,6 +49,6 @@ public interface FontInt extends Font {
         public Path2D getPath(float pixelSize);
     }
 
-    public ArrayList<OutlineShape> getOutlineShapes(CharSequence string,
-            float pixelSize, Factory<? extends Vertex> vertexFactory);
+    public List<OutlineShape> getOutlineShapes(CharSequence string, float pixelSize,
+            Factory<? extends Vertex> vertexFactory);
 }
