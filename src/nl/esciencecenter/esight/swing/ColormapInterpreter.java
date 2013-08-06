@@ -10,6 +10,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
@@ -42,8 +44,12 @@ import org.slf4j.LoggerFactory;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class ColormapInterpreter {
+public final class ColormapInterpreter {
     private final static Logger logger = LoggerFactory.getLogger(ColormapInterpreter.class);
+
+    private ColormapInterpreter() {
+        // Utility class
+    }
 
     /**
      * Extension filter for the filtering of filenames in directory structures.
@@ -78,7 +84,8 @@ public class ColormapInterpreter {
      * 
      */
     public static class Dimensions {
-        public float min, max;
+        private float min;
+        private float max;
 
         /**
          * Constructor for Dimensions.
@@ -91,8 +98,8 @@ public class ColormapInterpreter {
          *            top end of the colormap).
          */
         public Dimensions(float min, float max) {
-            this.min = min;
-            this.max = max;
+            this.setMin(min);
+            this.setMax(max);
         }
 
         /**
@@ -101,27 +108,87 @@ public class ColormapInterpreter {
          * @return The range of the dataset
          */
         public float getDiff() {
-            return max - min;
+            return getMax() - getMin();
         }
 
+        /**
+         * Getter for min.
+         * 
+         * @return the min.
+         */
+        public float getMin() {
+            return min;
+        }
+
+        /**
+         * Setter for min.
+         * 
+         * @param min
+         *            the min to set
+         */
+        public void setMin(float min) {
+            this.min = min;
+        }
+
+        /**
+         * Getter for max.
+         * 
+         * @return the max.
+         */
+        public float getMax() {
+            return max;
+        }
+
+        /**
+         * Setter for max.
+         * 
+         * @param max
+         *            the max to set
+         */
+        public void setMax(float max) {
+            this.max = max;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#hashCode()
+         */
         @Override
         public int hashCode() {
-            return (int) (min + max);
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Float.floatToIntBits(max);
+            result = prime * result + Float.floatToIntBits(min);
+            return result;
         }
 
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
         @Override
-        public boolean equals(Object thatObject) {
-            if (this == thatObject)
+        public boolean equals(Object obj) {
+            if (this == obj) {
                 return true;
-            if (!(thatObject instanceof Dimensions))
+            }
+            if (obj == null) {
                 return false;
-
-            // cast to native object is now safe
-            Dimensions that = (Dimensions) thatObject;
-
-            // now a proper field-by-field evaluation can be made
-            return (min == that.min && max == that.max);
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            Dimensions other = (Dimensions) obj;
+            if (Float.floatToIntBits(max) != Float.floatToIntBits(other.max)) {
+                return false;
+            }
+            if (Float.floatToIntBits(min) != Float.floatToIntBits(other.min)) {
+                return false;
+            }
+            return true;
         }
+
     }
 
     /**
@@ -131,29 +198,108 @@ public class ColormapInterpreter {
      * 
      */
     public static class Color {
-        public float red, green, blue, alpha;
+        private float red;
+        private float green;
+        private float blue;
+        private float alpha;
         public static final Color WHITE = new Color(1f, 1f, 1f, 1f);
         public static final Color BLACK = new Color(0f, 0f, 0f, 1f);
 
         public Color() {
-            this.red = 0f;
-            this.green = 0f;
-            this.blue = 0f;
-            this.alpha = 0f;
+            this.setRed(0f);
+            this.setGreen(0f);
+            this.setBlue(0f);
+            this.setAlpha(0f);
         }
 
         public Color(float r, float g, float b, float a) {
-            this.red = r;
-            this.green = g;
-            this.blue = b;
-            this.alpha = a;
+            this.setRed(r);
+            this.setGreen(g);
+            this.setBlue(b);
+            this.setAlpha(a);
+        }
+
+        /**
+         * Getter for red.
+         * 
+         * @return the red.
+         */
+        public float getRed() {
+            return red;
+        }
+
+        /**
+         * Setter for red.
+         * 
+         * @param red
+         *            the red to set
+         */
+        public void setRed(float red) {
+            this.red = red;
+        }
+
+        /**
+         * Getter for green.
+         * 
+         * @return the green.
+         */
+        public float getGreen() {
+            return green;
+        }
+
+        /**
+         * Setter for green.
+         * 
+         * @param green
+         *            the green to set
+         */
+        public void setGreen(float green) {
+            this.green = green;
+        }
+
+        /**
+         * Getter for blue.
+         * 
+         * @return the blue.
+         */
+        public float getBlue() {
+            return blue;
+        }
+
+        /**
+         * Setter for blue.
+         * 
+         * @param blue
+         *            the blue to set
+         */
+        public void setBlue(float blue) {
+            this.blue = blue;
+        }
+
+        /**
+         * Getter for alpha.
+         * 
+         * @return the alpha.
+         */
+        public float getAlpha() {
+            return alpha;
+        }
+
+        /**
+         * Setter for alpha.
+         * 
+         * @param alpha
+         *            the alpha to set
+         */
+        public void setAlpha(float alpha) {
+            this.alpha = alpha;
         }
     }
 
     /** Storage for the statically read colormaps. */
-    private static HashMap<String, ArrayList<Color>> colorMaps;
+    private static Map<String, ArrayList<Color>> colorMaps;
     /** Storage for the statically built legend images. */
-    private static HashMap<String, Color[][]> legends;
+    private static Map<String, Color[][]> legends;
 
     private final static int LEGEND_WIDTH = 150;
     private final static int LEGEND_HEIGHT = 150;
@@ -189,7 +335,7 @@ public class ColormapInterpreter {
 
                 colorMaps.put(fileName, colorMap);
                 legends.put(fileName, makeLegendImage(LEGEND_WIDTH, LEGEND_HEIGHT, colorMap));
-                System.out.println("Colormap " + fileName + " registered for use.");
+                logger.info("Colormap " + fileName + " registered for use.");
             }
 
         } catch (IOException e) {
@@ -266,7 +412,7 @@ public class ColormapInterpreter {
      */
     public synchronized static Color getColor(String colorMapName, Dimensions dim, float var, float fillValue) {
         if (!colorMaps.containsKey(colorMapName)) {
-            System.err.println("Unregistered color map requested: " + colorMapName);
+            logger.error("Unregistered color map requested: " + colorMapName);
             colorMaps.get("default");
         }
 
@@ -276,29 +422,29 @@ public class ColormapInterpreter {
 
         Color color = null;
 
-        float result = (var - dim.min) / dim.getDiff();
+        float result = (var - dim.getMin()) / dim.getDiff();
         float rawIndex = result * cmEntries;
         float alpha;
 
         if ((var == fillValue || (var > fillValue - EPSILON) && (var < fillValue + EPSILON))
                 || (fillValue == -1E33f && var < -1E33f)) {
             color = Color.BLACK;
-        } else if (var < dim.min) {
+        } else if (var < dim.getMin()) {
             if (result > -1f) {
                 alpha = 1 - result;
             } else {
                 alpha = 0f;
             }
             color = colorMap.get(0);
-            color.alpha = alpha;
-        } else if (var > dim.max) {
+            color.setAlpha(alpha);
+        } else if (var > dim.getMax()) {
             if (result < 2f) {
                 alpha = 1f - (result - 1f);
             } else {
                 alpha = 0f;
             }
             color = colorMap.get(cmEntries - 1);
-            color.alpha = alpha;
+            color.setAlpha(alpha);
         } else {
             java.awt.Color swingColor = computeInterpolatedColor(colorMap, cmEntries, rawIndex);
 
@@ -322,7 +468,7 @@ public class ColormapInterpreter {
      */
     public synchronized static java.awt.Color getSwingColor(String colorMapName, Dimensions dim, float var) {
         if (!colorMaps.containsKey(colorMapName)) {
-            System.err.println("Unregistered color map requested: " + colorMapName);
+            logger.error("Unregistered color map requested: " + colorMapName);
             colorMaps.get("default");
         }
 
@@ -332,7 +478,7 @@ public class ColormapInterpreter {
 
         java.awt.Color color = null;
 
-        float result = (var - dim.min) / dim.getDiff();
+        float result = (var - dim.getMin()) / dim.getDiff();
         float rawIndex = result * cmEntries;
 
         color = computeInterpolatedColor(colorMap, cmEntries, rawIndex);
@@ -340,7 +486,7 @@ public class ColormapInterpreter {
         return color;
     }
 
-    private static java.awt.Color computeInterpolatedColor(ArrayList<Color> colorMap, int cmEntries, float rawIndex) {
+    private static java.awt.Color computeInterpolatedColor(List<Color> colorMap, int cmEntries, float rawIndex) {
         java.awt.Color color;
         float red = 0;
         float green = 0;
@@ -369,9 +515,9 @@ public class ColormapInterpreter {
 
         float colorInterval = rawIndex - iLow;
 
-        red = getInterpolatedColor(cHigh.red, cLow.red, colorInterval);
-        green = getInterpolatedColor(cHigh.green, cLow.green, colorInterval);
-        blue = getInterpolatedColor(cHigh.blue, cLow.blue, colorInterval);
+        red = getInterpolatedColor(cHigh.getRed(), cLow.getRed(), colorInterval);
+        green = getInterpolatedColor(cHigh.getGreen(), cLow.getGreen(), colorInterval);
+        blue = getInterpolatedColor(cHigh.getBlue(), cLow.getBlue(), colorInterval);
 
         color = new java.awt.Color(red, green, blue);
         return color;
@@ -403,9 +549,9 @@ public class ColormapInterpreter {
 
             for (int col = 0; col < width; col++) {
                 for (int row = 0; row < height; row++) {
-                    raster.setSample(col, row, 0, legendImageBuffer[col][row].blue * 255);
-                    raster.setSample(col, row, 1, legendImageBuffer[col][row].green * 255);
-                    raster.setSample(col, row, 2, legendImageBuffer[col][row].red * 255);
+                    raster.setSample(col, row, 0, legendImageBuffer[col][row].getBlue() * 255);
+                    raster.setSample(col, row, 1, legendImageBuffer[col][row].getGreen() * 255);
+                    raster.setSample(col, row, 2, legendImageBuffer[col][row].getRed() * 255);
                 }
             }
 
@@ -435,7 +581,7 @@ public class ColormapInterpreter {
      *            The dimensions of the image to be returned.
      * @return The image, in a Color[][].
      */
-    private static Color[][] makeLegendImage(int width, int height, ArrayList<Color> colorMap) {
+    private static Color[][] makeLegendImage(int width, int height, List<Color> colorMap) {
         Color[][] outBuf = new Color[width][height];
 
         for (int col = 0; col < width; col++) {
@@ -454,7 +600,7 @@ public class ColormapInterpreter {
             }
 
             for (int row = 0; row < height; row++) {
-                outBuf[col][row] = new Color(color.blue, color.green, color.red, 1f);
+                outBuf[col][row] = new Color(color.getBlue(), color.getGreen(), color.getRed(), 1f);
             }
         }
 
@@ -475,16 +621,19 @@ public class ColormapInterpreter {
     private static float getInterpolatedColor(float high, float low, float colorInterval) {
         float result = 0f;
 
-        if (low > high) {
-            float temp = high;
-            high = low;
-            low = temp;
+        float tmpHigh = high;
+        float tmpLow = low;
 
-            result = low + (colorInterval * (high - low));
-        } else if (low == high) {
-            result = low;
+        if (tmpLow > tmpHigh) {
+            float temp = tmpHigh;
+            tmpHigh = tmpLow;
+            tmpLow = temp;
+
+            result = tmpLow + (colorInterval * (tmpHigh - tmpLow));
+        } else if (tmpLow == tmpHigh) {
+            result = tmpLow;
         } else {
-            result = low + (colorInterval * (high - low));
+            result = tmpLow + (colorInterval * (tmpHigh - tmpLow));
         }
 
         return result;

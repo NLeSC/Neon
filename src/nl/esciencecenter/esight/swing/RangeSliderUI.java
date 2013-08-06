@@ -40,6 +40,8 @@ import nl.esciencecenter.esight.swing.ColormapInterpreter.Dimensions;
  */
 public class RangeSliderUI extends BasicSliderUI {
 
+    private static final int TRACK_HEIGHT_OR_WIDTH = 7;
+
     /** Color of selected range. */
     private String rangeColorMap;
 
@@ -229,21 +231,21 @@ public class RangeSliderUI extends BasicSliderUI {
             g.translate(trackBounds.x, trackBounds.y + cy);
 
             // Draw selected range.
-            int TRACKHEIGHT = 7;
+            int trackHeight = TRACK_HEIGHT_OR_WIDTH;
             for (int x = 0; x < lowerX - trackBounds.x; x++) {
                 g.setColor(ColormapInterpreter.getSwingColor(rangeColorMap, new Dimensions(lowerX - trackBounds.x,
                         upperX - trackBounds.x), lowerX - trackBounds.x));
-                g.fillRect(x, -1, 1, TRACKHEIGHT);
+                g.fillRect(x, -1, 1, trackHeight);
             }
             for (int x = lowerX - trackBounds.x; x < upperX - trackBounds.x; x++) {
                 g.setColor(ColormapInterpreter.getSwingColor(rangeColorMap, new Dimensions(lowerX - trackBounds.x,
                         upperX - trackBounds.x), x));
-                g.fillRect(x, -1, 1, TRACKHEIGHT);
+                g.fillRect(x, -1, 1, trackHeight);
             }
             for (int x = upperX - trackBounds.x; x < trackBounds.width; x++) {
                 g.setColor(ColormapInterpreter.getSwingColor(rangeColorMap, new Dimensions(lowerX - trackBounds.x,
                         upperX - trackBounds.x), upperX - trackBounds.x));
-                g.fillRect(x, -1, 1, TRACKHEIGHT);
+                g.fillRect(x, -1, 1, trackHeight);
             }
 
             // Restore position and color.
@@ -264,21 +266,21 @@ public class RangeSliderUI extends BasicSliderUI {
             g.translate(trackBounds.x + cx, trackBounds.y);
 
             // Draw selected range.
-            int TRACKWIDTH = 7;
+            int trackWidth = TRACK_HEIGHT_OR_WIDTH;
             for (int y = trackBounds.y; y < lowerY - trackBounds.y; y++) {
                 g.setColor(ColormapInterpreter.getSwingColor(rangeColorMap, new Dimensions(lowerY - trackBounds.y,
                         upperY - trackBounds.y), lowerY - trackBounds.y));
-                g.fillRect(-1, y, TRACKWIDTH, 1);
+                g.fillRect(-1, y, trackWidth, 1);
             }
             for (int y = lowerY - trackBounds.y; y < upperY - trackBounds.y; y++) {
                 g.setColor(ColormapInterpreter.getSwingColor(rangeColorMap, new Dimensions(lowerY - trackBounds.y,
                         upperY - trackBounds.y), y));
-                g.fillRect(-1, y, TRACKWIDTH, 1);
+                g.fillRect(-1, y, trackWidth, 1);
             }
             for (int y = upperY - trackBounds.y; y < trackBounds.width; y++) {
                 g.setColor(ColormapInterpreter.getSwingColor(rangeColorMap, new Dimensions(lowerY - trackBounds.y,
                         upperY - trackBounds.y), upperY - trackBounds.y));
-                g.fillRect(-1, y, TRACKWIDTH, 1);
+                g.fillRect(-1, y, trackWidth, 1);
             }
 
             // Restore position and color.
@@ -357,8 +359,7 @@ public class RangeSliderUI extends BasicSliderUI {
      */
     private Shape createThumbShape(int width, int height) {
         // Use circular shape.
-        Ellipse2D shape = new Ellipse2D.Double(0, 0, width, height);
-        return shape;
+        return new Ellipse2D.Double(0, 0, width, height);
     }
 
     /**
@@ -454,7 +455,7 @@ public class RangeSliderUI extends BasicSliderUI {
             }
 
             // Determine which thumb is pressed. If the upper thumb is
-            // selected (last one dragged), then check its position first;
+            // selected (last one dragged), then check its position first
             // otherwise check the position of the lower thumb first.
             boolean lowerPressed = false;
             boolean upperPressed = false;
@@ -523,7 +524,7 @@ public class RangeSliderUI extends BasicSliderUI {
                 case JSlider.VERTICAL:
                     offset = currentMouseY - thumbRect.y;
                     break;
-                case JSlider.HORIZONTAL:
+                default:
                     offset = currentMouseX - thumbRect.x;
                     break;
                 }

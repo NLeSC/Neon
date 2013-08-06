@@ -46,10 +46,8 @@ public class Perlin2D extends Texture2D {
         this.width = width;
         this.height = height;
 
-        // System.out.print("Generating noise");
         Noise n = new Noise(4, width, height, 1);
-        // System.out.println("done");
 
-        pixelBuffer = n.pixelBuffer;
+        pixelBuffer = n.getPixelBuffer();
     }
 }

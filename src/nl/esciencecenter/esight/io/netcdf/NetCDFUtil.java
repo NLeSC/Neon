@@ -39,8 +39,12 @@ import ucar.nc2.Variable;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class NetCDFUtil {
+public final class NetCDFUtil {
     private final static Logger logger = LoggerFactory.getLogger(NetCDFUtil.class);
+
+    private NetCDFUtil() {
+        // Utility class
+    }
 
     /**
      * Extension filter for files.
@@ -92,11 +96,11 @@ public class NetCDFUtil {
                     if (!foundOne) {
                         foundOne = true;
                     } else {
-                        System.err.println("ERROR: Filename includes two possible sequence numbers.");
+                        logger.error("Filename includes two possible sequence numbers.");
                     }
                 }
             } catch (NumberFormatException e) {
-                // IGNORE
+                logger.debug("NumberformatException.");
             }
         }
 
@@ -149,8 +153,7 @@ public class NetCDFUtil {
      * @return The path of the file.
      */
     public static String getPath(File file) {
-        final String path = file.getPath().substring(0, file.getPath().length() - file.getName().length());
-        return path;
+        return file.getPath().substring(0, file.getPath().length() - file.getName().length());
     }
 
     /**
@@ -276,8 +279,9 @@ public class NetCDFUtil {
     public static Array getData(NetcdfFile ncfile, String varName) throws NetCDFNoSuchVariableException {
         Variable v = ncfile.findVariable(varName);
         Array data = null;
-        if (null == v)
+        if (null == v) {
             throw new NetCDFNoSuchVariableException("no such variable " + varName);
+        }
         try {
             data = v.read();
         } catch (IOException ioe) {
@@ -348,7 +352,7 @@ public class NetCDFUtil {
      * @throws NetCDFNoSuchVariableException
      *             If no dimension name was found with the given substring.
      */
-    public static ArrayList<String> getUsedDimensionNamesBySubstring(NetcdfFile ncfile, String subString)
+    public static List<String> getUsedDimensionNamesBySubstring(NetcdfFile ncfile, String subString)
             throws NetCDFNoSuchVariableException {
         List<Dimension> dims = ncfile.getDimensions();
 
@@ -375,9 +379,8 @@ public class NetCDFUtil {
      * @return The list of variable names matching at least one of both of the
      *         first and last dimension names given.
      */
-    public static ArrayList<String> getVarNames(NetcdfFile ncfile, ArrayList<String> latCandidates,
-            ArrayList<String> lonCandidates) {
-        ArrayList<String> varNames = new ArrayList<String>();
+    public static List<String> getVarNames(NetcdfFile ncfile, List<String> latCandidates, List<String> lonCandidates) {
+        List<String> varNames = new ArrayList<String>();
 
         List<Variable> variables = ncfile.getVariables();
         for (Variable v : variables) {
@@ -541,9 +544,6 @@ public class NetCDFUtil {
             }
         }
 
-        // for (Variable v : qualifyingVariables) {
-        // System.out.println(v.getShortName());
-        // }
         return qualifyingVariables.toArray(new Variable[0]);
     }
 
@@ -611,9 +611,6 @@ public class NetCDFUtil {
         }
         String[] result = varNames.toArray(new String[0]);
 
-        // for (String s : result) {
-        // System.out.println(s);
-        // }
         return result;
     }
 
@@ -662,9 +659,6 @@ public class NetCDFUtil {
         }
         String[] result = varNames.toArray(new String[0]);
 
-        // for (String s : result) {
-        // System.out.println(s);
-        // }
         return result;
     }
 
@@ -686,8 +680,9 @@ public class NetCDFUtil {
             throws NetCDFNoSuchVariableException {
         Variable v = ncfile.findVariable(varName);
         Array data = null;
-        if (null == v)
+        if (null == v) {
             throw new NetCDFNoSuchVariableException("no such variable " + varName);
+        }
         try {
             data = v.read(subsections);
         } catch (IOException ioe) {
@@ -731,8 +726,9 @@ public class NetCDFUtil {
             String number = String.format(format, i);
 
             File fileTry = new File(prefix + number + postfix);
-            if (fileTry.exists())
+            if (fileTry.exists()) {
                 return fileTry;
+            }
         }
 
         return null;
@@ -784,8 +780,9 @@ public class NetCDFUtil {
         String number = String.format(format, initialNumber - 1);
 
         File fileTry = new File(prefix + number + postfix);
-        if (fileTry.exists())
+        if (fileTry.exists()) {
             return fileTry;
+        }
 
         return null;
     }
@@ -818,8 +815,9 @@ public class NetCDFUtil {
 
         logger.debug("Opening file: " + prefix + number + postfix);
 
-        if (fileTry.exists())
+        if (fileTry.exists()) {
             return fileTry;
+        }
 
         return null;
     }

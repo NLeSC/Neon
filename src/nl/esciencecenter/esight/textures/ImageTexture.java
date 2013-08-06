@@ -9,6 +9,9 @@ import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /* Copyright 2013 Netherlands eScience Center
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -30,15 +33,17 @@ import javax.imageio.ImageIO;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  */
 public class ImageTexture extends Texture2D {
+    private final static Logger logger = LoggerFactory.getLogger(ImageTexture.class);
+
     /**
      * Constructor for this Texture. Reads the file designated by fileName. Do
      * not forget to call {@link #init(javax.media.opengl.GL3)} before use.
      * 
      * @param filename
      *            The image file to be read.
-     * @param w_offSet
+     * @param wOffSet
      *            Optional width offset in the image file.
-     * @param h_offSet
+     * @param hOffSet
      *            Optional height offset in the image file.
      * @param glMultiTexUnit
      *            The OpenGL-internal MultitexUnit (GL.GL_TEXTUREX) this texture
@@ -46,7 +51,7 @@ public class ImageTexture extends Texture2D {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public ImageTexture(String filename, int w_offSet, int h_offSet, int glMultiTexUnit) throws FileNotFoundException,
+    public ImageTexture(String filename, int wOffSet, int hOffSet, int glMultiTexUnit) throws FileNotFoundException,
             IOException {
         super(glMultiTexUnit);
 
@@ -67,20 +72,20 @@ public class ImageTexture extends Texture2D {
             try {
                 pg.grabPixels();
             } catch (InterruptedException e) {
-                System.err.println("interrupted waiting for pixels!");
+                logger.error("interrupted waiting for pixels!");
                 return;
             }
 
             // Allocate ByteBuffer and fill it with pixel data.
             ByteBuffer tempBuffer = ByteBuffer.allocate(width * height * 4);
 
-            for (int row = (height + h_offSet) - 1; row >= h_offSet; row--) {
+            for (int row = (height + hOffSet) - 1; row >= hOffSet; row--) {
                 int i = row;
                 if (row >= height) {
                     i = row - height;
                 }
 
-                for (int col = w_offSet; col < (width + w_offSet); col++) {
+                for (int col = wOffSet; col < (width + wOffSet); col++) {
                     int j = col;
                     if (col >= width) {
                         j = col - width;

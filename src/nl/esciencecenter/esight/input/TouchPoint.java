@@ -24,7 +24,9 @@ package nl.esciencecenter.esight.input;
 class TouchPoint {
     private int id;
     private int state;
-    private float tx, ty; // Touch coordinates
+
+    // Touch coordinates
+    private float tx, ty;
 
     /**
      * Getter for id.

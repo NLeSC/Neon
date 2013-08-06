@@ -22,17 +22,14 @@ package nl.esciencecenter.esight.noise;
  * 
  */
 public class NewNoise {
-    int NOISE_MAGIC_X = 1619;
-    int NOISE_MAGIC_Y = 31337;
-    int NOISE_MAGIC_Z = 52591;
-    int NOISE_MAGIC_SEED = 1013;
+    final int NOISE_MAGIC_X = 1619;
+    final int NOISE_MAGIC_Y = 31337;
+    final int NOISE_MAGIC_Z = 52591;
+    final int NOISE_MAGIC_SEED = 1013;
 
     double triLinearInterpolation(double v000, double v100, double v010, double v110, double v001, double v101,
             double v011, double v111, double x, double y, double z) {
-        /*
-         * double tx = easeCurve(x); double ty = easeCurve(y); double tz =
-         * easeCurve(z);
-         */
+
         double tx = x;
         double ty = y;
         double tz = z;
@@ -41,19 +38,19 @@ public class NewNoise {
                 + v011 * (1 - tx) * ty * tz + v111 * tx * ty * tz);
     }
 
-    double noise3d_perlin(double x, double y, double z, int seed, int octaves, double persistence) {
+    double noise3dPerlin(double x, double y, double z, int seed, int octaves, double persistence) {
         double a = 0;
         double f = 1.0;
         double g = 1.0;
         for (int i = 0; i < octaves; i++) {
-            a += g * noise3d_gradient(x * f, y * f, z * f, seed + i);
+            a += g * noise3dGradient(x * f, y * f, z * f, seed + i);
             f *= 2.0;
             g *= persistence;
         }
         return a;
     }
 
-    double noise3d_gradient(double x, double y, double z, int seed) {
+    double noise3dGradient(double x, double y, double z, int seed) {
         // Calculate the integer coordinates
         int x0 = (x > 0.0 ? (int) x : (int) x - 1);
         int y0 = (y > 0.0 ? (int) y : (int) y - 1);

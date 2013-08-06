@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class FBO {
-    private final static Logger logger = LoggerFactory.getLogger(FBO.class);
+    private static final Logger logger = LoggerFactory.getLogger(FBO.class);
 
     /** OpenGL internal pointer to the framebuffer */
     private final IntBuffer fboPointer;
@@ -97,8 +97,8 @@ public class FBO {
                 rboTexture.use(gl);
                 checkNoError(gl, "post rbo use: ", false);
 
-                gl.glFramebufferTexture2D(GL3.GL_FRAMEBUFFER, GL3.GL_COLOR_ATTACHMENT0, GL3.GL_TEXTURE_2D,
-                        rboTexture.getPointer(), 0);
+                gl.glFramebufferTexture2D(GL3.GL_FRAMEBUFFER, GL3.GL_COLOR_ATTACHMENT0, GL3.GL_TEXTURE_2D, rboTexture
+                        .getPointer().get(0), 0);
                 checkNoError(gl, "post glFramebufferTexture2D: ", false);
 
                 rboTexture.unBind(gl);
@@ -113,8 +113,8 @@ public class FBO {
                 checkNoError(gl, "Setup depth buffer: ", false);
 
                 // Attach both buffers to the frame buffer
-                gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D,
-                        rboTexture.getPointer(), 0);
+                gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D, rboTexture
+                        .getPointer().get(0), 0);
                 gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER,
                         rboPointer.get(0));
 
@@ -122,7 +122,7 @@ public class FBO {
 
                 checkStatus(gl, "Framebuffer error:");
             } catch (UninitializedException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
 
             // Unbind. The FBO is now ready for use.
@@ -234,9 +234,7 @@ public class FBO {
      *            The opengl instance.
      */
     public void unBind(GL3 gl) {
-        // gl.glBindRenderbuffer(GL3.GL_RENDERBUFFER, 0);
         gl.glBindFramebuffer(GL3.GL_FRAMEBUFFER, 0);
-        // gl.glDrawBuffer(GL3.GL_BACK);
     }
 
     /**

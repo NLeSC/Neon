@@ -121,7 +121,7 @@ public class TypedProperties extends Properties {
         for (Object key : keys) {
             Matcher matcher = pattern.matcher((String) get(key));
             while (matcher.find()) {
-                // this will be something of the form ${...}
+                // this will be something of the form "${...}"
                 String fullSystemVar = matcher.group();
                 // remove the prefix '${' and the postfix '}'
                 String strippedSystemVar = fullSystemVar.substring(2, fullSystemVar.length() - 1);
@@ -696,7 +696,7 @@ public class TypedProperties extends Properties {
      * Checks all properties with the given prefix for validity.
      * 
      * @return a Property object containing all unrecognized properties.
-     * @param prefix
+     * @param tmpPrefix
      *            the prefix that should be checked
      * @param validKeys
      *            the set of valid keys (all with the prefix).
@@ -709,22 +709,23 @@ public class TypedProperties extends Properties {
      */
     public TypedProperties checkProperties(String prefix, String[] validKeys, String[] validSubPrefixes,
             boolean printWarning) {
+        String tmpPrefix = prefix;
         TypedProperties result = new TypedProperties();
 
-        if (prefix == null) {
-            prefix = "";
+        if (tmpPrefix == null) {
+            tmpPrefix = "";
         }
 
         for (Enumeration<?> e = propertyNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
 
-            if (key.startsWith(prefix)) {
-                String suffix = key.substring(prefix.length());
+            if (key.startsWith(tmpPrefix)) {
+                String suffix = key.substring(tmpPrefix.length());
                 String value = getProperty(key);
 
                 if (!startsWith(suffix, validSubPrefixes) && !contains(validKeys, key)) {
                     if (printWarning) {
-                        System.err.println("Warning, unknown property: " + key + " with value: " + value);
+                        logger.error("Warning, unknown property: " + key + " with value: " + value);
                     }
                     result.put(key, value);
                 }
@@ -737,7 +738,7 @@ public class TypedProperties extends Properties {
      * Returns all properties who's key start with a certain prefix.
      * 
      * @return a Property object containing all matching properties.
-     * @param prefix
+     * @param tmpPrefix
      *            the desired prefix
      * @param removePrefix
      *            should the prefix be removed from the property name?
@@ -746,22 +747,23 @@ public class TypedProperties extends Properties {
      *            properties?
      */
     public TypedProperties filter(String prefix, boolean removePrefix, boolean removeProperties) {
+        String tmpPrefix = prefix;
 
         TypedProperties result = new TypedProperties();
 
-        if (prefix == null) {
-            prefix = "";
+        if (tmpPrefix == null) {
+            tmpPrefix = "";
         }
 
         for (Enumeration<?> e = propertyNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
 
-            if (key.startsWith(prefix)) {
+            if (key.startsWith(tmpPrefix)) {
 
                 String value = getProperty(key);
 
                 if (removePrefix) {
-                    result.put(key.substring(prefix.length()), value);
+                    result.put(key.substring(tmpPrefix.length()), value);
                 } else {
                     result.put(key, value);
                 }
@@ -796,15 +798,16 @@ public class TypedProperties extends Properties {
      *            null, will print all properties
      */
     public void printProperties(PrintStream out, String prefix) {
-        if (prefix == null) {
-            prefix = "";
+        String tmpPrefix = prefix;
+        if (tmpPrefix == null) {
+            tmpPrefix = "";
         }
 
         for (Enumeration<?> e = propertyNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
             String value = getProperty(key);
 
-            if (key.toLowerCase().startsWith(prefix.toLowerCase())) {
+            if (key.toLowerCase().startsWith(tmpPrefix.toLowerCase())) {
                 out.println(key + " = " + value);
             }
         }
@@ -817,8 +820,6 @@ public class TypedProperties extends Properties {
      */
     @Override
     public String toString() {
-        String result = "";
-
         StringBuffer buf = new StringBuffer();
 
         for (Enumeration<?> e = propertyNames(); e.hasMoreElements();) {

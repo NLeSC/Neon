@@ -8,7 +8,9 @@ public class QuitListener implements WindowListener {
 
     @Override
     public void windowDestroyNotify(WindowEvent arg0) {
-        System.exit(0);
+        // We actually want this to exit the JVM, since it's the close button
+        // we're talking about.
+        System.exit(0); // NOSONAR
     }
 
     @Override

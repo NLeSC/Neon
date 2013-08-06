@@ -3,9 +3,6 @@ package nl.esciencecenter.esight.noise;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.jogamp.common.nio.Buffers;
 
 /* Copyright 2013 Netherlands eScience Center
@@ -32,38 +29,36 @@ import com.jogamp.common.nio.Buffers;
  * 
  */
 public class Noise {
-    private final static Logger logger = LoggerFactory.getLogger(Noise.class);
-    public ByteBuffer pixelBuffer;
-    public FloatBuffer tempBuf;
+    private ByteBuffer pixelBuffer;
+    private FloatBuffer tempBuf;
 
     public Noise(int channels, int width, int height, int depth) {
         int pixels = width * height * depth;
-        pixelBuffer = Buffers.newDirectByteBuffer(pixels * 4);
+        setPixelBuffer(Buffers.newDirectByteBuffer(pixels * 4));
 
-        tempBuf = Buffers.newDirectFloatBuffer(pixels);
+        setTempBuf(Buffers.newDirectFloatBuffer(pixels));
 
         if (depth == 0 || depth == 1) {
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    float noise = PerlinNoise_2D(channels, x, y);
-                    tempBuf.put(noise);
+                    float noise = perlinNoise2D(channels, x, y);
+                    getTempBuf().put(noise);
                 }
             }
 
         } else {
             for (int x = 0; x < width; x++) {
-                // System.out.print(".");
                 for (int y = 0; y < height; y++) {
                     for (int z = 0; z < depth; z++) {
-                        PerlinNoise_3D(pixelBuffer, channels, x, y, z);
+                        perlinNoise3D(getPixelBuffer(), channels, x, y, z);
                     }
                 }
             }
         }
-        pixelBuffer.rewind();
+        getPixelBuffer().rewind();
     }
 
-    double PerlinNoise_3D(ByteBuffer buffer, int channels, int x, int y, int z) {
+    private double perlinNoise3D(ByteBuffer buffer, int channels, int x, int y, int z) {
         double total = 0;
         double p = .25;
 
@@ -78,7 +73,7 @@ public class Noise {
         return total;
     }
 
-    float PerlinNoise_2D(int channels, int x, int y) {
+    private float perlinNoise2D(int channels, int x, int y) {
         float total = 0f;
         for (int i = 0; i < channels; i++) {
             float amplitude = (float) Math.pow(2.0, i);
@@ -93,11 +88,11 @@ public class Noise {
     }
 
     public ByteBuffer getImage() {
-        return pixelBuffer;
+        return getPixelBuffer();
     }
 
     public FloatBuffer getFloats() {
-        return tempBuf;
+        return getTempBuf();
     }
 
     // 3D Noise map
@@ -148,8 +143,7 @@ public class Noise {
     private float noise3(int x, int y, int z) {
         int n = x + y * 57 + z * 93;
         n = (n << 13) ^ n;
-        float noise = 1.0f - (((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0f);
-        return noise;
+        return 1.0f - (((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0f);
     }
 
     // 2D Noise maps
@@ -183,17 +177,7 @@ public class Noise {
         int n = x + y * 57;
         n = (n << 13) ^ n;
 
-        float noise = (1.0f - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824f);
-        return noise;
-    }
-
-    private float cubicInterpolate(float v0, float v1, float v2, float v3, float x) {
-        float P = (v3 - v2) - (v0 - v1);
-        float Q = (v0 - v1) - P;
-        float R = v2 - v0;
-        float S = v1;
-
-        return (float) (P * Math.pow(x, 3) + Q * Math.pow(x, 2) + R * x + S);
+        return (1.0f - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824f);
     }
 
     private float cosInterpolate(float a, float b, float x) {
@@ -206,6 +190,44 @@ public class Noise {
     @SuppressWarnings("unused")
     private float linearInterpolate(float a, float b, float x) {
         return (b - a) * x + a;
+    }
+
+    /**
+     * Getter for pixelBuffer.
+     * 
+     * @return the pixelBuffer.
+     */
+    public ByteBuffer getPixelBuffer() {
+        return pixelBuffer;
+    }
+
+    /**
+     * Setter for pixelBuffer.
+     * 
+     * @param pixelBuffer
+     *            the pixelBuffer to set
+     */
+    public void setPixelBuffer(ByteBuffer pixelBuffer) {
+        this.pixelBuffer = pixelBuffer;
+    }
+
+    /**
+     * Getter for tempBuf.
+     * 
+     * @return the tempBuf.
+     */
+    public FloatBuffer getTempBuf() {
+        return tempBuf;
+    }
+
+    /**
+     * Setter for tempBuf.
+     * 
+     * @param tempBuf
+     *            the tempBuf to set
+     */
+    public void setTempBuf(FloatBuffer tempBuf) {
+        this.tempBuf = tempBuf;
     }
 
 }

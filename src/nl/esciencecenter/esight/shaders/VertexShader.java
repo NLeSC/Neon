@@ -59,7 +59,7 @@ public class VertexShader extends Shader {
 
     @Override
     public void init(GL3 gl) throws CompilationFailedException {
-        shaderPointer = gl.glCreateShader(GL3.GL_VERTEX_SHADER);
+        setShaderPointer(gl.glCreateShader(GL3.GL_VERTEX_SHADER));
         super.init(gl);
     }
 }

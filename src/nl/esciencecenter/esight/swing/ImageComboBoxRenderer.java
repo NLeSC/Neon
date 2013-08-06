@@ -106,7 +106,6 @@ public class ImageComboBoxRenderer extends JLabel implements ListCellRenderer {
         String description = descriptions[selectedIndex];
         setIcon(icon);
         if (icon != null) {
-            // setText(description);
             setFont(list.getFont());
         } else {
             setDescription(description, list.getFont());

@@ -60,7 +60,7 @@ public class FragmentShader extends Shader {
 
     @Override
     public void init(GL3 gl) throws CompilationFailedException {
-        shaderPointer = gl.glCreateShader(GL3.GL_FRAGMENT_SHADER);
+        setShaderPointer(gl.glCreateShader(GL3.GL_FRAGMENT_SHADER));
         super.init(gl);
     }
 }

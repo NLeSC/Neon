@@ -26,13 +26,13 @@ import java.nio.Buffer;
  * 
  */
 public class GLSLAttrib {
-    public static int SIZE_FLOAT = 4;
-    public static int SIZE_SHORT = 2;
+    public static final int SIZE_FLOAT = 4;
+    public static final int SIZE_SHORT = 2;
 
-    public Buffer buffer;
-    public String name;
-    public int numVectors;
-    public int vectorSize;
+    private Buffer buffer;
+    private String name;
+    private int numVectors;
+    private int vectorSize;
 
     /**
      * Basic constructor for GLSLAttrib.
@@ -52,6 +52,82 @@ public class GLSLAttrib {
         this.buffer = buffer;
         this.name = name;
         this.numVectors = numVectors;
+        this.vectorSize = vectorSize;
+    }
+
+    /**
+     * Getter for buffer.
+     * 
+     * @return the buffer.
+     */
+    public Buffer getBuffer() {
+        return buffer;
+    }
+
+    /**
+     * Setter for buffer.
+     * 
+     * @param buffer
+     *            the buffer to set
+     */
+    public void setBuffer(Buffer buffer) {
+        this.buffer = buffer;
+    }
+
+    /**
+     * Getter for name.
+     * 
+     * @return the name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Setter for name.
+     * 
+     * @param name
+     *            the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Getter for numVectors.
+     * 
+     * @return the numVectors.
+     */
+    public int getNumVectors() {
+        return numVectors;
+    }
+
+    /**
+     * Setter for numVectors.
+     * 
+     * @param numVectors
+     *            the numVectors to set
+     */
+    public void setNumVectors(int numVectors) {
+        this.numVectors = numVectors;
+    }
+
+    /**
+     * Getter for vectorSize.
+     * 
+     * @return the vectorSize.
+     */
+    public int getVectorSize() {
+        return vectorSize;
+    }
+
+    /**
+     * Setter for vectorSize.
+     * 
+     * @param vectorSize
+     *            the vectorSize to set
+     */
+    public void setVectorSize(int vectorSize) {
         this.vectorSize = vectorSize;
     }
 }

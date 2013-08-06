@@ -3,7 +3,6 @@ package nl.esciencecenter.esight.shaders;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,14 +68,13 @@ import com.jogamp.common.nio.Buffers;
 public class ShaderProgram {
     private final static Logger logger = LoggerFactory.getLogger(ShaderProgram.class);
 
-    public int pointer;
+    private int pointer;
     private final VertexShader vs;
     private GeometryShader gs;
     private final FragmentShader fs;
 
     private final Map<String, FloatBuffer> uniformFloatMatrices;
     private final Map<String, FloatBuffer> uniformFloatVectors;
-    private final Map<String, ShortBuffer> uniformShortVectors;
     private final Map<String, Boolean> uniformBooleans;
     private final Map<String, Integer> uniformInts;
     private final Map<String, Float> uniformFloats;
@@ -94,12 +92,11 @@ public class ShaderProgram {
      *            The fragment shader to use for this program.
      */
     public ShaderProgram(VertexShader vs, FragmentShader fs) {
-        pointer = 0;
+        setPointer(0);
         this.vs = vs;
         this.fs = fs;
         uniformFloatMatrices = new HashMap<String, FloatBuffer>();
         uniformFloatVectors = new HashMap<String, FloatBuffer>();
-        uniformShortVectors = new HashMap<String, ShortBuffer>();
         uniformBooleans = new HashMap<String, Boolean>();
         uniformInts = new HashMap<String, Integer>();
         uniformFloats = new HashMap<String, Float>();
@@ -116,13 +113,12 @@ public class ShaderProgram {
      *            The fragment shader to use for this program.
      */
     public ShaderProgram(VertexShader vs, GeometryShader gs, FragmentShader fs) {
-        pointer = 0;
+        setPointer(0);
         this.vs = vs;
         this.gs = gs;
         this.fs = fs;
         uniformFloatMatrices = new HashMap<String, FloatBuffer>();
         uniformFloatVectors = new HashMap<String, FloatBuffer>();
-        uniformShortVectors = new HashMap<String, ShortBuffer>();
         uniformBooleans = new HashMap<String, Boolean>();
         uniformInts = new HashMap<String, Integer>();
         uniformFloats = new HashMap<String, Float>();
@@ -138,24 +134,23 @@ public class ShaderProgram {
      */
     public void init(GL3 gl) {
         if (!initialized) {
-            pointer = gl.glCreateProgram();
+            setPointer(gl.glCreateProgram());
 
             try {
-                gl.glAttachShader(pointer, vs.getShaderPointer());
+                gl.glAttachShader(getPointer(), vs.getShaderPointer());
                 if (geometry_enabled) {
-                    gl.glAttachShader(pointer, gs.getShaderPointer());
+                    gl.glAttachShader(getPointer(), gs.getShaderPointer());
                 }
-                gl.glAttachShader(pointer, fs.getShaderPointer());
+                gl.glAttachShader(getPointer(), fs.getShaderPointer());
             } catch (UninitializedException e) {
-                System.out.println("Shaders not initialized properly");
-                System.exit(0);
+                logger.error("Shaders not initialized properly");
             }
 
-            gl.glLinkProgram(pointer);
+            gl.glLinkProgram(getPointer());
 
             // Check for errors
             IntBuffer buf = Buffers.newDirectIntBuffer(1);
-            gl.glGetProgramiv(pointer, GL3.GL_LINK_STATUS, buf);
+            gl.glGetProgramiv(getPointer(), GL3.GL_LINK_STATUS, buf);
             if (buf.get(0) == 0) {
                 logger.error("Link error");
                 printError(gl);
@@ -280,7 +275,7 @@ public class ShaderProgram {
             for (Map.Entry<String, Class> inEntry : vsIns.entrySet()) {
                 boolean thisEntryAvailable = false;
                 for (GLSLAttrib attr : attribs) {
-                    if (attr.name.compareTo(inEntry.getKey()) == 0) {
+                    if (attr.getName().compareTo(inEntry.getKey()) == 0) {
                         thisEntryAvailable = true;
                     }
                 }
@@ -306,27 +301,26 @@ public class ShaderProgram {
     public void detachShaders(GL3 gl) throws UninitializedException {
         if (initialized) {
             try {
-                gl.glDetachShader(pointer, vs.getShaderPointer());
+                gl.glDetachShader(getPointer(), vs.getShaderPointer());
                 gl.glDeleteShader(vs.getShaderPointer());
 
                 if (geometry_enabled) {
-                    gl.glDetachShader(pointer, gs.getShaderPointer());
+                    gl.glDetachShader(getPointer(), gs.getShaderPointer());
                     gl.glDeleteShader(gs.getShaderPointer());
                 }
 
-                gl.glDetachShader(pointer, fs.getShaderPointer());
+                gl.glDetachShader(getPointer(), fs.getShaderPointer());
                 gl.glDeleteShader(fs.getShaderPointer());
 
                 // Check for errors
                 IntBuffer buf = Buffers.newDirectIntBuffer(1);
-                gl.glGetProgramiv(pointer, GL3.GL_LINK_STATUS, buf);
+                gl.glGetProgramiv(getPointer(), GL3.GL_LINK_STATUS, buf);
                 if (buf.get(0) == 0) {
                     logger.error("Link error");
                     printError(gl);
                 }
             } catch (UninitializedException e) {
-                System.out.println("Shaders not initialized properly");
-                System.exit(0);
+                logger.error("Shaders not initialized properly");
             }
         } else {
             throw new UninitializedException();
@@ -344,9 +338,9 @@ public class ShaderProgram {
      *             if this ShaderProgram was used without initialization.
      */
     public void use(GL3 gl) throws UninitializedException {
-        if (pointer != 0 && initialized) {
+        if (getPointer() != 0 && initialized) {
 
-            gl.glUseProgram(pointer);
+            gl.glUseProgram(getPointer());
 
             for (Entry<String, FloatBuffer> var : uniformFloatMatrices.entrySet()) {
                 passUniformMat(gl, var.getKey(), var.getValue());
@@ -368,7 +362,7 @@ public class ShaderProgram {
 
             // Check for errors
             IntBuffer buf = Buffers.newDirectIntBuffer(1);
-            gl.glGetProgramiv(pointer, GL3.GL_LINK_STATUS, buf);
+            gl.glGetProgramiv(getPointer(), GL3.GL_LINK_STATUS, buf);
             if (buf.get(0) == 0) {
                 logger.error("Use error");
                 printError(gl);
@@ -391,11 +385,11 @@ public class ShaderProgram {
         if (initialized) {
             int nextStart = 0;
             for (GLSLAttrib attrib : attribs) {
-                int ptr = gl.glGetAttribLocation(pointer, attrib.name);
-                gl.glVertexAttribPointer(ptr, attrib.vectorSize, GL3.GL_FLOAT, false, 0, nextStart);
+                int ptr = gl.glGetAttribLocation(getPointer(), attrib.getName());
+                gl.glVertexAttribPointer(ptr, attrib.getVectorSize(), GL3.GL_FLOAT, false, 0, nextStart);
                 gl.glEnableVertexAttribArray(ptr);
 
-                nextStart += attrib.buffer.capacity() * Buffers.SIZEOF_FLOAT;
+                nextStart += attrib.getBuffer().capacity() * Buffers.SIZEOF_FLOAT;
             }
 
             checkIns(vs, attribs);
@@ -415,10 +409,10 @@ public class ShaderProgram {
      */
     private void printError(GL3 gl) {
         IntBuffer buf = Buffers.newDirectIntBuffer(1);
-        gl.glGetProgramiv(pointer, GL3.GL_INFO_LOG_LENGTH, buf);
+        gl.glGetProgramiv(getPointer(), GL3.GL_INFO_LOG_LENGTH, buf);
         int logLength = buf.get(0);
         ByteBuffer reason = ByteBuffer.wrap(new byte[logLength]);
-        gl.glGetProgramInfoLog(pointer, logLength, null, reason);
+        gl.glGetProgramInfoLog(getPointer(), logLength, null, reason);
 
         logger.error(new String(reason.array()));
     }
@@ -439,24 +433,6 @@ public class ShaderProgram {
         uniformFloatVectors.put(name, var.asBuffer());
 
     }
-
-    // /**
-    // * Staging method for a Uniform Short Vector variable. This will be given
-    // to
-    // * the GPU upon {@link ShaderProgram#use(GL3 gl)} of this ShaderProgram.
-    // *
-    // * @param name
-    // * The name in the GLSL code for this uniform variable.
-    // * @param var
-    // * The Vector to stage.
-    // */
-    // public void setUniformVector(String name, VectorS var) {
-    // if (!uniformFloatVectors.containsKey(name)) {
-    // warningsGiven = false;
-    // }
-    // uniformShortVectors.put(name, var.asBuffer());
-    //
-    // }
 
     /**
      * Staging method for a Uniform Float Matrix variable. This will be given to
@@ -539,7 +515,7 @@ public class ShaderProgram {
      *            The uniform variable to pas to the shader.
      */
     public void passUniformVec(GL3 gl, String pointerNameInShader, FloatBuffer var) {
-        int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
+        int ptr = gl.glGetUniformLocation(getPointer(), pointerNameInShader);
 
         int vecSize = var.capacity();
         if (vecSize == 1) {
@@ -568,7 +544,7 @@ public class ShaderProgram {
      *            The uniform variable to pas to the shader.
      */
     public void passUniformVecArray(GL3 gl, String pointerNameInShader, FloatBuffer var, int vecSize, int count) {
-        int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
+        int ptr = gl.glGetUniformLocation(getPointer(), pointerNameInShader);
 
         if (vecSize == 1) {
             gl.glUniform1fv(ptr, count, var);
@@ -596,7 +572,7 @@ public class ShaderProgram {
      *            The uniform variable to pas to the shader.
      */
     public void passUniformVecArray(GL3 gl, String pointerNameInShader, IntBuffer var, int vecSize, int count) {
-        int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
+        int ptr = gl.glGetUniformLocation(getPointer(), pointerNameInShader);
 
         if (vecSize == 1) {
             gl.glUniform1iv(ptr, count, var);
@@ -624,7 +600,7 @@ public class ShaderProgram {
      *            The uniform variable to pas to the shader.
      */
     public void passUniformMat(GL3 gl, String pointerNameInShader, FloatBuffer var) {
-        int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
+        int ptr = gl.glGetUniformLocation(getPointer(), pointerNameInShader);
 
         int matSize = var.capacity();
         if (matSize == 4) {
@@ -650,9 +626,9 @@ public class ShaderProgram {
      *            The uniform variable to pas to the shader.
      */
     public void passUniform(GL3 gl, String pointerNameInShader, boolean var) {
-        int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
+        int ptr = gl.glGetUniformLocation(getPointer(), pointerNameInShader);
         int passable = 0;
-        if (var == true) {
+        if (var) {
             passable = 1;
         }
         gl.glUniform1i(ptr, passable);
@@ -673,7 +649,7 @@ public class ShaderProgram {
      */
 
     public void passUniform(GL3 gl, String pointerNameInShader, int var) {
-        int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
+        int ptr = gl.glGetUniformLocation(getPointer(), pointerNameInShader);
         gl.glUniform1i(ptr, var);
     }
 
@@ -692,7 +668,7 @@ public class ShaderProgram {
      */
 
     public void passUniform(GL3 gl, String pointerNameInShader, float var) {
-        int ptr = gl.glGetUniformLocation(pointer, pointerNameInShader);
+        int ptr = gl.glGetUniformLocation(getPointer(), pointerNameInShader);
         gl.glUniform1f(ptr, var);
     }
 
@@ -703,6 +679,25 @@ public class ShaderProgram {
      *            The opengl intance.
      */
     public void delete(GL3 gl) {
-        gl.glDeleteProgram(pointer);
+        gl.glDeleteProgram(getPointer());
+    }
+
+    /**
+     * Getter for pointer.
+     * 
+     * @return the pointer.
+     */
+    public int getPointer() {
+        return pointer;
+    }
+
+    /**
+     * Setter for pointer.
+     * 
+     * @param pointer
+     *            the pointer to set
+     */
+    public void setPointer(int pointer) {
+        this.pointer = pointer;
     }
 }

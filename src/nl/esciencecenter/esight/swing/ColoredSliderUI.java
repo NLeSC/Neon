@@ -30,7 +30,7 @@ import javax.swing.plaf.basic.BasicSliderUI;
  * 
  */
 public class ColoredSliderUI extends BasicSliderUI {
-    Color thumbColor;
+    private final Color thumbColor;
 
     /**
      * Default {@link JSlider} constructor with added color value.
@@ -91,7 +91,6 @@ public class ColoredSliderUI extends BasicSliderUI {
             g.drawLine(cw, 0, cw, 3);
             g.setColor(Color.red);
             g.fillRect(1, 1, cw - 2, 4);
-            // g.drawLine(1, 1, cw - 2, 1);
 
             g.translate(-trackBounds.x, -(trackBounds.y + cy));
         } else {
@@ -108,14 +107,8 @@ public class ColoredSliderUI extends BasicSliderUI {
             g.drawLine(0, ch, 3, ch);
             g.setColor(Color.red);
             g.fillRect(1, 1, 4, ch - 2);
-            // g.drawLine(1, 1, 1, ch - 2);
 
             g.translate(-(trackBounds.x + cx), -trackBounds.y);
         }
-    }
-
-    @Override
-    public int valueForXPosition(int pos) {
-        return super.valueForXPosition(pos);
     }
 }

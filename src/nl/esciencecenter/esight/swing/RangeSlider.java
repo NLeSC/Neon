@@ -68,14 +68,6 @@ public class RangeSlider extends JSlider {
     }
 
     /**
-     * Returns the lower value in the range.
-     */
-    @Override
-    public int getValue() {
-        return super.getValue();
-    }
-
-    /**
      * Sets the lower value in the range.
      */
     @Override

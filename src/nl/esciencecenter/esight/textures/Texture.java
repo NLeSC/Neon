@@ -32,7 +32,7 @@ import nl.esciencecenter.esight.exceptions.UninitializedException;
  */
 public abstract class Texture {
     /** The OpenGL-internal MultitexUnit (GL.GL_TEXTUREX) this texture uses. */
-    protected int glMultiTexUnit;
+    private int glMultiTexUnit;
 
     protected IntBuffer pointer;
     protected ByteBuffer pixelBuffer;
@@ -48,7 +48,7 @@ public abstract class Texture {
      *            uses.
      */
     public Texture(int gLMultiTexUnit) {
-        this.glMultiTexUnit = gLMultiTexUnit;
+        this.setGlMultiTexUnit(gLMultiTexUnit);
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract class Texture {
      * @return The OpenGL-internal GL_TEXTUREX this texture uses.
      */
     public int getGLMultiTexUnit() {
-        return glMultiTexUnit;
+        return getGlMultiTexUnit();
     }
 
     /**
@@ -66,7 +66,7 @@ public abstract class Texture {
      * @return this.glMultiTexUnit - GL.GL_TEXTURE0;
      */
     public int getMultitexNumber() {
-        int result = glMultiTexUnit - GL.GL_TEXTURE0;
+        int result = getGlMultiTexUnit() - GL.GL_TEXTURE0;
 
         return result;
     }
@@ -88,10 +88,11 @@ public abstract class Texture {
     /**
      * @return the pointer
      */
-    public int getPointer() throws UninitializedException {
-        if (pointer == null)
+    public IntBuffer getPointer() throws UninitializedException {
+        if (pointer == null) {
             throw new UninitializedException();
-        return pointer.get(0);
+        }
+        return pointer;
     }
 
     /**
@@ -185,5 +186,24 @@ public abstract class Texture {
      */
     public void delete(GL3 gl) {
         gl.glDeleteTextures(1, pointer);
+    }
+
+    /**
+     * Getter for glMultiTexUnit.
+     * 
+     * @return the glMultiTexUnit.
+     */
+    public int getGlMultiTexUnit() {
+        return glMultiTexUnit;
+    }
+
+    /**
+     * Setter for glMultiTexUnit.
+     * 
+     * @param glMultiTexUnit
+     *            the glMultiTexUnit to set
+     */
+    public void setGlMultiTexUnit(int glMultiTexUnit) {
+        this.glMultiTexUnit = glMultiTexUnit;
     }
 }

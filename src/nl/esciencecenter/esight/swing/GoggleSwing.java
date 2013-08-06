@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
@@ -49,8 +50,12 @@ import org.slf4j.LoggerFactory;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class GoggleSwing {
+public final class GoggleSwing {
     private final static Logger logger = LoggerFactory.getLogger(GoggleSwing.class);
+
+    private GoggleSwing() {
+        // Utility class
+    }
 
     /**
      * A single item for a ButtonBox, to be used in conjuction with
@@ -301,7 +306,7 @@ public class GoggleSwing {
      *            The components to be boxed.
      * @return the boxed components.
      */
-    public static Box hBoxedComponents(ArrayList<Component> components) {
+    public static Box hBoxedComponents(List<Component> components) {
         final Box hrzOuterBox = Box.createHorizontalBox();
         hrzOuterBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         hrzOuterBox.add(GoggleSwing.horizontalStrut(2));
@@ -409,7 +414,6 @@ public class GoggleSwing {
     public static Box horizontalDropdownBoxesBox(String name, DropdownBoxesBoxItem... boxItems) {
         final ArrayList<Component> vcomponents = new ArrayList<Component>();
         vcomponents.add(new JLabel(name));
-        // vcomponents.add(Box.createHorizontalGlue());
 
         final ArrayList<Component> hcomponents = new ArrayList<Component>();
 
@@ -567,7 +571,7 @@ public class GoggleSwing {
      *            option to have a bevel border yes/no.
      * @return the vertically boxed components.
      */
-    public static Box vBoxedComponents(ArrayList<Component> components, boolean bordered) {
+    public static Box vBoxedComponents(List<Component> components, boolean bordered) {
         final Box hrzBox = Box.createHorizontalBox();
         hrzBox.add(GoggleSwing.horizontalStrut(2));
 
@@ -596,7 +600,7 @@ public class GoggleSwing {
      *            option to have a bevel border yes/no.
      * @return the horizontally boxed components.
      */
-    public static Box hBoxedComponents(ArrayList<Component> components, boolean bordered) {
+    public static Box hBoxedComponents(List<Component> components, boolean bordered) {
         final Box vrtBox = Box.createVerticalBox();
         vrtBox.add(GoggleSwing.verticalStrut(2));
 
@@ -624,7 +628,6 @@ public class GoggleSwing {
      * @return The strut.
      */
     public static Component verticalStrut(int size) {
-        final Component verticalStrut = Box.createRigidArea(new Dimension(0, size));
-        return verticalStrut;
+        return Box.createRigidArea(new Dimension(0, size));
     }
 }

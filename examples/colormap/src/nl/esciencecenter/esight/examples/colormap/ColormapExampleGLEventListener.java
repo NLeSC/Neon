@@ -383,9 +383,9 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
                 for (int x = 0; x < NOISE_LONS; x++) {
                     Color color = ColormapInterpreter.getColor(colorMap, colormapDims, ((noise.get()) / 255f),
                             Float.NaN);
-                    surfaceBuffer.put((byte) (color.red * 255));
-                    surfaceBuffer.put((byte) (color.green * 255));
-                    surfaceBuffer.put((byte) (color.blue * 255));
+                    surfaceBuffer.put((byte) (color.getRed() * 255));
+                    surfaceBuffer.put((byte) (color.getGreen() * 255));
+                    surfaceBuffer.put((byte) (color.getBlue() * 255));
                     surfaceBuffer.put((byte) 0);
                 }
             }

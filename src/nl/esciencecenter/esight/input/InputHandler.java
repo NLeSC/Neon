@@ -41,35 +41,35 @@ public class InputHandler implements MouseListener, KeyListener {
     }
 
     /** Initial value for the rotation in the X direction */
-    protected float rotationXorigin = 0;
+    private float rotationXorigin = 0;
     /**
      * Final rotation in the X direction, translated to openGL units, stored to
      * make successive rotations smooth
      */
-    protected float rotationX;
+    private float rotationX;
 
     /** Initial value for the rotation in the Y direction */
-    protected float rotationYorigin = 0;
+    private float rotationYorigin = 0;
     /**
      * Final rotation in the Y direction, translated to openGL units, stored to
      * make successive rotations smooth
      */
-    protected float rotationY;
+    private float rotationY;
 
     /** Mouse drag start point in X direction */
-    protected float dragLeftXorigin;
+    private float dragLeftXorigin;
     /** Mouse drag start point in Y direction */
-    protected float dragLeftYorigin;
+    private float dragLeftYorigin;
 
     /** Final rotation in openGL units */
-    public VecF3 rotation;
+    private VecF3 rotation;
     /** Final view distance (translation) in openGL units */
-    public float viewDist = -5f;
+    private float viewDist = -5f;
     /** Current direction of the view */
-    private octants current_view_octant = octants.PPP;
+    private octants currentViewOctant = octants.PPP;
 
     private static class SingletonHolder {
-        public static final InputHandler instance = new InputHandler();
+        public static final InputHandler INSTANCE = new InputHandler();
     }
 
     /**
@@ -78,7 +78,7 @@ public class InputHandler implements MouseListener, KeyListener {
      * @return The only instance of this class allowed at one time.
      */
     public static InputHandler getInstance() {
-        return SingletonHolder.instance;
+        return SingletonHolder.INSTANCE;
     }
 
     protected InputHandler() {
@@ -127,10 +127,12 @@ public class InputHandler implements MouseListener, KeyListener {
             }
             // Make sure the numbers are always positive (so we can determine
             // the octant we're in more easily)
-            if (rotationX < 0)
+            if (rotationX < 0) {
                 rotationX = 360f + rotationX % 360;
-            if (rotationY < 0)
+            }
+            if (rotationY < 0) {
                 rotationY = 360f + rotationY % 360;
+            }
 
             rotation.setX(rotationY);
             rotation.setY(rotationX);
@@ -168,41 +170,61 @@ public class InputHandler implements MouseListener, KeyListener {
         float y = rotation.getY();
         int qy = (int) Math.floor(y / 90f);
 
-        if (qx == 0 && qy == 0) {
-            current_view_octant = octants.NPP;
-        } else if (qx == 0 && qy == 1) {
-            current_view_octant = octants.NPN;
-        } else if (qx == 0 && qy == 2) {
-            current_view_octant = octants.PPN;
-        } else if (qx == 0 && qy == 3) {
-            current_view_octant = octants.PPP;
+        if (qx == 0) {
+            if (qy == 0) {
+                currentViewOctant = octants.NPP;
+            }
+            if (qy == 1) {
+                currentViewOctant = octants.NPN;
+            }
+            if (qy == 2) {
+                currentViewOctant = octants.PPN;
+            }
+            if (qy == 3) {
+                currentViewOctant = octants.PPP;
+            }
 
-        } else if (qx == 1 && qy == 0) {
-            current_view_octant = octants.PPN;
-        } else if (qx == 1 && qy == 1) {
-            current_view_octant = octants.PPP;
-        } else if (qx == 1 && qy == 2) {
-            current_view_octant = octants.NPP;
-        } else if (qx == 1 && qy == 3) {
-            current_view_octant = octants.NPN;
+        } else if (qx == 1) {
+            if (qy == 0) {
+                currentViewOctant = octants.PPN;
+            }
+            if (qy == 1) {
+                currentViewOctant = octants.PPP;
+            }
+            if (qy == 2) {
+                currentViewOctant = octants.NPP;
+            }
+            if (qy == 3) {
+                currentViewOctant = octants.NPN;
+            }
 
-        } else if (qx == 2 && qy == 0) {
-            current_view_octant = octants.PNN;
-        } else if (qx == 2 && qy == 1) {
-            current_view_octant = octants.PNP;
-        } else if (qx == 2 && qy == 2) {
-            current_view_octant = octants.NNP;
-        } else if (qx == 2 && qy == 3) {
-            current_view_octant = octants.NNN;
+        } else if (qx == 2) {
+            if (qy == 0) {
+                currentViewOctant = octants.PNN;
+            }
+            if (qy == 1) {
+                currentViewOctant = octants.PNP;
+            }
+            if (qy == 2) {
+                currentViewOctant = octants.NNP;
+            }
+            if (qy == 3) {
+                currentViewOctant = octants.NNN;
+            }
 
-        } else if (qx == 3 && qy == 0) {
-            current_view_octant = octants.NNP;
-        } else if (qx == 3 && qy == 1) {
-            current_view_octant = octants.NNN;
-        } else if (qx == 3 && qy == 2) {
-            current_view_octant = octants.PNN;
-        } else if (qx == 3 && qy == 3) {
-            current_view_octant = octants.PNP;
+        } else if (qx == 3) {
+            if (qy == 0) {
+                currentViewOctant = octants.NNP;
+            }
+            if (qy == 1) {
+                currentViewOctant = octants.NNN;
+            }
+            if (qy == 2) {
+                currentViewOctant = octants.PNN;
+            }
+            if (qy == 3) {
+                currentViewOctant = octants.PNP;
+            }
         }
     }
 
@@ -252,6 +274,6 @@ public class InputHandler implements MouseListener, KeyListener {
      * @return the current_view_octant (mainly used for octrees)
      */
     public octants getCurrentViewOctant() {
-        return current_view_octant;
+        return currentViewOctant;
     }
 }

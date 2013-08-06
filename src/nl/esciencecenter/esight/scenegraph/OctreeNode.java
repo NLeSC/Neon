@@ -1,6 +1,7 @@
 package nl.esciencecenter.esight.scenegraph;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.media.opengl.GL3;
 
@@ -51,7 +52,7 @@ public class OctreeNode {
      */
     private final int maxElements;
     /** The stored elements. */
-    private final ArrayList<OctreeElement> elements;
+    private final List<OctreeElement> elements;
     /** The center location for this node. */
     private final VecF3 center;
     /** The size of the ribs of the cube this node represents. */
@@ -61,7 +62,7 @@ public class OctreeNode {
     /** The model to be used if this node is drawn. */
     private final Model model;
     /** The translation matrix for this node. */
-    private final MatF4 TMatrix;
+    private final MatF4 tMatrix;
     /** The scale for this node's graphical representation. */
     private final float scale;
 
@@ -97,7 +98,7 @@ public class OctreeNode {
         this.depth = depth;
         this.center = corner.add(new VecF3(.5f * ribSize, .5f * ribSize, .5f * ribSize));
         this.ribSize = ribSize;
-        this.TMatrix = MatrixFMath.translate(center);
+        this.tMatrix = MatrixFMath.translate(center);
         this.scale = ribSize;
         this.elements = new ArrayList<OctreeElement>();
     }
@@ -115,7 +116,7 @@ public class OctreeNode {
         this.ribSize = other.ribSize;
         this.depth = other.depth;
         this.model = other.model;
-        this.TMatrix = other.TMatrix;
+        this.tMatrix = other.tMatrix;
         this.scale = other.scale;
 
         this.ppp = other.ppp;
@@ -167,17 +168,6 @@ public class OctreeNode {
     public void delete(GL3 gl) {
         if (initialized) {
             model.delete(gl);
-
-            // if (subdivided) {
-            // ppp.delete(gl);
-            // ppn.delete(gl);
-            // pnp.delete(gl);
-            // pnn.delete(gl);
-            // npp.delete(gl);
-            // npn.delete(gl);
-            // nnp.delete(gl);
-            // nnn.delete(gl);
-            // }
         }
     }
 
@@ -338,19 +328,19 @@ public class OctreeNode {
      *            the current GL instance.
      * @param program
      *            The ShaderProgram to use in the drawing process.
-     * @param MVMatrix
+     * @param mvMatrix
      *            The global Modelview Matrix.
      * @throws UninitializedException
      *             if this method was called before calling the
      *             {@link #init(GL3)} method.
      */
-    public void draw(GL3 gl, ShaderProgram program, MatF4 MVMatrix) throws UninitializedException {
+    public void draw(GL3 gl, ShaderProgram program, MatF4 mvMatrix) throws UninitializedException {
         if (initialized) {
             if (subdivided) {
-                draw_sorted(gl, program, MVMatrix);
+                draw_sorted(gl, program, mvMatrix);
             } else {
                 if (drawable) {
-                    MatF4 newM = MVMatrix.mul(TMatrix);
+                    MatF4 newM = mvMatrix.mul(tMatrix);
                     program.setUniformMatrix("MVMatrix", newM);
                     program.setUniformMatrix("SMatrix", MatrixFMath.scale(scale));
                     program.setUniformVector("Color", color);
@@ -373,112 +363,112 @@ public class OctreeNode {
      *            the current opengl instance.
      * @param program
      *            the shaderprogram to use in drawing.
-     * @param MVMatrix
+     * @param mvMatrix
      *            the global Modelview Matrix.
      */
-    private void draw_sorted(GL3 gl, ShaderProgram program, MatF4 MVMatrix) {
+    private void draw_sorted(GL3 gl, ShaderProgram program, MatF4 mvMatrix) {
         InputHandler inputHandler = InputHandler.getInstance();
 
         try {
             if (inputHandler.getCurrentViewOctant() == InputHandler.octants.NNN) {
-                ppp.draw(gl, program, MVMatrix);
+                ppp.draw(gl, program, mvMatrix);
 
-                npp.draw(gl, program, MVMatrix);
-                pnp.draw(gl, program, MVMatrix);
-                ppn.draw(gl, program, MVMatrix);
+                npp.draw(gl, program, mvMatrix);
+                pnp.draw(gl, program, mvMatrix);
+                ppn.draw(gl, program, mvMatrix);
 
-                nnp.draw(gl, program, MVMatrix);
-                pnn.draw(gl, program, MVMatrix);
-                npn.draw(gl, program, MVMatrix);
+                nnp.draw(gl, program, mvMatrix);
+                pnn.draw(gl, program, mvMatrix);
+                npn.draw(gl, program, mvMatrix);
 
-                nnn.draw(gl, program, MVMatrix);
+                nnn.draw(gl, program, mvMatrix);
             } else if (inputHandler.getCurrentViewOctant() == InputHandler.octants.NNP) {
-                ppn.draw(gl, program, MVMatrix);
+                ppn.draw(gl, program, mvMatrix);
 
-                npn.draw(gl, program, MVMatrix);
-                pnn.draw(gl, program, MVMatrix);
-                ppp.draw(gl, program, MVMatrix);
+                npn.draw(gl, program, mvMatrix);
+                pnn.draw(gl, program, mvMatrix);
+                ppp.draw(gl, program, mvMatrix);
 
-                nnn.draw(gl, program, MVMatrix);
-                pnp.draw(gl, program, MVMatrix);
-                npp.draw(gl, program, MVMatrix);
+                nnn.draw(gl, program, mvMatrix);
+                pnp.draw(gl, program, mvMatrix);
+                npp.draw(gl, program, mvMatrix);
 
-                nnp.draw(gl, program, MVMatrix);
+                nnp.draw(gl, program, mvMatrix);
             } else if (inputHandler.getCurrentViewOctant() == InputHandler.octants.NPN) {
-                pnp.draw(gl, program, MVMatrix);
+                pnp.draw(gl, program, mvMatrix);
 
-                nnp.draw(gl, program, MVMatrix);
-                ppp.draw(gl, program, MVMatrix);
-                pnn.draw(gl, program, MVMatrix);
+                nnp.draw(gl, program, mvMatrix);
+                ppp.draw(gl, program, mvMatrix);
+                pnn.draw(gl, program, mvMatrix);
 
-                npp.draw(gl, program, MVMatrix);
-                ppn.draw(gl, program, MVMatrix);
-                nnn.draw(gl, program, MVMatrix);
+                npp.draw(gl, program, mvMatrix);
+                ppn.draw(gl, program, mvMatrix);
+                nnn.draw(gl, program, mvMatrix);
 
-                npn.draw(gl, program, MVMatrix);
+                npn.draw(gl, program, mvMatrix);
             } else if (inputHandler.getCurrentViewOctant() == InputHandler.octants.NPP) {
-                pnn.draw(gl, program, MVMatrix);
+                pnn.draw(gl, program, mvMatrix);
 
-                nnn.draw(gl, program, MVMatrix);
-                ppn.draw(gl, program, MVMatrix);
-                pnp.draw(gl, program, MVMatrix);
+                nnn.draw(gl, program, mvMatrix);
+                ppn.draw(gl, program, mvMatrix);
+                pnp.draw(gl, program, mvMatrix);
 
-                npn.draw(gl, program, MVMatrix);
-                ppp.draw(gl, program, MVMatrix);
-                nnp.draw(gl, program, MVMatrix);
+                npn.draw(gl, program, mvMatrix);
+                ppp.draw(gl, program, mvMatrix);
+                nnp.draw(gl, program, mvMatrix);
 
-                npp.draw(gl, program, MVMatrix);
+                npp.draw(gl, program, mvMatrix);
             } else if (inputHandler.getCurrentViewOctant() == InputHandler.octants.PNN) {
-                npp.draw(gl, program, MVMatrix);
+                npp.draw(gl, program, mvMatrix);
 
-                ppp.draw(gl, program, MVMatrix);
-                nnp.draw(gl, program, MVMatrix);
-                npn.draw(gl, program, MVMatrix);
+                ppp.draw(gl, program, mvMatrix);
+                nnp.draw(gl, program, mvMatrix);
+                npn.draw(gl, program, mvMatrix);
 
-                pnp.draw(gl, program, MVMatrix);
-                nnn.draw(gl, program, MVMatrix);
-                ppn.draw(gl, program, MVMatrix);
+                pnp.draw(gl, program, mvMatrix);
+                nnn.draw(gl, program, mvMatrix);
+                ppn.draw(gl, program, mvMatrix);
 
-                pnn.draw(gl, program, MVMatrix);
+                pnn.draw(gl, program, mvMatrix);
             } else if (inputHandler.getCurrentViewOctant() == InputHandler.octants.PNP) {
-                npn.draw(gl, program, MVMatrix);
+                npn.draw(gl, program, mvMatrix);
 
-                ppn.draw(gl, program, MVMatrix);
-                nnn.draw(gl, program, MVMatrix);
-                npp.draw(gl, program, MVMatrix);
+                ppn.draw(gl, program, mvMatrix);
+                nnn.draw(gl, program, mvMatrix);
+                npp.draw(gl, program, mvMatrix);
 
-                pnn.draw(gl, program, MVMatrix);
-                nnp.draw(gl, program, MVMatrix);
-                ppp.draw(gl, program, MVMatrix);
+                pnn.draw(gl, program, mvMatrix);
+                nnp.draw(gl, program, mvMatrix);
+                ppp.draw(gl, program, mvMatrix);
 
-                pnp.draw(gl, program, MVMatrix);
+                pnp.draw(gl, program, mvMatrix);
             } else if (inputHandler.getCurrentViewOctant() == InputHandler.octants.PPN) {
-                nnp.draw(gl, program, MVMatrix);
+                nnp.draw(gl, program, mvMatrix);
 
-                pnp.draw(gl, program, MVMatrix);
-                npp.draw(gl, program, MVMatrix);
-                nnn.draw(gl, program, MVMatrix);
+                pnp.draw(gl, program, mvMatrix);
+                npp.draw(gl, program, mvMatrix);
+                nnn.draw(gl, program, mvMatrix);
 
-                ppp.draw(gl, program, MVMatrix);
-                npn.draw(gl, program, MVMatrix);
-                pnn.draw(gl, program, MVMatrix);
+                ppp.draw(gl, program, mvMatrix);
+                npn.draw(gl, program, mvMatrix);
+                pnn.draw(gl, program, mvMatrix);
 
-                ppn.draw(gl, program, MVMatrix);
+                ppn.draw(gl, program, mvMatrix);
             } else if (inputHandler.getCurrentViewOctant() == InputHandler.octants.PPP) {
-                nnn.draw(gl, program, MVMatrix);
+                nnn.draw(gl, program, mvMatrix);
 
-                pnn.draw(gl, program, MVMatrix);
-                npn.draw(gl, program, MVMatrix);
-                nnp.draw(gl, program, MVMatrix);
+                pnn.draw(gl, program, mvMatrix);
+                npn.draw(gl, program, mvMatrix);
+                nnp.draw(gl, program, mvMatrix);
 
-                ppn.draw(gl, program, MVMatrix);
-                npp.draw(gl, program, MVMatrix);
-                pnp.draw(gl, program, MVMatrix);
+                ppn.draw(gl, program, mvMatrix);
+                npp.draw(gl, program, mvMatrix);
+                pnp.draw(gl, program, mvMatrix);
 
-                ppp.draw(gl, program, MVMatrix);
+                ppp.draw(gl, program, mvMatrix);
             }
         } catch (UninitializedException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 }

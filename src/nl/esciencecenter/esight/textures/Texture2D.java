@@ -6,6 +6,9 @@ import javax.media.opengl.GL3;
 
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /* Copyright 2013 Netherlands eScience Center
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -29,6 +32,7 @@ import nl.esciencecenter.esight.exceptions.UninitializedException;
  * 
  */
 public abstract class Texture2D extends Texture {
+    private final static Logger logger = LoggerFactory.getLogger(Texture2D.class);
 
     /**
      * Generic constructor, should be called by all classes extending this class
@@ -54,12 +58,11 @@ public abstract class Texture2D extends Texture {
     public void init(GL3 gl) {
         if (!initialized) {
             if (pixelBuffer == null) {
-                System.err
-                        .println("Add a pixelbuffer first, by using a custom constructor. The Texture2D constructor is only meant to be extended.");
+                logger.error("Add a pixelbuffer first, by using a custom constructor. The Texture2D constructor is only meant to be extended.");
             }
 
             // Tell OpenGL we want to use 2D textures
-            gl.glActiveTexture(glMultiTexUnit);
+            gl.glActiveTexture(getGlMultiTexUnit());
 
             // Create a Texture Object
             pointer = IntBuffer.allocate(1);
@@ -94,8 +97,8 @@ public abstract class Texture2D extends Texture {
             init(gl);
         }
 
-        gl.glActiveTexture(glMultiTexUnit);
-        gl.glBindTexture(GL3.GL_TEXTURE_2D, getPointer());
+        gl.glActiveTexture(getGlMultiTexUnit());
+        gl.glBindTexture(GL3.GL_TEXTURE_2D, getPointer().get(0));
     }
 
     public void unBind(GL3 gl) {

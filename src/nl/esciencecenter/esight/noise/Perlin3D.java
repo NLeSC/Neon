@@ -47,10 +47,8 @@ public class Perlin3D extends Texture3D {
         this.height = height;
         this.depth = depth;
 
-        // System.out.print("Generating noise");
         Noise n = new Noise(4, width, height, depth);
-        // System.out.println("done");
 
-        pixelBuffer = n.pixelBuffer;
+        pixelBuffer = n.getPixelBuffer();
     }
 }

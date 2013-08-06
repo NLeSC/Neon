@@ -4,6 +4,9 @@ import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
+import javax.media.opengl.GLException;
+
+import nl.esciencecenter.esight.exceptions.UninitializedException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,19 +60,19 @@ public class RBOTexture extends Texture2D {
     public void init(GL3 gl) {
         if (!initialized) {
             checkNoError(gl, "rbo PRE: ", true);
-
-            // Tell OpenGL we want to use textures
-            // gl.glEnable(GL3.GL_TEXTURE_2D);
-
             checkNoError(gl, "rbo post glEnable: ", false);
 
-            gl.glActiveTexture(glMultiTexUnit);
+            gl.glActiveTexture(getGlMultiTexUnit());
 
             checkNoError(gl, "rbo post glActiveTexture: ", false);
 
             // Create a Texture Object
-            pointer = IntBuffer.allocate(1);
-            gl.glGenTextures(1, pointer);
+            setPointer(IntBuffer.allocate(1));
+            try {
+                gl.glGenTextures(1, getPointer());
+            } catch (UninitializedException e) {
+                logger.error(e.getMessage());
+            }
 
             checkNoError(gl, "rbo post glGenTextures: ", false);
 
@@ -123,7 +126,7 @@ public class RBOTexture extends Texture2D {
             if (GL.GL_NO_ERROR != error) {
                 logger.error("GL ERROR(s) " + exceptionMessage + " : ");
                 while (GL.GL_NO_ERROR != error) {
-                    Exception exception = new Exception(" GL Error 0x" + Integer.toHexString(error));
+                    GLException exception = new GLException(" GL Error 0x" + Integer.toHexString(error));
                     logger.error("Error in OpenGL operation while initializing FBO", exception);
                     error = gl.glGetError();
                 }

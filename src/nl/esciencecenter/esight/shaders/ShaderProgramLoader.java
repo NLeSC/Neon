@@ -3,6 +3,7 @@ package nl.esciencecenter.esight.shaders;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.media.opengl.GL3;
 
@@ -37,7 +38,7 @@ import nl.esciencecenter.esight.math.VectorF;
  */
 public class ShaderProgramLoader {
     /** Storage for the Shader Programs */
-    private ArrayList<ShaderProgram> programs;
+    private List<ShaderProgram> programs;
 
     /**
      * Constructor, initializes storage.

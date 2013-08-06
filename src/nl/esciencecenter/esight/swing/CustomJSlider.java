@@ -45,12 +45,14 @@ public class CustomJSlider extends JSlider {
      */
     public CustomJSlider(final BasicSliderUI ui) {
         ChangeListener[] cl = getChangeListeners();
-        for (ChangeListener l : cl)
-            removeChangeListener(l); // remove UI-installed ChangeListeners
+        for (ChangeListener l : cl) {
+            removeChangeListener(l);
+        }
 
         MouseListener[] listeners = getMouseListeners();
-        for (MouseListener l : listeners)
-            removeMouseListener(l); // remove UI-installed TrackListener
+        for (MouseListener l : listeners) {
+            removeMouseListener(l);
+        }
         setUI(ui);
 
         ColoredSliderUI.TrackListener tl = ui.new TrackListener() {

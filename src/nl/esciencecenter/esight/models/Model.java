@@ -69,11 +69,11 @@ public abstract class Model {
      *            The {@link vertex_format} used by this model.
      */
     public Model(vertex_format format) {
-        setVertices(null);
-        setNormals(null);
-        setTexCoords(null);
-        setNumVertices(0);
-        this.setFormat(format);
+        vertices = null;
+        normals = null;
+        texCoords = null;
+        numVertices = 0;
+        this.format = format;
     }
 
     /**
@@ -162,8 +162,9 @@ public abstract class Model {
         }
     }
 
-    /** 
+    /**
      * Getter for format.
+     * 
      * @return the format.
      */
     public vertex_format getFormat() {
@@ -172,14 +173,17 @@ public abstract class Model {
 
     /**
      * Setter for format.
-     * @param format the format to set
+     * 
+     * @param format
+     *            the format to set
      */
     public void setFormat(vertex_format format) {
         this.format = format;
     }
 
-    /** 
+    /**
      * Getter for vertices.
+     * 
      * @return the vertices.
      */
     public FloatBuffer getVertices() {
@@ -188,14 +192,17 @@ public abstract class Model {
 
     /**
      * Setter for vertices.
-     * @param vertices the vertices to set
+     * 
+     * @param vertices
+     *            the vertices to set
      */
     public void setVertices(FloatBuffer vertices) {
         this.vertices = vertices;
     }
 
-    /** 
+    /**
      * Getter for normals.
+     * 
      * @return the normals.
      */
     public FloatBuffer getNormals() {
@@ -204,14 +211,17 @@ public abstract class Model {
 
     /**
      * Setter for normals.
-     * @param normals the normals to set
+     * 
+     * @param normals
+     *            the normals to set
      */
     public void setNormals(FloatBuffer normals) {
         this.normals = normals;
     }
 
-    /** 
+    /**
      * Getter for texCoords.
+     * 
      * @return the texCoords.
      */
     public FloatBuffer getTexCoords() {
@@ -220,14 +230,17 @@ public abstract class Model {
 
     /**
      * Setter for texCoords.
-     * @param texCoords the texCoords to set
+     * 
+     * @param texCoords
+     *            the texCoords to set
      */
     public void setTexCoords(FloatBuffer texCoords) {
         this.texCoords = texCoords;
     }
 
-    /** 
+    /**
      * Getter for vbo.
+     * 
      * @return the vbo.
      */
     public VBO getVbo() {
@@ -236,7 +249,9 @@ public abstract class Model {
 
     /**
      * Setter for vbo.
-     * @param vbo the vbo to set
+     * 
+     * @param vbo
+     *            the vbo to set
      */
     public void setVbo(VBO vbo) {
         this.vbo = vbo;
@@ -244,7 +259,9 @@ public abstract class Model {
 
     /**
      * Setter for numVertices.
-     * @param numVertices the numVertices to set
+     * 
+     * @param numVertices
+     *            the numVertices to set
      */
     public void setNumVertices(int numVertices) {
         this.numVertices = numVertices;

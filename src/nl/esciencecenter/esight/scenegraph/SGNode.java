@@ -1,6 +1,7 @@
 package nl.esciencecenter.esight.scenegraph;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.media.opengl.GL3;
 
@@ -38,25 +39,25 @@ public class SGNode {
      * The translation matrix for the elements (and children) of this Scenegraph
      * node.
      */
-    protected MatF4 TMatrix;
+    private MatF4 TMatrix;
     /**
      * The rotation matrix for the elements (and children) of this Scenegraph
      * node.
      */
-    protected MatF4 RMatrix;
+    private MatF4 RMatrix;
     /**
      * The scale matrix for the elements (and children) of this Scenegraph node.
      */
-    protected MatF4 SMatrix;
+    private MatF4 SMatrix;
 
     /** Store for the children. */
-    protected ArrayList<SGNode> children;
+    private final List<SGNode> children;
 
     /** Store for the models (elements). */
-    protected ArrayList<Model> models;
+    private final List<Model> models;
 
     /** Store for lightsources. */
-    protected ArrayList<LightSource> lightsources;
+    private List<LightSource> lightsources;
 
     /** State holder. */
     private boolean initialized = false;
@@ -181,17 +182,17 @@ public class SGNode {
      *            the current gl instance.
      * @param program
      *            The shaderProgram to use for the drawing process.
-     * @param MVMatrix
+     * @param mvMatrix
      *            The global Modelview Matrix.
      * @throws UninitializedException
      *             if this method was called before the init() method.
      */
-    public synchronized void draw(GL3 gl, ShaderProgram program, MatF4 MVMatrix) throws UninitializedException {
+    public synchronized void draw(GL3 gl, ShaderProgram program, MatF4 mvMatrix) throws UninitializedException {
         if (!initialized) {
             throw new UninitializedException();
         }
 
-        MatF4 newM = MVMatrix.mul(TMatrix);
+        MatF4 newM = mvMatrix.mul(TMatrix);
 
         for (Model m : models) {
             program.setUniformMatrix("MVMatrix", newM);
