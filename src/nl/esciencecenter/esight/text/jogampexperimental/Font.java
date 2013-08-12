@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.text.jogampExperimental;
+package nl.esciencecenter.esight.text.jogampexperimental;
 
 import nl.esciencecenter.esight.exceptions.FontException;
 
@@ -45,14 +45,14 @@ import com.jogamp.opengl.math.geom.AABBox;
 public interface Font {
 
     /** font name indices for name table */
-    public static final int NAME_COPYRIGHT = 0;
-    public static final int NAME_FAMILY = 1;
-    public static final int NAME_SUBFAMILY = 2;
-    public static final int NAME_UNIQUNAME = 3;
-    public static final int NAME_FULLNAME = 4;
-    public static final int NAME_VERSION = 5;
-    public static final int NAME_MANUFACTURER = 8;
-    public static final int NAME_DESIGNER = 9;
+    static final int NAME_COPYRIGHT = 0;
+    static final int NAME_FAMILY = 1;
+    static final int NAME_SUBFAMILY = 2;
+    static final int NAME_UNIQUNAME = 3;
+    static final int NAME_FULLNAME = 4;
+    static final int NAME_VERSION = 5;
+    static final int NAME_MANUFACTURER = 8;
+    static final int NAME_DESIGNER = 9;
 
     /**
      * Metrics for font
@@ -63,7 +63,7 @@ public interface Font {
      * Vertical http://developer.apple.com/fonts/TTRefMan/RM06/Chap6vhea.html
      * Horizontal http://developer.apple.com/fonts/TTRefMan/RM06/Chap6hhea.html
      */
-    public interface Metrics {
+    interface Metrics {
         float getAscent(float pixelSize);
 
         float getDescent(float pixelSize);
@@ -80,7 +80,7 @@ public interface Font {
     /**
      * Glyph for font
      */
-    public interface Glyph {
+    interface Glyph {
         public Font getFont();
 
         public char getSymbol();
@@ -90,9 +90,9 @@ public interface Font {
         public float getAdvance(float pixelSize, boolean useFrationalMetrics);
     }
 
-    public String getName(int nameIndex);
+    String getName(int nameIndex);
 
-    public StringBuilder getName(StringBuilder string, int nameIndex);
+    StringBuilder getName(StringBuilder string, int nameIndex);
 
     /**
      * Shall return the family and subfamily name, separated a dash.
@@ -104,25 +104,25 @@ public interface Font {
      * Example: "{@code Ubuntu-Regular}"
      * </p>
      */
-    public StringBuilder getFullFamilyName(StringBuilder buffer);
+    StringBuilder getFullFamilyName(StringBuilder buffer);
 
-    public StringBuilder getAllNames(StringBuilder string, String separator);
+    StringBuilder getAllNames(StringBuilder string, String separator);
 
-    public Metrics getMetrics();
+    Metrics getMetrics();
 
-    public Glyph getGlyph(char symbol) throws FontException;
+    Glyph getGlyph(char symbol) throws FontException;
 
-    public int getNumGlyphs();
+    int getNumGlyphs();
 
-    public float getStringWidth(CharSequence string, float pixelSize);
+    float getStringWidth(CharSequence string, float pixelSize);
 
-    public float getStringHeight(CharSequence string, float pixelSize);
+    float getStringHeight(CharSequence string, float pixelSize);
 
-    public AABBox getStringBounds(CharSequence string, float pixelSize);
+    AABBox getStringBounds(CharSequence string, float pixelSize);
 
-    public boolean isPrintableChar(char c);
+    boolean isPrintableChar(char c);
 
     /** Shall return {@link #getFullFamilyName()} */
     @Override
-    public String toString();
+    String toString();
 }

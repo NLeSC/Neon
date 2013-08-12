@@ -379,16 +379,31 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
             ByteBuffer surfaceBuffer = Buffers.newDirectByteBuffer(NOISE_LONS * NOISE_LATS * 4);
             noise.rewind();
 
+            float noiseMin = 1000000f;
+            float noiseMax = -1000000f;
+            float total = 0f;
             for (int y = 0; y < NOISE_LATS; y++) {
                 for (int x = 0; x < NOISE_LONS; x++) {
-                    Color color = ColormapInterpreter.getColor(colorMap, colormapDims, ((noise.get()) / 255f),
-                            Float.NaN);
+                    float noisePixel = noise.get();
+                    total += noisePixel;
+                    if (noisePixel < noiseMin) {
+                        noiseMin = noisePixel;
+                    }
+                    if (noisePixel > noiseMax) {
+                        noiseMax = noisePixel;
+                    }
+
+                    Color color = ColormapInterpreter.getColor(colorMap, colormapDims, (noisePixel / 255f), Float.NaN);
                     surfaceBuffer.put((byte) (color.getRed() * 255));
                     surfaceBuffer.put((byte) (color.getGreen() * 255));
                     surfaceBuffer.put((byte) (color.getBlue() * 255));
                     surfaceBuffer.put((byte) 0);
                 }
             }
+            System.out.println("min: " + noiseMin);
+            System.out.println("max: " + noiseMax);
+            System.out.println("avg: " + total / (NOISE_LATS * NOISE_LONS));
+
             surfaceBuffer.flip();
 
             surfaceTex = new ByteBufferTexture(GL3.GL_TEXTURE3, surfaceBuffer, NOISE_LONS, NOISE_LATS);

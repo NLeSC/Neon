@@ -49,6 +49,10 @@ import nl.esciencecenter.esight.swing.RangeSliderUI;
  * 
  */
 public class ColormapExampleInterfaceWindow extends JPanel {
+    private static final int INTENTIONALLY_TOO_LARGE = 1000;
+    private static final int DEFAULT_HEIGHT = 25;
+    private static final int DEFAULT_WIDTH = 240;
+
     private final static ColormapExampleSettings settings = ColormapExampleSettings.getInstance();
 
     // A serialVersionUID is 'needed' because we extend JPanel.
@@ -90,14 +94,14 @@ public class ColormapExampleInterfaceWindow extends JPanel {
         configPanel = new JPanel();
         add(configPanel, BorderLayout.WEST);
         configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.Y_AXIS));
-        configPanel.setPreferredSize(new Dimension(240, 0));
-        configPanel.setMaximumSize(new Dimension(240, 1000));
+        configPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH, 0));
+        configPanel.setMaximumSize(new Dimension(DEFAULT_WIDTH, INTENTIONALLY_TOO_LARGE));
         configPanel.setVisible(false);
 
         dataConfig = new JPanel();
         dataConfig.setLayout(new BoxLayout(dataConfig, BoxLayout.Y_AXIS));
-        dataConfig.setMinimumSize(new Dimension(240, 0));
-        dataConfig.setMaximumSize(new Dimension(240, 1000));
+        dataConfig.setMinimumSize(new Dimension(DEFAULT_WIDTH, 0));
+        dataConfig.setMaximumSize(new Dimension(DEFAULT_WIDTH, INTENTIONALLY_TOO_LARGE));
         createColormapselector();
 
         configPanel.setVisible(true);
@@ -125,24 +129,25 @@ public class ColormapExampleInterfaceWindow extends JPanel {
         };
         dataModeComboBox.addActionListener(al);
         dataModeComboBox.setSelectedIndex(settings.getSelectedDataModeIndex());
-        dataModeComboBox.setMinimumSize(new Dimension(50, 25));
-        dataModeComboBox.setMaximumSize(new Dimension(240, 25));
+        dataModeComboBox.setMinimumSize(new Dimension(50, DEFAULT_HEIGHT));
+        dataModeComboBox.setMaximumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         screenHcomponents.add(dataModeComboBox);
 
         screenHcomponents.add(Box.createHorizontalGlue());
 
         final JComboBox variablesComboBox = new JComboBox(settings.getVariables());
         variablesComboBox.setSelectedItem(settings.getSelectedVariableIndex());
-        variablesComboBox.setMinimumSize(new Dimension(50, 25));
-        variablesComboBox.setMaximumSize(new Dimension(240, 25));
+        variablesComboBox.setMinimumSize(new Dimension(50, DEFAULT_HEIGHT));
+        variablesComboBox.setMaximumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         screenHcomponents.add(variablesComboBox);
 
         screenVcomponents.add(GoggleSwing.hBoxedComponents(screenHcomponents, true));
 
-        final JComboBox colorMapsComboBox = ColormapInterpreter.getLegendJComboBox(new Dimension(240, 25));
+        final JComboBox colorMapsComboBox = ColormapInterpreter.getLegendJComboBox(new Dimension(DEFAULT_WIDTH,
+                DEFAULT_HEIGHT));
         colorMapsComboBox.setSelectedItem(settings.getSelectedColormapName());
-        colorMapsComboBox.setMinimumSize(new Dimension(100, 25));
-        colorMapsComboBox.setMaximumSize(new Dimension(240, 25));
+        colorMapsComboBox.setMinimumSize(new Dimension(100, DEFAULT_HEIGHT));
+        colorMapsComboBox.setMaximumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         screenVcomponents.add(colorMapsComboBox);
 
         final RangeSlider selectionLegendSlider = new RangeSlider();
@@ -166,8 +171,6 @@ public class ColormapExampleInterfaceWindow extends JPanel {
             @Override
             public void stateChanged(ChangeEvent e) {
                 RangeSlider slider = (RangeSlider) e.getSource();
-                // SurfaceTextureDescription texDesc =
-                // settings.getSurfaceDescription(currentScreen);
 
                 String var = settings.getSelectedVariableName();
                 settings.setVariableLowerBound(var, slider.getValue());

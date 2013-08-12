@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class FBO {
-    private static final Logger logger = LoggerFactory.getLogger(FBO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FBO.class);
 
     /** OpenGL internal pointer to the framebuffer */
     private final IntBuffer fboPointer;
@@ -122,7 +122,7 @@ public class FBO {
 
                 checkStatus(gl, "Framebuffer error:");
             } catch (UninitializedException e) {
-                logger.error(e.getMessage());
+                LOGGER.error(e.getMessage());
             }
 
             // Unbind. The FBO is now ready for use.
@@ -148,10 +148,10 @@ public class FBO {
         int error = gl.glGetError();
         if (!quietlyRemoveAllPreviousErrors) {
             if (GL.GL_NO_ERROR != error) {
-                logger.error("GL ERROR(s) " + exceptionMessage + " : ");
+                LOGGER.error("GL ERROR(s) " + exceptionMessage + " : ");
                 while (GL.GL_NO_ERROR != error) {
                     Exception exception = new Exception(" GL Error 0x" + Integer.toHexString(error));
-                    logger.error("Error in OpenGL operation while initializing FBO", exception);
+                    LOGGER.error("Error in OpenGL operation while initializing FBO", exception);
                     error = gl.glGetError();
                 }
                 return false;
@@ -195,7 +195,7 @@ public class FBO {
         }
 
         if (errDetected) {
-            logger.error(errString);
+            LOGGER.error(errString);
         }
     }
 

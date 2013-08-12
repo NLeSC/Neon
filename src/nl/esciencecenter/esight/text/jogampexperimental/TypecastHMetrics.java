@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.text.jogampExperimental;
+package nl.esciencecenter.esight.text.jogampexperimental;
 
 /**
  * Copyright 2011 JogAmp Community. All rights reserved.
@@ -30,7 +30,7 @@ package nl.esciencecenter.esight.text.jogampExperimental;
 
 import jogamp.graph.font.typecast.ot.table.HeadTable;
 import jogamp.graph.font.typecast.ot.table.HheaTable;
-import nl.esciencecenter.esight.text.jogampExperimental.Font.Metrics;
+import nl.esciencecenter.esight.text.jogampexperimental.Font.Metrics;
 
 import com.jogamp.opengl.math.geom.AABBox;
 

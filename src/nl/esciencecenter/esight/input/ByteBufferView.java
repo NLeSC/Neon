@@ -6,6 +6,8 @@ package nl.esciencecenter.esight.input;
  * @author Paul Melis, SurfSARA
  */
 class ByteBufferView {
+    private static final int BITSHIFT = 0xff;
+
     private byte[] buffer;
     private int offset;
 
@@ -30,21 +32,17 @@ class ByteBufferView {
     }
 
     public int getInt() {
-        // bytebuffer to integer representation conversion, not boolean
-        // complexity as sonar suggests.
-        int value = (buffer[offset] & 0xff) | (buffer[offset + 1] & 0xff) << 8 | (buffer[offset + 2] & 0xff) << 16
-                | (buffer[offset + 3] & 0xff) << 24; // NOSONAR
+        int value = (buffer[offset] & BITSHIFT) | (buffer[offset + 1] & BITSHIFT) << 8
+                | (buffer[offset + 2] & BITSHIFT) << 16 | (buffer[offset + 3] & BITSHIFT) << 24;
         offset += 4;
         return value;
     }
 
     public long getLong() {
-        // bytebuffer to long representation conversion, not boolean complexity
-        // as sonar suggests.
-        long value = buffer[offset] & 0xff | (long) (buffer[offset + 1] & 0xff) << 8
-                | (long) (buffer[offset + 2] & 0xff) << 16 | (long) (buffer[offset + 3] & 0xff) << 24
-                | (long) (buffer[offset + 4] & 0xff) << 32 | (long) (buffer[offset + 5] & 0xff) << 40
-                | (long) (buffer[offset + 6] & 0xff) << 48 | (long) (buffer[offset + 7] & 0xff) << 56; // NOSONAR
+        long value = buffer[offset] & BITSHIFT | (long) (buffer[offset + 1] & BITSHIFT) << 8
+                | (long) (buffer[offset + 2] & BITSHIFT) << 16 | (long) (buffer[offset + 3] & BITSHIFT) << 24
+                | (long) (buffer[offset + 4] & BITSHIFT) << 32 | (long) (buffer[offset + 5] & BITSHIFT) << 40
+                | (long) (buffer[offset + 6] & BITSHIFT) << 48 | (long) (buffer[offset + 7] & BITSHIFT) << 56;
         offset += 8;
         return value;
     }

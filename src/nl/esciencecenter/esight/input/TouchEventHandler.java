@@ -22,5 +22,5 @@ package nl.esciencecenter.esight.input;
  * 
  */
 interface TouchEventHandler {
-    public void onTouchPoints(double timestamp, TouchPoint[] points, int n);
+    void onTouchPoints(double timestamp, TouchPoint[] points, int n);
 }

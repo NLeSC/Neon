@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.text.jogampExperimental;
+package nl.esciencecenter.esight.text.jogampexperimental;
 
 /**
  * Copyright 2011 JogAmp Community. All rights reserved.

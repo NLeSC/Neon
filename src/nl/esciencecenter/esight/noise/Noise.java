@@ -29,12 +29,11 @@ import com.jogamp.common.nio.Buffers;
  * 
  */
 public class Noise {
-    private ByteBuffer pixelBuffer;
-    private FloatBuffer tempBuf;
+    private final FloatBuffer tempBuf;
+    private final int pixels;
 
     public Noise(int channels, int width, int height, int depth) {
-        int pixels = width * height * depth;
-        pixelBuffer = Buffers.newDirectByteBuffer(pixels * 4);
+        pixels = width * height * depth;
 
         tempBuf = Buffers.newDirectFloatBuffer(pixels);
 
@@ -42,7 +41,7 @@ public class Noise {
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     float noise = perlinNoise2D(channels, x, y);
-                    getTempBuf().put(noise);
+                    tempBuf.put(noise);
                 }
             }
 
@@ -50,100 +49,68 @@ public class Noise {
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     for (int z = 0; z < depth; z++) {
-                        perlinNoise3D(getPixelBuffer(), channels, x, y, z);
+                        float noise = perlinNoise3D(channels, x, y, z);
+                        tempBuf.put(noise);
                     }
                 }
             }
         }
-        getPixelBuffer().rewind();
+
+        tempBuf.rewind();
     }
 
-    private double perlinNoise3D(ByteBuffer buffer, int channels, int x, int y, int z) {
-        double total = 0;
-        double p = .25;
+    private float perlinNoise3D(int channels, int x, int y, int z) {
+        float total = 0f;
+        float p = .75f;
 
-        double amplitude = 128.0;
-        double frequency = 0.1;
+        float amplitude = 128.0f;
+        float frequency = 0.05f;
+
         for (int i = 0; i < channels; i++) {
-            buffer.put((byte) (ImprovedPerlinNoise.noise(x * frequency, y * frequency, z * frequency) * amplitude));
+            total += (float) ImprovedPerlinNoise.noise(x * frequency, y * frequency, z * frequency) * amplitude;
 
             amplitude *= p;
             frequency *= 2;
         }
-        return total;
+        return total + 128f;
     }
 
     private float perlinNoise2D(int channels, int x, int y) {
         float total = 0f;
+        float p = .75f;
+
+        float amplitude = 128.0f;
+        float frequency = 0.05f;
+
         for (int i = 0; i < channels; i++) {
-            float amplitude = (float) Math.pow(2.0, i);
-            float frequency = (float) Math.pow(0.5, i);
+            total += interpolatedNoise(x * frequency, y * frequency) * amplitude;
 
-            float noise = interpolatedNoise(x * frequency, y * frequency) * amplitude;
-
-            total += noise;
+            amplitude *= p;
+            frequency *= 2;
         }
 
-        return total;
-    }
-
-    public ByteBuffer getImage() {
-        return getPixelBuffer();
+        return total + 128f;
     }
 
     public FloatBuffer getFloats() {
-        return getTempBuf();
+        return tempBuf.duplicate();
     }
 
-    // 3D Noise map
-    @SuppressWarnings("unused")
-    private float interpolatedNoise3(float xf, float yf, float zf) {
-        int x = (int) xf;
-        int y = (int) yf;
-        int z = (int) zf;
-        float fracX = xf - x;
-        float fracY = yf - y;
-        float fracZ = zf - z;
+    public ByteBuffer getPixelBuffer() {
+        ByteBuffer result = ByteBuffer.allocate(pixels * 4);
 
-        float v1 = smoothNoise3(x, y, z);
-        float v2 = smoothNoise3(x + 1, y, z);
-        float v3 = smoothNoise3(x, y + 1, z);
-        float v4 = smoothNoise3(x + 1, y + 1, z);
-        float v5 = smoothNoise3(x, y, z + 1);
-        float v6 = smoothNoise3(x + 1, y, z + 1);
-        float v7 = smoothNoise3(x, y + 1, z + 1);
-        float v8 = smoothNoise3(x + 1, y + 1, z + 1);
+        for (int i = 0; i < tempBuf.capacity(); i++) {
+            float val = tempBuf.get(i);
+            result.put((byte) (val));
+            result.put((byte) (val));
+            result.put((byte) (val));
+            result.put((byte) (val));
+        }
 
-        float iX1 = cosInterpolate(v1, v2, fracX);
-        float iX2 = cosInterpolate(v3, v4, fracX);
-        float iX3 = cosInterpolate(v5, v6, fracX);
-        float iX4 = cosInterpolate(v7, v8, fracX);
-
-        float iY1 = cosInterpolate(iX1, iX2, fracY);
-        float iY2 = cosInterpolate(iX3, iX4, fracY);
-
-        float result = cosInterpolate(iY1, iY2, fracZ);
+        result.rewind();
+        tempBuf.rewind();
 
         return result;
-    }
-
-    private float smoothNoise3(int x, int y, int z) {
-        float corners = (noise3(x - 1, y - 1, z - 1) + noise3(x + 1, y - 1, z - 1) + noise3(x - 1, y + 1, z - 1)
-                + noise3(x + 1, y + 1, z - 1) + noise3(x - 1, y - 1, z + 1) + noise3(x + 1, y - 1, z + 1)
-                + noise3(x - 1, y + 1, z + 1) + noise3(x + 1, y + 1, z + 1)) / 32f;
-
-        float sides = (noise3(x - 1, y, z) + noise3(x + 1, y, z) + noise3(x, y - 1, z) + noise3(x, y + 1, z)
-                + noise3(x, y, z - 1) + noise3(x, y, z + 1)) / 12f;
-
-        float center = noise3(x, y, z) / 4f;
-
-        return corners + sides + center;
-    }
-
-    private float noise3(int x, int y, int z) {
-        int n = x + y * 57 + z * 93;
-        n = (n << 13) ^ n;
-        return 1.0f - (((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0f);
     }
 
     // 2D Noise maps
@@ -185,49 +152,6 @@ public class Noise {
         float f = (1f - (float) Math.cos(ft)) * .5f;
 
         return a * (1 - f) + b * f;
-    }
-
-    @SuppressWarnings("unused")
-    private float linearInterpolate(float a, float b, float x) {
-        return (b - a) * x + a;
-    }
-
-    /**
-     * Getter for pixelBuffer.
-     * 
-     * @return the pixelBuffer.
-     */
-    public ByteBuffer getPixelBuffer() {
-        return pixelBuffer;
-    }
-
-    /**
-     * Setter for pixelBuffer.
-     * 
-     * @param pixelBuffer
-     *            the pixelBuffer to set
-     */
-    public void setPixelBuffer(ByteBuffer pixelBuffer) {
-        this.pixelBuffer = pixelBuffer;
-    }
-
-    /**
-     * Getter for tempBuf.
-     * 
-     * @return the tempBuf.
-     */
-    public FloatBuffer getTempBuf() {
-        return tempBuf;
-    }
-
-    /**
-     * Setter for tempBuf.
-     * 
-     * @param tempBuf
-     *            the tempBuf to set
-     */
-    public void setTempBuf(FloatBuffer tempBuf) {
-        this.tempBuf = tempBuf;
     }
 
 }

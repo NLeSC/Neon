@@ -22,10 +22,10 @@ import nl.esciencecenter.esight.math.VectorFMath;
 import nl.esciencecenter.esight.models.BoundingBox;
 import nl.esciencecenter.esight.models.Model;
 import nl.esciencecenter.esight.shaders.ShaderProgram;
-import nl.esciencecenter.esight.text.jogampExperimental.Font;
-import nl.esciencecenter.esight.text.jogampExperimental.GlyphShape;
-import nl.esciencecenter.esight.text.jogampExperimental.OutlineShape;
-import nl.esciencecenter.esight.text.jogampExperimental.TypecastFont;
+import nl.esciencecenter.esight.text.jogampexperimental.Font;
+import nl.esciencecenter.esight.text.jogampexperimental.GlyphShape;
+import nl.esciencecenter.esight.text.jogampexperimental.OutlineShape;
+import nl.esciencecenter.esight.text.jogampexperimental.TypecastFont;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ import com.jogamp.graph.geom.opengl.SVertex;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  */
 public class MultiColorText extends Model {
-    private final static Logger logger = LoggerFactory.getLogger(MultiColorText.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(MultiColorText.class);
 
     /** Initialization is needed for certain functions to work properly */
     private boolean initialized = false;
@@ -353,7 +353,7 @@ public class MultiColorText extends Model {
             try {
                 program.use(gl);
             } catch (UninitializedException e) {
-                logger.error(e.getMessage());
+                LOGGER.error(e.getMessage());
             }
 
             getVbo().bind(gl);

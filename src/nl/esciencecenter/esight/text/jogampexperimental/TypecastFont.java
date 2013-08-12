@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.text.jogampExperimental;
+package nl.esciencecenter.esight.text.jogampexperimental;
 
 /**
  * Copyright 2011 JogAmp Community. All rights reserved.
@@ -69,7 +69,7 @@ public class TypecastFont implements FontInt {
 
         // Generic attempt to find the best CmapTable,
         // which is assumed to be the one with the most entries (stupid 'eh?)
-        CmapTable cmapTable = getFont().getCmapTable();
+        CmapTable cmapTable = font.getCmapTable();
         CmapFormat[] cmapFormatP = { null, null, null, null };
         int platform = -1;
         int platformLength = -1;
@@ -94,8 +94,7 @@ public class TypecastFont implements FontInt {
         if (0 <= platform) {
             cmapFormat = cmapFormatP[platform];
             if (DEBUG) {
-                logger.debug("Selected CmapFormat: platform " + platform + ", encoding " + encoding + ": "
-                        + getCmapFormat());
+                logger.debug("Selected CmapFormat: platform " + platform + ", encoding " + encoding + ": " + cmapFormat);
             }
         } else {
             CmapFormat tmpCmapFormat = null;
@@ -113,38 +112,38 @@ public class TypecastFont implements FontInt {
                 tmpCmapFormat = cmapTable.getCmapFormat((short) platform, (short) encoding);
             }
             if (null == tmpCmapFormat) {
-                throw new FontException("Cannot find a suitable cmap table for font " + getFont());
+                throw new FontException("Cannot find a suitable cmap table for font " + font);
             }
             cmapFormat = tmpCmapFormat;
             if (DEBUG) {
                 logger.debug("Selected CmapFormat (2): platform " + platform + ", encoding " + encoding + ": "
-                        + getCmapFormat());
+                        + cmapFormat);
             }
         }
 
-        setCmapentries(0);
-        for (int i = 0; i < getCmapFormat().getRangeCount(); ++i) {
-            CmapFormat.Range range = getCmapFormat().getRange(i);
-            setCmapentries(getCmapentries() + (range.getEndCode() - range.getStartCode() + 1)); // end
+        cmapentries = 0;
+        for (int i = 0; i < cmapFormat.getRangeCount(); ++i) {
+            CmapFormat.Range range = cmapFormat.getRange(i);
+            cmapentries = cmapentries + (range.getEndCode() - range.getStartCode() + 1); // end
             // included
         }
         if (DEBUG) {
-            logger.debug("font direction hint: " + getFont().getHeadTable().getFontDirectionHint());
-            logger.debug("num glyphs: " + getFont().getNumGlyphs());
-            logger.debug("num cmap entries: " + getCmapentries());
-            logger.debug("num cmap ranges: " + getCmapFormat().getRangeCount());
+            logger.debug("font direction hint: " + font.getHeadTable().getFontDirectionHint());
+            logger.debug("num glyphs: " + font.getNumGlyphs());
+            logger.debug("num cmap entries: " + cmapentries);
+            logger.debug("num cmap ranges: " + cmapFormat.getRangeCount());
 
-            for (int i = 0; i < getCmapFormat().getRangeCount(); ++i) {
-                CmapFormat.Range range = getCmapFormat().getRange(i);
+            for (int i = 0; i < cmapFormat.getRangeCount(); ++i) {
+                CmapFormat.Range range = cmapFormat.getRange(i);
                 for (int j = range.getStartCode(); j <= range.getEndCode(); ++j) {
-                    final int code = getCmapFormat().mapCharCode(j);
+                    final int code = cmapFormat.mapCharCode(j);
                     if (code < 15) {
                         logger.debug(" char: " + j + " ( " + (char) j + " ) -> " + code);
                     }
                 }
             }
         }
-        setChar2Glyph(new IntObjectHashMap(getCmapentries() + getCmapentries() / 4));
+        char2Glyph = new IntObjectHashMap(cmapentries + cmapentries / 4);
     }
 
     @Override
@@ -164,9 +163,10 @@ public class TypecastFont implements FontInt {
 
     @Override
     public StringBuilder getFullFamilyName(StringBuilder sb) {
-        sb = getName(sb, Font.NAME_FAMILY).append("-");
-        getName(sb, Font.NAME_SUBFAMILY);
-        return sb;
+        StringBuilder newSb = new StringBuilder(sb);
+        newSb = getName(newSb, Font.NAME_FAMILY).append("-");
+        getName(newSb, Font.NAME_SUBFAMILY);
+        return newSb;
     }
 
     @Override
@@ -276,10 +276,10 @@ public class TypecastFont implements FontInt {
         if (string == null) {
             return new AABBox();
         }
-        final Metrics metrics = getMetrics();
-        final float lineGap = metrics.getLineGap(pixelSize);
-        final float ascent = metrics.getAscent(pixelSize);
-        final float descent = metrics.getDescent(pixelSize);
+        final Metrics tmpMetrics = getMetrics();
+        final float lineGap = tmpMetrics.getLineGap(pixelSize);
+        final float ascent = tmpMetrics.getAscent(pixelSize);
+        final float descent = tmpMetrics.getDescent(pixelSize);
         final float advanceY = lineGap - descent + ascent;
         float totalHeight = 0;
         float totalWidth = 0;

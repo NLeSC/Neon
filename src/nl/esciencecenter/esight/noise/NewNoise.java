@@ -22,10 +22,18 @@ package nl.esciencecenter.esight.noise;
  * 
  */
 public class NewNoise {
-    private final int NOISE_MAGIC_X = 1619;
-    private final int NOISE_MAGIC_Y = 31337;
-    private final int NOISE_MAGIC_Z = 52591;
-    private final int NOISE_MAGIC_SEED = 1013;
+    private static final int NOISE_MAGIC_X = 1619;
+    private static final int NOISE_MAGIC_Y = 31337;
+    private static final int NOISE_MAGIC_Z = 52591;
+    private static final int NOISE_MAGIC_SEED = 1013;
+
+    private static final int PRIME_0 = 13;
+    private static final int PRIME_1 = 1619;
+    private static final int PRIME_2 = 19990303;
+    private static final int PRIME_3 = 1376312589;
+    private static final int PRIME_4 = 1073741824;
+
+    private static final int BITSHIFT = 0x7fffffff;
 
     double triLinearInterpolation(double v000, double v100, double v010, double v110, double v001, double v101,
             double v011, double v111, double x, double y, double z) {
@@ -73,9 +81,9 @@ public class NewNoise {
     }
 
     double noise3d(int x, int y, int z, int seed) {
-        int n = (NOISE_MAGIC_X * x + NOISE_MAGIC_Y * y + NOISE_MAGIC_Z * z + NOISE_MAGIC_SEED * seed) & 0x7fffffff;
-        n = (n >> 13) ^ n;
-        n = (n * (n * n * 60493 + 19990303) + 1376312589) & 0x7fffffff;
-        return 1.0 - (double) n / 1073741824;
+        int n = (NOISE_MAGIC_X * x + NOISE_MAGIC_Y * y + NOISE_MAGIC_Z * z + NOISE_MAGIC_SEED * seed) & BITSHIFT;
+        n = (n >> PRIME_0) ^ n;
+        n = (n * (n * n * PRIME_1 + PRIME_2) + PRIME_3) & BITSHIFT;
+        return 1.0 - (double) n / PRIME_4;
     }
 }

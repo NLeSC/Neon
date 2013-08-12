@@ -69,8 +69,11 @@ public abstract class MatrixF {
      *            The row.
      * @return The value at index i,j.
      */
-    public float get(int i, int j) {
+    public float get(int i, int j) throws IllegalArgumentException {
         int rowSize = (int) Math.sqrt(m.length);
+        if (i >= rowSize || j >= rowSize) {
+            throw new IllegalArgumentException("either i or j was larger than the row/column size of this matrix");
+        }
         return m[i * rowSize + j];
     }
 
@@ -95,8 +98,11 @@ public abstract class MatrixF {
      * @param f
      *            The new value.
      */
-    public void set(int i, int j, float f) {
+    public void set(int i, int j, float f) throws IllegalArgumentException {
         int rowSize = (int) Math.sqrt(m.length);
+        if (i >= rowSize || j >= rowSize) {
+            throw new IllegalArgumentException("either i or j was larger than the row/column size of this matrix");
+        }
         m[i * rowSize + j] = f;
     }
 

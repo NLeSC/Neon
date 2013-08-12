@@ -67,11 +67,9 @@
 					<formatter type="xml" />
 					<formatter type="plain" />
 					<fileset dir="src">
-						<include name="**/RealisticEarthTest.java" />
-						<include name="**/HelloWorldExampleTest.java" />
-						<include name="**/GoggleSwingExampleTest.java" />
-						<include name="**/ColormapExampleTest.java" />
-						<include name="**/LiveShaderEditorTest.java" />
+						<include name="**/*.java" />
+						<!--
+						<include name="**/MatF2Test.java" />
 						<include name="**/MatF3Test.java" />
 						<include name="**/MatF4Test.java" />
 						<include name="**/VecF2Test.java" />
@@ -79,6 +77,12 @@
 						<include name="**/VecF4Test.java" />
 						<include name="**/MatrixFMathTest.java" />
 						<include name="**/VectorFMathTest.java" />
+						<include name="**/RealisticEarthTest.java" />
+						<include name="**/HelloWorldExampleTest.java" />
+						<include name="**/GoggleSwingExampleTest.java" />
+						<include name="**/ColormapExampleTest.java" />
+						<include name="**/LiveShaderEditorTest.java" />
+						-->
 					</fileset>
 				</batchtest>
 			</junit>

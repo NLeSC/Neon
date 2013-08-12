@@ -237,7 +237,11 @@ public class TypedProperties extends Properties {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Integer expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Integer expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -264,7 +268,11 @@ public class TypedProperties extends Properties {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Integer expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Integer expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -288,7 +296,11 @@ public class TypedProperties extends Properties {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Long expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Long expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -315,7 +327,11 @@ public class TypedProperties extends Properties {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Long expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Long expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -339,7 +355,11 @@ public class TypedProperties extends Properties {
         try {
             return Short.parseShort(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Short expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Short expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -366,7 +386,11 @@ public class TypedProperties extends Properties {
         try {
             return Short.parseShort(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Short expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Short expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -390,7 +414,11 @@ public class TypedProperties extends Properties {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Double expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Double expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -417,7 +445,11 @@ public class TypedProperties extends Properties {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Double expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Double expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -441,7 +473,11 @@ public class TypedProperties extends Properties {
         try {
             return Float.parseFloat(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Float expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Float expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -468,7 +504,11 @@ public class TypedProperties extends Properties {
         try {
             return Float.parseFloat(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Float expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Float expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -575,8 +615,11 @@ public class TypedProperties extends Properties {
             return Long.parseLong(value);
 
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Long[G|g|M|m|K|k] expected for property " + key + ", not \"" + value
-                    + "\"");
+            NumberFormatException ex = new NumberFormatException("Long[G|g|M|m|K|k] expected for property " + key
+                    + ", not \"" + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 

@@ -48,7 +48,7 @@ public abstract class Texture {
      *            uses.
      */
     public Texture(int gLMultiTexUnit) {
-        this.setGlMultiTexUnit(gLMultiTexUnit);
+        this.glMultiTexUnit = gLMultiTexUnit;
     }
 
     /**

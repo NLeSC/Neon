@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.text.jogampExperimental;
+package nl.esciencecenter.esight.text.jogampexperimental;
 
 /**
  * Copyright 2011 JogAmp Community. All rights reserved.
@@ -37,18 +37,17 @@ import com.jogamp.graph.geom.Vertex.Factory;
 
 public interface FontInt extends Font {
 
-    public interface Glyph extends Font.Glyph {
+    interface Glyph extends Font.Glyph {
         // reserved special glyph IDs
         // http://scripts.sil.org/cms/scripts/page.php?item_id=IWS-Chapter08#ba57949e
-        public static final int ID_UNKNOWN = 0;
-        public static final int ID_CR = 2;
-        public static final int ID_SPACE = 3;
+        static final int ID_UNKNOWN = 0;
+        static final int ID_CR = 2;
+        static final int ID_SPACE = 3;
 
-        public Path2D getPath(); // unscaled path
+        Path2D getPath(); // unscaled path
 
-        public Path2D getPath(float pixelSize);
+        Path2D getPath(float pixelSize);
     }
 
-    public List<OutlineShape> getOutlineShapes(CharSequence string, float pixelSize,
-            Factory<? extends Vertex> vertexFactory);
+    List<OutlineShape> getOutlineShapes(CharSequence string, float pixelSize, Factory<? extends Vertex> vertexFactory);
 }

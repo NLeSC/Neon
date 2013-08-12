@@ -27,8 +27,8 @@ import nl.esciencecenter.esight.noise.Perlin3D;
 import nl.esciencecenter.esight.shaders.ShaderProgram;
 import nl.esciencecenter.esight.shaders.ShaderProgramLoader;
 import nl.esciencecenter.esight.text.MultiColorText;
-import nl.esciencecenter.esight.text.jogampExperimental.Font;
-import nl.esciencecenter.esight.text.jogampExperimental.FontFactory;
+import nl.esciencecenter.esight.text.jogampexperimental.Font;
+import nl.esciencecenter.esight.text.jogampexperimental.FontFactory;
 
 public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
     private ShaderProgram liveShader, postprocessShader, axesShader, textShader;

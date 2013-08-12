@@ -14,8 +14,8 @@ import nl.esciencecenter.esight.math.Point4;
 import nl.esciencecenter.esight.math.VecF3;
 import nl.esciencecenter.esight.math.VecF4;
 import nl.esciencecenter.esight.shaders.ShaderProgramLoader;
-import nl.esciencecenter.esight.text.jogampExperimental.Font;
-import nl.esciencecenter.esight.text.jogampExperimental.FontFactory;
+import nl.esciencecenter.esight.text.jogampexperimental.Font;
+import nl.esciencecenter.esight.text.jogampexperimental.FontFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

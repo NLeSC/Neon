@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.text.jogampExperimental;
+package nl.esciencecenter.esight.text.jogampexperimental;
 
 /**
  * Copyright 2011 JogAmp Community. All rights reserved.
@@ -29,6 +29,7 @@ package nl.esciencecenter.esight.text.jogampExperimental;
  */
 
 import java.util.HashMap;
+import java.util.Map;
 
 import jogamp.graph.geom.plane.AffineTransform;
 import jogamp.graph.geom.plane.Path2D;
@@ -36,10 +37,10 @@ import jogamp.graph.geom.plane.Path2D;
 import com.jogamp.opengl.math.geom.AABBox;
 
 public class TypecastGlyph implements FontInt.Glyph {
-    public class Advance {
+    public static class Advance {
         private final Font font;
         private final float advance;
-        private final HashMap<Float, Float> size2advance = new HashMap<Float, Float>();
+        private final Map<Float, Float> size2advance = new HashMap<Float, Float>();
 
         public Advance(Font font, float advance) {
             this.font = font;
@@ -62,7 +63,7 @@ public class TypecastGlyph implements FontInt.Glyph {
             Float fo = size2advance.get(size);
             if (null == fo) {
                 float value = (this.advance * getScale(size));
-                if (useFrationalMetrics == false) {
+                if (!useFrationalMetrics) {
                     value = (int) (value + 0.5f);
                 }
                 size2advance.put(size, value);
@@ -136,7 +137,9 @@ public class TypecastGlyph implements FontInt.Glyph {
         this.symbol = symbol;
         this.advance = advance;
 
-        init(id, bbox, advance);
+        this.id = id;
+        this.advance = advance;
+        this.metrics = new Metrics(this.font, bbox, advance);
 
         this.path = path;
         this.pathSized = null;

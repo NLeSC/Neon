@@ -65,8 +65,8 @@ public class InputHandler implements MouseListener, KeyListener {
     private VecF3 rotation;
     /** Final view distance (translation) in openGL units */
     private float viewDist = -5f;
+
     /** Current direction of the view */
-    private octants currentViewOctant = octants.PPP;
 
     private static class SingletonHolder {
         public static final InputHandler INSTANCE = new InputHandler();
@@ -137,7 +137,6 @@ public class InputHandler implements MouseListener, KeyListener {
             rotation.setX(rotationY);
             rotation.setY(rotationX);
             rotation.setZ(0f); // We never rotate around the Z axis.
-            setCurrentOctant(rotation);
         }
     }
 
@@ -151,81 +150,13 @@ public class InputHandler implements MouseListener, KeyListener {
         float newViewDist = this.viewDist;
 
         if (e.isShiftDown()) {
-            newViewDist -= e.getRotation()[1] * 2;
+            float wheelRotation = e.getRotation()[0];
+            newViewDist -= wheelRotation * 2;
         } else {
-            newViewDist -= e.getRotation()[1] * 10;
+            float wheelRotation = e.getRotation()[1];
+            newViewDist -= wheelRotation * 10;
         }
         viewDist = newViewDist;
-    }
-
-    /**
-     * Setter for the current viewing 'angle' by octant.
-     * 
-     * @param rotation
-     *            The rotation from which to calculate the viewing octant.
-     */
-    private void setCurrentOctant(VecF3 rotation) {
-        float x = rotation.getX();
-        int qx = (int) Math.floor(x / 90f);
-        float y = rotation.getY();
-        int qy = (int) Math.floor(y / 90f);
-
-        if (qx == 0) {
-            if (qy == 0) {
-                currentViewOctant = octants.NPP;
-            }
-            if (qy == 1) {
-                currentViewOctant = octants.NPN;
-            }
-            if (qy == 2) {
-                currentViewOctant = octants.PPN;
-            }
-            if (qy == 3) {
-                currentViewOctant = octants.PPP;
-            }
-
-        } else if (qx == 1) {
-            if (qy == 0) {
-                currentViewOctant = octants.PPN;
-            }
-            if (qy == 1) {
-                currentViewOctant = octants.PPP;
-            }
-            if (qy == 2) {
-                currentViewOctant = octants.NPP;
-            }
-            if (qy == 3) {
-                currentViewOctant = octants.NPN;
-            }
-
-        } else if (qx == 2) {
-            if (qy == 0) {
-                currentViewOctant = octants.PNN;
-            }
-            if (qy == 1) {
-                currentViewOctant = octants.PNP;
-            }
-            if (qy == 2) {
-                currentViewOctant = octants.NNP;
-            }
-            if (qy == 3) {
-                currentViewOctant = octants.NNN;
-            }
-
-        } else if (qx == 3) {
-            if (qy == 0) {
-                currentViewOctant = octants.NNP;
-            }
-            if (qy == 1) {
-                currentViewOctant = octants.NNN;
-            }
-            if (qy == 2) {
-                currentViewOctant = octants.PNN;
-            }
-            if (qy == 3) {
-                currentViewOctant = octants.PNP;
-            }
-        }
     }
 
     @Override
@@ -268,12 +199,5 @@ public class InputHandler implements MouseListener, KeyListener {
      */
     public void setViewDist(float viewDist) {
         this.viewDist = viewDist;
-    }
-
-    /**
-     * @return the current_view_octant (mainly used for octrees)
-     */
-    public octants getCurrentViewOctant() {
-        return currentViewOctant;
     }
 }

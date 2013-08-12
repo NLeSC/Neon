@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.text.jogampExperimental;
+package nl.esciencecenter.esight.text.jogampexperimental;
 
 /**
  * Copyright 2010 JogAmp Community. All rights reserved.
@@ -663,7 +663,7 @@ public class OutlineShape implements Comparable<OutlineShape> {
         return 0;
     }
 
-    private final void validateBoundingBox() {
+    private void validateBoundingBox() {
         dirtyBits &= ~DIRTY_BOUNDS;
         bbox.reset();
         for (int i = 0; i < outlines.size(); i++) {

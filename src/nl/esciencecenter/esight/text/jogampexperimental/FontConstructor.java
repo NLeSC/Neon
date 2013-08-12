@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.text.jogampExperimental;
+package nl.esciencecenter.esight.text.jogampexperimental;
 
 /**
  * Copyright 2011 JogAmp Community. All rights reserved.
@@ -29,33 +29,5 @@ package nl.esciencecenter.esight.text.jogampExperimental;
  * policies, either expressed or implied, of JogAmp Community.
  */
 
-public interface FontSet {
-
-    /** Font family REGULAR **/
-    public static final int FAMILY_REGULAR = 0;
-
-    /** Font family LIGHT **/
-    public static final int FAMILY_LIGHT = 1;
-
-    /** Font family MEDIUM **/
-    public static final int FAMILY_MEDIUM = 2;
-
-    /** Font family CONDENSED **/
-    public static final int FAMILY_CONDENSED = 3;
-
-    /** Font family MONO **/
-    public static final int FAMILY_MONOSPACED = 4;
-
-    /** SERIF style/family bit flag. Fallback to Sans Serif. */
-    public static final int STYLE_SERIF = 1 << 1;
-
-    /** BOLD style bit flag */
-    public static final int STYLE_BOLD = 1 << 2;
-
-    /** ITALIC style bit flag */
-    public static final int STYLE_ITALIC = 1 << 3;
-
-    Font getDefault();
-
-    Font get(int family, int stylebits);
+public interface FontConstructor {
 }

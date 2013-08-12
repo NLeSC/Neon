@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.text.jogampExperimental;
+package nl.esciencecenter.esight.text.jogampexperimental;
 
 /**
  * Copyright 2011 JogAmp Community. All rights reserved.
@@ -43,15 +43,19 @@ public final class UbuntuFontLoader implements FontSet {
         return fontLoader;
     }
 
-    final static String availableFontFileNames[] = {
-    /* 00 */"Ubuntu-R.ttf", // regular
-            /* 01 */"Ubuntu-RI.ttf", // regular italic
-            /* 02 */"Ubuntu-B.ttf", // bold
-            /* 03 */"Ubuntu-BI.ttf", // bold italic
-            /* 04 */"Ubuntu-L.ttf", // light
-            /* 05 */"Ubuntu-LI.ttf", // light italic
-            /* 06 */"Ubuntu-M.ttf", // medium
-            /* 07 */"Ubuntu-MI.ttf", // medium italic
+    private final static int REGULAR = 0;
+    private final static int REGULAR_ITALIC = 1;
+    private final static int REGULAR_BOLD = 2;
+    private final static int REGULAR_BOLD_ITALIC = 3;
+    private final static int LIGHT = 4;
+    private final static int LIGHT_ITALIC = 5;
+    private final static int MEDIUM = 6;
+    private final static int MEDIUM_ITALIC = 7;
+
+    private final static int FONT_FAMILIES = 8;
+
+    final static String availableFontFileNames[] = { "Ubuntu-R.ttf", "Ubuntu-RI.ttf", "Ubuntu-B.ttf", "Ubuntu-BI.ttf",
+            "Ubuntu-L.ttf", "Ubuntu-LI.ttf", "Ubuntu-M.ttf", "Ubuntu-MI.ttf",
 
     };
 
@@ -74,7 +78,7 @@ public final class UbuntuFontLoader implements FontSet {
 
     @Override
     public Font get(int family, int style) {
-        Font font = (Font) fontMap.get((family << 8) | style);
+        Font font = (Font) fontMap.get((family << FONT_FAMILIES) | style);
         if (font != null) {
             return font;
         }
@@ -85,34 +89,34 @@ public final class UbuntuFontLoader implements FontSet {
         case FAMILY_REGULAR:
             if (is(style, STYLE_BOLD)) {
                 if (is(style, STYLE_ITALIC)) {
-                    font = abspath(availableFontFileNames[3], family, style);
+                    font = abspath(availableFontFileNames[REGULAR_BOLD_ITALIC], family, style);
                 } else {
-                    font = abspath(availableFontFileNames[2], family, style);
+                    font = abspath(availableFontFileNames[REGULAR_BOLD], family, style);
                 }
             } else if (is(style, STYLE_ITALIC)) {
-                font = abspath(availableFontFileNames[1], family, style);
+                font = abspath(availableFontFileNames[REGULAR_ITALIC], family, style);
             } else {
-                font = abspath(availableFontFileNames[0], family, style);
+                font = abspath(availableFontFileNames[REGULAR], family, style);
             }
             break;
 
         case FAMILY_LIGHT:
             if (is(style, STYLE_ITALIC)) {
-                font = abspath(availableFontFileNames[5], family, style);
+                font = abspath(availableFontFileNames[LIGHT_ITALIC], family, style);
             } else {
-                font = abspath(availableFontFileNames[4], family, style);
+                font = abspath(availableFontFileNames[LIGHT], family, style);
             }
             break;
 
         case FAMILY_MEDIUM:
             if (is(style, STYLE_ITALIC)) {
-                font = abspath(availableFontFileNames[6], family, style);
+                font = abspath(availableFontFileNames[MEDIUM_ITALIC], family, style);
             } else {
-                font = abspath(availableFontFileNames[7], family, style);
+                font = abspath(availableFontFileNames[MEDIUM], family, style);
             }
             break;
         default:
-            font = abspath(availableFontFileNames[0], family, style);
+            font = abspath(availableFontFileNames[REGULAR], family, style);
         }
 
         return font;
@@ -127,7 +131,7 @@ public final class UbuntuFontLoader implements FontSet {
             }
             final Font f = FontFactory.get(urlc);
             if (null != f) {
-                fontMap.put((family << 8) | style, f);
+                fontMap.put((family << FONT_FAMILIES) | style, f);
                 return f;
             }
             throw new GLException(err + " " + urlc);

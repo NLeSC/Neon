@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class GLProfileSelector {
-    private static final Logger logger = LoggerFactory.getLogger(GLProfileSelector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GLProfileSelector.class);
 
     private GLProfileSelector() {
         // Utility class
@@ -36,7 +36,7 @@ public final class GLProfileSelector {
     /**
      * Prints the available GLProfiles (hardware defined) to STDOUT
      */
-    public static final void printAvailable() {
-        logger.info(GLProfile.glAvailabilityToString());
+    static final void printAvailable() {
+        LOGGER.info(GLProfile.glAvailabilityToString());
     }
 }

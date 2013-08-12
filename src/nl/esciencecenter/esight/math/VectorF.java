@@ -30,12 +30,12 @@ public interface VectorF {
      * 
      * @return This vector as a FloatBuffer.
      */
-    public FloatBuffer asBuffer();
+    FloatBuffer asBuffer();
 
     /**
      * Getter for the size of this vector (number of places)
      * 
      * @return The size of this vector
      */
-    public int getSize();
+    int getSize();
 }
