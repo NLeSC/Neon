@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.models;
+package nl.esciencecenter.esight.examples.graphs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ import nl.esciencecenter.esight.math.Point4;
 import nl.esciencecenter.esight.math.VecF3;
 import nl.esciencecenter.esight.math.VecF4;
 import nl.esciencecenter.esight.math.VectorFMath;
+import nl.esciencecenter.esight.models.Model;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
@@ -24,96 +25,48 @@ import nl.esciencecenter.esight.math.VectorFMath;
  */
 
 /**
- * Box implementation of the Model class.
+ * A simple quad (square) {@link Model}.
  * 
- * @author Maarten van Meersbergen <m.vanmeersbergen@esciencecenter.nl>
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  */
-public class Box extends Model {
-
+public class LeftBottomQuad extends Model {
     private static final int VERTICES_PER_QUAD = 6;
 
+    /** width for this quad */
+    private float width;
+    /** height for this quad */
+    private float height;
+
     /**
-     * Basic constructor for Box. Allows for an optional bottom side.
+     * Simple constructor. Do not forget to call the
+     * {@link #init(javax.media.opengl.GL3)} function before use.
      * 
-     * @param width
-     *            The width (X) of this box (should fall in 0.0 to 1.0
-     *            interval).
      * @param height
-     *            The height (Y) of this box (should fall in 0.0 to 1.0
-     *            interval).
-     * @param depth
-     *            The depth (Z) for this box (should fall in 0.0 to 1.0
-     *            interval).
-     * @param bottom
-     *            flag to draw either a bottom (true) or no bottom (false).
+     *            This quad's height.
+     * @param width
+     *            This quad's width.
+     * @param leftBottom
+     *            The left bottom location of this quad.
      */
-    public Box(float width, float height, float depth, boolean bottom) {
+    public LeftBottomQuad(float height, float width, VecF3 leftBottom) {
         super(VertexFormat.TRIANGLES);
 
-        Point4[] vertices = makeVertices(width, height, depth);
+        Point4[] vertices = makeVertices(height, width, leftBottom);
 
         List<VecF4> allPoints = new ArrayList<VecF4>();
         List<VecF3> allNormals = new ArrayList<VecF3>();
         List<VecF3> allTexCoords = new ArrayList<VecF3>();
 
         // FRONT QUAD
-        List<Point4> points = tesselate(vertices, 1, 0, 3, 2);
-        List<VecF3> normals = createNormals(new VecF3(0, 0, -1));
-        List<VecF3> tCoords = createTexCoords();
+        List<Point4> listPoints = tesselate(vertices, 1, 0, 3, 2);
+        List<VecF3> listNormals = createNormals(new VecF3(0, 0, -1));
+        List<VecF3> listTCoords = createTexCoords();
 
-        allPoints.addAll(points);
-        allNormals.addAll(normals);
-        allTexCoords.addAll(tCoords);
+        allPoints.addAll(listPoints);
+        allNormals.addAll(listNormals);
+        allTexCoords.addAll(listTCoords);
 
-        // RIGHT QUAD
-        points = tesselate(vertices, 2, 3, 7, 6);
-        normals = createNormals(new VecF3(1, 0, 0));
-        tCoords = createTexCoords();
-
-        allPoints.addAll(points);
-        allNormals.addAll(normals);
-        allTexCoords.addAll(tCoords);
-
-        if (bottom) {
-            // BOTTOM QUAD
-            points = tesselate(vertices, 3, 0, 4, 7);
-            normals = createNormals(new VecF3(0, -1, 0));
-            tCoords = createTexCoords();
-
-            allPoints.addAll(points);
-            allNormals.addAll(normals);
-            allTexCoords.addAll(tCoords);
-        }
-
-        // TOP QUAD
-        points = tesselate(vertices, 6, 5, 1, 2);
-        normals = createNormals(new VecF3(0, 1, 0));
-        tCoords = createTexCoords();
-
-        allPoints.addAll(points);
-        allNormals.addAll(normals);
-        allTexCoords.addAll(tCoords);
-
-        // BACK QUAD
-        points = tesselate(vertices, 4, 5, 6, 7);
-        normals = createNormals(new VecF3(0, 0, 1));
-        tCoords = createTexCoords();
-
-        allPoints.addAll(points);
-        allNormals.addAll(normals);
-        allTexCoords.addAll(tCoords);
-
-        // LEFT QUAD
-        points = tesselate(vertices, 5, 4, 0, 1);
-        normals = createNormals(new VecF3(-1, 0, 0));
-        tCoords = createTexCoords();
-
-        allPoints.addAll(points);
-        allNormals.addAll(normals);
-        allTexCoords.addAll(tCoords);
-
-        final int floatsPerVecF4 = 4;
-        this.setNumVertices(allPoints.size() / floatsPerVecF4);
+        this.setNumVertices(allPoints.size());
 
         this.setVertices(VectorFMath.vec4ListToBuffer(allPoints));
         this.setNormals(VectorFMath.vec3ListToBuffer(allNormals));
@@ -121,30 +74,38 @@ public class Box extends Model {
     }
 
     /**
-     * Helper method to create a Vertex array describing the corners of a box.
-     * The sides still need to be divided into triangles before it can be used.
+     * Generate the individual vertices needed for the construction of a Quad,
+     * based on the given specifications.
      * 
-     * @param width
-     *            The width of the box to make (assumes input from 0.0 to 1.0).
      * @param height
-     *            The height of the box to make (assumes input from 0.0 to 1.0).
-     * @param depth
-     *            The depth of the box to make (assumes input from 0.0 to 1.0).
-     * @return The array of 8 points that makes up all the corners of a box.
+     *            The height of this Model.
+     * @param width
+     *            The width of this Model.
+     * @param leftBottomCoordinates
+     *            The left Bottom location for this Model.
+     * @return The points(vertices) that make up the composition of this Model.
      */
-    private Point4[] makeVertices(float width, float height, float depth) {
-        float xpos = +(width / 2f);
-        float xneg = -(width / 2f);
-        float ypos = +(height / 2f);
-        float yneg = -(height / 2f);
-        float zpos = +(depth / 2f);
-        float zneg = -(depth / 2f);
+    private Point4[] makeVertices(float height, float width, VecF3 leftBottomCoordinates) {
+        float x = leftBottomCoordinates.getX();
+        float y = leftBottomCoordinates.getY();
 
-        Point4[] result = new Point4[] { new Point4(xneg, yneg, zpos), new Point4(xneg, ypos, zpos),
-                new Point4(xpos, ypos, zpos), new Point4(xpos, yneg, zpos), new Point4(xneg, yneg, zneg),
-                new Point4(xneg, ypos, zneg), new Point4(xpos, ypos, zneg), new Point4(xpos, yneg, zneg) };
+        float xpos = x + width;
+        float xneg = x;
+        float ypos = y + height;
+        float yneg = y;
+
+        Point4[] result = new Point4[] { new Point4(xneg, yneg, 0.0f), new Point4(xneg, ypos, 0.0f),
+                new Point4(xpos, ypos, 0.0f), new Point4(xpos, yneg, 0.0f) };
 
         return result;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
     }
 
     /**

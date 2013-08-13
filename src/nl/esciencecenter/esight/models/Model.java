@@ -35,7 +35,7 @@ public abstract class Model {
      * The OpenGL-internal vertex format rules the vertexes in the VBO can
      * follow.
      */
-    public static enum vertex_format {
+    public static enum VertexFormat {
         TRIANGLES, POINTS, LINES
     };
 
@@ -43,7 +43,7 @@ public abstract class Model {
      * The OpenGL-internal vertex format rules the vertexes in the VBO are going
      * to follow.
      */
-    private vertex_format format;
+    private VertexFormat format;
 
     /** The storage buffers for the standard elements of a model. */
     private FloatBuffer vertices;
@@ -66,9 +66,9 @@ public abstract class Model {
      * / null.
      * 
      * @param format
-     *            The {@link vertex_format} used by this model.
+     *            The {@link VertexFormat} used by this model.
      */
-    public Model(vertex_format format) {
+    public Model(VertexFormat format) {
         vertices = null;
         normals = null;
         texCoords = null;
@@ -150,11 +150,11 @@ public abstract class Model {
 
             program.linkAttribs(gl, getVbo().getAttribs());
 
-            if (getFormat() == vertex_format.TRIANGLES) {
+            if (getFormat() == VertexFormat.TRIANGLES) {
                 gl.glDrawArrays(GL3.GL_TRIANGLES, 0, getNumVertices());
-            } else if (getFormat() == vertex_format.POINTS) {
+            } else if (getFormat() == VertexFormat.POINTS) {
                 gl.glDrawArrays(GL3.GL_POINTS, 0, getNumVertices());
-            } else if (getFormat() == vertex_format.LINES) {
+            } else if (getFormat() == VertexFormat.LINES) {
                 gl.glDrawArrays(GL3.GL_LINES, 0, getNumVertices());
             }
         } else {
@@ -167,7 +167,7 @@ public abstract class Model {
      * 
      * @return the format.
      */
-    public vertex_format getFormat() {
+    public VertexFormat getFormat() {
         return format;
     }
 
@@ -177,7 +177,7 @@ public abstract class Model {
      * @param format
      *            the format to set
      */
-    public void setFormat(vertex_format format) {
+    public void setFormat(VertexFormat format) {
         this.format = format;
     }
 

@@ -54,7 +54,7 @@ public class Sphere extends Model {
      *            20 * (divisions ^ 4) * 3
      */
     public Sphere(int divisions, boolean texCoordsIn3D) {
-        super(vertex_format.TRIANGLES);
+        super(VertexFormat.TRIANGLES);
 
         List<VecF3> points3List = new ArrayList<VecF3>();
 

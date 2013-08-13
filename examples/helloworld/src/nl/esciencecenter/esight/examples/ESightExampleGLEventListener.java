@@ -340,7 +340,7 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
 
         // Draw the text to the renderbuffer, to (arbitrary unit) location 30x
         // 30y counted from left bottom.
-        hudText.draw(gl, program, canvasWidth, canvasHeight, 30f, 30f);
+        hudText.drawHudRelative(gl, program, canvasWidth, canvasHeight, 30f, 30f);
     }
 
     // The reshape method is automatically called by the openGL animator if the

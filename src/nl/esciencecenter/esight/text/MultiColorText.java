@@ -105,7 +105,7 @@ public class MultiColorText extends Model {
      *            The font for this text model.
      */
     public MultiColorText(Font font) {
-        super(vertex_format.TRIANGLES);
+        super(VertexFormat.TRIANGLES);
 
         this.font = font;
 
@@ -119,7 +119,7 @@ public class MultiColorText extends Model {
     }
 
     public MultiColorText(GL3 gl, Font font, String text, Color4 initialColor, int fontSize) {
-        super(vertex_format.TRIANGLES);
+        super(VertexFormat.TRIANGLES);
 
         this.font = font;
 
@@ -344,12 +344,41 @@ public class MultiColorText extends Model {
         makeVBO(gl);
     }
 
-    public void draw(GL3 gl, ShaderProgram program, float canvasWidth, float canvasHeight, float rasterPosX,
+    public void drawHudRelative(GL3 gl, ShaderProgram program, float canvasWidth, float canvasHeight, float rasterPosX,
             float rasterPosY) throws UninitializedException {
         if (initialized) {
             program.setUniformMatrix("MVMatrix", getMVMatrixForHUD(canvasWidth, canvasHeight, rasterPosX, rasterPosY));
             program.setUniformMatrix("PMatrix", getPMatrixForHUD(canvasWidth, canvasHeight));
 
+            try {
+                program.use(gl);
+            } catch (UninitializedException e) {
+                LOGGER.error(e.getMessage());
+            }
+
+            getVbo().bind(gl);
+
+            program.linkAttribs(gl, getVbo().getAttribs());
+
+            gl.glDrawArrays(GL3.GL_TRIANGLES, 0, getNumVertices());
+        } else {
+            throw new UninitializedException();
+        }
+    }
+
+    /**
+     * Draw method for this model. Links its VBO attributes and calls OpenGL
+     * DrawArrays.
+     * 
+     * @param gl
+     *            The global openGL instance.
+     * @param program
+     *            The shader program to be used for this drawing instance.
+     * @throws UninitializedException
+     */
+    @Override
+    public void draw(GL3 gl, ShaderProgram program) throws UninitializedException {
+        if (initialized) {
             try {
                 program.use(gl);
             } catch (UninitializedException e) {

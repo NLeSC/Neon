@@ -284,7 +284,7 @@ public class LiveShaderEditorGLEventListener extends ESightGLEventListener {
         gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
 
         // Draw
-        myText.draw(gl, textShader, canvasWidth, canvasHeight, 30f, 2f * canvasHeight - 40f);
+        myText.drawHudRelative(gl, textShader, canvasWidth, canvasHeight, 30f, 2f * canvasHeight - 40f);
 
         hudFBO.unBind(gl);
     }

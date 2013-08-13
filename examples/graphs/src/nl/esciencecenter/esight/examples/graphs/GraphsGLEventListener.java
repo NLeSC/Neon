@@ -1,6 +1,7 @@
-package nl.esciencecenter.esight.examples.realisticearth;
+package nl.esciencecenter.esight.examples.graphs;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
@@ -8,17 +9,20 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLContext;
 
 import nl.esciencecenter.esight.ESightGLEventListener;
+import nl.esciencecenter.esight.datastructures.FBO;
+import nl.esciencecenter.esight.datastructures.IntPBO;
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 import nl.esciencecenter.esight.input.InputHandler;
+import nl.esciencecenter.esight.math.Color4;
 import nl.esciencecenter.esight.math.MatF4;
 import nl.esciencecenter.esight.math.MatrixFMath;
 import nl.esciencecenter.esight.math.Point4;
 import nl.esciencecenter.esight.math.VecF3;
 import nl.esciencecenter.esight.math.VecF4;
-import nl.esciencecenter.esight.models.GeoSphere;
-import nl.esciencecenter.esight.models.InvertedGeoSphere;
+import nl.esciencecenter.esight.models.Axis;
+import nl.esciencecenter.esight.models.Model;
 import nl.esciencecenter.esight.shaders.ShaderProgram;
-import nl.esciencecenter.esight.textures.Texture2D;
+import nl.esciencecenter.esight.text.MultiColorText;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
@@ -36,31 +40,39 @@ import nl.esciencecenter.esight.textures.Texture2D;
  */
 
 /**
- * Example implementation of a ESightGLEventListener, built to render a
- * semi-realistic earth using texture maps.
+ * Example implementation of a ESightGLEventListener. Renders Axes in different
+ * colors to a texture and renders then this texture to the screen.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class RealisticEarthGLEventListener extends ESightGLEventListener {
+public class GraphsGLEventListener extends ESightGLEventListener {
     // Two example shader program definitions.
-    private ShaderProgram shaderProgram_Universe, shaderProgram_Earth, shaderProgram_Atmosphere;
+    private ShaderProgram axesShaderProgram, textShaderProgram;
 
     // Model definitions, the quad is necessary for Full-screen rendering. The
     // axes are the model we wish to render (example)
-    private GeoSphere geoSphere, atmSphere, moonSphere;
+    private Model xAxis, yAxis, zAxis;
 
-    private InvertedGeoSphere universeInvertedSphere;
-
-    // Texture definitions for the spheres
-    private Texture2D colorTex, specularTex, cityLightsTex, cloudTex, cloudTransparencyTex, normalTex, universeTex,
-            moonTex;
+    private DataReader dr;
+    private Histogram2D hist;
+    private int[] histData = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     // Global (singleton) settings instance.
-    private final RealisticEarthSettings settings = RealisticEarthSettings.getInstance();
+    private final GraphsSettings settings = GraphsSettings.getInstance();
+
+    // Pixelbuffer Object, we use this to get screenshots.
+    private IntPBO finalPBO;
 
     // Global (singleton) inputhandler instance.
-    private final RealisticEarthInputHandler inputHandler = RealisticEarthInputHandler.getInstance();
+    private final GraphsInputHandler inputHandler = GraphsInputHandler.getInstance();
+
+    // State keeping variable
+    private boolean screenshotWanted;
+
+    // Example of text to display on screen, and the size of the font for this.
+    private MultiColorText hudText;
+    private final int fontSize = 30;
 
     // Height and width of the drawable area. We extract this from the opengl
     // instance in the reshape method every time it is changed, but set it in
@@ -75,21 +87,11 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
     final Point4 at = new Point4(0.0f, 0.0f, 0.0f);
     final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
-    long time = System.currentTimeMillis();
-    double totalMinutesPassed = 0.0;
-
     /**
      * Basic constructor for ESightExampleGLEventListener.
      */
-    public RealisticEarthGLEventListener() {
+    public GraphsGLEventListener() {
         super();
-
-        setInputRotationX(settings.getInitialRotationX());
-        setInputRotationY(settings.getInitialRotationY());
-        setInputViewDistance(settings.getInitialZoom());
-
-        inputHandler.setRotation(new VecF3(getInputRotationX(), getInputRotationY(), 0.0f));
-        inputHandler.setViewDist(getInputViewDistance());
 
     }
 
@@ -131,8 +133,8 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         gl.glClearDepth(1.0f);
 
         // Enable Culling (render only the camera-facing sides of objects).
-        gl.glEnable(GL3.GL_CULL_FACE);
-        gl.glCullFace(GL3.GL_BACK);
+        // gl.glEnable(GL3.GL_CULL_FACE);
+        // gl.glCullFace(GL3.GL_BACK);
 
         // Enable Blending (needed for both Transparency and Anti-Aliasing)
         gl.glBlendFunc(GL3.GL_SRC_ALPHA, GL3.GL_ONE_MINUS_SRC_ALPHA);
@@ -154,14 +156,16 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
             // Create the ShaderProgram that we're going to use for the Example
             // Axes. The source code for the VertexShader: shaders/vs_axes.vp,
             // and the source code for the FragmentShader: shaders/fs_axes.fp
-            shaderProgram_Universe = getLoader().createProgram(gl, "shaderProgram_Universe",
-                    new File("shaders/vs_texture.vp"), new File("shaders/fs_texture.fp"));
+            axesShaderProgram = getLoader().createProgram(gl, "axes", new File("shaders/vs_axes.vp"),
+                    new File("shaders/fs_axes.fp"));
+            // Do the same for the text shader
+            textShaderProgram = getLoader().createProgram(gl, "text", new File("shaders/vs_multiColorTextShader.vp"),
+                    new File("shaders/fs_multiColorTextShader.fp"));
 
-            shaderProgram_Earth = getLoader().createProgram(gl, "shaderProgram_Earth",
-                    new File("shaders/vs_perFragmentLighting.vp"), new File("shaders/fs_perFragmentLighting.fp"));
-
-            shaderProgram_Atmosphere = getLoader().createProgram(gl, "shaderProgram_Atmosphere",
-                    new File("shaders/vs_atmosphere.vp"), new File("shaders/fs_atmosphere.fp"));
+            // Same for the postprocessing shader.
+            // postprocessShader = getLoader().createProgram(gl, "postProcess",
+            // new File("shaders/vs_postprocess.vp"),
+            // new File("shaders/fs_examplePostprocess.fp"));
         } catch (final Exception e) {
             // If compilation fails, we will output the error message and quit
             // the application.
@@ -170,38 +174,39 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
             System.exit(1);
         }
 
-        // Here we define the Sphere models, and initialize them.
-        geoSphere = new GeoSphere(50, 50, 13f, false);
-        geoSphere.init(gl);
+        // Here we define the Axis models, and initialize them.
+        xAxis = new Axis(new VecF3(-1f, 0f, 0f), new VecF3(1f, 0f, 0f), .1f, .02f);
+        xAxis.init(gl);
+        yAxis = new Axis(new VecF3(0f, -1f, 0f), new VecF3(0f, 1f, 0f), .1f, .02f);
+        yAxis.init(gl);
+        zAxis = new Axis(new VecF3(0f, 0f, -1f), new VecF3(0f, 0f, 1f), .1f, .02f);
+        zAxis.init(gl);
 
-        atmSphere = new GeoSphere(50, 50, 13.2f, false);
-        atmSphere.init(gl);
+        // Here we implement some text to show on the Heads-Up-Display (HUD),
+        // which is another term for an interface that doesn't move with the
+        // scene.
+        String text = "Example text";
+        hudText = new MultiColorText(gl, getFont(), text, Color4.WHITE, fontSize);
+        hudText.init(gl);
 
-        moonSphere = new GeoSphere(50, 50, 0.273f * 13f, false);
-        moonSphere.init(gl);
+        // Here we define a PixelBufferObject, which is used for getting
+        // screenshots.
+        finalPBO = new IntPBO(canvasWidth, canvasHeight);
+        finalPBO.init(gl);
 
-        universeInvertedSphere = new InvertedGeoSphere(50, 50, 5000f, false);
-        universeInvertedSphere.init(gl);
+        // Read data
+        try {
+            dr = new DataReader();
 
-        colorTex = new ImageTexture("images/Envisat_mosaic_May_-_November_2004.jpg", 0, 0, GL3.GL_TEXTURE2);
-        normalTex = new ImageTexture("images/earthNormalMap_2048.png", 0, 0, GL3.GL_TEXTURE3);
-        specularTex = new ImageTexture("images/Envisat_mosaic_May_-_November_2004_Specular.jpg", 0, 0, GL3.GL_TEXTURE4);
-        cityLightsTex = new ImageTexture("images/earthlights1k.jpg", 0, 0, GL3.GL_TEXTURE5);
-        cloudTex = new ImageTexture("images/earthcloudmap.jpg", 0, 0, GL3.GL_TEXTURE6);
-        cloudTransparencyTex = new ImageTexture("images/earthcloudmaptrans.jpg", 0, 0, GL3.GL_TEXTURE7);
-        universeTex = new ImageTexture("images/ESOMilkyWay.jpg", 0, 0, GL3.GL_TEXTURE8);
-        moonTex = new ImageTexture("images/MoonMap_2500x1250.jpg", 0, 0, GL3.GL_TEXTURE9);
-
-        colorTex.init(gl);
-        specularTex.init(gl);
-        cityLightsTex.init(gl);
-        cloudTex.init(gl);
-        cloudTransparencyTex.init(gl);
-        normalTex.init(gl);
-        universeTex.init(gl);
-        moonTex.init(gl);
-
-        inputHandler.setViewDist(-40f);
+            hist = new Histogram2D(1f, 1f, new VecF3(), new Color4[] { Color4.BLUE, new Color4("00755E"),
+                    new Color4("014421"), new Color4("008000"), Color4.GREEN, Color4.CYAN,
+                    new Color4(135, 156, 69, 255), Color4.YELLOW, Color4.WHITE }, new String[] { "Water",
+                    "Rain Forest", "Deciduous Forest", "Evergreen Forest", "Grassland", "Tundra", "Shrubland",
+                    "Desert", "Ice" });
+            hist.init(gl);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         // Release the context.
         contextOff(drawable);
@@ -220,7 +225,7 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         // Once we have the context current, we can extract the OpenGL instance
         // from it. We have defined a OpenGL 3.0 instance in the
         // ESightNewtWindow by adding the line
-        // "glp = GLProfile.get(GLProfile.GL3)"
+        // glp = GLProfile.get(GLProfile.GL3);
         // Therefore, we extract a GL3 instance, so we cannot make any
         // unfortunate mistakes (calls to methods that are undefined for this
         // version).
@@ -240,13 +245,33 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         // inputhandler.
         modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
         modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
+        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationZ(inputHandler.getRotation().getZ()));
 
         // Render the scene with these modelview settings. In this case, the end
         // result of this action will be that the AxesFBO has been filled with
         // the right pixels.
         renderScene(gl, modelViewMatrix);
 
-        // Release the context.
+        // Render the text on the Heads-Up-Display
+        try {
+            renderHUDText(gl, modelViewMatrix, textShaderProgram);
+        } catch (UninitializedException e1) {
+            e1.printStackTrace();
+        }
+
+        // Render the FBO's to screen, doing any post-processing actions that
+        // might be wanted.
+        // renderTexturesToScreen(gl, canvasWidth, canvasHeight);
+
+        // Make a screenshot, when wanted. The PBO copies the current
+        // framebuffer. We then set the state back because we dont want to make
+        // a screenshot 60 times a second.
+        if (screenshotWanted) {
+            finalPBO.makeScreenshotPNG(gl, settings.getScreenshotFileName());
+
+            screenshotWanted = false;
+        }
+
         contextOff(drawable);
     }
 
@@ -265,65 +290,59 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
      */
     private void renderScene(GL3 gl, MatF4 mv) {
         try {
-            // Bind the FrameBufferObject so we can start rendering to it
+            renderAxes(gl, new MatF4(mv), axesShaderProgram);
+            renderHistogram(gl, new MatF4(mv), axesShaderProgram);
 
-            // Clear the renderbuffer to start with a clean (black) slate
-            gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
-
-            long currentTime = System.currentTimeMillis();
-            double timePassed = currentTime - time;
-            time = currentTime;
-
-            double minutesPassed = timePassed / 60000.0;
-            totalMinutesPassed += minutesPassed;
-
-            renderUniverse(gl, new MatF4(mv), shaderProgram_Universe);
-            renderGeoSphere(gl, new MatF4(mv), shaderProgram_Earth);
-            renderMoon(gl, new MatF4(mv), shaderProgram_Universe);
-            renderAtmosphere(gl, new MatF4(mv), shaderProgram_Atmosphere);
-
-            // Unbind the FrameBufferObject, making it available for texture
-            // extraction.
+            textShaderProgram.setUniformMatrix("PMatrix", makePerspectiveMatrix());
+            hist.drawLabels(gl, mv, textShaderProgram);
         } catch (final UninitializedException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Universe inverse sphere rendering method.
+     * Axes rendering method. This assumes rendering to an {@link FBO}. This is
+     * not a necessity, but it allows for post processing.
      * 
      * @param gl
      *            The current openGL instance.
      * @param mv
      *            The current modelview matrix.
-     * @param program
+     * @param target
      *            The {@link ShaderProgram} to use for rendering.
+     * @param target
+     *            The target {@link FBO} to render to.
      * @throws UninitializedException
      *             if either the shader Program or FBO used in this method are
      *             uninitialized before use.
      */
-    private void renderUniverse(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
-
-        // Stage the Perspective and Modelview matrixes in the
-        // ShaderProgram.
+    private void renderAxes(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+        // Stage the Perspective and Modelview matrixes in the ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
         program.setUniformMatrix("MVMatrix", mv);
-        program.setUniformMatrix("NMatrix", MatrixFMath.getNormalMatrix(mv));
 
-        // Stage the pointer to the textures
-        program.setUniform("texture_map", universeTex.getMultitexNumber());
+        // Stage the Color vector in the ShaderProgram.
+        program.setUniformVector("Color", new VecF4(1f, 0f, 0f, 1f));
 
         // Load all staged variables into the GPU, check for errors and
         // omissions.
         program.use(gl);
         // Call the model's draw method, this links the model's VertexBuffer to
         // the ShaderProgram and then calls the OpenGL draw method.
-        universeInvertedSphere.draw(gl, program);
+        xAxis.draw(gl, program);
+
+        // Do this 2 more times, with different colors and models.
+        program.setUniformVector("Color", new VecF4(0f, 1f, 0f, 1f));
+        program.use(gl);
+        yAxis.draw(gl, program);
+
+        program.setUniformVector("Color", new VecF4(0f, 0f, 1f, 1f));
+        program.use(gl);
+        zAxis.draw(gl, program);
     }
 
     /**
-     * GeoSphere rendering method. Applies the color, specular, citylights and
-     * normal maps. Uses the perFragmentLighting shaders.
+     * Renders the histogram.
      * 
      * @param gl
      *            The current openGL instance.
@@ -332,101 +351,64 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
      * @param program
      *            The {@link ShaderProgram} to use for rendering.
      * @throws UninitializedException
-     *             if either the shader Program or FBO used in this method are
-     *             uninitialized before use.
      */
-    private void renderGeoSphere(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
-
-        VecF4 rawLightPos = new VecF4(-30.0f, 4.0f, -20.0f, 0f);
-        program.setUniformVector("lightPos", rawLightPos);
-
-        MatF4 yRotatedMV = mv.mul(MatrixFMath.rotationY((float) (totalMinutesPassed * 360f)));
-
-        // Stage the Perspective and Modelview matrixes in the
-        // ShaderProgram.
+    private void renderHistogram(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+        // Stage the Perspective and Modelview matrixes in the ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
-        program.setUniformMatrix("MVMatrix", yRotatedMV);
-        program.setUniformMatrix("NMatrix", MatrixFMath.getNormalMatrix(mv));
-
-        // Stage the pointer to the textures
-        program.setUniform("colorTex", colorTex.getMultitexNumber());
-        program.setUniform("specularTex", specularTex.getMultitexNumber());
-        program.setUniform("cityLightsTex", cityLightsTex.getMultitexNumber());
-        program.setUniform("normalTex", normalTex.getMultitexNumber());
+        program.setUniformMatrix("MVMatrix", mv);
 
         // Load all staged variables into the GPU, check for errors and
         // omissions.
         program.use(gl);
-        // Call the model's draw method, this links the model's VertexBuffer to
-        // the ShaderProgram and then calls the OpenGL draw method.
-        geoSphere.draw(gl, program);
+
+        int type = dr.getNextType(), max = 0;
+        int[] oldHistData = histData;
+        histData = new int[oldHistData.length];
+
+        float[] scaledData = new float[oldHistData.length];
+        for (int i = 0; i < oldHistData.length; i++) {
+            if (type == i) {
+                histData[i] = oldHistData[i] + 1;
+            } else {
+                histData[i] = oldHistData[i];
+            }
+            if (histData[i] > max) {
+                max = histData[i];
+            }
+        }
+
+        for (int i = 0; i < oldHistData.length; i++) {
+            scaledData[i] = (float) histData[i] / (float) max;
+        }
+
+        hist.setValues(gl, scaledData);
+
+        hist.drawBars(gl, program);
     }
 
     /**
-     * Universe inverse sphere rendering method.
+     * Rendering method for text on the Heads-Up-Display (HUD). This currently
+     * prints a random string in white.
      * 
      * @param gl
      *            The current openGL instance.
      * @param mv
      *            The current modelview matrix.
-     * @param program
+     * @param target
      *            The {@link ShaderProgram} to use for rendering.
+     * @param target
+     *            The target {@link FBO} to render to.
      * @throws UninitializedException
-     *             if either the shader Program or FBO used in this method are
-     *             uninitialized before use.
+     *             if the FBO used in this method is uninitialized before use.
      */
-    private void renderMoon(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+    private void renderHUDText(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+        // Set a new text for the string
+        String randomString = "Basic Test, random: " + Math.random();
+        hudText.setString(gl, randomString, Color4.WHITE, fontSize);
 
-        // Stage the Perspective and Modelview matrixes in the
-        // ShaderProgram.
-        program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
-        program.setUniformMatrix("MVMatrix", mv.mul(MatrixFMath.translate(785, 0, 0)));
-        program.setUniformMatrix("NMatrix", MatrixFMath.getNormalMatrix(mv));
-
-        // Stage the pointer to the textures
-        program.setUniform("texture_map", moonTex.getMultitexNumber());
-
-        // Load all staged variables into the GPU, check for errors and
-        // omissions.
-        program.use(gl);
-        // Call the model's draw method, this links the model's VertexBuffer to
-        // the ShaderProgram and then calls the OpenGL draw method.
-        moonSphere.draw(gl, program);
-    }
-
-    /**
-     * Render the atmosphere by applying the cloud color and cloud transparency
-     * maps. Uses the atmosphere shaders.
-     * 
-     * @param gl
-     *            The current openGL instance.
-     * @param mv
-     *            The current modelview matrix.
-     * @param program
-     *            The {@link ShaderProgram} to use for rendering.
-     * @throws UninitializedException
-     *             if either the shader Program or FBO used in this method are
-     *             uninitialized before use.
-     */
-    private void renderAtmosphere(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
-
-        VecF4 rawLightPos = new VecF4(-30.0f, 4.0f, -20.0f, 0f);
-        program.setUniformVector("lightPos", rawLightPos);
-
-        MatF4 yRotatedMV = mv.mul(MatrixFMath.rotationY((float) (totalMinutesPassed * 360f)));
-
-        // Stage the Perspective and Modelview matrixes in the
-        // ShaderProgram.
-        program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
-        program.setUniformMatrix("MVMatrix", yRotatedMV);
-        program.setUniformMatrix("NMatrix", MatrixFMath.getNormalMatrix(mv));
-
-        // Stage the pointer to the textures
-        program.setUniform("cloudTex", cloudTex.getMultitexNumber());
-        program.setUniform("cloudTransparencyTex", cloudTransparencyTex.getMultitexNumber());
-
-        program.use(gl);
-        atmSphere.draw(gl, program);
+        // Draw the text to the renderbuffer, to (arbitrary unit) location 30x
+        // 30y counted from left bottom.
+        hudText.drawHudRelative(gl, program, canvasWidth, canvasHeight, 30f, 30f);
     }
 
     // The reshape method is automatically called by the openGL animator if the
@@ -441,7 +423,7 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         // Once we have the context current, we can extract the OpenGL instance
         // from it. We have defined a OpenGL 3.0 instance in the
         // ESightNewtWindow by adding the line
-        // "glp = GLProfile.get(GLProfile.GL3)"
+        // "glp = GLProfile.get(GLProfile.GL3);"
         // Therefore, we extract a GL3 instance, so we cannot make any
         // unfortunate mistakes (calls to methods that are undefined for this
         // version).
@@ -451,6 +433,11 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         canvasWidth = GLContext.getCurrent().getGLDrawable().getWidth();
         canvasHeight = GLContext.getCurrent().getGLDrawable().getHeight();
         setAspect((float) canvasWidth / (float) canvasHeight);
+
+        // Resize the PixelBuffer Object that can be used for screenshots.
+        finalPBO.delete(gl);
+        finalPBO = new IntPBO(w, h);
+        finalPBO.init(gl);
 
         // Release the context.
         contextOff(drawable);
@@ -468,14 +455,14 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         // Once we have the context current, we can extract the OpenGL instance
         // from it. We have defined a OpenGL 3.0 instance in the
         // ESightNewtWindow by adding the line
-        // "glp = GLProfile.get(GLProfile.GL3)"
+        // "glp = GLProfile.get(GLProfile.GL3);"
         // Therefore, we extract a GL3 instance, so we cannot make any
         // unfortunate mistakes (calls to methods that are undefined for this
         // version).
         final GL3 gl = GLContext.getCurrentGL().getGL3();
 
-        // Delete Models
-        geoSphere.delete(gl);
+        // Delete the FramBuffer Objects.
+        finalPBO.delete(gl);
 
         // Let the ShaderProgramLoader clean up. This deletes all of the
         // ShaderProgram instances as well.
@@ -484,8 +471,6 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         } catch (UninitializedException e1) {
             e1.printStackTrace();
         }
-
-        // Release the context.
 
         // Release the context.
         contextOff(drawable);

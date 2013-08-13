@@ -48,7 +48,7 @@ public class Quad extends Model {
      *            The center location of this quad.
      */
     public Quad(float height, float width, VecF3 center) {
-        super(vertex_format.TRIANGLES);
+        super(VertexFormat.TRIANGLES);
 
         Point4[] vertices = makeVertices(height, width, center);
 

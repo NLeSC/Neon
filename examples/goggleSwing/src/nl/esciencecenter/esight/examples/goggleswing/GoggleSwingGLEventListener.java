@@ -371,7 +371,7 @@ public class GoggleSwingGLEventListener extends ESightGLEventListener {
 
         // Draw the text to the renderbuffer, to (arbitrary unit) location 30x
         // 30y counted from left bottom.
-        hudText.draw(gl, program, canvasWidth, canvasHeight, 30f, 30f);
+        hudText.drawHudRelative(gl, program, canvasWidth, canvasHeight, 30f, 30f);
 
         // Unbind the FrameBufferObject, making it available for texture
         // extraction.

@@ -66,7 +66,81 @@ public class Color4 extends VecF4 {
      *            The Alpha component to this color.
      */
     public Color4(float r, float g, float b, float a) {
-        super(r, g, b, a);
+        super();
+
+        boolean rSmall = (r >= 0.0f && r <= 1.0f);
+        boolean gSmall = (g >= 0.0f && g <= 1.0f);
+        boolean bSmall = (b >= 0.0f && b <= 1.0f);
+        boolean aSmall = (a >= 0.0f && a <= 1.0f);
+
+        if (rSmall && gSmall && bSmall && aSmall) {
+            // Interpret values as 0.0f < X < 1.0f
+            setR(r);
+            setG(g);
+            setB(b);
+            setA(a);
+        } else {
+            // Interpret values as 0.0f < X < 255.0f
+            setR(r / 255f);
+            setG(g / 255f);
+            setB(b / 255f);
+            setA(a / 255f);
+        }
+    }
+
+    /**
+     * Make a color using a HTML-style hex code with 6 or 8 places. Do not use a
+     * \# before the code.
+     * 
+     * @param hex
+     *            The Hex code to convert to a color, use 8 or 6 characters,
+     *            depending on alpha yes/no.
+     * @throws IllegalArgumentException
+     *             If the hex string has an incorrect length.
+     */
+    public Color4(String hex) throws IllegalArgumentException {
+        super();
+
+        if (hex.length() == 6) {
+            String rHex = hex.substring(0, 2);
+            String gHex = hex.substring(2, 4);
+            String bHex = hex.substring(4, 6);
+
+            int rInt = Integer.parseInt(rHex, 16);
+            int gInt = Integer.parseInt(gHex, 16);
+            int bInt = Integer.parseInt(bHex, 16);
+
+            float rFloat = rInt / 255f;
+            float gFloat = gInt / 255f;
+            float bFloat = bInt / 255f;
+
+            setR(rFloat);
+            setG(gFloat);
+            setB(bFloat);
+            setA(1.0f);
+        } else if (hex.length() == 8) {
+            String rHex = hex.substring(0, 2);
+            String gHex = hex.substring(2, 4);
+            String bHex = hex.substring(4, 6);
+            String aHex = hex.substring(6, 8);
+
+            int rInt = Integer.parseInt(rHex, 16);
+            int gInt = Integer.parseInt(gHex, 16);
+            int bInt = Integer.parseInt(bHex, 16);
+            int aInt = Integer.parseInt(aHex, 16);
+
+            float rFloat = rInt / 255f;
+            float gFloat = gInt / 255f;
+            float bFloat = bInt / 255f;
+            float aFloat = aInt / 255f;
+
+            setR(rFloat);
+            setG(gFloat);
+            setB(bFloat);
+            setA(aFloat);
+        } else {
+            throw new IllegalArgumentException("wrong number of elements for hex code color");
+        }
     }
 
     /**

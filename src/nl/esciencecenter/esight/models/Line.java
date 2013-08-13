@@ -35,7 +35,7 @@ public class Line extends Model {
      *            The end point for the line.
      */
     public Line(VecF3 start, VecF3 end) {
-        super(vertex_format.LINES);
+        super(VertexFormat.LINES);
 
         int numVertices = 2;
 

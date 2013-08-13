@@ -40,7 +40,7 @@ public class Axis extends Model {
      *            The minor interval for ticks.
      */
     public Axis(VecF3 start, VecF3 end, float majorInterval, float minorInterval) {
-        super(vertex_format.LINES);
+        super(VertexFormat.LINES);
 
         float length = VectorFMath.length(end.sub(start));
         int numMajorIntervals = (int) Math.floor(length / majorInterval);

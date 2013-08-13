@@ -249,8 +249,15 @@ public class ShaderProgram {
 
                 if (!thisEntryAvailable) {
                     allPresent = false;
-                    logger.warn("SHADER WARNING: " + fs.getName() + " uniform variable " + uniformEntry.getKey()
-                            + " not present at use.");
+                    if (vsUniforms.containsKey(uniformEntry.getKey())) {
+                        logger.warn("SHADER WARNING: " + vs.getName() + " uniform variable " + uniformEntry.getKey()
+                                + " not present at use.");
+                    }
+                    if (fsUniforms.containsKey(uniformEntry.getKey())) {
+                        logger.warn("SHADER WARNING: " + fs.getName() + " uniform variable " + uniformEntry.getKey()
+                                + " not present at use.");
+
+                    }
                 }
             }
         }

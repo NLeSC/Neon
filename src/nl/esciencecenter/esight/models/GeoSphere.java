@@ -50,7 +50,7 @@ public class GeoSphere extends Model {
      *            Flag for possible 3d texture coordinates.
      */
     public GeoSphere(int latRibs, int lonRibs, float radius, boolean texCoordsIn3D) {
-        super(vertex_format.TRIANGLES);
+        super(VertexFormat.TRIANGLES);
         this.texCoordsIn3D = texCoordsIn3D;
         this.latRibs = latRibs;
         this.lonRibs = lonRibs;
