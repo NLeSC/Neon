@@ -14,5 +14,5 @@ void main(void)
 	vColor = MCvertexColor.rgb;
 	vAlpha = MCvertexColor.a;
 	
-    gl_Position = MVMatrix * PMatrix * MCvertex;
+    gl_Position = PMatrix * MVMatrix * MCvertex;
 }

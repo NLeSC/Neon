@@ -43,24 +43,24 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public abstract class ESightGLEventListener implements GLEventListener {
-    private static final Logger logger = LoggerFactory.getLogger(ESightGLEventListener.class);
+    private static final Logger       logger  = LoggerFactory.getLogger(ESightGLEventListener.class);
 
     /** General radius variable needed for lookAt method */
-    private static final float radius = 1.0f;
+    private static final float        radius  = 1.0f;
     /** General ftheta variable needed for lookAt method */
-    private static final float ftheta = 0.0f;
+    private static final float        ftheta  = 0.0f;
     /** General phi variable needed for lookAt method */
-    private static final float phi = 0.0f;
+    private static final float        phi     = 0.0f;
 
     /**
      * General Field of View Y-direction variable needed for a default
      * perspective
      */
-    private static final float fovy = 45.0f;
+    private static final float        fovy    = 45.0f;
     /** General Near clipping plane variable needed for a default perspective */
-    private static final float zNear = 0.1f;
+    private static final float        zNear   = 0.1f;
     /** General Far clipping plane variable needed for a default perspective */
-    private static final float zFar = 30000.0f;
+    private static final float        zFar    = 1000000.0f;
 
     /**
      * A default implementation of the ProgramLoader, needed for programmable
@@ -71,37 +71,37 @@ public abstract class ESightGLEventListener implements GLEventListener {
     /**
      * Aspect ratio variable, normally set by the reshape function
      */
-    private float aspect;
+    private float                     aspect;
 
     /** Ubuntu fontset is used for HUD elements */
-    private static final int fontSet = FontFactory.UBUNTU;
+    private static final int          fontSet = FontFactory.UBUNTU;
     /** font is used for HUD elements @see fontSet */
-    private final Font font;
+    private final Font                font;
 
     /**
      * This variable is used (among others) in the lookAt helper function to
      * define the ModelView matrix, if no inputHandler was specified when
      * constructing this class.
      */
-    private float inputRotationX;
+    private float                     inputRotationX;
     /**
      * This variable is used (among others) in the lookAt helper function to
      * define the ModelView matrix, if no inputHandler was specified when
      * constructing this class.
      */
-    private float inputRotationY;
+    private float                     inputRotationY;
     /**
      * This variable is used (among others) in the lookAt helper function to
      * define the ModelView matrix, if no inputHandler was specified when
      * constructing this class.
      */
-    private float inputViewDistance;
+    private float                     inputViewDistance;
 
     /**
      * This inputHandler is used to define the Modelview Matrix in the lookAt
      * helper function if it is specified upon constructing this class.
      */
-    private InputHandler inputHandler;
+    private InputHandler              inputHandler;
 
     /**
      * Creates a new GLEventListener

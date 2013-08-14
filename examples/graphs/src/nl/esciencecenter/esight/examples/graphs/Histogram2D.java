@@ -13,20 +13,20 @@ import nl.esciencecenter.esight.text.jogampexperimental.Font;
 import nl.esciencecenter.esight.text.jogampexperimental.FontFactory;
 
 public class Histogram2D {
-    private final float[] data;
+    private final float[]          data;
     private final LeftBottomQuad[] bars;
-    private final Color4[] colors;
+    private final Color4[]         colors;
     private final MultiColorText[] barLabels;
-    private final String[] barLabelTexts;
+    private final String[]         barLabelTexts;
 
-    private final float width, height;
-    private final VecF3 leftBottomCoordinates;
+    private final float            width, height;
+    private final VecF3            leftBottomCoordinates;
 
     /** Ubuntu fontset is used for HUD elements */
-    private static final int fontSet = FontFactory.UBUNTU;
+    private static final int       fontSet  = FontFactory.UBUNTU;
     /** font is used for HUD elements @see fontSet */
-    private final Font font;
-    private final int FONTSIZE = 30;
+    private final Font             font;
+    private final int              FONTSIZE = 20;
 
     public Histogram2D(float width, float height, VecF3 leftBottomCoordinates, Color4[] barColors, String[] labels) {
         this.width = width;
@@ -82,11 +82,19 @@ public class Histogram2D {
     public void drawLabels(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
         float widthPerQuad = width / bars.length;
 
+        float scale = .0025f;
+
+        MatF4 scaleMatrix = MatrixFMath.scale(scale);
+        MatF4 scaledRotationMatrix = scaleMatrix.mul(MatrixFMath.rotationZ(-90f));
+
         for (int i = 0; i < bars.length; i++) {
             MultiColorText label = barLabels[i];
-            VecF3 newLeftBottom = leftBottomCoordinates.add(new VecF3(i * widthPerQuad, -0.5f, 0f));
+            VecF3 newLeftBottom = leftBottomCoordinates.add(new VecF3(0.5f, ((widthPerQuad / scale) * i)
+                    + ((.2f * widthPerQuad / scale)), 0f));
 
-            program.setUniformMatrix("MVMatrix", mv.mul(MatrixFMath.translate(newLeftBottom)));
+            MatF4 scaledRotationTranslatedMatrix = scaledRotationMatrix.mul(MatrixFMath.translate(newLeftBottom));
+
+            program.setUniformMatrix("MVMatrix", mv.mul(scaledRotationTranslatedMatrix));
 
             label.draw(gl, program);
         }

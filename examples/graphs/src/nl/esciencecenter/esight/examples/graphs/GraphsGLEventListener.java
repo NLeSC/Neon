@@ -11,6 +11,7 @@ import javax.media.opengl.GLContext;
 import nl.esciencecenter.esight.ESightGLEventListener;
 import nl.esciencecenter.esight.datastructures.FBO;
 import nl.esciencecenter.esight.datastructures.IntPBO;
+import nl.esciencecenter.esight.examples.graphs.DataReader.MapPoint;
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 import nl.esciencecenter.esight.input.InputHandler;
 import nl.esciencecenter.esight.math.Color4;
@@ -48,44 +49,49 @@ import nl.esciencecenter.esight.text.MultiColorText;
  */
 public class GraphsGLEventListener extends ESightGLEventListener {
     // Two example shader program definitions.
-    private ShaderProgram axesShaderProgram, textShaderProgram;
+    private ShaderProgram            axesShaderProgram, textShaderProgram;
 
     // Model definitions, the quad is necessary for Full-screen rendering. The
     // axes are the model we wish to render (example)
-    private Model xAxis, yAxis, zAxis;
+    private Model                    xAxis, yAxis, zAxis;
 
-    private DataReader dr;
-    private Histogram2D hist;
-    private int[] histData = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    private DataReader               dr;
+    private Histogram2D              hist;
+    private int[]                    histData     = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+    private ScatterPlot3D            scat;
 
     // Global (singleton) settings instance.
-    private final GraphsSettings settings = GraphsSettings.getInstance();
+    private final GraphsSettings     settings     = GraphsSettings.getInstance();
 
     // Pixelbuffer Object, we use this to get screenshots.
-    private IntPBO finalPBO;
+    private IntPBO                   finalPBO;
 
     // Global (singleton) inputhandler instance.
     private final GraphsInputHandler inputHandler = GraphsInputHandler.getInstance();
 
     // State keeping variable
-    private boolean screenshotWanted;
+    private boolean                  screenshotWanted;
 
     // Example of text to display on screen, and the size of the font for this.
-    private MultiColorText hudText;
-    private final int fontSize = 30;
+    private MultiColorText           hudText;
+    private final int                fontSize     = 30;
 
     // Height and width of the drawable area. We extract this from the opengl
     // instance in the reshape method every time it is changed, but set it in
     // the init method initially. The default values are defined by the settings
     // class.
-    private int canvasWidth, canvasHeight;
+    private int                      canvasWidth, canvasHeight;
 
     // Variables needed to calculate the viewpoint and camera angle.
-    final Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())),
-            (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
-            (float) (getRadius() * Math.cos(getFtheta())));
-    final Point4 at = new Point4(0.0f, 0.0f, 0.0f);
-    final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
+    final Point4                     eye          = new Point4(
+                                                          (float) (getRadius() * Math.sin(getFtheta()) * Math
+                                                                  .cos(getPhi())),
+                                                          (float) (getRadius() * Math.sin(getFtheta()) * Math
+                                                                  .sin(getPhi())), (float) (getRadius() * Math
+                                                                  .cos(getFtheta())));
+    final Point4                     at           = new Point4(0.0f, 0.0f, 0.0f);
+    final VecF4                      up           = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
     /**
      * Basic constructor for ESightExampleGLEventListener.
@@ -200,10 +206,12 @@ public class GraphsGLEventListener extends ESightGLEventListener {
 
             hist = new Histogram2D(1f, 1f, new VecF3(), new Color4[] { Color4.BLUE, new Color4("00755E"),
                     new Color4("014421"), new Color4("008000"), Color4.GREEN, Color4.CYAN,
-                    new Color4(135, 156, 69, 255), Color4.YELLOW, Color4.WHITE }, new String[] { "Water",
+                    new Color4(135, 156, 69, 255), Color4.YELLOW, Color4.WHITE, Color4.WHITE }, new String[] { "Water",
                     "Rain Forest", "Deciduous Forest", "Evergreen Forest", "Grassland", "Tundra", "Shrubland",
-                    "Desert", "Ice" });
+                    "Desert", "Ice", "" });
             hist.init(gl);
+
+            scat = new ScatterPlot3D();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -291,10 +299,14 @@ public class GraphsGLEventListener extends ESightGLEventListener {
     private void renderScene(GL3 gl, MatF4 mv) {
         try {
             renderAxes(gl, new MatF4(mv), axesShaderProgram);
-            renderHistogram(gl, new MatF4(mv), axesShaderProgram);
 
+            renderScatterplot(gl, mv, textShaderProgram);
+
+            renderHistogram(gl, new MatF4(mv), axesShaderProgram);
             textShaderProgram.setUniformMatrix("PMatrix", makePerspectiveMatrix());
             hist.drawLabels(gl, mv, textShaderProgram);
+
+            dr.next();
         } catch (final UninitializedException e) {
             e.printStackTrace();
         }
@@ -361,7 +373,7 @@ public class GraphsGLEventListener extends ESightGLEventListener {
         // omissions.
         program.use(gl);
 
-        int type = dr.getNextType(), max = 0;
+        int type = dr.getType(), max = 0;
         int[] oldHistData = histData;
         histData = new int[oldHistData.length];
 
@@ -384,6 +396,55 @@ public class GraphsGLEventListener extends ESightGLEventListener {
         hist.setValues(gl, scaledData);
 
         hist.drawBars(gl, program);
+    }
+
+    /**
+     * Renders the scatterplot.
+     * 
+     * @param gl
+     *            The current openGL instance.
+     * @param mv
+     *            The current modelview matrix.
+     * @param program
+     *            The {@link ShaderProgram} to use for rendering.
+     * @throws UninitializedException
+     */
+    private void renderScatterplot(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+        // Stage the Perspective and Modelview matrixes in the ShaderProgram.
+        program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
+        program.setUniformMatrix("MVMatrix", mv);
+
+        // Load all staged variables into the GPU, check for errors and
+        // omissions.
+        program.use(gl);
+
+        MapPoint mp = dr.getMapPoint();
+
+        Color4 color = new Color4();
+        if (mp.getLandType() == 0) {
+            color = Color4.BLUE;
+        } else if (mp.getLandType() == 1) {
+            color = new Color4("00755E");
+        } else if (mp.getLandType() == 2) {
+            color = new Color4("014421");
+        } else if (mp.getLandType() == 3) {
+            color = new Color4("008000");
+        } else if (mp.getLandType() == 4) {
+            color = Color4.GREEN;
+        } else if (mp.getLandType() == 5) {
+            color = Color4.CYAN;
+        } else if (mp.getLandType() == 6) {
+            color = new Color4(135, 156, 69, 255);
+        } else if (mp.getLandType() == 7) {
+            color = Color4.YELLOW;
+        } else if (mp.getLandType() == 8) {
+            color = Color4.WHITE;
+        }
+
+        scat.add(new Point4(-mp.getLatitude() / 180f, mp.getHeight() / 10000f, mp.getLongitude() / 360f), color);
+        scat.init(gl);
+
+        scat.draw(gl, program);
     }
 
     /**

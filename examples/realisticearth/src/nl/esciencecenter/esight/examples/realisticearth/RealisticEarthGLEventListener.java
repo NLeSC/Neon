@@ -44,39 +44,42 @@ import nl.esciencecenter.esight.textures.Texture2D;
  */
 public class RealisticEarthGLEventListener extends ESightGLEventListener {
     // Two example shader program definitions.
-    private ShaderProgram shaderProgram_Universe, shaderProgram_Earth, shaderProgram_Atmosphere;
+    private ShaderProgram                    shaderProgram_Universe, shaderProgram_Earth, shaderProgram_Atmosphere;
 
     // Model definitions, the quad is necessary for Full-screen rendering. The
     // axes are the model we wish to render (example)
-    private GeoSphere geoSphere, atmSphere, moonSphere;
+    private GeoSphere                        geoSphere, atmSphere, moonSphere;
 
-    private InvertedGeoSphere universeInvertedSphere;
+    private InvertedGeoSphere                universeInvertedSphere;
 
     // Texture definitions for the spheres
-    private Texture2D colorTex, specularTex, cityLightsTex, cloudTex, cloudTransparencyTex, normalTex, universeTex,
-            moonTex;
+    private Texture2D                        colorTex, specularTex, cityLightsTex, cloudTex, cloudTransparencyTex,
+            normalTex, universeTex, moonTex;
 
     // Global (singleton) settings instance.
-    private final RealisticEarthSettings settings = RealisticEarthSettings.getInstance();
+    private final RealisticEarthSettings     settings           = RealisticEarthSettings.getInstance();
 
     // Global (singleton) inputhandler instance.
-    private final RealisticEarthInputHandler inputHandler = RealisticEarthInputHandler.getInstance();
+    private final RealisticEarthInputHandler inputHandler       = RealisticEarthInputHandler.getInstance();
 
     // Height and width of the drawable area. We extract this from the opengl
     // instance in the reshape method every time it is changed, but set it in
     // the init method initially. The default values are defined by the settings
     // class.
-    private int canvasWidth, canvasHeight;
+    private int                              canvasWidth, canvasHeight;
 
     // Variables needed to calculate the viewpoint and camera angle.
-    final Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())),
-            (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
-            (float) (getRadius() * Math.cos(getFtheta())));
-    final Point4 at = new Point4(0.0f, 0.0f, 0.0f);
-    final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
+    final Point4                             eye                = new Point4(
+                                                                        (float) (getRadius() * Math.sin(getFtheta()) * Math
+                                                                                .cos(getPhi())),
+                                                                        (float) (getRadius() * Math.sin(getFtheta()) * Math
+                                                                                .sin(getPhi())),
+                                                                        (float) (getRadius() * Math.cos(getFtheta())));
+    final Point4                             at                 = new Point4(0.0f, 0.0f, 0.0f);
+    final VecF4                              up                 = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
 
-    long time = System.currentTimeMillis();
-    double totalMinutesPassed = 0.0;
+    long                                     time               = System.currentTimeMillis();
+    double                                   totalMinutesPassed = 0.0;
 
     /**
      * Basic constructor for ESightExampleGLEventListener.
@@ -180,7 +183,7 @@ public class RealisticEarthGLEventListener extends ESightGLEventListener {
         moonSphere = new GeoSphere(50, 50, 0.273f * 13f, false);
         moonSphere.init(gl);
 
-        universeInvertedSphere = new InvertedGeoSphere(50, 50, 5000f, false);
+        universeInvertedSphere = new InvertedGeoSphere(50, 50, 500000f, false);
         universeInvertedSphere.init(gl);
 
         colorTex = new ImageTexture("images/Envisat_mosaic_May_-_November_2004.jpg", 0, 0, GL3.GL_TEXTURE2);
