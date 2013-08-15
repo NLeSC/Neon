@@ -11,6 +11,7 @@ out float vAlpha;
 
 void main(void)
 {
+	gl_PointSize = 3;
 	vColor = MCvertexColor.rgb;
 	vAlpha = MCvertexColor.a;
 	

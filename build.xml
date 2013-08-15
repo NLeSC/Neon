@@ -36,34 +36,20 @@
 	<target name="compile" description="compile the source ">
 		<mkdir dir="build/classes" />
 		<mkdir dir="dist" />
-
+		
 		<!-- Compile the java code from src into classes -->
 		<javac srcdir="src" destdir="build/classes" debug="on">
+			<include name="**/*.java"/>
+			<exclude name="**/*Test*"/>
+			
 			<classpath refid="lib.jars" />
 			<compilerarg value="-Xlint" />
 		</javac>
-
-		<javac srcdir="examples/helloworld/src" destdir="build/classes" debug="on">
-			<classpath refid="lib.jars" />
-			<compilerarg value="-Xlint" />
-		</javac>
-
-		<javac srcdir="examples/goggleSwing/src" destdir="build/classes" debug="on">
-			<classpath refid="lib.jars" />
-			<compilerarg value="-Xlint" />
-		</javac>
-
-		<javac srcdir="examples/colormap/src" destdir="build/classes" debug="on">
-			<classpath refid="lib.jars" />
-			<compilerarg value="-Xlint" />
-		</javac>
-
-		<javac srcdir="examples/liveshadereditor/src" destdir="build/classes" debug="on">
-			<classpath refid="lib.jars" />
-			<compilerarg value="-Xlint" />
-		</javac>
-
-		<javac srcdir="examples/realisticearth/src" destdir="build/classes" debug="on">
+		
+		<javac srcdir="examples" destdir="build/classes" debug="on">
+			<include name="**/*.java"/>
+			<exclude name="**/*Test*"/>
+			
 			<classpath refid="lib.jars" />
 			<compilerarg value="-Xlint" />
 		</javac>
