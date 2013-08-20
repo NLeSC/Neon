@@ -379,15 +379,15 @@ public class MultiColorText extends Model {
     @Override
     public void draw(GL3 gl, ShaderProgram program) throws UninitializedException {
         if (initialized) {
+            getVbo().bind(gl);
+
+            program.linkAttribs(gl, getVbo().getAttribs());
+
             try {
                 program.use(gl);
             } catch (UninitializedException e) {
                 LOGGER.error(e.getMessage());
             }
-
-            getVbo().bind(gl);
-
-            program.linkAttribs(gl, getVbo().getAttribs());
 
             gl.glDrawArrays(GL3.GL_TRIANGLES, 0, getNumVertices());
         } else {

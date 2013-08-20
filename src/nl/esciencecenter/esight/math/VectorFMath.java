@@ -330,7 +330,7 @@ public final class VectorFMath {
             VecF4 endLocation) {
         VecF4[] newBezierPoints = new VecF4[steps];
         for (int i = 0; i < steps; i++) {
-            newBezierPoints[i] = new VecF4();
+            newBezierPoints[i] = new VecF4(0f, 0f, 0f, 1f);
         }
 
         float t = 1f / steps;

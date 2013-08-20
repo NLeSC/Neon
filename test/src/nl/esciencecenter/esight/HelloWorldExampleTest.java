@@ -1,6 +1,6 @@
 package nl.esciencecenter.esight;
 
-import nl.esciencecenter.esight.examples.graphs.GraphsExample;
+import nl.esciencecenter.esight.examples.jurriaan.GraphsExample;
 
 import org.junit.Test;
 

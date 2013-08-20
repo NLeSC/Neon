@@ -11,7 +11,7 @@ import java.util.List;
 public class DataReader {
     public class MapPoint {
         private final float latitude, longitude, height;
-        private final int   landType;
+        private final int landType;
 
         public MapPoint(float latitude, float longitude, float height, int landType) {
             this.latitude = latitude;
@@ -37,11 +37,11 @@ public class DataReader {
         }
     }
 
-    private File                 dataFile;
+    private File dataFile;
 
-    private final List<Integer>  landType;
+    private final List<Integer> landType;
     private final List<MapPoint> mapPoints;
-    private int                  index = 0;
+    private int index = 0;
 
     public DataReader() throws FileNotFoundException {
         File newFile = new File("examples/graphs/data/ISCCP.D2GRID.0.GLOBAL.1983.99.99.9999.GPC");
@@ -90,21 +90,24 @@ public class DataReader {
     }
 
     public int getType() {
+        if (index == mapPoints.size()) {
+            return Integer.MIN_VALUE;
+        }
         int type = landType.get(index);
         return type;
     }
 
     public MapPoint getMapPoint() {
+        if (index == mapPoints.size()) {
+            return null;
+        }
         MapPoint result = mapPoints.get(index);
         return result;
-
     }
 
     public void next() {
-        index++;
-
-        if (index == mapPoints.size()) {
-            index = 0;
+        if (index < mapPoints.size() - 1) {
+            index++;
         }
     }
 

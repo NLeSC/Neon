@@ -13,20 +13,20 @@ import nl.esciencecenter.esight.text.jogampexperimental.Font;
 import nl.esciencecenter.esight.text.jogampexperimental.FontFactory;
 
 public class Histogram2D {
-    private final float[]          data;
+    private final float[] data;
     private final LeftBottomQuad[] bars;
-    private final Color4[]         colors;
+    private final Color4[] colors;
     private final MultiColorText[] barLabels;
-    private final String[]         barLabelTexts;
+    private final String[] barLabelTexts;
 
-    private final float            width, height;
-    private final VecF3            leftBottomCoordinates;
+    private final float width, height;
+    private final VecF3 leftBottomCoordinates;
 
     /** Ubuntu fontset is used for HUD elements */
-    private static final int       fontSet  = FontFactory.UBUNTU;
+    private static final int fontSet = FontFactory.UBUNTU;
     /** font is used for HUD elements @see fontSet */
-    private final Font             font;
-    private final int              FONTSIZE = 20;
+    private final Font font;
+    private final int FONTSIZE = 20;
 
     public Histogram2D(float width, float height, VecF3 leftBottomCoordinates, Color4[] barColors, String[] labels) {
         this.width = width;
@@ -60,8 +60,10 @@ public class Histogram2D {
 
         int numBars = data.length;
         for (int i = 0; i < numBars; i++) {
-            barLabels[i] = new MultiColorText(gl, font, barLabelTexts[i], Color4.WHITE, FONTSIZE);
-            barLabels[i].setString(gl, barLabelTexts[i], Color4.WHITE, FONTSIZE);
+            if (barLabels[i] == null) {
+                barLabels[i] = new MultiColorText(gl, font, barLabelTexts[i], Color4.WHITE, FONTSIZE);
+                barLabels[i].setString(gl, barLabelTexts[i], Color4.WHITE, FONTSIZE);
+            }
         }
     }
 

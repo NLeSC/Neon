@@ -151,10 +151,10 @@ public class InputHandler implements MouseListener, KeyListener {
 
         if (e.isShiftDown()) {
             float wheelRotation = e.getRotation()[0];
-            newViewDist -= wheelRotation * 2;
+            newViewDist -= wheelRotation * .5;
         } else {
             float wheelRotation = e.getRotation()[1];
-            newViewDist -= wheelRotation * 10;
+            newViewDist -= wheelRotation * 2;
         }
         viewDist = newViewDist;
     }

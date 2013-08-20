@@ -23,7 +23,6 @@ import nl.esciencecenter.esight.math.VecF4;
 import nl.esciencecenter.esight.models.Axis;
 import nl.esciencecenter.esight.models.Model;
 import nl.esciencecenter.esight.shaders.ShaderProgram;
-import nl.esciencecenter.esight.text.MultiColorText;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
@@ -49,7 +48,7 @@ import nl.esciencecenter.esight.text.MultiColorText;
  */
 public class GraphsGLEventListener extends ESightGLEventListener {
     // Two example shader program definitions.
-    private ShaderProgram axesShaderProgram, textShaderProgram;
+    private ShaderProgram axesShaderProgram, textShaderProgram, lineShaderProgram;
 
     // Model definitions, the quad is necessary for Full-screen rendering. The
     // axes are the model we wish to render (example)
@@ -57,8 +56,9 @@ public class GraphsGLEventListener extends ESightGLEventListener {
 
     private DataReader dr;
     private Histogram2D hist;
-    private int[] histData = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    private int[] histData = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     private LineGraph2D lineGraph;
+    private BezierGraph2D bezierGraph;
 
     private ScatterPlot3D scat;
 
@@ -73,10 +73,6 @@ public class GraphsGLEventListener extends ESightGLEventListener {
 
     // State keeping variable
     private boolean screenshotWanted;
-
-    // Example of text to display on screen, and the size of the font for this.
-    private MultiColorText hudText;
-    private final int fontSize = 30;
 
     // Height and width of the drawable area. We extract this from the opengl
     // instance in the reshape method every time it is changed, but set it in
@@ -165,6 +161,9 @@ public class GraphsGLEventListener extends ESightGLEventListener {
             // Do the same for the text shader
             textShaderProgram = getLoader().createProgram(gl, "text", new File("shaders/vs_multiColorTextShader.vp"),
                     new File("shaders/fs_multiColorTextShader.fp"));
+            // Do the same for the line shader
+            lineShaderProgram = getLoader().createProgram(gl, "line", new File("shaders/vs_lineShader.vp"),
+                    new File("shaders/fs_lineShader.fp"));
 
             // Same for the postprocessing shader.
             // postprocessShader = getLoader().createProgram(gl, "postProcess",
@@ -186,13 +185,6 @@ public class GraphsGLEventListener extends ESightGLEventListener {
         zAxis = new Axis(new VecF3(0f, 0f, -1f), new VecF3(0f, 0f, 1f), .1f, .02f);
         zAxis.init(gl);
 
-        // Here we implement some text to show on the Heads-Up-Display (HUD),
-        // which is another term for an interface that doesn't move with the
-        // scene.
-        String text = "Example text";
-        hudText = new MultiColorText(gl, getFont(), text, Color4.WHITE, fontSize);
-        hudText.init(gl);
-
         // Here we define a PixelBufferObject, which is used for getting
         // screenshots.
         finalPBO = new IntPBO(canvasWidth, canvasHeight);
@@ -200,9 +192,9 @@ public class GraphsGLEventListener extends ESightGLEventListener {
 
         Color4[] vegetationColors = new Color4[] { Color4.BLUE, new Color4("00755E"), new Color4("014421"),
                 new Color4("008000"), Color4.GREEN, Color4.CYAN, new Color4(135, 156, 69, 255), Color4.YELLOW,
-                Color4.WHITE, Color4.WHITE };
+                Color4.WHITE };
         String[] vegetationNames = new String[] { "Water", "Rain Forest", "Deciduous Forest", "Evergreen Forest",
-                "Grassland", "Tundra", "Shrubland", "Desert", "Ice", "" };
+                "Grassland", "Tundra", "Shrubland", "Desert", "Ice" };
 
         // Read data
         try {
@@ -211,8 +203,13 @@ public class GraphsGLEventListener extends ESightGLEventListener {
             hist = new Histogram2D(1f, 1f, new VecF3(), vegetationColors, vegetationNames);
             hist.init(gl);
 
-            // lineGraph = new LineGraph2D(1f, 1f, 100, vegetationColors);
-            // lineGraph.init(gl);
+            lineGraph = new LineGraph2D(1f, 1f, 50, vegetationColors, vegetationNames,
+                    "Height above sealevel in meters", "% of total vegetation of this type");
+            lineGraph.init(gl);
+
+            bezierGraph = new BezierGraph2D(1f, 1f, 50, vegetationColors, vegetationNames, "Latitude in degrees",
+                    "% of total vegetation of this type");
+            bezierGraph.init(gl);
 
             scat = new ScatterPlot3D();
         } catch (FileNotFoundException e) {
@@ -263,17 +260,6 @@ public class GraphsGLEventListener extends ESightGLEventListener {
         // the right pixels.
         renderScene(gl, modelViewMatrix);
 
-        // Render the text on the Heads-Up-Display
-        try {
-            renderHUDText(gl, modelViewMatrix, textShaderProgram);
-        } catch (UninitializedException e1) {
-            e1.printStackTrace();
-        }
-
-        // Render the FBO's to screen, doing any post-processing actions that
-        // might be wanted.
-        // renderTexturesToScreen(gl, canvasWidth, canvasHeight);
-
         // Make a screenshot, when wanted. The PBO copies the current
         // framebuffer. We then set the state back because we dont want to make
         // a screenshot 60 times a second.
@@ -305,11 +291,22 @@ public class GraphsGLEventListener extends ESightGLEventListener {
 
             renderScatterplot(gl, mv, textShaderProgram);
 
-            // renderLineGraph(gl, mv, textShaderProgram);
+            renderLineGraph(gl, mv, lineShaderProgram);
+
+            renderBezierGraph(gl, mv, lineShaderProgram);
 
             renderHistogram(gl, mv, axesShaderProgram);
             textShaderProgram.setUniformMatrix("PMatrix", makePerspectiveMatrix());
             hist.drawLabels(gl, mv, textShaderProgram);
+
+            ModelViewStack mvStack = new ModelViewStack();
+            mvStack.putTop(MatrixFMath.translate(-1f, 0f, -1f));
+
+            lineGraph.drawLabels(gl, mv, mvStack, textShaderProgram);
+
+            mvStack = new ModelViewStack();
+            mvStack.putTop(MatrixFMath.translate(-1f, 0f, 0f));
+            bezierGraph.drawLabels(gl, mv, mvStack, textShaderProgram);
 
             dr.next();
 
@@ -380,32 +377,34 @@ public class GraphsGLEventListener extends ESightGLEventListener {
         program.use(gl);
 
         int type = dr.getType(), max = 0;
-        int[] oldHistData = histData;
-        histData = new int[oldHistData.length];
+        if (type != Integer.MIN_VALUE) {
+            int[] oldHistData = histData;
+            histData = new int[oldHistData.length];
 
-        float[] scaledData = new float[oldHistData.length];
-        for (int i = 0; i < oldHistData.length; i++) {
-            if (type == i) {
-                histData[i] = oldHistData[i] + 1;
-            } else {
-                histData[i] = oldHistData[i];
+            float[] scaledData = new float[oldHistData.length];
+            for (int i = 0; i < oldHistData.length; i++) {
+                if (type == i) {
+                    histData[i] = oldHistData[i] + 1;
+                } else {
+                    histData[i] = oldHistData[i];
+                }
+                if (histData[i] > max) {
+                    max = histData[i];
+                }
             }
-            if (histData[i] > max) {
-                max = histData[i];
+
+            for (int i = 0; i < oldHistData.length; i++) {
+                scaledData[i] = (float) histData[i] / (float) max;
             }
-        }
 
-        for (int i = 0; i < oldHistData.length; i++) {
-            scaledData[i] = (float) histData[i] / (float) max;
+            hist.setValues(gl, scaledData);
         }
-
-        hist.setValues(gl, scaledData);
 
         hist.drawBars(gl, program);
     }
 
     /**
-     * Renders the histogram.
+     * Renders the line graph.
      * 
      * @param gl
      *            The current openGL instance.
@@ -418,13 +417,45 @@ public class GraphsGLEventListener extends ESightGLEventListener {
     private void renderLineGraph(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
         // Stage the Perspective and Modelview matrixes in the ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
-        program.setUniformMatrix("MVMatrix", mv.mul(MatrixFMath.rotationY(90)));
 
-        // Load all staged variables into the GPU, check for errors and
-        // omissions.
-        program.use(gl);
+        MapPoint mp = dr.getMapPoint();
 
-        lineGraph.draw(gl, program);
+        if (mp != null) {
+            lineGraph.addData(mp.getLandType(), mp.getHeight(), 1f);
+            lineGraph.init(gl);
+        }
+
+        ModelViewStack mvStack = new ModelViewStack();
+        mvStack.putTop(MatrixFMath.translate(-1f, 0f, -1f));
+
+        lineGraph.draw(gl, mv, mvStack, program);
+    }
+
+    /**
+     * Renders the bezier graph.
+     * 
+     * @param gl
+     *            The current openGL instance.
+     * @param mv
+     *            The current modelview matrix.
+     * @param program
+     *            The {@link ShaderProgram} to use for rendering.
+     * @throws UninitializedException
+     */
+    private void renderBezierGraph(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+        // Stage the Perspective and Modelview matrixes in the ShaderProgram.
+        program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
+
+        MapPoint mp = dr.getMapPoint();
+        if (mp != null) {
+            bezierGraph.addData(mp.getLandType(), mp.getLatitude(), 1f);
+            bezierGraph.init(gl);
+        }
+
+        ModelViewStack mvStack = new ModelViewStack();
+        mvStack.putTop(MatrixFMath.translate(-1f, 0f, 0f));
+
+        bezierGraph.draw(gl, mv, mvStack, program);
     }
 
     /**
@@ -441,7 +472,8 @@ public class GraphsGLEventListener extends ESightGLEventListener {
     private void renderScatterplot(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
         // Stage the Perspective and Modelview matrixes in the ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
-        program.setUniformMatrix("MVMatrix", mv.mul(MatrixFMath.rotationY(90)).mul(MatrixFMath.rotationZ(180)));
+        program.setUniformMatrix("MVMatrix",
+                mv.mul(MatrixFMath.translate(0, 0, 1).mul(MatrixFMath.rotationY(90)).mul(MatrixFMath.rotationZ(180))));
 
         // Load all staged variables into the GPU, check for errors and
         // omissions.
@@ -449,56 +481,33 @@ public class GraphsGLEventListener extends ESightGLEventListener {
 
         MapPoint mp = dr.getMapPoint();
 
-        Color4 color = new Color4();
-        if (mp.getLandType() == 0) {
-            color = Color4.BLUE;
-        } else if (mp.getLandType() == 1) {
-            color = new Color4("00755E");
-        } else if (mp.getLandType() == 2) {
-            color = new Color4("014421");
-        } else if (mp.getLandType() == 3) {
-            color = new Color4("008000");
-        } else if (mp.getLandType() == 4) {
-            color = Color4.GREEN;
-        } else if (mp.getLandType() == 5) {
-            color = Color4.CYAN;
-        } else if (mp.getLandType() == 6) {
-            color = new Color4(135, 156, 69, 255);
-        } else if (mp.getLandType() == 7) {
-            color = Color4.YELLOW;
-        } else if (mp.getLandType() == 8) {
-            color = Color4.WHITE;
+        if (mp != null) {
+            Color4 color = new Color4();
+            if (mp.getLandType() == 0) {
+                color = Color4.BLUE;
+            } else if (mp.getLandType() == 1) {
+                color = new Color4("00755E");
+            } else if (mp.getLandType() == 2) {
+                color = new Color4("014421");
+            } else if (mp.getLandType() == 3) {
+                color = new Color4("008000");
+            } else if (mp.getLandType() == 4) {
+                color = Color4.GREEN;
+            } else if (mp.getLandType() == 5) {
+                color = Color4.CYAN;
+            } else if (mp.getLandType() == 6) {
+                color = new Color4(135, 156, 69, 255);
+            } else if (mp.getLandType() == 7) {
+                color = Color4.YELLOW;
+            } else if (mp.getLandType() == 8) {
+                color = Color4.WHITE;
+            }
+
+            scat.add(new Point4(-mp.getLatitude() / 180f, -mp.getHeight() / 40000f, mp.getLongitude() / 360f), color);
+            scat.init(gl);
         }
 
-        scat.add(new Point4(-mp.getLatitude() / 180f, -mp.getHeight() / 40000f, mp.getLongitude() / 360f), color);
-        scat.init(gl);
-
         scat.draw(gl, program);
-    }
-
-    /**
-     * Rendering method for text on the Heads-Up-Display (HUD). This currently
-     * prints a random string in white.
-     * 
-     * @param gl
-     *            The current openGL instance.
-     * @param mv
-     *            The current modelview matrix.
-     * @param target
-     *            The {@link ShaderProgram} to use for rendering.
-     * @param target
-     *            The target {@link FBO} to render to.
-     * @throws UninitializedException
-     *             if the FBO used in this method is uninitialized before use.
-     */
-    private void renderHUDText(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
-        // Set a new text for the string
-        String randomString = "Basic Test, random: " + Math.random();
-        hudText.setString(gl, randomString, Color4.WHITE, fontSize);
-
-        // Draw the text to the renderbuffer, to (arbitrary unit) location 30x
-        // 30y counted from left bottom.
-        hudText.drawHudRelative(gl, program, canvasWidth, canvasHeight, 30f, 30f);
     }
 
     // The reshape method is automatically called by the openGL animator if the
