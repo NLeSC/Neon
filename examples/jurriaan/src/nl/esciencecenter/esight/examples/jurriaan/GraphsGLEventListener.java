@@ -56,7 +56,7 @@ public class GraphsGLEventListener extends ESightGLEventListener {
 
     private DataReader dr;
     private Histogram2D hist;
-    private int[] histData = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    private final int[] histData = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     private LineGraph2D lineGraph;
     private BezierGraph2D bezierGraph;
 
@@ -190,28 +190,45 @@ public class GraphsGLEventListener extends ESightGLEventListener {
         finalPBO = new IntPBO(canvasWidth, canvasHeight);
         finalPBO.init(gl);
 
-        Color4[] vegetationColors = new Color4[] { Color4.BLUE, new Color4("00755E"), new Color4("014421"),
-                new Color4("008000"), Color4.GREEN, Color4.CYAN, new Color4(135, 156, 69, 255), Color4.YELLOW,
-                Color4.WHITE };
-        String[] vegetationNames = new String[] { "Water", "Rain Forest", "Deciduous Forest", "Evergreen Forest",
-                "Grassland", "Tundra", "Shrubland", "Desert", "Ice" };
-
         // Read data
         try {
             dr = new DataReader();
 
-            hist = new Histogram2D(1f, 1f, new VecF3(), vegetationColors, vegetationNames);
-            hist.init(gl);
+            // hist = new Histogram2D(1f, 1f, new VecF3(), vegetationColors,
+            // vegetationNames);
+            // hist.init(gl);
+            //
+            // lineGraph = new LineGraph2D(1f, 1f, 50, vegetationColors,
+            // vegetationNames,
+            // "Height above sealevel in meters",
+            // "% of total vegetation of this type");
+            // lineGraph.init(gl);
+            //
 
-            lineGraph = new LineGraph2D(1f, 1f, 50, vegetationColors, vegetationNames,
-                    "Height above sealevel in meters", "% of total vegetation of this type");
-            lineGraph.init(gl);
-
-            bezierGraph = new BezierGraph2D(1f, 1f, 50, vegetationColors, vegetationNames, "Latitude in degrees",
-                    "% of total vegetation of this type");
-            bezierGraph.init(gl);
+            bezierGraph = new BezierGraph2D(1f, 1f, 50, new Color4[] { Color4.GREEN, Color4.CYAN, Color4.YELLOW },
+                    new String[] { "x/z", "y/z", "x/y" }, "X coordinate", "% of Occurrences");
 
             scat = new ScatterPlot3D();
+
+            do {
+                MapPoint mp = dr.getMapPoint();
+
+                if (mp != null) {
+                    Color4 color = Color4.WHITE;
+
+                    scat.simpleAdd(new Point4(mp.getX(), mp.getY(), mp.getZ()), color);
+                    bezierGraph.simpleAdd(0, mp.getX(), -mp.getZ());
+                    bezierGraph.simpleAdd(1, mp.getY(), -mp.getZ());
+                    bezierGraph.simpleAdd(2, mp.getX(), mp.getY());
+
+                }
+            } while (dr.next());
+
+            scat.finalizeSimpleAdd();
+            bezierGraph.finalizeSimpleAdd();
+
+            scat.init(gl);
+            bezierGraph.init(gl);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -291,28 +308,37 @@ public class GraphsGLEventListener extends ESightGLEventListener {
 
             renderScatterplot(gl, mv, textShaderProgram);
 
-            renderLineGraph(gl, mv, lineShaderProgram);
-
             renderBezierGraph(gl, mv, lineShaderProgram);
 
-            renderHistogram(gl, mv, axesShaderProgram);
-            textShaderProgram.setUniformMatrix("PMatrix", makePerspectiveMatrix());
-            hist.drawLabels(gl, mv, textShaderProgram);
-
             ModelViewStack mvStack = new ModelViewStack();
-            mvStack.putTop(MatrixFMath.translate(-1f, 0f, -1f));
-
-            lineGraph.drawLabels(gl, mv, mvStack, textShaderProgram);
-
             mvStack = new ModelViewStack();
             mvStack.putTop(MatrixFMath.translate(-1f, 0f, 0f));
             bezierGraph.drawLabels(gl, mv, mvStack, textShaderProgram);
 
-            dr.next();
-
         } catch (final UninitializedException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Renders the bezier graph.
+     * 
+     * @param gl
+     *            The current openGL instance.
+     * @param mv
+     *            The current modelview matrix.
+     * @param program
+     *            The {@link ShaderProgram} to use for rendering.
+     * @throws UninitializedException
+     */
+    private void renderBezierGraph(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+        // Stage the Perspective and Modelview matrixes in the ShaderProgram.
+        program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
+
+        ModelViewStack mvStack = new ModelViewStack();
+        mvStack.putTop(MatrixFMath.translate(-1f, 0f, 0f));
+
+        bezierGraph.draw(gl, mv, mvStack, program);
     }
 
     /**
@@ -357,108 +383,6 @@ public class GraphsGLEventListener extends ESightGLEventListener {
     }
 
     /**
-     * Renders the histogram.
-     * 
-     * @param gl
-     *            The current openGL instance.
-     * @param mv
-     *            The current modelview matrix.
-     * @param program
-     *            The {@link ShaderProgram} to use for rendering.
-     * @throws UninitializedException
-     */
-    private void renderHistogram(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
-        // Stage the Perspective and Modelview matrixes in the ShaderProgram.
-        program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
-        program.setUniformMatrix("MVMatrix", mv);
-
-        // Load all staged variables into the GPU, check for errors and
-        // omissions.
-        program.use(gl);
-
-        int type = dr.getType(), max = 0;
-        if (type != Integer.MIN_VALUE) {
-            int[] oldHistData = histData;
-            histData = new int[oldHistData.length];
-
-            float[] scaledData = new float[oldHistData.length];
-            for (int i = 0; i < oldHistData.length; i++) {
-                if (type == i) {
-                    histData[i] = oldHistData[i] + 1;
-                } else {
-                    histData[i] = oldHistData[i];
-                }
-                if (histData[i] > max) {
-                    max = histData[i];
-                }
-            }
-
-            for (int i = 0; i < oldHistData.length; i++) {
-                scaledData[i] = (float) histData[i] / (float) max;
-            }
-
-            hist.setValues(gl, scaledData);
-        }
-
-        hist.drawBars(gl, program);
-    }
-
-    /**
-     * Renders the line graph.
-     * 
-     * @param gl
-     *            The current openGL instance.
-     * @param mv
-     *            The current modelview matrix.
-     * @param program
-     *            The {@link ShaderProgram} to use for rendering.
-     * @throws UninitializedException
-     */
-    private void renderLineGraph(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
-        // Stage the Perspective and Modelview matrixes in the ShaderProgram.
-        program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
-
-        MapPoint mp = dr.getMapPoint();
-
-        if (mp != null) {
-            lineGraph.addData(mp.getLandType(), mp.getHeight(), 1f);
-            lineGraph.init(gl);
-        }
-
-        ModelViewStack mvStack = new ModelViewStack();
-        mvStack.putTop(MatrixFMath.translate(-1f, 0f, -1f));
-
-        lineGraph.draw(gl, mv, mvStack, program);
-    }
-
-    /**
-     * Renders the bezier graph.
-     * 
-     * @param gl
-     *            The current openGL instance.
-     * @param mv
-     *            The current modelview matrix.
-     * @param program
-     *            The {@link ShaderProgram} to use for rendering.
-     * @throws UninitializedException
-     */
-    private void renderBezierGraph(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
-        // Stage the Perspective and Modelview matrixes in the ShaderProgram.
-        program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
-
-        MapPoint mp = dr.getMapPoint();
-        if (mp != null) {
-            bezierGraph.addData(mp.getLandType(), mp.getLatitude(), 1f);
-            bezierGraph.init(gl);
-        }
-
-        ModelViewStack mvStack = new ModelViewStack();
-        mvStack.putTop(MatrixFMath.translate(-1f, 0f, 0f));
-
-        bezierGraph.draw(gl, mv, mvStack, program);
-    }
-
-    /**
      * Renders the scatterplot.
      * 
      * @param gl
@@ -472,40 +396,11 @@ public class GraphsGLEventListener extends ESightGLEventListener {
     private void renderScatterplot(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
         // Stage the Perspective and Modelview matrixes in the ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
-        program.setUniformMatrix("MVMatrix",
-                mv.mul(MatrixFMath.translate(0, 0, 1).mul(MatrixFMath.rotationY(90)).mul(MatrixFMath.rotationZ(180))));
+        program.setUniformMatrix("MVMatrix", mv);
 
         // Load all staged variables into the GPU, check for errors and
         // omissions.
         program.use(gl);
-
-        MapPoint mp = dr.getMapPoint();
-
-        if (mp != null) {
-            Color4 color = new Color4();
-            if (mp.getLandType() == 0) {
-                color = Color4.BLUE;
-            } else if (mp.getLandType() == 1) {
-                color = new Color4("00755E");
-            } else if (mp.getLandType() == 2) {
-                color = new Color4("014421");
-            } else if (mp.getLandType() == 3) {
-                color = new Color4("008000");
-            } else if (mp.getLandType() == 4) {
-                color = Color4.GREEN;
-            } else if (mp.getLandType() == 5) {
-                color = Color4.CYAN;
-            } else if (mp.getLandType() == 6) {
-                color = new Color4(135, 156, 69, 255);
-            } else if (mp.getLandType() == 7) {
-                color = Color4.YELLOW;
-            } else if (mp.getLandType() == 8) {
-                color = Color4.WHITE;
-            }
-
-            scat.add(new Point4(-mp.getLatitude() / 180f, -mp.getHeight() / 40000f, mp.getLongitude() / 360f), color);
-            scat.init(gl);
-        }
 
         scat.draw(gl, program);
     }

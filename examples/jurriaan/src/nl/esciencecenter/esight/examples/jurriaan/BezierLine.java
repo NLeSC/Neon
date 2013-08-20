@@ -100,6 +100,32 @@ public class BezierLine extends Model {
         return dimensionsChanged;
     }
 
+    public void simpleAdd(float horizontal, float vertical) {
+        dataPoints.add(new DataPoint(horizontal, vertical));
+    }
+
+    public void finalizeSimpleAdd() {
+        for (DataPoint dp : dataPoints) {
+            float horizontal = dp.getHorizontal();
+            float vertical = dp.getVertical();
+
+            if (horizontal < minHorizontal) {
+                minHorizontal = horizontal;
+            }
+            if (vertical < minVertical) {
+                minVertical = vertical;
+            }
+            if (horizontal > maxHorizontal) {
+                maxHorizontal = horizontal;
+            }
+            if (vertical > maxVertical) {
+                maxVertical = vertical;
+            }
+        }
+
+        recalculatePoints();
+    }
+
     public void applyNewDimensions(float minHorizontal, float maxHorizontal, float minVertical, float maxVertical) {
         this.minHorizontal = minHorizontal;
         this.maxHorizontal = maxHorizontal;

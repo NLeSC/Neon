@@ -88,6 +88,17 @@ public class BezierGraph2D {
         }
     }
 
+    public void simpleAdd(int colorIndex, float horizontal, float vertical) {
+        BezierLine sl = segmentedLines.get(colorIndex);
+        sl.simpleAdd(horizontal, vertical);
+    }
+
+    public void finalizeSimpleAdd() {
+        for (BezierLine bl : segmentedLines.values()) {
+            bl.finalizeSimpleAdd();
+        }
+    }
+
     public void init(GL3 gl) {
         for (BezierLine sl : segmentedLines.values()) {
             sl.init(gl);

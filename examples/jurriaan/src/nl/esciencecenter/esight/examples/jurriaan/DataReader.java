@@ -10,41 +10,34 @@ import java.util.List;
 
 public class DataReader {
     public class MapPoint {
-        private final float latitude, longitude, height;
-        private final int landType;
+        private final float x, y, z;
 
-        public MapPoint(float latitude, float longitude, float height, int landType) {
-            this.latitude = latitude;
-            this.longitude = longitude;
-            this.height = height;
-            this.landType = landType;
+        public MapPoint(float x, float y, float z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
 
-        public float getLatitude() {
-            return latitude;
+        public float getX() {
+            return x;
         }
 
-        public float getLongitude() {
-            return longitude;
+        public float getY() {
+            return y;
         }
 
-        public float getHeight() {
-            return height;
-        }
-
-        public int getLandType() {
-            return landType;
+        public float getZ() {
+            return z;
         }
     }
 
     private File dataFile;
 
-    private final List<Integer> landType;
     private final List<MapPoint> mapPoints;
     private int index = 0;
 
     public DataReader() throws FileNotFoundException {
-        File newFile = new File("examples/graphs/data/ISCCP.D2GRID.0.GLOBAL.1983.99.99.9999.GPC");
+        File newFile = new File("examples/jurriaan/data/evalresults.txt");
 
         if (newFile != null && newFile.exists()) {
             dataFile = newFile;
@@ -52,7 +45,6 @@ public class DataReader {
             throw new FileNotFoundException();
         }
 
-        landType = new ArrayList<Integer>();
         mapPoints = new ArrayList<MapPoint>();
 
         BufferedReader br = null;
@@ -65,12 +57,10 @@ public class DataReader {
                 String[] splitLine = sCurrentLine.trim().split("\\s+");
 
                 try {
-                    float lat = Float.parseFloat(splitLine[5]);
-                    float lon = Float.parseFloat(splitLine[6]);
-                    float hgt = Float.parseFloat(splitLine[9]);
-                    int number = Integer.parseInt(splitLine[10]);
-                    landType.add(number);
-                    mapPoints.add(new MapPoint(lat, lon, hgt, number));
+                    float xCoord = Float.parseFloat(splitLine[1]);
+                    float yCoord = Float.parseFloat(splitLine[2]);
+                    float zCoord = Float.parseFloat(splitLine[3]);
+                    mapPoints.add(new MapPoint(xCoord, yCoord, zCoord));
 
                 } catch (NumberFormatException e) {
                     System.out.println(splitLine[10]);
@@ -89,14 +79,6 @@ public class DataReader {
         }
     }
 
-    public int getType() {
-        if (index == mapPoints.size()) {
-            return Integer.MIN_VALUE;
-        }
-        int type = landType.get(index);
-        return type;
-    }
-
     public MapPoint getMapPoint() {
         if (index == mapPoints.size()) {
             return null;
@@ -105,10 +87,13 @@ public class DataReader {
         return result;
     }
 
-    public void next() {
+    public boolean next() {
         if (index < mapPoints.size() - 1) {
             index++;
+            System.out.println(index);
+            return true;
         }
+        return false;
     }
 
 }

@@ -1,0 +1,7 @@
+analyseLocally=true
+eclipse.preferences.version=1
+extraProperties=
+lastAnalysisDate=1376317795569
+projectKey=nl.esciencecenter\:eSight
+serverUrl=http\://jenkins.esciencetest.nl/sonar
+version=2
