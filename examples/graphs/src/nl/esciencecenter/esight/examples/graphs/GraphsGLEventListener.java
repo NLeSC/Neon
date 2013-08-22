@@ -12,6 +12,7 @@ import nl.esciencecenter.esight.ESightGLEventListener;
 import nl.esciencecenter.esight.datastructures.FBO;
 import nl.esciencecenter.esight.datastructures.IntPBO;
 import nl.esciencecenter.esight.examples.graphs.DataReader.MapPoint;
+import nl.esciencecenter.esight.exceptions.InverseNotAvailableException;
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 import nl.esciencecenter.esight.input.InputHandler;
 import nl.esciencecenter.esight.math.Color4;
@@ -47,6 +48,7 @@ import nl.esciencecenter.esight.shaders.ShaderProgram;
  * 
  */
 public class GraphsGLEventListener extends ESightGLEventListener {
+
     // Two example shader program definitions.
     private ShaderProgram axesShaderProgram, textShaderProgram, lineShaderProgram;
 
@@ -259,6 +261,18 @@ public class GraphsGLEventListener extends ESightGLEventListener {
         // result of this action will be that the AxesFBO has been filled with
         // the right pixels.
         renderScene(gl, modelViewMatrix);
+
+        GraphsInputHandler.PickRequest pr = GraphsInputHandler.doPick();
+
+        if (pr != null) {
+            try {
+                VecF4 pickResult = MatrixFMathExt.unProject(makePerspectiveMatrix(), modelViewMatrix, new float[] { 0,
+                        0, canvasWidth, canvasHeight }, new VecF3(pr.x, pr.y, 0));
+                System.out.println("Pick result: " + pickResult);
+            } catch (InverseNotAvailableException e) {
+                e.printStackTrace();
+            }
+        }
 
         // Make a screenshot, when wanted. The PBO copies the current
         // framebuffer. We then set the state back because we dont want to make
@@ -532,6 +546,8 @@ public class GraphsGLEventListener extends ESightGLEventListener {
         canvasWidth = GLContext.getCurrent().getGLDrawable().getWidth();
         canvasHeight = GLContext.getCurrent().getGLDrawable().getHeight();
         setAspect((float) canvasWidth / (float) canvasHeight);
+
+        gl.glViewport(0, 0, canvasWidth, canvasHeight);
 
         // Resize the PixelBuffer Object that can be used for screenshots.
         finalPBO.delete(gl);

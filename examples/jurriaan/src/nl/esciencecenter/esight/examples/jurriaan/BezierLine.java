@@ -145,13 +145,13 @@ public class BezierLine extends Model {
         points.clear();
 
         for (int i = 0; i < numSegments; i++) {
-            float lowerSegmentBoundary = i * segmentWidth;
-            float upperSegmentBoundary = (i + 1) * segmentWidth;
+            float lowerSegmentBoundary = i * segmentWidth + minHorizontal;
+            float upperSegmentBoundary = (i + 1) * segmentWidth + minHorizontal;
 
             float qualifyingDataTotal = 0f;
             for (DataPoint d : dataPoints) {
                 if (d.getHorizontal() > lowerSegmentBoundary && d.getHorizontal() < upperSegmentBoundary) {
-                    qualifyingDataTotal += d.getVertical();
+                    qualifyingDataTotal++;
                 }
             }
 
@@ -171,7 +171,7 @@ public class BezierLine extends Model {
         float diffHorizontal = maxHorizontal - minHorizontal;
         float segmentWidth = diffHorizontal / numSegments;
 
-        return segmentIndex * segmentWidth;
+        return segmentIndex * segmentWidth + minHorizontal;
     }
 
     public FloatBuffer pointsAsBuffer() {

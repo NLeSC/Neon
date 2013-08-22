@@ -33,6 +33,8 @@ public class ScatterPlot3D extends Model {
 
     private float minX, maxX, minY, maxY, minZ, maxZ;
 
+    private String[][] bla;
+
     public ScatterPlot3D() {
         super(VertexFormat.POINTS);
 
@@ -163,6 +165,30 @@ public class ScatterPlot3D extends Model {
         } else {
             throw new UninitializedException();
         }
+    }
+
+    public float getMinX() {
+        return minX;
+    }
+
+    public float getMaxX() {
+        return maxX;
+    }
+
+    public float getMinY() {
+        return minY;
+    }
+
+    public float getMaxY() {
+        return maxY;
+    }
+
+    public float getMinZ() {
+        return minZ;
+    }
+
+    public float getMaxZ() {
+        return maxZ;
     }
 
 }

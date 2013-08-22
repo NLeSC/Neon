@@ -205,8 +205,8 @@ public class GraphsGLEventListener extends ESightGLEventListener {
             // lineGraph.init(gl);
             //
 
-            bezierGraph = new BezierGraph2D(1f, 1f, 50, new Color4[] { Color4.GREEN, Color4.CYAN, Color4.YELLOW },
-                    new String[] { "x/z", "y/z", "x/y" }, "X coordinate", "% of Occurrences");
+            bezierGraph = new BezierGraph2D(1f, 1f, 100, new Color4[] { Color4.GREEN, Color4.CYAN, Color4.YELLOW },
+                    new String[] { "x/z", "y/z", "x/y" }, "coordinate", "% of Occurrences");
 
             scat = new ScatterPlot3D();
 
@@ -217,10 +217,9 @@ public class GraphsGLEventListener extends ESightGLEventListener {
                     Color4 color = Color4.WHITE;
 
                     scat.simpleAdd(new Point4(mp.getX(), mp.getY(), mp.getZ()), color);
-                    bezierGraph.simpleAdd(0, mp.getX(), -mp.getZ());
-                    bezierGraph.simpleAdd(1, mp.getY(), -mp.getZ());
+                    bezierGraph.simpleAdd(0, mp.getX(), mp.getZ());
+                    bezierGraph.simpleAdd(1, mp.getZ(), mp.getY());
                     bezierGraph.simpleAdd(2, mp.getX(), mp.getY());
-
                 }
             } while (dr.next());
 

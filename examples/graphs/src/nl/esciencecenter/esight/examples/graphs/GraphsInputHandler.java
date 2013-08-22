@@ -31,6 +31,16 @@ import com.jogamp.newt.event.MouseListener;
  * 
  */
 public class GraphsInputHandler extends InputHandler implements MouseListener, KeyListener {
+    protected static class PickRequest {
+        public final int x, y;
+
+        public PickRequest(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    private static PickRequest pickRequest = null;
 
     private static class SingletonHolder {
         public static final GraphsInputHandler instance = new GraphsInputHandler();
@@ -44,6 +54,17 @@ public class GraphsInputHandler extends InputHandler implements MouseListener, K
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
+        int x = e.getX();
+        int y = e.getY();
+        pickRequest = new PickRequest(x, y);
+
         // Do something that is different than the standard
+    }
+
+    public static PickRequest doPick() {
+        PickRequest tmp = pickRequest;
+        pickRequest = null;
+
+        return tmp;
     }
 }

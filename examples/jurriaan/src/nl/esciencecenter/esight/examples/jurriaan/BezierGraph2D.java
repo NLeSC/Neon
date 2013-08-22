@@ -120,26 +120,26 @@ public class BezierGraph2D {
             }
         }
 
-        for (int i = 0; i < NR_OF_HORIZONTAL_LABELS; i++) {
-            int segmentIndex = (horizontalSegments / NR_OF_HORIZONTAL_LABELS) * i;
-            if (horizontalLabels[i] != null) {
-                horizontalLabels[i].delete(gl);
+        for (int i = 0; i < segmentedLines.size(); i++) {
+            BezierLine sl = segmentedLines.get(i);
+
+            for (int j = 0; j < NR_OF_HORIZONTAL_LABELS; j++) {
+                int segmentIndex = (horizontalSegments / NR_OF_HORIZONTAL_LABELS) * j;
+                if (horizontalLabels[j] != null) {
+                    horizontalLabels[j].delete(gl);
+                }
+
+                float rawValue = sl.getSegmentValue(segmentIndex);
+                String text = "";
+                if (sl.getMaxHorizontal() > 10f || sl.getMinHorizontal() < -10f) {
+                    text = String.format("%.0f", rawValue);
+                } else {
+                    text = String.format("%1.1f", rawValue);
+                }
+
+                horizontalLabels[j] = new MultiColorText(gl, font, text, Color4.WHITE, FONTSIZE);
+                horizontalLabels[j].setString(gl, text, Color4.WHITE, FONTSIZE);
             }
-
-            float rawValue = segmentedLines.get(0).getSegmentValue(segmentIndex);
-            int neatValue = 0;
-            if (segmentedLines.get(0).getMaxHorizontal() > 1000) {
-                neatValue = ((int) Math.floor(rawValue / 100) * 100);
-            } else if (segmentedLines.get(0).getMaxHorizontal() > 100) {
-                neatValue = ((int) Math.floor(rawValue / 10) * 10);
-            } else {
-                neatValue = (int) Math.floor(rawValue);
-            }
-
-            String text = Integer.toString(neatValue);
-
-            horizontalLabels[i] = new MultiColorText(gl, font, text, Color4.WHITE, FONTSIZE);
-            horizontalLabels[i].setString(gl, text, Color4.WHITE, FONTSIZE);
         }
     }
 
