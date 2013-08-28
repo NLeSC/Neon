@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.examples.graphs;
+package nl.esciencecenter.esight.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,6 @@ import nl.esciencecenter.esight.math.Point4;
 import nl.esciencecenter.esight.math.VecF3;
 import nl.esciencecenter.esight.math.VecF4;
 import nl.esciencecenter.esight.math.VectorFMath;
-import nl.esciencecenter.esight.models.Model;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 

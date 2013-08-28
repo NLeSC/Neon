@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.examples.graphs;
+package nl.esciencecenter.esight.models.graphs;
 
 import javax.media.opengl.GL3;
 
@@ -7,6 +7,7 @@ import nl.esciencecenter.esight.math.Color4;
 import nl.esciencecenter.esight.math.MatF4;
 import nl.esciencecenter.esight.math.MatrixFMath;
 import nl.esciencecenter.esight.math.VecF3;
+import nl.esciencecenter.esight.models.LeftBottomQuad;
 import nl.esciencecenter.esight.shaders.ShaderProgram;
 import nl.esciencecenter.esight.text.MultiColorText;
 import nl.esciencecenter.esight.text.jogampexperimental.Font;
@@ -19,7 +20,9 @@ public class Histogram2D {
     private final MultiColorText[] barLabels;
     private final String[] barLabelTexts;
 
-    private final float width, height;
+    private static final float DEFAULT_WIDTH = 1f;
+    private static final float DEFAULT_HEIGHT = 1f;
+
     private final VecF3 leftBottomCoordinates;
 
     /** Ubuntu fontset is used for HUD elements */
@@ -28,14 +31,12 @@ public class Histogram2D {
     private final Font font;
     private final int FONTSIZE = 20;
 
-    public Histogram2D(float width, float height, VecF3 leftBottomCoordinates, Color4[] barColors, String[] labels) {
-        this.width = width;
-        this.height = height;
-        this.leftBottomCoordinates = leftBottomCoordinates;
+    public Histogram2D(Color4[] barColors, String[] labels) {
+        this.leftBottomCoordinates = new VecF3();
 
         int numBars = barColors.length;
 
-        float widthPerQuad = width / numBars;
+        float widthPerQuad = DEFAULT_WIDTH / numBars;
 
         data = new float[numBars];
         bars = new LeftBottomQuad[numBars];
@@ -43,7 +44,7 @@ public class Histogram2D {
             data[i] = 0f;
 
             VecF3 newLeftBottom = leftBottomCoordinates.add(new VecF3(i * widthPerQuad, 0f, 0f));
-            bars[i] = new LeftBottomQuad(height, widthPerQuad, newLeftBottom);
+            bars[i] = new LeftBottomQuad(DEFAULT_HEIGHT, widthPerQuad, newLeftBottom);
         }
 
         this.colors = barColors;
@@ -82,7 +83,7 @@ public class Histogram2D {
     }
 
     public void drawLabels(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
-        float widthPerQuad = width / bars.length;
+        float widthPerQuad = DEFAULT_WIDTH / bars.length;
 
         float scale = .0025f;
 
@@ -104,7 +105,7 @@ public class Histogram2D {
 
     public void setValues(GL3 gl, float[] newData) throws IllegalArgumentException {
         int numBars = data.length;
-        float widthPerQuad = width / numBars;
+        float widthPerQuad = DEFAULT_WIDTH / numBars;
 
         if (newData.length != numBars) {
             throw new IllegalArgumentException("The size of this histogram was " + numBars
@@ -115,7 +116,7 @@ public class Histogram2D {
             bars[i].delete(gl);
 
             VecF3 newLeftBottom = leftBottomCoordinates.add(new VecF3(i * widthPerQuad, 0f, 0f));
-            bars[i] = new LeftBottomQuad(newData[i] * height, widthPerQuad, newLeftBottom);
+            bars[i] = new LeftBottomQuad(newData[i] * DEFAULT_HEIGHT, widthPerQuad, newLeftBottom);
             bars[i].init(gl);
         }
     }

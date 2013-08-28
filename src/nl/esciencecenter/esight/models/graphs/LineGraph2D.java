@@ -1,6 +1,5 @@
-package nl.esciencecenter.esight.examples.graphs;
+package nl.esciencecenter.esight.models.graphs;
 
-import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +14,7 @@ import nl.esciencecenter.esight.shaders.ShaderProgram;
 import nl.esciencecenter.esight.text.MultiColorText;
 import nl.esciencecenter.esight.text.jogampexperimental.Font;
 import nl.esciencecenter.esight.text.jogampexperimental.FontFactory;
+import nl.esciencecenter.esight.util.ModelViewStack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,14 +30,12 @@ public class LineGraph2D {
     private final Font font;
     private final int FONTSIZE = 20;
 
-    private FloatBuffer vertexColors;
-
     private final Color4[] colors;
     private final Map<Integer, SegmentedLine> segmentedLines;
 
-    private final float width;
+    private static final float DEFAULT_WIDTH = 1f;
+    private static final float DEFAULT_HEIGHT = 1f;
 
-    private final float height;
     private final int horizontalSegments;
 
     private final String[] seperateColorNames;
@@ -46,10 +44,8 @@ public class LineGraph2D {
     private final String horizontalAxisString, verticalAxisString;
     private MultiColorText horizontalAxisText, verticalAxisText;
 
-    public LineGraph2D(float width, float height, int horizontalSegments, Color4[] colors, String[] seperateColorNames,
+    public LineGraph2D(int horizontalSegments, Color4[] colors, String[] seperateColorNames,
             String horizontalAxisString, String verticalAxisString) {
-        this.width = width;
-        this.height = height;
         this.horizontalAxisString = horizontalAxisString;
         this.verticalAxisString = verticalAxisString;
         this.seperateColorNames = seperateColorNames;
@@ -59,7 +55,7 @@ public class LineGraph2D {
 
         this.segmentedLines = new HashMap<Integer, SegmentedLine>();
         for (int i = 0; i < colors.length; i++) {
-            segmentedLines.put(i, new SegmentedLine(horizontalSegments, width / horizontalSegments, colors[i]));
+            segmentedLines.put(i, new SegmentedLine(horizontalSegments, DEFAULT_WIDTH / horizontalSegments, colors[i]));
         }
 
         this.horizontalLabels = new MultiColorText[NR_OF_HORIZONTAL_LABELS];
@@ -136,7 +132,7 @@ public class LineGraph2D {
         int i = 0;
         for (SegmentedLine sl : segmentedLines.values()) {
             ModelViewStack linesStack = new ModelViewStack(mvStack);
-            linesStack.putBottom(MatrixFMath.translate(0f, 0f, i * (width / colors.length)));
+            linesStack.putBottom(MatrixFMath.translate(0f, 0f, i * (DEFAULT_WIDTH / colors.length)));
             program.setUniformMatrix("MVMatrix", linesStack.calc(mv));
 
             gl.glLineWidth(3f);
@@ -148,14 +144,14 @@ public class LineGraph2D {
 
     public void drawLabels(GL3 gl, MatF4 mv, ModelViewStack mvStack, ShaderProgram program)
             throws UninitializedException {
-        float widthPerSegment = width / horizontalSegments;
+        float widthPerSegment = DEFAULT_WIDTH / horizontalSegments;
 
         float scale = .0025f;
 
         MatF4 scaleMatrix = MatrixFMath.scale(scale);
 
         ModelViewStack horizontalAxisTextStack = new ModelViewStack(mvStack);
-        MatF4 horizontalAxisTranslation = MatrixFMath.translate(new VecF3(0f, -0.15f, width));
+        MatF4 horizontalAxisTranslation = MatrixFMath.translate(new VecF3(0f, -0.15f, DEFAULT_WIDTH));
         horizontalAxisTextStack.putTop(horizontalAxisTranslation);
         horizontalAxisTextStack.putTop(scaleMatrix);
         program.setUniformMatrix("MVMatrix", horizontalAxisTextStack.calc(mv));
@@ -165,7 +161,8 @@ public class LineGraph2D {
             MultiColorText label = seperateColorLabels[i];
 
             ModelViewStack colorLabelStack = new ModelViewStack(mvStack);
-            MatF4 colorLabelTranslation = MatrixFMath.translate(new VecF3(0f, -0.2f, i * (width / colors.length)));
+            MatF4 colorLabelTranslation = MatrixFMath.translate(new VecF3(0f, -0.2f, i
+                    * (DEFAULT_WIDTH / colors.length)));
             colorLabelStack.putTop(colorLabelTranslation);
             colorLabelStack.putTop(scaleMatrix);
             program.setUniformMatrix("MVMatrix", colorLabelStack.calc(mv));
@@ -176,7 +173,7 @@ public class LineGraph2D {
         MatF4 verticalAxisRotation = MatrixFMath.rotationZ(90f);
         verticalAxisTextStack.putTop(verticalAxisRotation);
 
-        MatF4 verticalAxisTranslation = MatrixFMath.translate(new VecF3(.15f, 0.05f, width));
+        MatF4 verticalAxisTranslation = MatrixFMath.translate(new VecF3(.15f, 0.05f, DEFAULT_WIDTH));
         verticalAxisTextStack.putTop(verticalAxisTranslation);
 
         verticalAxisTextStack.putTop(scaleMatrix);
@@ -190,7 +187,7 @@ public class LineGraph2D {
 
             MatF4 horizontalLabelTranslation = MatrixFMath.translate(0.2f,
                     (widthPerSegment * i * horizontalSegments / NR_OF_HORIZONTAL_LABELS) + (.2f * widthPerSegment),
-                    width);
+                    DEFAULT_WIDTH);
 
             ModelViewStack horizontalLabelStack = new ModelViewStack(mvStack);
             horizontalLabelStack.putTop(horizontalLabelRotationMatrix);

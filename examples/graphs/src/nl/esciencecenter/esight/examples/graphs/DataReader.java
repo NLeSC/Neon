@@ -39,7 +39,6 @@ public class DataReader {
 
     private File dataFile;
 
-    private final List<Integer> landType;
     private final List<MapPoint> mapPoints;
     private int index = 0;
 
@@ -52,7 +51,6 @@ public class DataReader {
             throw new FileNotFoundException();
         }
 
-        landType = new ArrayList<Integer>();
         mapPoints = new ArrayList<MapPoint>();
 
         BufferedReader br = null;
@@ -69,7 +67,6 @@ public class DataReader {
                     float lon = Float.parseFloat(splitLine[6]);
                     float hgt = Float.parseFloat(splitLine[9]);
                     int number = Integer.parseInt(splitLine[10]);
-                    landType.add(number);
                     mapPoints.add(new MapPoint(lat, lon, hgt, number));
 
                 } catch (NumberFormatException e) {
@@ -89,14 +86,6 @@ public class DataReader {
         }
     }
 
-    public int getType() {
-        if (index == mapPoints.size()) {
-            return Integer.MIN_VALUE;
-        }
-        int type = landType.get(index);
-        return type;
-    }
-
     public MapPoint getMapPoint() {
         if (index == mapPoints.size()) {
             return null;
@@ -105,10 +94,12 @@ public class DataReader {
         return result;
     }
 
-    public void next() {
+    public boolean next() {
         if (index < mapPoints.size() - 1) {
             index++;
+            return true;
         }
+        return false;
     }
 
 }

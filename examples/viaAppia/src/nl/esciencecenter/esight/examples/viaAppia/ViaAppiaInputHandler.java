@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.examples.graphs;
+package nl.esciencecenter.esight.examples.viaAppia;
 
 import nl.esciencecenter.esight.input.InputHandler;
 import nl.esciencecenter.esight.math.VecF3;
@@ -32,7 +32,7 @@ import com.jogamp.newt.event.MouseListener;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class GraphsInputHandler extends InputHandler implements MouseListener, KeyListener {
+public class ViaAppiaInputHandler extends InputHandler implements MouseListener, KeyListener {
     protected static class PickRequest {
         public final int x, y;
 
@@ -77,7 +77,7 @@ public class GraphsInputHandler extends InputHandler implements MouseListener, K
 
     private static PickRequest pickRequest = null;
 
-    private GraphsInputHandler() {
+    private ViaAppiaInputHandler() {
         reset();
     }
 
@@ -101,10 +101,10 @@ public class GraphsInputHandler extends InputHandler implements MouseListener, K
     }
 
     private static class SingletonHolder {
-        public static final GraphsInputHandler instance = new GraphsInputHandler();
+        public static final ViaAppiaInputHandler instance = new ViaAppiaInputHandler();
     }
 
-    public static GraphsInputHandler getInstance() {
+    public static ViaAppiaInputHandler getInstance() {
         return SingletonHolder.instance;
     }
 

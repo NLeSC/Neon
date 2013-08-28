@@ -379,8 +379,8 @@ public class ColormapExampleGLEventListener extends ESightGLEventListener {
             ByteBuffer surfaceBuffer = Buffers.newDirectByteBuffer(NOISE_LONS * NOISE_LATS * 4);
             noise.rewind();
 
-            float noiseMin = 1000000f;
-            float noiseMax = -1000000f;
+            float noiseMin = Float.MAX_VALUE;
+            float noiseMax = Float.MIN_VALUE;
             float total = 0f;
             for (int y = 0; y < NOISE_LATS; y++) {
                 for (int x = 0; x < NOISE_LONS; x++) {

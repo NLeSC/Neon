@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.examples.graphs;
+package nl.esciencecenter.esight.util;
 
 import java.util.ArrayList;
 import java.util.List;

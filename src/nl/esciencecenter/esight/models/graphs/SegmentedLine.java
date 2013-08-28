@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.examples.graphs;
+package nl.esciencecenter.esight.models.graphs;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -10,21 +10,15 @@ import nl.esciencecenter.esight.datastructures.GLSLAttrib;
 import nl.esciencecenter.esight.datastructures.VBO;
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 import nl.esciencecenter.esight.math.Color4;
-import nl.esciencecenter.esight.math.VecF3;
 import nl.esciencecenter.esight.math.VecF4;
-import nl.esciencecenter.esight.math.VectorFMath;
 import nl.esciencecenter.esight.models.Model;
 import nl.esciencecenter.esight.shaders.ShaderProgram;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BezierLine extends Model {
-    private final static Logger LOGGER = LoggerFactory.getLogger(BezierLine.class);
-
-    private static final int NUMBER_OF_BEZIER_STEPS = 10;
-    private final VecF3 bezierControlStart;
-    private final VecF3 bezierControlEnd;
+public class SegmentedLine extends Model {
+    private final static Logger LOGGER = LoggerFactory.getLogger(SegmentedLine.class);
 
     private final Color4 color;
     private final List<VecF4> points;
@@ -52,7 +46,7 @@ public class BezierLine extends Model {
 
     private float minHorizontal, maxHorizontal, minVertical, maxVertical;
 
-    public BezierLine(int numSegments, float widthPerSegment, Color4 color) {
+    public SegmentedLine(int numSegments, float widthPerSegment, Color4 color) {
         super(VertexFormat.LINES);
 
         this.widthPerSegment = widthPerSegment;
@@ -68,9 +62,6 @@ public class BezierLine extends Model {
         this.minVertical = Float.MAX_VALUE;
         this.maxHorizontal = Float.MIN_VALUE;
         this.maxVertical = Float.MIN_VALUE;
-
-        bezierControlStart = new VecF3(widthPerSegment, 0f, 0f);
-        bezierControlEnd = new VecF3(widthPerSegment, 0f, 0f);
     }
 
     public boolean addData(float horizontal, float vertical) {
@@ -109,7 +100,7 @@ public class BezierLine extends Model {
         recalculatePoints();
     }
 
-    private synchronized void recalculatePoints() {
+    private void recalculatePoints() {
         int numSegments = points.size();
 
         float diffHorizontal = maxHorizontal - minHorizontal;
@@ -119,20 +110,17 @@ public class BezierLine extends Model {
         points.clear();
 
         for (int i = 0; i < numSegments; i++) {
-            float lowerSegmentBoundary = i * segmentWidth + minHorizontal;
-            float upperSegmentBoundary = (i + 1) * segmentWidth + minHorizontal;
+            float lowerSegmentBoundary = i * segmentWidth;
+            float upperSegmentBoundary = (i + 1) * segmentWidth;
 
             float qualifyingDataTotal = 0f;
             for (DataPoint d : dataPoints) {
                 if (d.getHorizontal() > lowerSegmentBoundary && d.getHorizontal() < upperSegmentBoundary) {
-                    qualifyingDataTotal++;
+                    qualifyingDataTotal += d.getVertical();
                 }
             }
 
             float segmentHeight = qualifyingDataTotal / dataPoints.size();
-            if (Float.isNaN(segmentHeight)) {
-                segmentHeight = 0f;
-            }
 
             VecF4 segmentPoint = new VecF4(i * widthPerSegment, segmentHeight, 0f, 1f);
 
@@ -145,7 +133,7 @@ public class BezierLine extends Model {
         float diffHorizontal = maxHorizontal - minHorizontal;
         float segmentWidth = diffHorizontal / numSegments;
 
-        return segmentIndex * segmentWidth + minHorizontal;
+        return segmentIndex * segmentWidth;
     }
 
     public FloatBuffer pointsAsBuffer() {
@@ -184,43 +172,11 @@ public class BezierLine extends Model {
     }
 
     @Override
-    public synchronized void init(GL3 gl) {
+    public void init(GL3 gl) {
         delete(gl);
 
-        setNumVertices(points.size() * (2 * NUMBER_OF_BEZIER_STEPS));
-
-        FloatBuffer bezierBuffer = FloatBuffer.allocate(getNumVertices() * 4);
-
-        // for (int i = 1; i < points.size() - 1; i++) {
-        // VecF4 prevPoint = points.get(i - 1);
-        // VecF4 thisPoint = points.get(i);
-        // VecF4 nextPoint = points.get(i + 1);
-        // }
-
-        VecF4 lastBezierPointOfPreviousIteration = null;
-        for (int i = 0; i < points.size() - 1; i++) {
-            VecF4 startPoint = points.get(i);
-            VecF4 endPoint = points.get(i + 1);
-
-            VecF4[] bezierResult = VectorFMath.bezierCurve(NUMBER_OF_BEZIER_STEPS, startPoint, bezierControlStart,
-                    bezierControlEnd, endPoint);
-
-            for (int j = 0; j < bezierResult.length - 1; j++) {
-                if (j == 0 && lastBezierPointOfPreviousIteration != null) {
-                    bezierBuffer.put(lastBezierPointOfPreviousIteration.asBuffer());
-                    bezierBuffer.put(bezierResult[j].asArray());
-                }
-
-                bezierBuffer.put(bezierResult[j].asArray());
-                bezierBuffer.put(bezierResult[j + 1].asArray());
-            }
-
-            lastBezierPointOfPreviousIteration = bezierResult[bezierResult.length - 1];
-        }
-
-        bezierBuffer.rewind();
-
-        GLSLAttrib vAttrib = new GLSLAttrib(bezierBuffer, "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
+        setNumVertices(points.size() * 2);
+        GLSLAttrib vAttrib = new GLSLAttrib(pointsAsBuffer(), "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
 
         setVbo(new VBO(gl, vAttrib));
     }

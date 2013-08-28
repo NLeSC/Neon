@@ -1,4 +1,4 @@
-package nl.esciencecenter.esight.examples.graphs;
+package nl.esciencecenter.esight.models.graphs;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -20,14 +20,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ScatterPlot3D extends Model {
-    private final static Logger LOGGER      = LoggerFactory.getLogger(ScatterPlot3D.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ScatterPlot3D.class);
 
-    private final List<VecF4>   points;
-    private final List<VecF4>   colors;
+    private final List<VecF4> points;
+    private final List<VecF4> colors;
 
-    private FloatBuffer         vertexColors;
+    private FloatBuffer vertexColors;
+    private FloatBuffer newVertices, newColors;
 
-    private boolean             initialized = false;
+    private boolean initialized = false;
 
     public ScatterPlot3D() {
         super(VertexFormat.POINTS);
@@ -44,23 +45,48 @@ public class ScatterPlot3D extends Model {
     public void add(Point4 point, Color4 color) {
         points.add(point);
         colors.add(color);
+
+        initialized = false;
+    }
+
+    public void addAll(List<Point4> newPoints, List<Color4> newColors) {
+        points.addAll(newPoints);
+        colors.addAll(newColors);
+
+        initialized = false;
+    }
+
+    public void prepareBuffers() {
+        newVertices = VectorFMath.vec4ListToBuffer(points);
+        newColors = VectorFMath.vec4ListToBuffer(colors);
     }
 
     @Override
     public void init(GL3 gl) {
-        delete(gl);
+        if (!initialized) {
+            delete(gl);
 
-        this.setVertices(VectorFMath.vec4ListToBuffer(points));
-        this.vertexColors = VectorFMath.vec4ListToBuffer(colors);
+            if (newVertices == null) {
+                this.setVertices(VectorFMath.vec4ListToBuffer(points));
+            } else {
+                this.setVertices(newVertices);
+            }
 
-        GLSLAttrib vAttrib = new GLSLAttrib(this.getVertices(), "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
-        GLSLAttrib cAttrib = new GLSLAttrib(this.vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
+            if (newColors == null) {
+                this.vertexColors = VectorFMath.vec4ListToBuffer(colors);
+            } else {
+                this.vertexColors = newColors;
+            }
 
-        setVbo(new VBO(gl, vAttrib, cAttrib));
+            GLSLAttrib vAttrib = new GLSLAttrib(this.getVertices(), "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
+            GLSLAttrib cAttrib = new GLSLAttrib(this.vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
 
-        this.setNumVertices(points.size());
+            setVbo(new VBO(gl, vAttrib, cAttrib));
 
-        initialized = true;
+            this.setNumVertices(points.size());
+
+            initialized = true;
+        }
     }
 
     @Override
