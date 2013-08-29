@@ -56,13 +56,32 @@ public class ScatterPlot3D extends Model {
         initialized = false;
     }
 
+    public synchronized void addAll(FloatBuffer inPoints, FloatBuffer inColors) {
+        FloatBuffer newVertices = FloatBuffer.allocate(getVertices().capacity() + inPoints.capacity());
+        FloatBuffer newVertexColors = FloatBuffer.allocate(vertexColors.capacity() + inColors.capacity());
+
+        newVertices.put(getVertices());
+        newVertices.put(inPoints);
+
+        newVertexColors.put(vertexColors);
+        newVertexColors.put(inColors);
+
+        newVertices.rewind();
+        newVertexColors.rewind();
+
+        this.newVertices = newVertices;
+        this.newColors = newVertexColors;
+
+        initialized = false;
+    }
+
     public void prepareBuffers() {
         newVertices = VectorFMath.vec4ListToBuffer(points);
         newColors = VectorFMath.vec4ListToBuffer(colors);
     }
 
     @Override
-    public void init(GL3 gl) {
+    public synchronized void init(GL3 gl) {
         if (!initialized) {
             delete(gl);
 
@@ -83,7 +102,7 @@ public class ScatterPlot3D extends Model {
 
             setVbo(new VBO(gl, vAttrib, cAttrib));
 
-            this.setNumVertices(points.size());
+            this.setNumVertices(getVertices().capacity() / 4);
 
             initialized = true;
         }

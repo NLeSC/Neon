@@ -154,8 +154,13 @@ public class ViaAppiaInputHandler extends InputHandler implements MouseListener,
             rotation.setY(rotationX);
             rotation.setZ(0f); // We never rotate around the Z axis.
         } else if (e.isButtonDown(MouseEvent.BUTTON3)) {
-            translationX = (.01f * (e.getX() - dragXorigin)) + translationXorigin;
-            translationY = (-.01f * (e.getY() - dragYorigin)) + translationYorigin;
+            if (e.isShiftDown()) {
+                translationX = (.0001f * (e.getX() - dragXorigin)) + translationXorigin;
+                translationY = (-.0001f * (e.getY() - dragYorigin)) + translationYorigin;
+            } else {
+                translationX = (.01f * (e.getX() - dragXorigin)) + translationXorigin;
+                translationY = (-.01f * (e.getY() - dragYorigin)) + translationYorigin;
+            }
 
             translation.setX(translationX);
             translation.setY(translationY);

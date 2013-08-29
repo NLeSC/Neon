@@ -1,14 +1,10 @@
 package nl.esciencecenter.esight.examples.viaAppia;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.FloatBuffer;
 
 import javax.media.opengl.GL3;
 
-import nl.esciencecenter.esight.examples.viaAppia.DataReader.MapPoint;
-import nl.esciencecenter.esight.math.Color4;
-import nl.esciencecenter.esight.math.Point4;
 import nl.esciencecenter.esight.models.graphs.ScatterPlot3D;
 
 public class ScatBuilder implements Runnable {
@@ -28,36 +24,17 @@ public class ScatBuilder implements Runnable {
 
     @Override
     public void run() {
+        FloatBuffer[] buffers;
+
         while (true) {
-            if (dr.hasAddedFile()) {
+            buffers = dr.getBuffers();
+            if (buffers != null) {
                 System.out.println("Added file detected, now rebuilding scatterplot");
 
-                MapPoint minP = dr.getMinimumPoint();
-                MapPoint maxP = dr.getMaximumPoint();
+                FloatBuffer vertices = buffers[0];
+                FloatBuffer colors = buffers[1];
 
-                float minLat = minP.getLatitude(), minLon = minP.getLongitude(), minHgt = minP.getHeight();
-                float maxLat = maxP.getLatitude(), maxLon = maxP.getLongitude(), maxHgt = maxP.getHeight();
-                float diffLat = maxLat - minLat;
-                float diffLon = maxLon - minLon;
-                float diffHgt = maxHgt - minHgt;
-
-                List<MapPoint> points = dr.getPoints();
-
-                List<Point4> pointsToAdd = new ArrayList<Point4>();
-                List<Color4> colorsToAdd = new ArrayList<Color4>();
-
-                for (MapPoint mp : points) {
-                    if (mp != null) {
-
-                        float x = (mp.getLatitude() - minLat) / diffLat;
-                        float y = (mp.getLongitude() - minLon) / diffLon;
-                        float z = (mp.getHeight() - minHgt) / diffHgt;
-                        pointsToAdd.add(new Point4(x, y, z));
-                        colorsToAdd.add(new Color4(mp.getR() / 255f, mp.getG() / 255f, mp.getB() / 255f, 1f));
-                    }
-                }
-
-                addToScat(pointsToAdd, colorsToAdd);
+                addToScat(vertices, colors);
             } else {
                 try {
                     Thread.sleep(100);
@@ -68,9 +45,8 @@ public class ScatBuilder implements Runnable {
         }
     }
 
-    private synchronized void addToScat(List<Point4> pointsToAdd, List<Color4> colorsToAdd) {
-        scat.addAll(pointsToAdd, colorsToAdd);
-        scat.prepareBuffers();
+    private synchronized void addToScat(FloatBuffer vertices, FloatBuffer colors) {
+        scat.addAll(vertices, colors);
     }
 
     public synchronized ScatterPlot3D getScatterPlot(GL3 gl) {

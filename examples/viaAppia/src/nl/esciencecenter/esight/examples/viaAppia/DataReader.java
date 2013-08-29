@@ -5,161 +5,78 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.FloatBuffer;
 
 public class DataReader implements Runnable {
-    public class MapPoint {
-        private float latitude, longitude, height, r, g, b;
-
-        public MapPoint(MapPoint other) {
-            this.latitude = other.latitude;
-            this.longitude = other.longitude;
-            this.height = other.height;
-            this.r = other.r;
-            this.g = other.g;
-            this.b = other.b;
-        }
-
-        public MapPoint(float latitude, float longitude, float height, float r, float g, float b) {
-            this.latitude = latitude;
-            this.longitude = longitude;
-            this.height = height;
-            this.r = r;
-            this.g = g;
-            this.b = b;
-        }
-
-        public float getLatitude() {
-            return latitude;
-        }
-
-        public float getLongitude() {
-            return longitude;
-        }
-
-        public float getHeight() {
-            return height;
-        }
-
-        public float getR() {
-            return r;
-        }
-
-        public float getG() {
-            return g;
-        }
-
-        public float getB() {
-            return b;
-        }
-
-        public void setLatitude(float latitude) {
-            this.latitude = latitude;
-        }
-
-        public void setLongitude(float longitude) {
-            this.longitude = longitude;
-        }
-
-        public void setHeight(float height) {
-            this.height = height;
-        }
-
-        public void setR(float r) {
-            this.r = r;
-        }
-
-        public void setG(float g) {
-            this.g = g;
-        }
-
-        public void setB(float b) {
-            this.b = b;
-        }
-    }
-
-    private List<MapPoint> mapPoints;
-
-    private MapPoint minimumPoint;
-    private MapPoint maximumPoint;
-
     private boolean addedFile = false;
 
+    private final float OFFSET_X = 296880f;
+    private final float OFFSET_Y = 4632360f;
+    private final float OFFSET_Z = 110;
+    private final float SCALE = 0.01f;
+
+    private final int SKIP_POINTS = 0;
+
+    private FloatBuffer vertices;
+    private FloatBuffer colors;
+
+    private final int[] recordCount = new int[] { 1694588, 1645500, 280125, 2599222, 79093, 2546102, 67946, 2805104,
+            4310, 181, 70655, 15961079, 708917, 4524, 11611378, 2331688, 17197445, 837308, 5922495, 4924749, 15315,
+            88037, 26158, 5726, 3230734, 7942156, 1254, 603, 1089780, 12717516, 18070, 24279, 12856038, 353173, 7,
+            9610, 10157273, 2390450, 158, 5304485, 4335435, 17, 5426, 2853649, 6945270, 14, 886, 49, 5355, 700295,
+            10905817, 24055, 3820, 924652, 39313, 40736, 8612269, 419450, 525, 2362096, 8246679, 10023482, 12281443,
+            2647667, 9049, 8, 679218, 4526626, 99020, 4275357, 24666250, 2109018, 64537, 5591918, 28411, 4690653,
+            8251380, 31371, 5753, 3321, 48617, 4324444, 638369, 9111464, 134384, 30, 577, 7753, 24731, 9558585, 720084,
+            310, 65, 7135333, 77578281, 47988, 7, 1574, 8225524, 10655
+
+    };
+
     public DataReader() throws FileNotFoundException {
-        mapPoints = new ArrayList<MapPoint>();
-        minimumPoint = new MapPoint(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE,
-                Float.MAX_VALUE, Float.MAX_VALUE);
-        maximumPoint = new MapPoint(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE,
-                Float.MIN_VALUE, Float.MIN_VALUE);
     }
 
-    private void readFile(File dataFile) {
-        List<MapPoint> tmpList = new ArrayList<MapPoint>();
+    private void readFile(File dataFile, int sequenceNumber) {
+        int numRecords = // recordCount[sequenceNumber] * 4;
+        (int) Math.floor((recordCount[sequenceNumber] / (SKIP_POINTS + 1))) * 4;
 
-        MapPoint newMinimum = new MapPoint(minimumPoint);
-        MapPoint newMaximum = new MapPoint(maximumPoint);
+        FloatBuffer tmpVertices = FloatBuffer.allocate(numRecords);
+        FloatBuffer tmpColors = FloatBuffer.allocate(numRecords);
 
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(dataFile));
 
             String sCurrentLine;
+            int count = SKIP_POINTS;
+
             while ((sCurrentLine = br.readLine()) != null) {
+                if (count == 0) {
+                    String[] splitLine = sCurrentLine.trim().split("\\s+");
 
-                String[] splitLine = sCurrentLine.trim().split("\\s+");
+                    try {
+                        float lat = (Float.parseFloat(splitLine[0]) - OFFSET_X) * SCALE;
+                        float lon = (Float.parseFloat(splitLine[1]) - OFFSET_Y) * SCALE;
+                        float hgt = (Float.parseFloat(splitLine[2]) - OFFSET_Z) * SCALE;
+                        float r = Float.parseFloat(splitLine[3]) / 255f;
+                        float g = Float.parseFloat(splitLine[4]) / 255f;
+                        float b = Float.parseFloat(splitLine[5]) / 255f;
 
-                try {
-                    float lat = Float.parseFloat(splitLine[0]);
-                    float lon = Float.parseFloat(splitLine[1]);
-                    float hgt = Float.parseFloat(splitLine[2]);
-                    float r = Float.parseFloat(splitLine[3]);
-                    float g = Float.parseFloat(splitLine[4]);
-                    float b = Float.parseFloat(splitLine[5]);
+                        tmpVertices.put(lat);
+                        tmpVertices.put(lon);
+                        tmpVertices.put(hgt);
+                        tmpVertices.put(1f);
 
-                    if (lat < newMinimum.getLatitude()) {
-                        newMinimum.setLatitude(lat);
-                    }
-                    if (lon < newMinimum.getLongitude()) {
-                        newMinimum.setLongitude(lon);
-                    }
-                    if (hgt < newMinimum.getHeight()) {
-                        newMinimum.setHeight(hgt);
-                    }
-                    if (r < newMinimum.getR()) {
-                        newMinimum.setR(r);
-                    }
-                    if (g < newMinimum.getG()) {
-                        newMinimum.setG(g);
-                    }
-                    if (b < newMinimum.getB()) {
-                        newMinimum.setG(b);
-                    }
+                        tmpColors.put(r);
+                        tmpColors.put(g);
+                        tmpColors.put(b);
+                        tmpColors.put(1f);
 
-                    if (lat > newMaximum.getLatitude()) {
-                        newMaximum.setLatitude(lat);
+                    } catch (NumberFormatException e) {
+                        // System.out.println(splitLine[10]);
+                        // ignore this entry
                     }
-                    if (lon > newMaximum.getLongitude()) {
-                        newMaximum.setLongitude(lon);
-                    }
-                    if (hgt > newMaximum.getHeight()) {
-                        newMaximum.setHeight(hgt);
-                    }
-                    if (r > newMaximum.getR()) {
-                        newMaximum.setR(r);
-                    }
-                    if (g > newMaximum.getG()) {
-                        newMaximum.setG(g);
-                    }
-                    if (b > newMaximum.getB()) {
-                        newMaximum.setG(b);
-                    }
-
-                    tmpList.add(new MapPoint(lat, lon, hgt, r, g, b));
-
-                } catch (NumberFormatException e) {
-                    System.out.println(splitLine[10]);
-                    // ignore this entry
+                    count = SKIP_POINTS;
+                } else {
+                    count--;
                 }
             }
         } catch (IOException e) {
@@ -173,51 +90,54 @@ public class DataReader implements Runnable {
             }
         }
 
-        addPoints(tmpList, newMinimum, newMaximum);
-    }
+        tmpVertices.rewind();
+        tmpColors.rewind();
 
-    private synchronized void addPoints(List<MapPoint> toAddList, MapPoint newMinimum, MapPoint newMaximum) {
-        if (!addedFile) {
-            mapPoints.clear();
+        while (!addPoints(tmpVertices, tmpColors)) {
+            // keep trying
         }
 
-        List<MapPoint> tmpList = new ArrayList<MapPoint>(mapPoints);
-        tmpList.addAll(toAddList);
-
-        mapPoints = tmpList;
-        minimumPoint = newMinimum;
-        maximumPoint = newMaximum;
-
-        addedFile = true;
     }
 
-    public synchronized List<MapPoint> getPoints() {
-        addedFile = false;
+    private synchronized boolean addPoints(FloatBuffer tmpVertices, FloatBuffer tmpColors) {
+        if (!addedFile) {
+            vertices = tmpVertices;
+            colors = tmpColors;
 
-        return new ArrayList<MapPoint>(mapPoints);
+            addedFile = true;
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public MapPoint getMinimumPoint() {
-        return minimumPoint;
-    }
+    public synchronized FloatBuffer[] getBuffers() {
+        if (addedFile) {
+            System.out.println("got " + vertices.capacity() / 4 + " records to add");
+            addedFile = false;
 
-    public MapPoint getMaximumPoint() {
-        return maximumPoint;
-    }
-
-    public synchronized boolean hasAddedFile() {
-        return addedFile;
+            return new FloatBuffer[] { vertices, colors };
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void run() {
+        int tally = 0;
         File dataFile;
-        for (int i = 1; i < 18; i++) {
-            dataFile = new File("examples/viaAppia/data/Rome-000" + String.format("%03d", i) + ".las.txt");
+        for (int sequenceNumber = 12; sequenceNumber < 17; sequenceNumber++) {
+            dataFile = new File("examples/viaAppia/data/Rome-000" + String.format("%03d", sequenceNumber) + ".las.txt");
             if (dataFile != null && dataFile.exists()) {
                 System.out.println("Scanning:" + dataFile.getAbsolutePath());
-                readFile(dataFile);
-                System.out.println("Scan result OK, mapPoints size now :" + mapPoints.size());
+                readFile(dataFile, sequenceNumber - 1);
+
+                int newCount = vertices.capacity() / 4;
+                tally += newCount;
+
+                System.out
+                        .println("Scan result OK, read " + newCount + "points, up to a total of " + tally + " points");
             }
         }
     }
