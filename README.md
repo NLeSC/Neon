@@ -32,6 +32,7 @@ Useage
 ------
 
 To create a new eSight-powered project without including all of the eSight source code (just the JAR):
+
 1. Compile by running ant in the root directory of the eSight project.
 
 2. Create a new java 1.6 project.
