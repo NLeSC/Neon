@@ -33,13 +33,21 @@ Useage
 
 To create a new eSight-powered project without including all of the eSight source code (just the JAR):
 1. Compile by running ant in the root directory of the eSight project.
+
 2. Create a new java 1.6 project.
+
 3. Copy all of the files in the dist/ folder to your lib/ folder.
+
 4. Copy the images/ shaders/ and fonts/ directories to your new project.
+
 5. Copy the settings.properties and log4j.properties files to the root folder of your project.
+
 6. Include all the jar files from the lib/ folder and its jogl/ subfolder in your classpath.
+
 7. Include the root folder of your new project in your classpath.
+
 8. Implement an extension of ESightGLEventListener.
+
 9. Implement a main class that creates a new ESightNewtWindow, using your new GLEventlistener as a parameter.
  
 As a starting point for the implementations in step 8 and 9, you can use the HelloWorldExample, as mentioned below.
