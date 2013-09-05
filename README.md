@@ -31,17 +31,28 @@ for both Desktop and mobile devices, except through remote rendering (for which 
 Useage
 ------
 
-Compile/export all files in the src, doc, lib, images and fonts directories into "dist/eSight.jar". Place eSight.jar in your classpath. Implementations on top of this library should extend at least the classes:
+To create a new eSight-powered project without including all of the eSight source code (just the JAR):
+1. Compile by running ant in the root directory of the eSight project.
+2. Create a new java 1.6 project.
+3. Copy all of the files in the dist/ folder to your lib/ folder.
+4. Copy the images/ shaders/ and fonts/ directories to your new project.
+5. Copy the settings.properties and log4j.properties files to the root folder of your project.
+6. Include all the jar files from the lib/ folder and its jogl/ subfolder in your classpath.
+7. Include the root folder of your new project in your classpath.
+8. Implement an extension of ESightGLEventListener.
+9. Implement a main class that creates a new ESightNewtWindow, using your new GLEventlistener as a parameter.
+ 
+As a starting point for the implementations in step 8 and 9, you can use the HelloWorldExample, as mentioned below.
 
-* ESightGLEventListener
-* ESightNewtWindow
-
-An annotated and as-complete-as-possible example implementation can be found in the examples directory.
+PS: If you want to create a project with all of the source code included, please make sure to include the root directory of the eSight library.
 
 Example implementation
 ----------------------
 
-An example implementation can be found in the examples directory. It consists of 5 classes, of which ESightExample is the main class.
+Example implementations can be found in the examples directory. Typical implementations consist of at least 2 classes, namely a main class, and a class that extends the ESightGLEventListener class.
+Taking the HelloWorldExample as a model implementation, the two files indicated are HelloWorldExample.java for the main class, and HelloWorldGLEventListener.java as the extension of the ESightGLEventListener class.
+
+To run the HellowWorld example (as well as all other example implementations), the root directory of the project should be included in the classpath. This is done because the projects need some additional files, like the GLSL shaders and the font files. Since the eSight library searches for these files in a directory relative to the directories on the classpath, store these in shaders/ and fonts/ respectively. 
 
 The Latest Version
 ------------------
