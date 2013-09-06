@@ -4,7 +4,7 @@ import java.nio.FloatBuffer;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -25,12 +25,11 @@ import java.nio.FloatBuffer;
  */
 public abstract class MatrixF {
     /** The main storage array for this matrix. */
-    protected float m[];
+    private float m[];
 
     /** The same storage, but in FloatBuffer form. */
-    protected FloatBuffer buf;
 
-    protected int size;
+    private int size;
 
     /**
      * Basic constructor for MatrixF.
@@ -41,8 +40,6 @@ public abstract class MatrixF {
     protected MatrixF(int size) {
         this.size = size;
         m = new float[size];
-        buf = FloatBuffer.wrap(m);
-        buf.rewind();
     }
 
     /**
@@ -60,8 +57,7 @@ public abstract class MatrixF {
      * @return This matrix as a FloatBuffer.
      */
     public FloatBuffer asBuffer() {
-        buf.rewind();
-        return buf;
+        return FloatBuffer.wrap(m);
     }
 
     /**
@@ -73,8 +69,11 @@ public abstract class MatrixF {
      *            The row.
      * @return The value at index i,j.
      */
-    public float get(int i, int j) {
+    public float get(int i, int j) throws IllegalArgumentException {
         int rowSize = (int) Math.sqrt(m.length);
+        if (i >= rowSize || j >= rowSize) {
+            throw new IllegalArgumentException("either i or j was larger than the row/column size of this matrix");
+        }
         return m[i * rowSize + j];
     }
 
@@ -99,8 +98,11 @@ public abstract class MatrixF {
      * @param f
      *            The new value.
      */
-    public void set(int i, int j, float f) {
+    public void set(int i, int j, float f) throws IllegalArgumentException {
         int rowSize = (int) Math.sqrt(m.length);
+        if (i >= rowSize || j >= rowSize) {
+            throw new IllegalArgumentException("either i or j was larger than the row/column size of this matrix");
+        }
         m[i * rowSize + j] = f;
     }
 
@@ -119,50 +121,49 @@ public abstract class MatrixF {
     @Override
     public String toString() {
         int rowSize = (int) Math.sqrt(m.length);
-        String result = "";
 
+        StringBuffer tmpBuf = new StringBuffer();
         for (int i = 0; i < m.length; i++) {
-            if (i != 0 && i % rowSize == 0)
-                result += "\n";
-
-            result += m[i] + " ";
-        }
-
-        return result;
-    }
-
-    @Override
-    public int hashCode() {
-        int rowsAndCols = (int) Math.sqrt(size);
-
-        int hashCode = 1;
-        for (int i = 0; i < rowsAndCols; ++i) {
-            for (int j = 0; j < rowsAndCols; ++j) {
-                int v = Float.floatToIntBits(m[i * rowsAndCols + j]);
-                int valHash = v ^ (v >>> 32);
-                hashCode = 31 * hashCode + valHash;
+            if (i != 0 && i % rowSize == 0) {
+                tmpBuf.append("\n");
             }
+            tmpBuf.append(m[i]);
+            tmpBuf.append(" ");
         }
-        return hashCode;
+
+        return tmpBuf.toString();
     }
 
-    @Override
-    public boolean equals(Object thatObject) {
-        if (this == thatObject)
-            return true;
-        if (!(thatObject instanceof MatrixF))
-            return false;
-
-        // cast to native object is now safe
-        MatrixF that = (MatrixF) thatObject;
-
-        // now a proper field-by-field evaluation can be made
-        boolean same = true;
-        for (int i = 0; i < size; i++) {
-            if (m[i] < that.m[i] - MatrixFMath.EPSILON || m[i] > that.m[i] + MatrixFMath.EPSILON) {
-                same = false;
-            }
+    /**
+     * Setter for m.
+     * 
+     * @param m
+     *            the m to set
+     */
+    public void setMatrix(float m[]) {
+        this.m = new float[m.length];
+        for (int i = 0; i < m.length; i++) {
+            this.m[i] = m[i];
         }
-        return same;
     }
+
+    /**
+     * Getter for size.
+     * 
+     * @return the size.
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * Setter for size.
+     * 
+     * @param size
+     *            the size to set
+     */
+    public void setSize(int size) {
+        this.size = size;
+    }
+
 }

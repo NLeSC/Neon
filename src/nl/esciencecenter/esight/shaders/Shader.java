@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import javax.media.opengl.GL3;
@@ -12,11 +13,14 @@ import javax.media.opengl.GL3;
 import nl.esciencecenter.esight.exceptions.CompilationFailedException;
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.jogamp.common.nio.Buffers;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -38,7 +42,10 @@ import com.jogamp.common.nio.Buffers;
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  */
+@SuppressWarnings("rawtypes")
 public abstract class Shader {
+    private static final Logger logger = LoggerFactory.getLogger(Shader.class);
+
     /** The library-internal name for this shader. */
     private final String shaderName;
     /** The source-file name for this shader. */
@@ -46,14 +53,13 @@ public abstract class Shader {
     /** The source code for this shader. */
     private final String[] source;
 
-    @SuppressWarnings("rawtypes")
-    private final HashMap<String, Class> ins, outs, uniforms;
+    private final Map<String, Class> ins, outs, uniforms;
 
     /**
      * The OpenGL-internal pointer of this shader, set by initializing said
      * shader.
      */
-    protected int shaderPointer = -1;
+    private int shaderPointer = -1;
 
     /**
      * Constructor, reads the GLSL shader source code from file.
@@ -65,15 +71,13 @@ public abstract class Shader {
      * @throws FileNotFoundException
      *             If the file given was not found.
      */
-    @SuppressWarnings("rawtypes")
     public Shader(String shaderName, File path) throws FileNotFoundException {
         this.shaderName = shaderName;
         this.filename = path.getName();
 
         // Read file
         StringBuffer buf = new StringBuffer();
-        Scanner scan;
-        scan = new Scanner(ClassLoader.getSystemClassLoader().getResourceAsStream(path.getPath()));
+        Scanner scan = new Scanner(ClassLoader.getSystemClassLoader().getResourceAsStream(path.getPath()));
 
         ins = new HashMap<String, Class>();
         outs = new HashMap<String, Class>();
@@ -81,7 +85,8 @@ public abstract class Shader {
 
         while (scan.hasNext()) {
             String line = scan.nextLine();
-            buf.append(line + "\n");
+            buf.append(line);
+            buf.append("\n");
 
             parseVariables(line);
         }
@@ -97,7 +102,6 @@ public abstract class Shader {
      * @param shaderCode
      *            The source code for this shader.
      */
-    @SuppressWarnings("rawtypes")
     public Shader(String shaderName, String shaderCode) {
         this.shaderName = shaderName;
         this.filename = "";
@@ -111,7 +115,8 @@ public abstract class Shader {
 
         while (scan.hasNext()) {
             String line = scan.nextLine();
-            buf.append(line + "\n");
+            buf.append(line);
+            buf.append("\n");
 
             parseVariables(line);
         }
@@ -132,83 +137,44 @@ public abstract class Shader {
         String[] words = trimmedLine[0].split("[\\s,;]+");
         if (words[0].compareTo("in") == 0) {
             for (int i = 2; i < words.length; i++) {
-
-                @SuppressWarnings("rawtypes")
-                Class clazz = null;
-                if (words[1].compareTo("vec2") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("vec3") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("vec4") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("float") == 0) {
-                    clazz = Float.class;
-                } else if (words[1].compareTo("sampler2D") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("sampler3D") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("int") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("mat3") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("mat4") == 0) {
-                    clazz = FloatBuffer.class;
-                }
+                Class clazz = extractShaderParameterType(words[1]);
                 ins.put(words[i], clazz);
             }
         } else if (words[0].compareTo("out") == 0) {
             for (int i = 2; i < words.length; i++) {
-
-                @SuppressWarnings("rawtypes")
-                Class clazz = null;
-                if (words[1].compareTo("vec2") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("vec3") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("vec4") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("float") == 0) {
-                    clazz = Float.class;
-                } else if (words[1].compareTo("int") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("sampler2D") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("sampler3D") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("mat3") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("mat4") == 0) {
-                    clazz = FloatBuffer.class;
-                }
+                Class clazz = extractShaderParameterType(words[1]);
                 outs.put(words[i], clazz);
             }
         } else if (words[0].compareTo("uniform") == 0) {
             for (int i = 2; i < words.length; i++) {
-
-                @SuppressWarnings("rawtypes")
-                Class clazz = null;
-                if (words[1].compareTo("vec2") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("vec3") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("vec4") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("float") == 0) {
-                    clazz = Float.class;
-                } else if (words[1].compareTo("int") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("sampler2D") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("sampler3D") == 0) {
-                    clazz = Integer.class;
-                } else if (words[1].compareTo("mat3") == 0) {
-                    clazz = FloatBuffer.class;
-                } else if (words[1].compareTo("mat4") == 0) {
-                    clazz = FloatBuffer.class;
-                }
+                Class clazz = extractShaderParameterType(words[1]);
                 uniforms.put(words[i], clazz);
             }
         }
+    }
+
+    private Class extractShaderParameterType(String word) {
+        Class clazz = null;
+        if (word.compareTo("vec2") == 0) {
+            clazz = FloatBuffer.class;
+        } else if (word.compareTo("vec3") == 0) {
+            clazz = FloatBuffer.class;
+        } else if (word.compareTo("vec4") == 0) {
+            clazz = FloatBuffer.class;
+        } else if (word.compareTo("float") == 0) {
+            clazz = Float.class;
+        } else if (word.compareTo("sampler2D") == 0) {
+            clazz = Integer.class;
+        } else if (word.compareTo("sampler3D") == 0) {
+            clazz = Integer.class;
+        } else if (word.compareTo("int") == 0) {
+            clazz = Integer.class;
+        } else if (word.compareTo("mat3") == 0) {
+            clazz = FloatBuffer.class;
+        } else if (word.compareTo("mat4") == 0) {
+            clazz = FloatBuffer.class;
+        }
+        return clazz;
     }
 
     /**
@@ -220,26 +186,30 @@ public abstract class Shader {
      *             If the compilation of the GLSL code generated any errors.
      */
     public void init(GL3 gl) throws CompilationFailedException {
-        // First, give the source to OpenGL and compile
-        gl.glShaderSource(shaderPointer, 1, source, (int[]) null, 0);
-        gl.glCompileShader(shaderPointer);
+        try {
+            // First, give the source to OpenGL and compile
+            gl.glShaderSource(getShaderPointer(), 1, source, (int[]) null, 0);
+            gl.glCompileShader(getShaderPointer());
 
-        // Receive compilation status
-        IntBuffer buf = Buffers.newDirectIntBuffer(1);
-        gl.glGetShaderiv(shaderPointer, GL3.GL_COMPILE_STATUS, buf);
-        int status = buf.get(0);
+            // Receive compilation status
+            IntBuffer buf = Buffers.newDirectIntBuffer(1);
+            gl.glGetShaderiv(getShaderPointer(), GL3.GL_COMPILE_STATUS, buf);
+            int status = buf.get(0);
 
-        // Check the status
-        if (status == GL3.GL_FALSE) {
-            // Prepare for additional information
-            gl.glGetShaderiv(shaderPointer, GL3.GL_INFO_LOG_LENGTH, buf);
-            int logLength = buf.get(0);
-            byte[] reason = new byte[logLength];
+            // Check the status
+            if (status == GL3.GL_FALSE) {
+                // Prepare for additional information
+                gl.glGetShaderiv(getShaderPointer(), GL3.GL_INFO_LOG_LENGTH, buf);
+                int logLength = buf.get(0);
+                byte[] reason = new byte[logLength];
 
-            // Get additional information
-            gl.glGetShaderInfoLog(shaderPointer, logLength, null, 0, reason, 0);
+                // Get additional information
+                gl.glGetShaderInfoLog(getShaderPointer(), logLength, null, 0, reason, 0);
 
-            throw new CompilationFailedException("Compilation of " + filename + " failed, " + new String(reason));
+                throw new CompilationFailedException("Compilation of " + filename + " failed, " + new String(reason));
+            }
+        } catch (UninitializedException e) {
+            logger.error(e.getMessage());
         }
     }
 
@@ -252,8 +222,9 @@ public abstract class Shader {
      *             called.
      */
     public int getShaderPointer() throws UninitializedException {
-        if (shaderPointer == -1)
+        if (shaderPointer == -1) {
             throw new UninitializedException();
+        }
         return shaderPointer;
     }
 
@@ -263,8 +234,7 @@ public abstract class Shader {
      * @return the HashMap containing the input attribute names (and their raw
      *         types) of this shader.
      */
-    @SuppressWarnings("rawtypes")
-    public HashMap<String, Class> getIns() {
+    public Map<String, Class> getIns() {
         return ins;
     }
 
@@ -274,8 +244,7 @@ public abstract class Shader {
      * @return the HashMap containing the output attribute names (and their raw
      *         types) of this shader.
      */
-    @SuppressWarnings("rawtypes")
-    public HashMap<String, Class> getOuts() {
+    public Map<String, Class> getOuts() {
         return outs;
     }
 
@@ -285,8 +254,7 @@ public abstract class Shader {
      * @return the HashMap containing the uniform names (and their raw types) of
      *         this shader.
      */
-    @SuppressWarnings("rawtypes")
-    public HashMap<String, Class> getUniforms() {
+    public Map<String, Class> getUniforms() {
         return uniforms;
     }
 
@@ -297,5 +265,15 @@ public abstract class Shader {
      */
     public String getName() {
         return shaderName;
+    }
+
+    /**
+     * Setter for shaderPointer.
+     * 
+     * @param shaderPointer
+     *            the shaderPointer to set
+     */
+    public void setShaderPointer(int shaderPointer) {
+        this.shaderPointer = shaderPointer;
     }
 }

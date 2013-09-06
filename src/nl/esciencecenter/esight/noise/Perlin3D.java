@@ -4,7 +4,7 @@ import nl.esciencecenter.esight.textures.Texture3D;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -47,10 +47,8 @@ public class Perlin3D extends Texture3D {
         this.height = height;
         this.depth = depth;
 
-        // System.out.print("Generating noise");
         Noise n = new Noise(4, width, height, depth);
-        // System.out.println("done");
 
-        pixelBuffer = n.pixelBuffer;
+        pixelBuffer = n.getPixelBuffer();
     }
 }

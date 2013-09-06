@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class FBO {
-    private final static Logger logger = LoggerFactory.getLogger(FBO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FBO.class);
 
     /** OpenGL internal pointer to the framebuffer */
     private final IntBuffer fboPointer;
@@ -80,49 +80,56 @@ public class FBO {
      *            The opengl instance.
      */
     public void init(GL3 gl) {
-        try {
-            checkNoError(gl, "PRE: ", true);
+        if (!initialized) {
+            try {
+                checkNoError(gl, "PRE: ", true);
 
-            // Create and bind frame buffer
-            gl.glGenFramebuffers(1, fboPointer);
-            gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fboPointer.get(0));
+                // Create and bind frame buffer
+                gl.glGenFramebuffers(1, fboPointer);
+                gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fboPointer.get(0));
 
-            checkNoError(gl, "Bind framebuffer: ", false);
+                checkNoError(gl, "Bind framebuffer: ", false);
 
-            // Setup texture and color buffer
-            rboTexture.init(gl);
-            rboTexture.use(gl);
-            gl.glFramebufferTexture2D(GL3.GL_FRAMEBUFFER, GL3.GL_COLOR_ATTACHMENT0, GL3.GL_TEXTURE_2D,
-                    rboTexture.getPointer(), 0);
-            rboTexture.unBind(gl);
+                // Setup texture and color buffer
+                rboTexture.init(gl);
+                checkNoError(gl, "post rbo init: ", false);
 
-            checkNoError(gl, "Setup texture: ", false);
+                rboTexture.use(gl);
+                checkNoError(gl, "post rbo use: ", false);
 
-            // Setup the depth buffer
-            gl.glGenRenderbuffers(1, rboPointer);
-            gl.glBindRenderbuffer(GL3.GL_RENDERBUFFER, rboPointer.get(0));
-            gl.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL3.GL_DEPTH_COMPONENT16, width, height);
-            gl.glBindRenderbuffer(GL3.GL_RENDERBUFFER, 0);
+                gl.glFramebufferTexture2D(GL3.GL_FRAMEBUFFER, GL3.GL_COLOR_ATTACHMENT0, GL3.GL_TEXTURE_2D, rboTexture
+                        .getPointer().get(0), 0);
+                checkNoError(gl, "post glFramebufferTexture2D: ", false);
 
-            checkNoError(gl, "Setup depth buffer: ", false);
+                rboTexture.unBind(gl);
+                checkNoError(gl, "post unbind: ", false);
 
-            // Attach both buffers to the frame buffer
-            gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D,
-                    rboTexture.getPointer(), 0);
-            gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER,
-                    rboPointer.get(0));
+                // Setup the depth buffer
+                gl.glGenRenderbuffers(1, rboPointer);
+                gl.glBindRenderbuffer(GL3.GL_RENDERBUFFER, rboPointer.get(0));
+                gl.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL3.GL_DEPTH_COMPONENT16, width, height);
+                gl.glBindRenderbuffer(GL3.GL_RENDERBUFFER, 0);
 
-            checkNoError(gl, "POST: ", false);
+                checkNoError(gl, "Setup depth buffer: ", false);
 
-            checkStatus(gl, "Framebuffer error:");
-        } catch (UninitializedException e) {
-            e.printStackTrace();
+                // Attach both buffers to the frame buffer
+                gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D, rboTexture
+                        .getPointer().get(0), 0);
+                gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER,
+                        rboPointer.get(0));
+
+                checkNoError(gl, "POST: ", false);
+
+                checkStatus(gl, "Framebuffer error:");
+            } catch (UninitializedException e) {
+                LOGGER.error(e.getMessage());
+            }
+
+            // Unbind. The FBO is now ready for use.
+            gl.glBindFramebuffer(GL3.GL_FRAMEBUFFER, 0);
+
+            initialized = true;
         }
-
-        // Unbind. The FBO is now ready for use.
-        gl.glBindFramebuffer(GL3.GL_FRAMEBUFFER, 0);
-
-        initialized = true;
     }
 
     /**
@@ -141,10 +148,10 @@ public class FBO {
         int error = gl.glGetError();
         if (!quietlyRemoveAllPreviousErrors) {
             if (GL.GL_NO_ERROR != error) {
-                logger.error("GL ERROR(s) " + exceptionMessage + " : ");
+                LOGGER.error("GL ERROR(s) " + exceptionMessage + " : ");
                 while (GL.GL_NO_ERROR != error) {
                     Exception exception = new Exception(" GL Error 0x" + Integer.toHexString(error));
-                    logger.error("Error in OpenGL operation while initializing FBO", exception);
+                    LOGGER.error("Error in OpenGL operation while initializing FBO", exception);
                     error = gl.glGetError();
                 }
                 return false;
@@ -188,7 +195,7 @@ public class FBO {
         }
 
         if (errDetected) {
-            logger.error(errString);
+            LOGGER.error(errString);
         }
     }
 
@@ -227,9 +234,7 @@ public class FBO {
      *            The opengl instance.
      */
     public void unBind(GL3 gl) {
-        // gl.glBindRenderbuffer(GL3.GL_RENDERBUFFER, 0);
         gl.glBindFramebuffer(GL3.GL_FRAMEBUFFER, 0);
-        // gl.glDrawBuffer(GL3.GL_BACK);
     }
 
     /**

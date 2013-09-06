@@ -53,9 +53,9 @@ import javax.swing.ListCellRenderer;
 public class ImageComboBoxRenderer extends JLabel implements ListCellRenderer {
     private static final long serialVersionUID = -6243517743093061609L;
 
-    private Font              descriptionFont;
+    private Font descriptionFont;
 
-    private final String[]    descriptions;
+    private final String[] descriptions;
     private final ImageIcon[] images;
 
     /**
@@ -72,8 +72,14 @@ public class ImageComboBoxRenderer extends JLabel implements ListCellRenderer {
         setHorizontalAlignment(CENTER);
         setVerticalAlignment(CENTER);
 
-        this.descriptions = descriptions;
-        this.images = images;
+        this.descriptions = new String[descriptions.length];
+        for (int i = 0; i < descriptions.length; i++) {
+            this.descriptions[i] = descriptions[i];
+        }
+        this.images = new ImageIcon[images.length];
+        for (int i = 0; i < images.length; i++) {
+            this.images[i] = images[i];
+        }
     }
 
     /*
@@ -81,8 +87,8 @@ public class ImageComboBoxRenderer extends JLabel implements ListCellRenderer {
      * and returns the label, set up to display the text and image.
      */
     @Override
-    public Component getListCellRendererComponent(JList list, Object value,
-            int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+            boolean cellHasFocus) {
         // Get the selected index. (The index param isn't
         // always valid, so just use the value.)
         int selectedIndex = ((Integer) value).intValue();
@@ -100,7 +106,6 @@ public class ImageComboBoxRenderer extends JLabel implements ListCellRenderer {
         String description = descriptions[selectedIndex];
         setIcon(icon);
         if (icon != null) {
-            // setText(description);
             setFont(list.getFont());
         } else {
             setDescription(description, list.getFont());

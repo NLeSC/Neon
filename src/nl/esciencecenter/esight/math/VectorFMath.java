@@ -5,7 +5,7 @@ import java.util.List;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -24,7 +24,10 @@ import java.util.List;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class VectorFMath {
+public final class VectorFMath {
+    private VectorFMath() {
+        // Utility class
+    }
 
     /**
      * Helper method to calculate the dot product of two vectors
@@ -36,7 +39,7 @@ public class VectorFMath {
      * @return The dot product of the two vectors.
      */
     public static float dot(VecF2 u, VecF2 v) {
-        return u.v[0] * v.v[0] + u.v[1] * v.v[1];
+        return u.getX() * v.getX() + u.getY() * v.getY();
     }
 
     /**
@@ -49,7 +52,7 @@ public class VectorFMath {
      * @return The dot product of the two vectors.
      */
     public static float dot(VecF3 u, VecF3 v) {
-        return u.v[0] * v.v[0] + u.v[1] * v.v[1] + u.v[2] * v.v[2];
+        return u.getX() * v.getX() + u.getY() * v.getY() + u.getZ() * v.getZ();
     }
 
     /**
@@ -62,7 +65,7 @@ public class VectorFMath {
      * @return The dot product of the two vectors.
      */
     public static float dot(VecF4 u, VecF4 v) {
-        return u.v[0] * v.v[0] + u.v[1] * v.v[1] + u.v[2] * v.v[2] + u.v[3] * v.v[3];
+        return u.getX() * v.getX() + u.getY() * v.getY() + u.getZ() * v.getZ() + u.getW() * v.getW();
     }
 
     /**
@@ -141,8 +144,8 @@ public class VectorFMath {
      * @return The new vector, which is the cross product of the two vectors.
      */
     public static VecF3 cross(VecF3 u, VecF3 v) {
-        return new VecF3(u.v[1] * v.v[2] - u.v[2] * v.v[1], u.v[2] * v.v[0] - u.v[0] * v.v[2], u.v[0] * v.v[1] - u.v[1]
-                * v.v[0]);
+        return new VecF3(u.getY() * v.getZ() - u.getZ() * v.getY(), u.getZ() * v.getX() - u.getX() * v.getZ(), u.getX()
+                * v.getY() - u.getY() * v.getX());
     }
 
     /**
@@ -155,8 +158,8 @@ public class VectorFMath {
      * @return The new vector, which is the cross product of the two vectors.
      */
     public static VecF4 cross(VecF4 u, VecF4 v) {
-        return new VecF4(u.v[1] * v.v[2] - u.v[2] * v.v[1], u.v[2] * v.v[0] - u.v[0] * v.v[2], u.v[0] * v.v[1] - u.v[1]
-                * v.v[0], 0.0f);
+        return new VecF4(u.getY() * v.getZ() - u.getZ() * v.getY(), u.getZ() * v.getX() - u.getX() * v.getZ(), u.getX()
+                * v.getY() - u.getY() * v.getX(), 0.0f);
     }
 
     /**
@@ -168,13 +171,9 @@ public class VectorFMath {
      */
     public static FloatBuffer toBuffer(float[] array) {
         FloatBuffer result = FloatBuffer.allocate(array.length);
-
-        for (int i = 0; i < array.length; i++) {
-            result.put(array[i]);
-        }
+        result.put(array);
 
         result.rewind();
-
         return result;
     }
 
@@ -331,7 +330,7 @@ public class VectorFMath {
             VecF4 endLocation) {
         VecF4[] newBezierPoints = new VecF4[steps];
         for (int i = 0; i < steps; i++) {
-            newBezierPoints[i] = new VecF4();
+            newBezierPoints[i] = new VecF4(0f, 0f, 0f, 1f);
         }
 
         float t = 1f / steps;
@@ -339,13 +338,30 @@ public class VectorFMath {
 
         for (int coord = 0; coord < 3; coord++) {
             float p[] = new float[4];
-            p[0] = startLocation.get(coord);
-            p[1] = (startLocation.add(startControl)).get(coord);
-            p[2] = (endLocation.add(endControl.neg())).get(coord);
-            p[3] = endLocation.get(coord);
+            if (coord == 0) {
+                p[0] = startLocation.getX();
+                p[1] = (startLocation.add(startControl)).getX();
+                p[2] = (endLocation.add(endControl.neg())).getX();
+                p[3] = endLocation.getX();
+            } else if (coord == 1) {
+                p[0] = startLocation.getY();
+                p[1] = (startLocation.add(startControl)).getY();
+                p[2] = (endLocation.add(endControl.neg())).getY();
+                p[3] = endLocation.getY();
+            } else if (coord == 2) {
+                p[0] = startLocation.getZ();
+                p[1] = (startLocation.add(startControl)).getZ();
+                p[2] = (endLocation.add(endControl.neg())).getZ();
+                p[3] = endLocation.getZ();
+            } else if (coord == 3) {
+                p[0] = startLocation.getW();
+                p[1] = (startLocation.add(startControl)).getW();
+                p[2] = (endLocation.add(endControl.neg())).getW();
+                p[3] = endLocation.getW();
+            }
 
             // The algorithm itself begins here ==
-            float f, fd, fdd, fddd, fdd_per_2, fddd_per_2, fddd_per_6;
+            float f, fd, fdd, fddd, fdd_per_2, fddd_per_2, fddd_per_6; // NOSONAR
 
             // I've tried to optimize the amount of
             // multiplications here, but these are exactly
@@ -361,7 +377,15 @@ public class VectorFMath {
             fddd_per_6 = fddd_per_2 * (1f / 3);
 
             for (int loop = 0; loop < steps; loop++) {
-                newBezierPoints[loop].set(coord, f);
+                if (coord == 0) {
+                    newBezierPoints[loop].setX(f);
+                } else if (coord == 1) {
+                    newBezierPoints[loop].setY(f);
+                } else if (coord == 2) {
+                    newBezierPoints[loop].setZ(f);
+                } else if (coord == 3) {
+                    newBezierPoints[loop].setW(f);
+                }
 
                 f = f + fd + fdd_per_2 + fddd_per_6;
                 fd = fd + fdd + fddd_per_2;
@@ -402,11 +426,22 @@ public class VectorFMath {
 
         for (int coord = 0; coord < 3; coord++) {
             float p[] = new float[4];
-
-            p[0] = startLocation.get(coord);
-            p[1] = (startLocation.add(startControl)).get(coord);
-            p[2] = (endLocation.add(endControl.neg())).get(coord);
-            p[3] = endLocation.get(coord);
+            if (coord == 0) {
+                p[0] = startLocation.getX();
+                p[1] = (startLocation.add(startControl)).getX();
+                p[2] = (endLocation.add(endControl.neg())).getX();
+                p[3] = endLocation.getX();
+            } else if (coord == 1) {
+                p[0] = startLocation.getY();
+                p[1] = (startLocation.add(startControl)).getY();
+                p[2] = (endLocation.add(endControl.neg())).getY();
+                p[3] = endLocation.getY();
+            } else if (coord == 2) {
+                p[0] = startLocation.getZ();
+                p[1] = (startLocation.add(startControl)).getZ();
+                p[2] = (endLocation.add(endControl.neg())).getZ();
+                p[3] = endLocation.getZ();
+            }
 
             if (p[0] - p[3] < 0f) {
                 p[0] = p[0] + 360f;
@@ -415,7 +450,7 @@ public class VectorFMath {
             }
 
             // The algorithm itself begins here ==
-            float f, fd, fdd, fddd, fdd_per_2, fddd_per_2, fddd_per_6;
+            float f, fd, fdd, fddd, fdd_per_2, fddd_per_2, fddd_per_6; // NOSONAR
 
             // I've tried to optimize the amount of
             // multiplications here, but these are exactly
@@ -431,7 +466,13 @@ public class VectorFMath {
             fddd_per_6 = fddd_per_2 * (1f / 3);
 
             for (int loop = 0; loop < steps; loop++) {
-                newBezierPoints[loop].set(coord, f);
+                if (coord == 0) {
+                    newBezierPoints[loop].setX(f);
+                } else if (coord == 1) {
+                    newBezierPoints[loop].setY(f);
+                } else if (coord == 2) {
+                    newBezierPoints[loop].setZ(f);
+                }
 
                 f = f + fd + fdd_per_2 + fddd_per_6;
                 fd = fd + fdd + fddd_per_2;
@@ -443,20 +484,20 @@ public class VectorFMath {
         return newBezierPoints;
     }
 
-    public static VecF4[] interpolateColors(int steps, VecF4 startColor, VecF4 endColor) {
-        VecF4[] newColors = new VecF4[steps];
+    public static Color4[] interpolateColors(int steps, Color4 startColor, Color4 endColor) {
+        Color4[] newColors = new Color4[steps];
 
-        float rstep = (endColor.get(0) - startColor.get(0)) / steps;
-        float gstep = (endColor.get(1) - startColor.get(1)) / steps;
-        float bstep = (endColor.get(2) - startColor.get(2)) / steps;
-        float astep = (endColor.get(3) - startColor.get(3)) / steps;
+        float rstep = (endColor.getR() - startColor.getR()) / steps;
+        float gstep = (endColor.getG() - startColor.getG()) / steps;
+        float bstep = (endColor.getB() - startColor.getB()) / steps;
+        float astep = (endColor.getA() - startColor.getA()) / steps;
 
         for (int i = 0; i < steps; i++) {
-            VecF4 stepColor = new VecF4();
-            stepColor.set(0, startColor.get(0) + (rstep * i));
-            stepColor.set(1, startColor.get(1) + (gstep * i));
-            stepColor.set(2, startColor.get(2) + (bstep * i));
-            stepColor.set(3, startColor.get(3) + (astep * i));
+            Color4 stepColor = new Color4();
+            stepColor.setR(startColor.getR() + (rstep * i));
+            stepColor.setG(startColor.getG() + (gstep * i));
+            stepColor.setB(startColor.getB() + (bstep * i));
+            stepColor.setA(startColor.getA() + (astep * i));
 
             newColors[i] = stepColor;
         }

@@ -5,19 +5,14 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 
 import nl.esciencecenter.esight.input.InputHandler;
+import nl.esciencecenter.esight.util.QuitListener;
 
-import com.jogamp.newt.Display;
-import com.jogamp.newt.NewtFactory;
-import com.jogamp.newt.Screen;
-import com.jogamp.newt.event.WindowAdapter;
-import com.jogamp.newt.event.WindowEvent;
-import com.jogamp.newt.event.WindowUpdateEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.util.Animator;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -37,9 +32,6 @@ import com.jogamp.opengl.util.Animator;
  * 
  */
 public class ESightNewtWindow {
-    /** Screen id number to start the application on. */
-    static int screenIdx = 0;
-
     /**
      * Constructor for this class. Sets up the window and enables common
      * features like anti-aliasing and hardware acceleration.
@@ -61,13 +53,11 @@ public class ESightNewtWindow {
      */
     public ESightNewtWindow(boolean forceGL2ES2, InputHandler inputHandler, final GLEventListener glEventListener,
             int width, int height, String windowTitle) {
-        final GLProfile glp;
-        // if (forceGL2ES2) {
-        // glp = GLProfile.get(GLProfile.GL2ES2);
-        // } else {
+
         GLProfile.initSingleton();
+
+        final GLProfile glp;
         glp = GLProfile.get(GLProfile.GL3);
-        // }
 
         // Set up the GL context
         final GLCapabilities caps = new GLCapabilities(glp);
@@ -80,76 +70,22 @@ public class ESightNewtWindow {
         caps.setAlphaBits(4);
         caps.setNumSamples(4);
 
-        // Create the Newt Window
-        Display dpy = NewtFactory.createDisplay("decon");
-        Screen screen = NewtFactory.createScreen(dpy, screenIdx);
-        final GLWindow glWindow = GLWindow.create(screen, caps);
-        glWindow.setTitle(windowTitle);
+        GLWindow window = GLWindow.create(caps);
 
-        // Set to automatically swap front and back buffers once the display
-        // cycle is done.
-        glWindow.setAutoSwapBufferMode(true);
+        window.addGLEventListener(glEventListener);
+        window.addWindowListener(new QuitListener());
+        window.setAutoSwapBufferMode(true);
+        window.setSize(width, height);
+        window.setTitle(windowTitle);
+        window.addMouseListener(inputHandler);
+        window.addKeyListener(inputHandler);
 
-        // Add listeners
-        glWindow.addMouseListener(inputHandler);
-        glWindow.addKeyListener(inputHandler);
-        // glWindow.setFullscreen(true);
-
-        // WindowListener[] listeners = glWindow.getWindowListeners();
-        // final WindowListener original = listeners[0];
-        // glWindow.removeWindowListener(original);
-
-        glWindow.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowDestroyNotify(WindowEvent arg0) {
-                // glWindow.getAnimator().stop();
-                // original.windowDestroyNotify(arg0);
-                System.exit(0);
-            }
-
-            @Override
-            public void windowDestroyed(WindowEvent arg0) {
-                // glWindow.getAnimator().stop();
-                // original.windowDestroyed(arg0);
-                // glWindow.destroy();
-                System.exit(0);
-            }
-
-            @Override
-            public void windowGainedFocus(WindowEvent arg0) {
-                // original.windowGainedFocus(arg0);
-            }
-
-            @Override
-            public void windowLostFocus(WindowEvent arg0) {
-                // original.windowLostFocus(arg0);
-            }
-
-            @Override
-            public void windowMoved(WindowEvent arg0) {
-                // original.windowMoved(arg0);
-            }
-
-            @Override
-            public void windowRepaint(WindowUpdateEvent arg0) {
-                // original.windowRepaint(arg0);
-            }
-
-            @Override
-            public void windowResized(WindowEvent arg0) {
-                // original.windowResized(arg0);
-            }
-        });
-
-        glWindow.addGLEventListener(glEventListener);
-
-        // Create the Animator
-        final Animator animator = new Animator();
-        animator.add(glWindow);
+        Animator animator = new Animator();
+        animator.add(window);
         animator.start();
+        animator.setUpdateFPSFrames(60, null);
 
-        glWindow.setSize(width, height);
+        window.setVisible(true);
 
-        glWindow.setVisible(true);
     }
 }

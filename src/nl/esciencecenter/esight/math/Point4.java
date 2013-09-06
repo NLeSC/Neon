@@ -2,7 +2,7 @@ package nl.esciencecenter.esight.math;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -26,8 +26,7 @@ public class Point4 extends VecF4 {
      * Stand-in for a 4-place vector, where the fourth place is always 1f.
      */
     public Point4() {
-        super();
-        this.v[3] = 1f;
+        super(0f, 0f, 0f, 1f);
     }
 
     /**
@@ -48,8 +47,7 @@ public class Point4 extends VecF4 {
      *            replaced by 1f.
      */
     public Point4(VecF4 v) {
-        super(v);
-        this.v[3] = 1f;
+        super(v.getX(), v.getY(), v.getZ(), 1f);
     }
 
     /**
@@ -64,7 +62,7 @@ public class Point4 extends VecF4 {
      * @param w
      *            This value is discarded in favour of 1f.
      */
-    public Point4(float x, float y, float z, float w) {
+    public Point4(float x, float y, float z) {
         super(x, y, z, 1f);
     }
 }

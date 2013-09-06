@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
@@ -30,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -49,8 +50,12 @@ import org.slf4j.LoggerFactory;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class GoggleSwing {
+public final class GoggleSwing {
     private final static Logger logger = LoggerFactory.getLogger(GoggleSwing.class);
+
+    private GoggleSwing() {
+        // Utility class
+    }
 
     /**
      * A single item for a ButtonBox, to be used in conjuction with
@@ -59,8 +64,8 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class ButtonBoxItem {
-        public String label;
-        public ActionListener listener;
+        private final String label;
+        private final ActionListener listener;
 
         public ButtonBoxItem(String label, ActionListener listener) {
             this.label = label;
@@ -75,8 +80,8 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class RadioBoxItem {
-        public String label;
-        public ActionListener listener;
+        private final String label;
+        private final ActionListener listener;
 
         public RadioBoxItem(String label, ActionListener listener) {
             this.label = label;
@@ -91,10 +96,10 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class CheckBoxItem {
-        public String label;
+        private final String label;
 
-        public boolean selection;
-        public ItemListener listener;
+        private final boolean selection;
+        private final ItemListener listener;
 
         public CheckBoxItem(String label, boolean selection, ItemListener listener) {
             this.label = label;
@@ -110,10 +115,10 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class ColoredCheckBoxItem {
-        public String label;
-        public Color color;
-        public boolean selection;
-        public ItemListener listener;
+        private final String label;
+        private final Color color;
+        private final boolean selection;
+        private final ItemListener listener;
 
         public ColoredCheckBoxItem(String label, Color color, boolean selection, ItemListener listener) {
             this.label = label;
@@ -130,8 +135,8 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class DropdownBoxItem {
-        public String label;
-        public ActionListener listener;
+        private final String label;
+        private final ActionListener listener;
 
         public DropdownBoxItem(String itemLabel, ActionListener listener) {
             this.label = itemLabel;
@@ -146,9 +151,9 @@ public class GoggleSwing {
      * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
      */
     public static class DropdownBoxesBoxItem {
-        public String label;
-        public String selectedOption;
-        public DropdownBoxItem[] items;
+        private final String label;
+        private final String selectedOption;
+        private final DropdownBoxItem[] items;
 
         public DropdownBoxesBoxItem(String boxLabel, String selectedOption, DropdownBoxItem... items) {
             this.label = boxLabel;
@@ -301,7 +306,7 @@ public class GoggleSwing {
      *            The components to be boxed.
      * @return the boxed components.
      */
-    public static Box hBoxedComponents(ArrayList<Component> components) {
+    public static Box hBoxedComponents(List<Component> components) {
         final Box hrzOuterBox = Box.createHorizontalBox();
         hrzOuterBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         hrzOuterBox.add(GoggleSwing.horizontalStrut(2));
@@ -328,8 +333,7 @@ public class GoggleSwing {
      * @return The strut.
      */
     public static Component horizontalStrut(int size) {
-        final Component verticalStrut = Box.createRigidArea(new Dimension(size, 0));
-        return verticalStrut;
+        return Box.createRigidArea(new Dimension(size, 0));
     }
 
     /**
@@ -409,7 +413,6 @@ public class GoggleSwing {
     public static Box horizontalDropdownBoxesBox(String name, DropdownBoxesBoxItem... boxItems) {
         final ArrayList<Component> vcomponents = new ArrayList<Component>();
         vcomponents.add(new JLabel(name));
-        vcomponents.add(Box.createHorizontalGlue());
 
         final ArrayList<Component> hcomponents = new ArrayList<Component>();
 
@@ -567,7 +570,7 @@ public class GoggleSwing {
      *            option to have a bevel border yes/no.
      * @return the vertically boxed components.
      */
-    public static Box vBoxedComponents(ArrayList<Component> components, boolean bordered) {
+    public static Box vBoxedComponents(List<Component> components, boolean bordered) {
         final Box hrzBox = Box.createHorizontalBox();
         hrzBox.add(GoggleSwing.horizontalStrut(2));
 
@@ -596,7 +599,7 @@ public class GoggleSwing {
      *            option to have a bevel border yes/no.
      * @return the horizontally boxed components.
      */
-    public static Box hBoxedComponents(ArrayList<Component> components, boolean bordered) {
+    public static Box hBoxedComponents(List<Component> components, boolean bordered) {
         final Box vrtBox = Box.createVerticalBox();
         vrtBox.add(GoggleSwing.verticalStrut(2));
 
@@ -624,7 +627,6 @@ public class GoggleSwing {
      * @return The strut.
      */
     public static Component verticalStrut(int size) {
-        final Component verticalStrut = Box.createRigidArea(new Dimension(0, size));
-        return verticalStrut;
+        return Box.createRigidArea(new Dimension(0, size));
     }
 }

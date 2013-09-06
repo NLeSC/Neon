@@ -6,7 +6,7 @@ import nl.esciencecenter.esight.math.VectorFMath;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -40,14 +40,13 @@ public class Axis extends Model {
      *            The minor interval for ticks.
      */
     public Axis(VecF3 start, VecF3 end, float majorInterval, float minorInterval) {
-        super(vertex_format.LINES);
+        super(VertexFormat.LINES);
 
         float length = VectorFMath.length(end.sub(start));
         int numMajorIntervals = (int) Math.floor(length / majorInterval);
         int numMinorIntervals = (int) Math.floor(length / minorInterval);
 
-        int numVertices = 2 + (numMajorIntervals * 2) - 4
-                + (numMinorIntervals * 2) - 4;
+        int numVertices = 2 + (numMajorIntervals * 2) - 4 + (numMinorIntervals * 2) - 4;
 
         VecF4[] points = new VecF4[numVertices];
         VecF3[] normals = new VecF3[numVertices];
@@ -67,12 +66,12 @@ public class Axis extends Model {
 
         VecF3 perpendicular;
         VecF3 vec = VectorFMath.normalize((end.sub(start)));
-        if (vec.get(0) > 0.5f) {
+        if (vec.getX() > 0.5f) {
             perpendicular = new VecF3(0f, 0f, 1f);
-        } else if (vec.get(1) > 0.5f) {
+        } else if (vec.getY() > 0.5f) {
             perpendicular = new VecF3(1f, 0f, 0f);
         } else {
-            perpendicular = new VecF3(1f, 0f, 0f);
+            perpendicular = new VecF3(0f, 1f, 0f);
         }
 
         VecF3 nil = new VecF3();
@@ -81,28 +80,24 @@ public class Axis extends Model {
         float minorIntervalSize = length / 300f;
 
         for (int i = 1; i < numMajorIntervals / 2; i++) {
-            arrayindex = addInterval(points, normals, tCoords, arrayindex,
-                    nil.add(vec.mul(majorInterval * i)), perpendicular,
-                    majorIntervalSize);
-            arrayindex = addInterval(points, normals, tCoords, arrayindex,
-                    nil.sub(vec.mul(majorInterval * i)), perpendicular,
-                    majorIntervalSize);
+            arrayindex = addInterval(points, normals, tCoords, arrayindex, nil.add(vec.mul(majorInterval * i)),
+                    perpendicular, majorIntervalSize);
+            arrayindex = addInterval(points, normals, tCoords, arrayindex, nil.sub(vec.mul(majorInterval * i)),
+                    perpendicular, majorIntervalSize);
         }
 
         for (int i = 1; i < numMinorIntervals / 2; i++) {
-            arrayindex = addInterval(points, normals, tCoords, arrayindex,
-                    nil.add(vec.mul(minorInterval * i)), perpendicular,
-                    minorIntervalSize);
-            arrayindex = addInterval(points, normals, tCoords, arrayindex,
-                    nil.sub(vec.mul(minorInterval * i)), perpendicular,
-                    minorIntervalSize);
+            arrayindex = addInterval(points, normals, tCoords, arrayindex, nil.add(vec.mul(minorInterval * i)),
+                    perpendicular, minorIntervalSize);
+            arrayindex = addInterval(points, normals, tCoords, arrayindex, nil.sub(vec.mul(minorInterval * i)),
+                    perpendicular, minorIntervalSize);
 
         }
 
-        this.numVertices = numVertices;
-        this.vertices = VectorFMath.toBuffer(points);
-        this.normals = VectorFMath.toBuffer(normals);
-        this.texCoords = VectorFMath.toBuffer(tCoords);
+        this.setNumVertices(numVertices);
+        this.setVertices(VectorFMath.toBuffer(points));
+        this.setNormals(VectorFMath.toBuffer(normals));
+        this.setTexCoords(VectorFMath.toBuffer(tCoords));
     }
 
     /**
@@ -124,16 +119,17 @@ public class Axis extends Model {
      *            the size of the tick to paint.
      * @return the new index in the ouput arrays.
      */
-    private int addInterval(VecF4[] points, VecF3[] normals, VecF3[] tCoords,
-            int offset, VecF3 center, VecF3 alignment, float size) {
-        points[offset] = new VecF4(center.add(alignment.mul(size)), 1f);
-        normals[offset] = VectorFMath.normalize(alignment);
-        tCoords[offset] = new VecF3(0, 0, 0);
-        offset++;
-        points[offset] = new VecF4(center.sub(alignment.mul(size)), 1f);
-        normals[offset] = VectorFMath.normalize(alignment).neg();
-        tCoords[offset] = new VecF3(1, 1, 1);
-        offset++;
-        return offset;
+    private int addInterval(VecF4[] points, VecF3[] normals, VecF3[] tCoords, int offset, VecF3 center,
+            VecF3 alignment, float size) {
+        int tmpOffset = offset;
+        points[tmpOffset] = new VecF4(center.add(alignment.mul(size)), 1f);
+        normals[tmpOffset] = VectorFMath.normalize(alignment);
+        tCoords[tmpOffset] = new VecF3(0, 0, 0);
+        tmpOffset++;
+        points[tmpOffset] = new VecF4(center.sub(alignment.mul(size)), 1f);
+        normals[tmpOffset] = VectorFMath.normalize(alignment).neg();
+        tCoords[tmpOffset] = new VecF3(1, 1, 1);
+        tmpOffset++;
+        return tmpOffset;
     }
 }

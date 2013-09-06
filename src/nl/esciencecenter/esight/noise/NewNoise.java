@@ -2,7 +2,7 @@ package nl.esciencecenter.esight.noise;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -22,17 +22,22 @@ package nl.esciencecenter.esight.noise;
  * 
  */
 public class NewNoise {
-    int NOISE_MAGIC_X = 1619;
-    int NOISE_MAGIC_Y = 31337;
-    int NOISE_MAGIC_Z = 52591;
-    int NOISE_MAGIC_SEED = 1013;
+    private static final int NOISE_MAGIC_X = 1619;
+    private static final int NOISE_MAGIC_Y = 31337;
+    private static final int NOISE_MAGIC_Z = 52591;
+    private static final int NOISE_MAGIC_SEED = 1013;
+
+    private static final int PRIME_0 = 13;
+    private static final int PRIME_1 = 1619;
+    private static final int PRIME_2 = 19990303;
+    private static final int PRIME_3 = 1376312589;
+    private static final int PRIME_4 = 1073741824;
+
+    private static final int BITSHIFT = 0x7fffffff;
 
     double triLinearInterpolation(double v000, double v100, double v010, double v110, double v001, double v101,
             double v011, double v111, double x, double y, double z) {
-        /*
-         * double tx = easeCurve(x); double ty = easeCurve(y); double tz =
-         * easeCurve(z);
-         */
+
         double tx = x;
         double ty = y;
         double tz = z;
@@ -41,19 +46,19 @@ public class NewNoise {
                 + v011 * (1 - tx) * ty * tz + v111 * tx * ty * tz);
     }
 
-    double noise3d_perlin(double x, double y, double z, int seed, int octaves, double persistence) {
+    double noise3dPerlin(double x, double y, double z, int seed, int octaves, double persistence) {
         double a = 0;
         double f = 1.0;
         double g = 1.0;
         for (int i = 0; i < octaves; i++) {
-            a += g * noise3d_gradient(x * f, y * f, z * f, seed + i);
+            a += g * noise3dGradient(x * f, y * f, z * f, seed + i);
             f *= 2.0;
             g *= persistence;
         }
         return a;
     }
 
-    double noise3d_gradient(double x, double y, double z, int seed) {
+    double noise3dGradient(double x, double y, double z, int seed) {
         // Calculate the integer coordinates
         int x0 = (x > 0.0 ? (int) x : (int) x - 1);
         int y0 = (y > 0.0 ? (int) y : (int) y - 1);
@@ -76,9 +81,9 @@ public class NewNoise {
     }
 
     double noise3d(int x, int y, int z, int seed) {
-        int n = (NOISE_MAGIC_X * x + NOISE_MAGIC_Y * y + NOISE_MAGIC_Z * z + NOISE_MAGIC_SEED * seed) & 0x7fffffff;
-        n = (n >> 13) ^ n;
-        n = (n * (n * n * 60493 + 19990303) + 1376312589) & 0x7fffffff;
-        return 1.0 - (double) n / 1073741824;
+        int n = (NOISE_MAGIC_X * x + NOISE_MAGIC_Y * y + NOISE_MAGIC_Z * z + NOISE_MAGIC_SEED * seed) & BITSHIFT;
+        n = (n >> PRIME_0) ^ n;
+        n = (n * (n * n * PRIME_1 + PRIME_2) + PRIME_3) & BITSHIFT;
+        return 1.0 - (double) n / PRIME_4;
     }
 }

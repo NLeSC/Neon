@@ -4,16 +4,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Connection handling class. Used for Touch events for collaboratorium.
  * 
  * @author Paul Melis, SurfSARA
  */
 class ConnectionHandler implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionHandler.class);
+
     private static final int INITIAL_MESSAGE_LENGTH = 4;
     private static final int MAX_TOUCH_EVENTS = 6;
-    final protected Socket socket;
-    final protected TouchEventHandler handler;
+    private final Socket socket;
+    private final TouchEventHandler handler;
 
     public ConnectionHandler(TouchEventHandler handler, Socket socket) {
         this.socket = socket;
@@ -22,79 +27,77 @@ class ConnectionHandler implements Runnable {
 
     @Override
     public void run() {
-        // InputStream.read(buf, offs, len)
         InputStream is;
 
-        byte[] length_buffer = new byte[4];
-        byte[] message_buffer = new byte[2048];
-        int message_length;
+        byte[] lengthBuffer = new byte[4];
+        byte[] messageBuffer = new byte[2048];
+        int messageLength;
 
-        int num_touches;
+        int numTouches;
 
-        ByteBufferView view = new ByteBufferView(length_buffer);
+        ByteBufferView view = new ByteBufferView(lengthBuffer);
 
         double timestamp;
 
         TouchPoint[] points;
 
-        // XXX nicely hardcoded :)
         points = new TouchPoint[MAX_TOUCH_EVENTS];
-        for (int i = 0; i < MAX_TOUCH_EVENTS; i++)
+        for (int i = 0; i < MAX_TOUCH_EVENTS; i++) {
             points[i] = new TouchPoint();
+        }
 
         try {
-            System.out.println("Touch thread started");
+            logger.debug("Touch thread started");
 
             is = socket.getInputStream();
 
-            // readFully(is, header_buffer, 6);
-
             while (true) {
-                if (!readFully(is, length_buffer, INITIAL_MESSAGE_LENGTH))
+                if (!readFully(is, lengthBuffer, INITIAL_MESSAGE_LENGTH)) {
                     return;
-
-                view.initialize(length_buffer);
-                message_length = view.getInt();
-                // System.out.println("message_length: "+message_length);
-
-                if (!readFully(is, message_buffer, message_length))
-                    return;
-
-                view.initialize(message_buffer);
-                timestamp = view.getDouble();
-                // System.out.println("timestamp "+timestamp);
-                num_touches = view.getInt();
-                // System.out.println("num touches "+num_touches);
-
-                for (int i = 0; i < num_touches; i++) {
-                    points[i].id = view.getInt();
-                    points[i].state = view.getInt();
-                    points[i].tx = view.getFloat();
-                    points[i].ty = view.getFloat();
                 }
 
-                if (handler != null)
-                    handler.OnTouchPoints(timestamp, points, num_touches);
+                view.initialize(lengthBuffer);
+                messageLength = view.getInt();
+
+                if (!readFully(is, messageBuffer, messageLength)) {
+                    return;
+                }
+
+                view.initialize(messageBuffer);
+                timestamp = view.getDouble();
+
+                numTouches = view.getInt();
+
+                for (int i = 0; i < numTouches; i++) {
+                    points[i].setId(view.getInt());
+                    points[i].setState(view.getInt());
+                    points[i].setTx(view.getFloat());
+                    points[i].setTy(view.getFloat());
+                }
+
+                if (handler != null) {
+                    handler.onTouchPoints(timestamp, points, numTouches);
+                }
             }
 
         } catch (Exception e) {
-            System.out.println("Exception: " + e);
+            logger.error("Exception: " + e);
             return;
         }
     }
 
-    private boolean readFully(InputStream is, byte[] buffer, int n)
-            throws IOException {
+    private boolean readFully(InputStream is, byte[] buffer, int n) throws IOException {
         int read;
         int offset = 0;
+        int tmp = n;
 
-        while (n > 0) {
-            read = is.read(buffer, offset, n);
+        while (tmp > 0) {
+            read = is.read(buffer, offset, tmp);
             if (read == -1) {
-                System.out.println("readFully(): read = -1");
+                logger.error("readFully(): read = -1");
                 return false;
             }
-            n -= read;
+            tmp -= read;
             offset += read;
         }
 
