@@ -28,6 +28,13 @@ Limitations / System requirements
 The library assumes hardware that can support OpenGL 3.0 or greater. It is also written for Java 1.6+. This limits the use of this library 
 for both Desktop and mobile devices, except through remote rendering (for which direct support will be implemented at a later date).
 
+Getting started
+---------------
+
+Install:
+Java SE Development kit 7.0 http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
+Eclipse IDE for Java developers (or some other IDE of your choice): http://www.eclipse.org/downloads/
+
 Useage
 ------
 
