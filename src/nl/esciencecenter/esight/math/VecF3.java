@@ -1,8 +1,10 @@
 package nl.esciencecenter.esight.math;
 
+import java.nio.FloatBuffer;
+
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -21,15 +23,19 @@ package nl.esciencecenter.esight.math;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class VecF3 extends VectorF {
+public class VecF3 implements VectorF {
+    /** The number of elements in this vector */
+    private static final int SIZE = 3;
+
+    private float x, y, z;
+
     /**
      * Creates a new vector, initialized to 0.
      */
     public VecF3() {
-        super(3);
-        this.v[0] = 0f;
-        this.v[1] = 0f;
-        this.v[2] = 0f;
+        this.x = 0f;
+        this.y = 0f;
+        this.z = 0f;
     }
 
     /**
@@ -39,10 +45,9 @@ public class VecF3 extends VectorF {
      *            The vector to be copied.
      */
     public VecF3(VecF3 v) {
-        super(3);
-        this.v[0] = v.v[0];
-        this.v[1] = v.v[1];
-        this.v[2] = v.v[2];
+        this.x = v.getX();
+        this.y = v.getY();
+        this.z = v.getZ();
     }
 
     /**
@@ -54,19 +59,13 @@ public class VecF3 extends VectorF {
      *            The value to be put in the second position.
      * @param z
      *            The value to be put in the third position.
+     * @param w
+     *            The value to be put in the fourth position.
      */
     public VecF3(float x, float y, float z) {
-        super(3);
-        this.v[0] = x;
-        this.v[1] = y;
-        this.v[2] = z;
-    }
-
-    public VecF3(VecF4 v) {
-        super(3);
-        this.v[0] = v.v[0];
-        this.v[1] = v.v[1];
-        this.v[2] = v.v[2];
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     /**
@@ -76,9 +75,9 @@ public class VecF3 extends VectorF {
      */
     public VecF3 neg() {
         VecF3 result = new VecF3();
-        result.v[0] = -v[0];
-        result.v[1] = -v[1];
-        result.v[2] = -v[2];
+        result.setX(-x);
+        result.setY(-y);
+        result.setZ(-z);
         return result;
     }
 
@@ -91,9 +90,9 @@ public class VecF3 extends VectorF {
      */
     public VecF3 add(VecF3 u) {
         VecF3 result = new VecF3();
-        result.v[0] = v[0] + u.v[0];
-        result.v[1] = v[1] + u.v[1];
-        result.v[2] = v[2] + u.v[2];
+        result.setX(x + u.getX());
+        result.setY(y + u.getY());
+        result.setZ(z + u.getZ());
         return result;
     }
 
@@ -106,9 +105,9 @@ public class VecF3 extends VectorF {
      */
     public VecF3 sub(VecF3 u) {
         VecF3 result = new VecF3();
-        result.v[0] = v[0] - u.v[0];
-        result.v[1] = v[1] - u.v[1];
-        result.v[2] = v[2] - u.v[2];
+        result.setX(x - u.getX());
+        result.setY(y - u.getY());
+        result.setZ(z - u.getZ());
         return result;
     }
 
@@ -122,24 +121,10 @@ public class VecF3 extends VectorF {
     public VecF3 mul(Number n) {
         float fn = n.floatValue();
         VecF3 result = new VecF3();
-        result.v[0] = v[0] * fn;
-        result.v[1] = v[1] * fn;
-        result.v[2] = v[2] * fn;
-        return result;
-    }
+        result.setX(x * fn);
+        result.setY(y * fn);
+        result.setZ(z * fn);
 
-    /**
-     * Multiplies the given vector with this vector.
-     * 
-     * @param u
-     *            The vector to be multiplied with this one.
-     * @return The new Vector, which is a result of the multiplication.
-     */
-    public VecF3 mul(VecF3 u) {
-        VecF3 result = new VecF3();
-        result.v[0] = v[0] * u.v[0];
-        result.v[1] = v[1] * u.v[1];
-        result.v[2] = v[2] * u.v[2];
         return result;
     }
 
@@ -151,40 +136,150 @@ public class VecF3 extends VectorF {
      * @return The new Vector, which is a result of the division.
      */
     public VecF3 div(Number n) {
-        float f = n.floatValue();
-        if (f == 0f)
+        float fn = n.floatValue();
+        if (fn == 0f) {
             return new VecF3();
-        float fn = 1f / f;
+        }
+        float divfn = 1f / fn;
 
         VecF3 result = new VecF3();
-        result.v[0] = v[0] * fn;
-        result.v[1] = v[1] * fn;
-        result.v[2] = v[2] * fn;
+        result.setX(x * divfn);
+        result.setY(y * divfn);
+        result.setZ(z * divfn);
+
         return result;
     }
 
     @Override
-    public VecF3 clone() {
-        return new VecF3(this);
+    public FloatBuffer asBuffer() {
+        FloatBuffer result = FloatBuffer.allocate(SIZE);
+        result.put(x);
+        result.put(y);
+        result.put(z);
+
+        result.rewind();
+
+        return result;
     }
 
+    @Override
+    public int getSize() {
+        return SIZE;
+    }
+
+    /**
+     * Getter for x.
+     * 
+     * @return the x.
+     */
+    public float getX() {
+        return x;
+    }
+
+    /**
+     * Setter for x.
+     * 
+     * @param x
+     *            the x to set
+     */
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    /**
+     * Getter for y.
+     * 
+     * @return the y.
+     */
+    public float getY() {
+        return y;
+    }
+
+    /**
+     * Setter for y.
+     * 
+     * @param y
+     *            the y to set
+     */
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    /**
+     * Getter for z.
+     * 
+     * @return the z.
+     */
+    public float getZ() {
+        return z;
+    }
+
+    /**
+     * Setter for z.
+     * 
+     * @param z
+     *            the z to set
+     */
+    public void setZ(float z) {
+        this.z = z;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode() {
-        int hashCode = (int) (v[0] + 23 * 6833 + v[1] + 7 * 7207 + v[2] + 11 * 7919);
-        return hashCode;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Float.floatToIntBits(x);
+        result = prime * result + Float.floatToIntBits(y);
+        result = prime * result + Float.floatToIntBits(z);
+        return result;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
-    public boolean equals(Object thatObject) {
-        if (this == thatObject)
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        if (!(thatObject instanceof VecF3))
+        }
+        if (obj == null) {
             return false;
-
-        // cast to native object is now safe
-        VecF3 that = (VecF3) thatObject;
-
-        // now a proper field-by-field evaluation can be made
-        return (v[0] == that.v[0] && v[1] == that.v[1] && v[2] == that.v[2]);
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        VecF3 other = (VecF3) obj;
+        if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
+            return false;
+        }
+        if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) {
+            return false;
+        }
+        if (Float.floatToIntBits(z) != Float.floatToIntBits(other.z)) {
+            return false;
+        }
+        return true;
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "VecF3 [x=" + x + ", y=" + y + ", z=" + z + "]";
+    }
+
+    public float[] asArray() {
+        return new float[] { x, y, z };
+    }
+
 }

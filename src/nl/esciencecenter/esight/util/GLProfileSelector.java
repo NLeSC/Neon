@@ -2,9 +2,12 @@ package nl.esciencecenter.esight.util;
 
 import javax.media.opengl.GLProfile;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -23,11 +26,17 @@ import javax.media.opengl.GLProfile;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class GLProfileSelector {
+public final class GLProfileSelector {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GLProfileSelector.class);
+
+    private GLProfileSelector() {
+        // Utility class
+    }
+
     /**
      * Prints the available GLProfiles (hardware defined) to STDOUT
      */
-    public static final void printAvailable() {
-        System.out.println(GLProfile.glAvailabilityToString());
+    static final void printAvailable() {
+        LOGGER.info(GLProfile.glAvailabilityToString());
     }
 }

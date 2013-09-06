@@ -1,8 +1,11 @@
 package nl.esciencecenter.esight.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -23,46 +26,48 @@ package nl.esciencecenter.esight.util;
  * @see TypedProperties
  */
 public class Settings {
-    private boolean STEREO_RENDERING = true;
-    private boolean STEREO_SWITCHED = true;
+    private static final Logger logger = LoggerFactory.getLogger(Settings.class);
 
-    private float STEREO_OCULAR_DISTANCE_MIN = 0f;
-    private float STEREO_OCULAR_DISTANCE_DEF = .2f;
-    private float STEREO_OCULAR_DISTANCE_MAX = 1f;
+    private boolean stereoRendering = true;
+    private boolean stereoSwitched = true;
+
+    private float stereoOcularDistanceMin = 0f;
+    private float stereoOcularDistanceDef = .2f;
+    private float stereoOcularDistanceMax = 1f;
 
     // Size settings for default startup and screenshots
-    private int DEFAULT_SCREEN_WIDTH = 1920;
-    private int DEFAULT_SCREEN_HEIGHT = 720;
+    private int defaultScreenWidth = 1920;
+    private int defaultScreenHeight = 720;
 
     // Settings for the initial view
-    private int INITIAL_SIMULATION_FRAME = 0;
-    private float INITIAL_ROTATION_X = 17f;
-    private float INITIAL_ROTATION_Y = -25f;
-    private float INITIAL_ZOOM = -390.0f;
+    private int initialSimulationFrame = 0;
+    private float initialRotationX = 17f;
+    private float initialRotationY = -25f;
+    private float initialZoom = -390.0f;
 
     // Setting per movie frame
-    private boolean MOVIE_ROTATE = true;
-    private final float MOVIE_ROTATION_SPEED_MIN = -1f;
-    private final float MOVIE_ROTATION_SPEED_MAX = 1f;
-    private float MOVIE_ROTATION_SPEED_DEF = -0.25f;
+    private boolean movieRotate = true;
+    private float movieRotationSpeedMin = -1f;
+    private float movieRotationSpeedMax = 1f;
+    private float movieRotationSpeedDef = -0.25f;
 
     // Settings for the gas cloud octree
-    private final int MAX_OCTREE_DEPTH = 25;
-    private final float OCTREE_EDGES = 800f;
+    private int maxOctreeDepth = 25;
+    private float octreeEdges = 800f;
 
     // Settings that should never change, but are listed here to make sure they
     // can be found if necessary
-    private final int MAX_EXPECTED_MODELS = 1000;
+    private int maxExpectedModels = 1000;
 
-    protected String SCREENSHOT_PATH = System.getProperty("user.dir") + System.getProperty("path.separator");
+    private String screenshotPath = System.getProperty("user.dir") + System.getProperty("path.separator");
 
-    private final String[] ACCEPTABLE_NETCDF_EXTENSTIONS = { ".nc" };
+    private String[] acceptableNetcdfExtenstions = { ".nc" };
 
-    private final String CURRENT_NETCDF_EXTENSTION = "nc";
+    private String currentNetcdfExtenstion = "nc";
 
-    private static final boolean TOUCH_CONNECTION_ENABLED = false;
-    private static int INTERFACE_WIDTH = 240;
-    private static int INTERFACE_HEIGHT = 720;
+    private boolean touchConnectionEnabled = false;
+    private int interfaceWidth = 240;
+    private int interfaceHeight = 720;
 
     private static class SingletonHolder {
         public final static Settings instance = new Settings();
@@ -72,193 +77,428 @@ public class Settings {
         return SingletonHolder.instance;
     }
 
-    protected Settings() {
+    public Settings() {
         try {
             TypedProperties props = new TypedProperties();
             props.loadFromClassPath("settings.properties");
 
-            STEREO_RENDERING = props.getBooleanProperty("STEREO_RENDERING");
-            STEREO_SWITCHED = props.getBooleanProperty("STEREO_SWITCHED");
+            stereoRendering = props.getBooleanProperty("STEREO_RENDERING");
+            stereoSwitched = props.getBooleanProperty("STEREO_SWITCHED");
 
-            STEREO_OCULAR_DISTANCE_MIN = props.getFloatProperty("STEREO_OCULAR_DISTANCE_MIN");
-            STEREO_OCULAR_DISTANCE_MAX = props.getFloatProperty("STEREO_OCULAR_DISTANCE_MAX");
-            STEREO_OCULAR_DISTANCE_DEF = props.getFloatProperty("STEREO_OCULAR_DISTANCE_DEF");
+            stereoOcularDistanceMin = props.getFloatProperty("STEREO_OCULAR_DISTANCE_MIN");
+            stereoOcularDistanceMax = props.getFloatProperty("STEREO_OCULAR_DISTANCE_MAX");
+            stereoOcularDistanceDef = props.getFloatProperty("STEREO_OCULAR_DISTANCE_DEF");
 
             // Size settings for default startup and screenshots
-            DEFAULT_SCREEN_WIDTH = props.getIntProperty("DEFAULT_SCREEN_WIDTH");
-            DEFAULT_SCREEN_HEIGHT = props.getIntProperty("DEFAULT_SCREEN_HEIGHT");
+            defaultScreenWidth = props.getIntProperty("DEFAULT_SCREEN_WIDTH");
+            defaultScreenHeight = props.getIntProperty("DEFAULT_SCREEN_HEIGHT");
 
-            INTERFACE_WIDTH = props.getIntProperty("INTERFACE_WIDTH");
-            INTERFACE_HEIGHT = props.getIntProperty("INTERFACE_HEIGHT");
+            interfaceWidth = props.getIntProperty("INTERFACE_WIDTH");
+            interfaceHeight = props.getIntProperty("INTERFACE_HEIGHT");
 
             // Settings for the initial view
-            INITIAL_SIMULATION_FRAME = props.getIntProperty("INITIAL_SIMULATION_FRAME");
-            INITIAL_ROTATION_X = props.getFloatProperty("INITIAL_ROTATION_X");
-            INITIAL_ROTATION_Y = props.getFloatProperty("INITIAL_ROTATION_Y");
-            INITIAL_ZOOM = props.getFloatProperty("INITIAL_ZOOM");
+            initialSimulationFrame = props.getIntProperty("INITIAL_SIMULATION_FRAME");
+            initialRotationX = props.getFloatProperty("INITIAL_ROTATION_X");
+            initialRotationY = props.getFloatProperty("INITIAL_ROTATION_Y");
+            initialZoom = props.getFloatProperty("INITIAL_ZOOM");
 
-            // Setting per movie frame
-            // MOVIE_ROTATE = props.getBooleanProperty("MOVIE_ROTATE");
-            // MOVIE_ROTATION_SPEED_MIN = props
-            // .getFloatProperty("MOVIE_ROTATION_SPEED_MIN");
-            // MOVIE_ROTATION_SPEED_MAX = props
-            // .getFloatProperty("MOVIE_ROTATION_SPEED_MAX");
-            // MOVIE_ROTATION_SPEED_DEF = props
-            // .getFloatProperty("MOVIE_ROTATION_SPEED_DEF");
-
-            // Settings for the gas cloud octree
-            // MAX_OCTREE_DEPTH = props.getIntProperty("MAX_OCTREE_DEPTH");
-            // OCTREE_EDGES = props.getFloatProperty("OCTREE_EDGES");
-
-            // Settings that should never change, but are listed here to make
-            // sure they can be found if necessary
-            // MAX_EXPECTED_MODELS =
-            // props.getIntProperty("MAX_EXPECTED_MODELS");
-
-            SCREENSHOT_PATH = props.getProperty("SCREENSHOT_PATH");
+            screenshotPath = props.getProperty("SCREENSHOT_PATH");
         } catch (NumberFormatException e) {
-            System.out.println(e.getMessage());
+            logger.warn(e.getMessage());
         }
     }
 
     public boolean getStereo() {
-        return STEREO_RENDERING;
+        return stereoRendering;
     }
 
     public void setStereo(int stateChange) {
-        if (stateChange == 1)
-            STEREO_RENDERING = true;
-        if (stateChange == 2)
-            STEREO_RENDERING = false;
+        if (stateChange == 1) {
+            stereoRendering = true;
+        }
+
+        if (stateChange == 2) {
+            stereoRendering = false;
+        }
     }
 
     public boolean getStereoSwitched() {
-        return STEREO_SWITCHED;
+        return stereoSwitched;
     }
 
     public void setStereoSwitched(int stateChange) {
-        if (stateChange == 1)
-            STEREO_SWITCHED = true;
-        if (stateChange == 2)
-            STEREO_SWITCHED = false;
+        if (stateChange == 1) {
+            stereoSwitched = true;
+        }
+
+        if (stateChange == 2) {
+            stereoSwitched = false;
+        }
     }
 
     public float getStereoOcularDistanceMin() {
-        return STEREO_OCULAR_DISTANCE_MIN;
+        return stereoOcularDistanceMin;
     }
 
     public float getStereoOcularDistanceMax() {
-        return STEREO_OCULAR_DISTANCE_MAX;
+        return stereoOcularDistanceMax;
     }
 
     public float getStereoOcularDistance() {
-        return STEREO_OCULAR_DISTANCE_DEF;
+        return stereoOcularDistanceDef;
     }
 
     public void setStereoOcularDistance(float value) {
-        STEREO_OCULAR_DISTANCE_DEF = value;
+        stereoOcularDistanceDef = value;
     }
 
     public int getDefaultScreenWidth() {
-        return DEFAULT_SCREEN_WIDTH;
+        return defaultScreenWidth;
     }
 
     public int getDefaultScreenHeight() {
-        return DEFAULT_SCREEN_HEIGHT;
+        return defaultScreenHeight;
     }
 
     public int getMaxOctreeDepth() {
-        return MAX_OCTREE_DEPTH;
+        return maxOctreeDepth;
     }
 
     public float getOctreeEdges() {
-        return OCTREE_EDGES;
+        return octreeEdges;
     }
 
     public int getMaxExpectedModels() {
-        return MAX_EXPECTED_MODELS;
+        return maxExpectedModels;
     }
 
     public float getInitialRotationX() {
-        return INITIAL_ROTATION_X;
+        return initialRotationX;
     }
 
     public float getInitialRotationY() {
-        return INITIAL_ROTATION_Y;
+        return initialRotationY;
     }
 
     public float getInitialZoom() {
-        return INITIAL_ZOOM;
+        return initialZoom;
     }
 
     public void setMovieRotate(int stateChange) {
-        if (stateChange == 1)
-            MOVIE_ROTATE = true;
-        if (stateChange == 2)
-            MOVIE_ROTATE = false;
+        if (stateChange == 1) {
+            movieRotate = true;
+        }
+        if (stateChange == 2) {
+            movieRotate = false;
+        }
     }
 
     public boolean getMovieRotate() {
-        return MOVIE_ROTATE;
+        return movieRotate;
     }
 
     public void setMovieRotationSpeed(float value) {
-        MOVIE_ROTATION_SPEED_DEF = value;
+        movieRotationSpeedDef = value;
     }
 
     public float getMovieRotationSpeedMin() {
-        return MOVIE_ROTATION_SPEED_MIN;
+        return movieRotationSpeedMin;
     }
 
     public float getMovieRotationSpeedMax() {
-        return MOVIE_ROTATION_SPEED_MAX;
+        return movieRotationSpeedMax;
     }
 
     public float getMovieRotationSpeedDef() {
-        return MOVIE_ROTATION_SPEED_DEF;
+        return movieRotationSpeedDef;
     }
 
     public int getInitialSimulationFrame() {
-        return INITIAL_SIMULATION_FRAME;
+        return initialSimulationFrame;
     }
 
-    public void setInitial_simulation_frame(int initialSimulationFrame) {
-        INITIAL_SIMULATION_FRAME = initialSimulationFrame;
+    public void setInitialSimulationFrame(int initialSimulationFrame) {
+        this.initialSimulationFrame = initialSimulationFrame;
     }
 
-    public void setInitial_rotation_x(float initialRotationX) {
-        INITIAL_ROTATION_X = initialRotationX;
+    public void setInitialRotationX(float initialRotationX) {
+        this.initialRotationX = initialRotationX;
     }
 
-    public void setInitial_rotation_y(float initialRotationY) {
-        INITIAL_ROTATION_Y = initialRotationY;
+    public void setInitialRotationY(float initialRotationY) {
+        this.initialRotationY = initialRotationY;
     }
 
     public String getScreenshotPath() {
-        return SCREENSHOT_PATH;
+        return screenshotPath;
     }
 
     public void setScreenshotPath(String newPath) {
-        SCREENSHOT_PATH = newPath;
+        screenshotPath = newPath;
     }
 
     public String getCurrentNetCDFExtension() {
-        return CURRENT_NETCDF_EXTENSTION;
+        return currentNetcdfExtenstion;
     }
 
     public String[] getAcceptableNetCDFExtensions() {
-        return ACCEPTABLE_NETCDF_EXTENSTIONS;
+        return acceptableNetcdfExtenstions.clone();
     }
 
     public boolean isTouchConnected() {
-        return TOUCH_CONNECTION_ENABLED;
+        return touchConnectionEnabled;
     }
 
     public int getInterfaceWidth() {
-        return INTERFACE_WIDTH;
+        return interfaceWidth;
     }
 
     public int getInterfaceHeight() {
-        return INTERFACE_HEIGHT;
+        return interfaceHeight;
+    }
+
+    /**
+     * Getter for stereoRendering.
+     * 
+     * @return the stereoRendering.
+     */
+    public boolean isStereoRendering() {
+        return stereoRendering;
+    }
+
+    /**
+     * Setter for stereoRendering.
+     * 
+     * @param stereoRendering
+     *            the stereoRendering to set
+     */
+    public void setStereoRendering(boolean stereoRendering) {
+        this.stereoRendering = stereoRendering;
+    }
+
+    /**
+     * Getter for stereoOcularDistanceDef.
+     * 
+     * @return the stereoOcularDistanceDef.
+     */
+    public float getStereoOcularDistanceDef() {
+        return stereoOcularDistanceDef;
+    }
+
+    /**
+     * Setter for stereoOcularDistanceDef.
+     * 
+     * @param stereoOcularDistanceDef
+     *            the stereoOcularDistanceDef to set
+     */
+    public void setStereoOcularDistanceDef(float stereoOcularDistanceDef) {
+        this.stereoOcularDistanceDef = stereoOcularDistanceDef;
+    }
+
+    /**
+     * Getter for acceptableNetcdfExtenstions.
+     * 
+     * @return the acceptableNetcdfExtenstions.
+     */
+    public String[] getAcceptableNetcdfExtenstions() {
+        return acceptableNetcdfExtenstions.clone();
+    }
+
+    /**
+     * Setter for acceptableNetcdfExtenstions.
+     * 
+     * @param acceptableNetcdfExtenstions
+     *            the acceptableNetcdfExtenstions to set
+     */
+    public void setAcceptableNetcdfExtenstions(String[] acceptableNetcdfExtenstions) {
+        this.acceptableNetcdfExtenstions = acceptableNetcdfExtenstions.clone();
+    }
+
+    /**
+     * Getter for currentNetcdfExtenstion.
+     * 
+     * @return the currentNetcdfExtenstion.
+     */
+    public String getCurrentNetcdfExtenstion() {
+        return currentNetcdfExtenstion;
+    }
+
+    /**
+     * Setter for currentNetcdfExtenstion.
+     * 
+     * @param currentNetcdfExtenstion
+     *            the currentNetcdfExtenstion to set
+     */
+    public void setCurrentNetcdfExtenstion(String currentNetcdfExtenstion) {
+        this.currentNetcdfExtenstion = currentNetcdfExtenstion;
+    }
+
+    /**
+     * Getter for touchConnectionEnabled.
+     * 
+     * @return the touchConnectionEnabled.
+     */
+    public boolean isTouchConnectionEnabled() {
+        return touchConnectionEnabled;
+    }
+
+    /**
+     * Setter for touchConnectionEnabled.
+     * 
+     * @param touchConnectionEnabled
+     *            the touchConnectionEnabled to set
+     */
+    public void setTouchConnectionEnabled(boolean touchConnectionEnabled) {
+        this.touchConnectionEnabled = touchConnectionEnabled;
+    }
+
+    /**
+     * Setter for stereoSwitched.
+     * 
+     * @param stereoSwitched
+     *            the stereoSwitched to set
+     */
+    public void setStereoSwitched(boolean stereoSwitched) {
+        this.stereoSwitched = stereoSwitched;
+    }
+
+    /**
+     * Setter for stereoOcularDistanceMin.
+     * 
+     * @param stereoOcularDistanceMin
+     *            the stereoOcularDistanceMin to set
+     */
+    public void setStereoOcularDistanceMin(float stereoOcularDistanceMin) {
+        this.stereoOcularDistanceMin = stereoOcularDistanceMin;
+    }
+
+    /**
+     * Setter for stereoOcularDistanceMax.
+     * 
+     * @param stereoOcularDistanceMax
+     *            the stereoOcularDistanceMax to set
+     */
+    public void setStereoOcularDistanceMax(float stereoOcularDistanceMax) {
+        this.stereoOcularDistanceMax = stereoOcularDistanceMax;
+    }
+
+    /**
+     * Setter for defaultScreenWidth.
+     * 
+     * @param defaultScreenWidth
+     *            the defaultScreenWidth to set
+     */
+    public void setDefaultScreenWidth(int defaultScreenWidth) {
+        this.defaultScreenWidth = defaultScreenWidth;
+    }
+
+    /**
+     * Setter for defaultScreenHeight.
+     * 
+     * @param defaultScreenHeight
+     *            the defaultScreenHeight to set
+     */
+    public void setDefaultScreenHeight(int defaultScreenHeight) {
+        this.defaultScreenHeight = defaultScreenHeight;
+    }
+
+    /**
+     * Setter for initialZoom.
+     * 
+     * @param initialZoom
+     *            the initialZoom to set
+     */
+    public void setInitialZoom(float initialZoom) {
+        this.initialZoom = initialZoom;
+    }
+
+    /**
+     * Setter for movieRotate.
+     * 
+     * @param movieRotate
+     *            the movieRotate to set
+     */
+    public void setMovieRotate(boolean movieRotate) {
+        this.movieRotate = movieRotate;
+    }
+
+    /**
+     * Setter for movieRotationSpeedMin.
+     * 
+     * @param movieRotationSpeedMin
+     *            the movieRotationSpeedMin to set
+     */
+    public void setMovieRotationSpeedMin(float movieRotationSpeedMin) {
+        this.movieRotationSpeedMin = movieRotationSpeedMin;
+    }
+
+    /**
+     * Setter for movieRotationSpeedMax.
+     * 
+     * @param movieRotationSpeedMax
+     *            the movieRotationSpeedMax to set
+     */
+    public void setMovieRotationSpeedMax(float movieRotationSpeedMax) {
+        this.movieRotationSpeedMax = movieRotationSpeedMax;
+    }
+
+    /**
+     * Setter for movieRotationSpeedDef.
+     * 
+     * @param movieRotationSpeedDef
+     *            the movieRotationSpeedDef to set
+     */
+    public void setMovieRotationSpeedDef(float movieRotationSpeedDef) {
+        this.movieRotationSpeedDef = movieRotationSpeedDef;
+    }
+
+    /**
+     * Setter for maxOctreeDepth.
+     * 
+     * @param maxOctreeDepth
+     *            the maxOctreeDepth to set
+     */
+    public void setMaxOctreeDepth(int maxOctreeDepth) {
+        this.maxOctreeDepth = maxOctreeDepth;
+    }
+
+    /**
+     * Setter for octreeEdges.
+     * 
+     * @param octreeEdges
+     *            the octreeEdges to set
+     */
+    public void setOctreeEdges(float octreeEdges) {
+        this.octreeEdges = octreeEdges;
+    }
+
+    /**
+     * Setter for maxExpectedModels.
+     * 
+     * @param maxExpectedModels
+     *            the maxExpectedModels to set
+     */
+    public void setMaxExpectedModels(int maxExpectedModels) {
+        this.maxExpectedModels = maxExpectedModels;
+    }
+
+    /**
+     * Setter for interfaceWidth.
+     * 
+     * @param interfaceWidth
+     *            the interfaceWidth to set
+     */
+    public void setInterfaceWidth(int interfaceWidth) {
+        this.interfaceWidth = interfaceWidth;
+    }
+
+    /**
+     * Setter for interfaceHeight.
+     * 
+     * @param interfaceHeight
+     *            the interfaceHeight to set
+     */
+    public void setInterfaceHeight(int interfaceHeight) {
+        this.interfaceHeight = interfaceHeight;
     }
 }

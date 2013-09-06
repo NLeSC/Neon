@@ -5,7 +5,7 @@ import nl.esciencecenter.esight.math.VecF3;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -53,21 +53,21 @@ public class BoundingBox {
      */
     public void resize(VecF3 newEntry) {
         if (initialized) {
-            minX = Math.min(minX, newEntry.get(0));
-            minY = Math.min(minY, newEntry.get(1));
-            minZ = Math.min(minZ, newEntry.get(2));
+            minX = Math.min(minX, newEntry.getX());
+            minY = Math.min(minY, newEntry.getY());
+            minZ = Math.min(minZ, newEntry.getZ());
 
-            maxX = Math.max(maxX, newEntry.get(0));
-            maxY = Math.max(maxY, newEntry.get(1));
-            maxZ = Math.max(maxZ, newEntry.get(2));
+            maxX = Math.max(maxX, newEntry.getX());
+            maxY = Math.max(maxY, newEntry.getY());
+            maxZ = Math.max(maxZ, newEntry.getZ());
         } else {
-            minX = newEntry.get(0);
-            minY = newEntry.get(1);
-            minZ = newEntry.get(2);
+            minX = newEntry.getX();
+            minY = newEntry.getY();
+            minZ = newEntry.getZ();
 
-            maxX = newEntry.get(0);
-            maxY = newEntry.get(1);
-            maxZ = newEntry.get(2);
+            maxX = newEntry.getX();
+            maxY = newEntry.getY();
+            maxZ = newEntry.getZ();
         }
 
         initialized = true;
@@ -82,8 +82,9 @@ public class BoundingBox {
      *             called.
      */
     public VecF3 getMin() throws UninitializedException {
-        if (!initialized)
+        if (!initialized) {
             throw new UninitializedException("BoundingBox not initialized.");
+        }
         return new VecF3(minX, minY, minZ);
     }
 
@@ -96,8 +97,9 @@ public class BoundingBox {
      *             called.
      */
     public VecF3 getMax() throws UninitializedException {
-        if (!initialized)
+        if (!initialized) {
             throw new UninitializedException("BoundingBox not initialized.");
+        }
         return new VecF3(maxX, maxY, maxZ);
     }
 

@@ -10,7 +10,7 @@ import javax.swing.plaf.basic.BasicSliderUI;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -45,12 +45,14 @@ public class CustomJSlider extends JSlider {
      */
     public CustomJSlider(final BasicSliderUI ui) {
         ChangeListener[] cl = getChangeListeners();
-        for (ChangeListener l : cl)
-            removeChangeListener(l); // remove UI-installed ChangeListeners
+        for (ChangeListener l : cl) {
+            removeChangeListener(l);
+        }
 
         MouseListener[] listeners = getMouseListeners();
-        for (MouseListener l : listeners)
-            removeMouseListener(l); // remove UI-installed TrackListener
+        for (MouseListener l : listeners) {
+            removeMouseListener(l);
+        }
         setUI(ui);
 
         ColoredSliderUI.TrackListener tl = ui.new TrackListener() {

@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -36,7 +36,8 @@ import org.slf4j.LoggerFactory;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  */
 public class IntPBO {
-    private final static Logger logger = LoggerFactory.getLogger(IntPBO.class);
+    private static final Logger logger = LoggerFactory.getLogger(IntPBO.class);
+    private static final int BYTES_PER_PIXEL = 4;
 
     /** Internal OpenGL pointer to the PBO */
     private final IntBuffer pboPointer;
@@ -64,7 +65,7 @@ public class IntPBO {
 
         pboPointer = IntBuffer.allocate(1);
 
-        data = ByteBuffer.allocate(width * height * 4);
+        data = ByteBuffer.allocate(width * height * BYTES_PER_PIXEL);
     }
 
     /**
@@ -82,7 +83,7 @@ public class IntPBO {
         gl.glBindBuffer(GL3.GL_PIXEL_PACK_BUFFER, pboPointer.get(0));
         gl.glPixelStorei(GL3.GL_UNPACK_ALIGNMENT, 1);
 
-        gl.glBufferData(GL3.GL_PIXEL_PACK_BUFFER, width * height * 4, null, GL3.GL_STREAM_READ);
+        gl.glBufferData(GL3.GL_PIXEL_PACK_BUFFER, width * height * BYTES_PER_PIXEL, null, GL3.GL_STREAM_READ);
         gl.glReadPixels(0, 0, width, height, GL3.GL_BGRA, GL3.GL_UNSIGNED_BYTE, 0);
 
         checkNoError(gl, "POST: ", false);
@@ -201,11 +202,10 @@ public class IntPBO {
             int[] array = new int[pixels];
             IntBuffer ib = IntBuffer.wrap(array);
 
-            for (int i = 0; i < (pixels * 4); i += 4) {
+            for (int i = 0; i < (pixels * BYTES_PER_PIXEL); i += BYTES_PER_PIXEL) {
                 int b = bb.get(i) & 0xFF;
                 int g = bb.get(i + 1) & 0xFF;
                 int r = bb.get(i + 2) & 0xFF;
-                // int a = bb.get(i + 3) & 0xFF;
 
                 int argb = (r << 16) | (g << 8) | b;
                 ib.put(argb);
@@ -225,12 +225,13 @@ public class IntPBO {
             BufferedImage bufIm = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             bufIm.setRGB(0, 0, width, height, dest.array(), 0, width);
             try {
-                new File(filename).mkdirs();
-                ImageIO.write(bufIm, "png", new File(filename));
-                System.out.println("Saved screenshot: " + filename);
+                boolean dirsMade = new File(filename).mkdirs();
+                if (dirsMade) {
+                    ImageIO.write(bufIm, "png", new File(filename));
+                    logger.info("Saved screenshot: " + filename);
+                }
             } catch (IOException e2) {
-                // TODO Auto-generated catch block
-                e2.printStackTrace();
+                logger.error(e2.getMessage());
             }
 
             unBind(gl);

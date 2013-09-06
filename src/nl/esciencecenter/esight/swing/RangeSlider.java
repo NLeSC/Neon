@@ -4,7 +4,7 @@ import javax.swing.JSlider;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -65,14 +65,6 @@ public class RangeSlider extends JSlider {
         // Update UI for slider labels. This must be called after updating the
         // UI of the slider. Refer to JSlider.updateUI().
         updateLabelUIs();
-    }
-
-    /**
-     * Returns the lower value in the range.
-     */
-    @Override
-    public int getValue() {
-        return super.getValue();
     }
 
     /**

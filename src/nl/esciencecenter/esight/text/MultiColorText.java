@@ -3,6 +3,7 @@ package nl.esciencecenter.esight.text;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,10 +22,13 @@ import nl.esciencecenter.esight.math.VectorFMath;
 import nl.esciencecenter.esight.models.BoundingBox;
 import nl.esciencecenter.esight.models.Model;
 import nl.esciencecenter.esight.shaders.ShaderProgram;
-import nl.esciencecenter.esight.text.jogampExperimental.Font;
-import nl.esciencecenter.esight.text.jogampExperimental.GlyphShape;
-import nl.esciencecenter.esight.text.jogampExperimental.OutlineShape;
-import nl.esciencecenter.esight.text.jogampExperimental.TypecastFont;
+import nl.esciencecenter.esight.text.jogampexperimental.Font;
+import nl.esciencecenter.esight.text.jogampexperimental.GlyphShape;
+import nl.esciencecenter.esight.text.jogampexperimental.OutlineShape;
+import nl.esciencecenter.esight.text.jogampexperimental.TypecastFont;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jogamp.graph.geom.Triangle;
 import com.jogamp.graph.geom.Vertex;
@@ -32,7 +36,7 @@ import com.jogamp.graph.geom.opengl.SVertex;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -53,6 +57,8 @@ import com.jogamp.graph.geom.opengl.SVertex;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  */
 public class MultiColorText extends Model {
+    private final static Logger LOGGER = LoggerFactory.getLogger(MultiColorText.class);
+
     /** Initialization is needed for certain functions to work properly */
     private boolean initialized = false;
 
@@ -60,12 +66,12 @@ public class MultiColorText extends Model {
      * Private storage construct for glyph shapes (one per character in the
      * text)
      */
-    private final HashMap<Integer, GlyphShape> glyphs;
+    private final Map<Integer, GlyphShape> glyphs;
     /**
      * Private storage construct for character colors (one per character in the
      * text)
      */
-    private final HashMap<Integer, VecF4> colors;
+    private final Map<Integer, VecF4> colors;
 
     /** Buffer for final per-vertex colors */
     private FloatBuffer vertexColors;
@@ -99,7 +105,7 @@ public class MultiColorText extends Model {
      *            The font for this text model.
      */
     public MultiColorText(Font font) {
-        super(vertex_format.TRIANGLES);
+        super(VertexFormat.TRIANGLES);
 
         this.font = font;
 
@@ -109,11 +115,11 @@ public class MultiColorText extends Model {
         colors = new HashMap<Integer, VecF4>();
         glyphs = new HashMap<Integer, GlyphShape>();
 
-        numVertices = 0;
+        setNumVertices(0);
     }
 
     public MultiColorText(GL3 gl, Font font, String text, Color4 initialColor, int fontSize) {
-        super(vertex_format.TRIANGLES);
+        super(VertexFormat.TRIANGLES);
 
         this.font = font;
 
@@ -123,7 +129,7 @@ public class MultiColorText extends Model {
         colors = new HashMap<Integer, VecF4>();
         glyphs = new HashMap<Integer, GlyphShape>();
 
-        setString(gl, text, initialColor, fontSize);
+        setFields(gl, text, initialColor, fontSize);
     }
 
     @Override
@@ -131,12 +137,43 @@ public class MultiColorText extends Model {
         // We override because we do not have the normals information.
 
         if (!initialized) {
-            GLSLAttrib vAttrib = new GLSLAttrib(vertices, "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
+            GLSLAttrib vAttrib = new GLSLAttrib(getVertices(), "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
             GLSLAttrib cAttrib = new GLSLAttrib(vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
 
-            vbo = new VBO(gl, vAttrib, cAttrib);
+            setVbo(new VBO(gl, vAttrib, cAttrib));
         }
         initialized = true;
+    }
+
+    private void setFields(GL3 gl, String str, Color4 basicColor, int size) {
+        // Get the outline shapes for the current string in this font
+        List<OutlineShape> shapes = ((TypecastFont) font).getOutlineShapes(str, size, SVertex.factory());
+
+        // Make a set of glyph shapes from the outlines
+        int numGlyps = shapes.size();
+
+        for (int index = 0; index < numGlyps; index++) {
+            if (shapes.get(index) == null) {
+                colors.put(index, null);
+                glyphs.put(index, null);
+                continue;
+            }
+            GlyphShape glyphShape = new GlyphShape(SVertex.factory(), shapes.get(index));
+
+            if (glyphShape.getNumVertices() < 3) {
+                colors.put(index, null);
+                glyphs.put(index, null);
+                continue;
+            }
+            colors.put(index, basicColor);
+            glyphs.put(index, glyphShape);
+        }
+
+        initialized = false;
+        makeVBO(gl);
+        this.cachedString = str;
+        this.cachedSize = size;
+        this.cachedColor = basicColor;
     }
 
     /**
@@ -151,37 +188,11 @@ public class MultiColorText extends Model {
      * @param size
      */
     public void setString(GL3 gl, String str, Color4 basicColor, int size) {
-        if (cachedString.compareTo(str) != 0 || cachedSize != size || cachedColor != basicColor) {
+        if (cachedString.compareTo(str) != 0 || cachedSize != size || !cachedColor.equals(basicColor)) {
             colors.clear();
             glyphs.clear();
 
-            // Get the outline shapes for the current string in this font
-            ArrayList<OutlineShape> shapes = ((TypecastFont) font).getOutlineShapes(str, size, SVertex.factory());
-
-            // Make a set of glyph shapes from the outlines
-            int numGlyps = shapes.size();
-
-            for (int index = 0; index < numGlyps; index++) {
-                if (shapes.get(index) == null) {
-                    colors.put(index, null);
-                    glyphs.put(index, null);
-                    continue;
-                }
-                GlyphShape glyphShape = new GlyphShape(SVertex.factory(), shapes.get(index));
-
-                if (glyphShape.getNumVertices() < 3) {
-                    colors.put(index, null);
-                    glyphs.put(index, null);
-                    continue;
-                }
-                colors.put(index, basicColor);
-                glyphs.put(index, glyphShape);
-            }
-
-            makeVBO(gl);
-            this.cachedString = str;
-            this.cachedSize = size;
-            this.cachedColor = basicColor;
+            setFields(gl, str, basicColor, size);
         }
     }
 
@@ -193,53 +204,55 @@ public class MultiColorText extends Model {
      *            The global openGL instance.
      */
     private void makeVBO(GL3 gl) {
-        // Create list of vertices based on the glyph shapes
-        ArrayList<Vertex> vertices = new ArrayList<Vertex>();
-        ArrayList<VecF4> vertexColors = new ArrayList<VecF4>();
-        for (int i = 0; i < glyphs.size(); i++) {
-            if (glyphs.get(i) != null) {
-                GlyphShape glyph = glyphs.get(i);
-                VecF4 glypColor = colors.get(i);
+        if (!initialized) {
+            // Create list of vertices based on the glyph shapes
+            ArrayList<Vertex> vertices = new ArrayList<Vertex>();
+            ArrayList<VecF4> tmpVertexColors = new ArrayList<VecF4>();
+            for (int i = 0; i < glyphs.size(); i++) {
+                if (glyphs.get(i) != null) {
+                    GlyphShape glyph = glyphs.get(i);
+                    VecF4 glypColor = colors.get(i);
 
-                ArrayList<Triangle> gtris = glyph.triangulate();
-                for (Triangle t : gtris) {
-                    vertices.add(t.getVertices()[0]);
-                    vertices.add(t.getVertices()[1]);
-                    vertices.add(t.getVertices()[2]);
+                    List<Triangle> gtris = glyph.triangulate();
+                    for (Triangle t : gtris) {
+                        vertices.add(t.getVertices()[0]);
+                        vertices.add(t.getVertices()[1]);
+                        vertices.add(t.getVertices()[2]);
 
-                    vertexColors.add(glypColor);
-                    vertexColors.add(glypColor);
-                    vertexColors.add(glypColor);
+                        tmpVertexColors.add(glypColor);
+                        tmpVertexColors.add(glypColor);
+                        tmpVertexColors.add(glypColor);
+                    }
                 }
             }
+
+            // Transform the vertices from Vertex objects to Vec4 objects
+            // and
+            // update BoundingBox.
+            VecF4[] myVertices = new VecF4[vertices.size()];
+            int i = 0;
+            for (Vertex v : vertices) {
+                VecF3 vec = new VecF3(v.getX(), v.getY(), v.getZ());
+                bbox.resize(vec);
+
+                myVertices[i] = new VecF4(vec, 1f);
+
+                i++;
+            }
+
+            if (getVbo() != null) {
+                getVbo().delete(gl);
+            }
+            this.setVertices(VectorFMath.toBuffer(myVertices));
+            this.vertexColors = VectorFMath.vec4ListToBuffer(tmpVertexColors);
+            GLSLAttrib vAttrib = new GLSLAttrib(this.getVertices(), "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
+            GLSLAttrib cAttrib = new GLSLAttrib(this.vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
+            setVbo(new VBO(gl, vAttrib, cAttrib));
+
+            this.setNumVertices(vertices.size());
+
+            initialized = true;
         }
-
-        // Transform the vertices from Vertex objects to Vec4 objects
-        // and
-        // update BoundingBox.
-        VecF4[] myVertices = new VecF4[vertices.size()];
-        int i = 0;
-        for (Vertex v : vertices) {
-            VecF3 vec = new VecF3(v.getX(), v.getY(), v.getZ());
-            bbox.resize(vec);
-
-            myVertices[i] = new VecF4(vec, 1f);
-
-            i++;
-        }
-
-        if (vbo != null) {
-            vbo.delete(gl);
-        }
-        this.vertices = VectorFMath.toBuffer(myVertices);
-        this.vertexColors = VectorFMath.vec4ListToBuffer(vertexColors);
-        GLSLAttrib vAttrib = new GLSLAttrib(this.vertices, "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
-        GLSLAttrib cAttrib = new GLSLAttrib(this.vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
-        vbo = new VBO(gl, vAttrib, cAttrib);
-
-        this.numVertices = vertices.size();
-
-        initialized = true;
     }
 
     /**
@@ -250,7 +263,7 @@ public class MultiColorText extends Model {
      * @param map
      *            The map of substrings and colors.
      */
-    public void setSubstringColors(GL3 gl, HashMap<String, Color4> map) {
+    public void setSubstringColors(GL3 gl, Map<String, Color4> map) {
         for (Map.Entry<String, Color4> entry : map.entrySet()) {
             setSubstringColorWordBounded(gl, entry.getKey(), entry.getValue());
         }
@@ -327,26 +340,58 @@ public class MultiColorText extends Model {
     }
 
     public void finalizeColorScheme(GL3 gl) {
+        initialized = false;
         makeVBO(gl);
     }
 
-    public void draw(GL3 gl, ShaderProgram program, float canvasWidth, float canvasHeight, float RasterPosX,
-            float RasterPosY) {
+    public void drawHudRelative(GL3 gl, ShaderProgram program, float canvasWidth, float canvasHeight, float rasterPosX,
+            float rasterPosY) throws UninitializedException {
         if (initialized) {
-            program.setUniformMatrix("MVMatrix", getMVMatrixForHUD(canvasWidth, canvasHeight, RasterPosX, RasterPosY));
+            program.setUniformMatrix("MVMatrix", getMVMatrixForHUD(canvasWidth, canvasHeight, rasterPosX, rasterPosY));
             program.setUniformMatrix("PMatrix", getPMatrixForHUD(canvasWidth, canvasHeight));
 
             try {
                 program.use(gl);
             } catch (UninitializedException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage());
             }
 
-            vbo.bind(gl);
+            getVbo().bind(gl);
 
-            program.linkAttribs(gl, vbo.getAttribs());
+            program.linkAttribs(gl, getVbo().getAttribs());
 
-            gl.glDrawArrays(GL3.GL_TRIANGLES, 0, numVertices);
+            gl.glDrawArrays(GL3.GL_TRIANGLES, 0, getNumVertices());
+        } else {
+            throw new UninitializedException();
+        }
+    }
+
+    /**
+     * Draw method for this model. Links its VBO attributes and calls OpenGL
+     * DrawArrays.
+     * 
+     * @param gl
+     *            The global openGL instance.
+     * @param program
+     *            The shader program to be used for this drawing instance.
+     * @throws UninitializedException
+     */
+    @Override
+    public void draw(GL3 gl, ShaderProgram program) throws UninitializedException {
+        if (initialized) {
+            getVbo().bind(gl);
+
+            program.linkAttribs(gl, getVbo().getAttribs());
+
+            try {
+                program.use(gl);
+            } catch (UninitializedException e) {
+                LOGGER.error(e.getMessage());
+            }
+
+            gl.glDrawArrays(GL3.GL_TRIANGLES, 0, getNumVertices());
+        } else {
+            throw new UninitializedException();
         }
     }
 
@@ -363,19 +408,15 @@ public class MultiColorText extends Model {
      *            The width of the HUD (canvas).
      * @param canvasHeight
      *            The height of the HUD (canvas).
-     * @param RasterPosX
+     * @param rasterPosX
      *            The X coordinate on the HUD to paint the model at.
-     * @param RasterPosY
+     * @param rasterPosY
      *            The Y coordinate on the HUD to paint the model at.
      * @return the Modelview matrix needed to paint at the given coordinates on
      *         the HUD.
      */
-    private MatF4 getMVMatrixForHUD(float canvasWidth, float canvasHeight, float RasterPosX, float RasterPosY) {
-
-        MatF4 MVMatrix = new MatF4();
-        MVMatrix = MVMatrix.mul(MatrixFMath.translate((RasterPosX / canvasWidth), (RasterPosY / canvasHeight), 0f));
-
-        return MVMatrix;
+    private MatF4 getMVMatrixForHUD(float canvasWidth, float canvasHeight, float rasterPosX, float rasterPosY) {
+        return new MatF4().mul(MatrixFMath.translate((rasterPosX / canvasWidth), (rasterPosY / canvasHeight), 0f));
     }
 
     /**
@@ -389,10 +430,7 @@ public class MultiColorText extends Model {
      * @return the Perspective matrix needed to paint on the HUD.
      */
     private MatF4 getPMatrixForHUD(float canvasWidth, float canvasHeight) {
-
-        MatF4 PMatrix = MatrixFMath.ortho(0f, canvasWidth, 0f, canvasHeight, -1f, 1f);
-
-        return PMatrix;
+        return MatrixFMath.ortho(0f, canvasWidth, 0f, canvasHeight, -1f, 1f);
     }
 
 }

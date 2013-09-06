@@ -9,7 +9,7 @@ import com.jogamp.newt.event.MouseListener;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -41,35 +41,35 @@ public class InputHandler implements MouseListener, KeyListener {
     }
 
     /** Initial value for the rotation in the X direction */
-    protected float rotationXorigin = 0;
+    private float rotationXorigin = 0;
     /**
      * Final rotation in the X direction, translated to openGL units, stored to
      * make successive rotations smooth
      */
-    protected float rotationX;
+    private float rotationX;
 
     /** Initial value for the rotation in the Y direction */
-    protected float rotationYorigin = 0;
+    private float rotationYorigin = 0;
     /**
      * Final rotation in the Y direction, translated to openGL units, stored to
      * make successive rotations smooth
      */
-    protected float rotationY;
+    private float rotationY;
 
     /** Mouse drag start point in X direction */
-    protected float dragLeftXorigin;
+    private float dragLeftXorigin;
     /** Mouse drag start point in Y direction */
-    protected float dragLeftYorigin;
+    private float dragLeftYorigin;
 
     /** Final rotation in openGL units */
-    public VecF3 rotation;
+    private VecF3 rotation;
     /** Final view distance (translation) in openGL units */
-    public float viewDist = -5f;
+    private float viewDist = -5f;
+
     /** Current direction of the view */
-    private octants current_view_octant = octants.PPP;
 
     private static class SingletonHolder {
-        public static final InputHandler instance = new InputHandler();
+        public static final InputHandler INSTANCE = new InputHandler();
     }
 
     /**
@@ -78,7 +78,7 @@ public class InputHandler implements MouseListener, KeyListener {
      * @return The only instance of this class allowed at one time.
      */
     public static InputHandler getInstance() {
-        return SingletonHolder.instance;
+        return SingletonHolder.INSTANCE;
     }
 
     protected InputHandler() {
@@ -127,15 +127,16 @@ public class InputHandler implements MouseListener, KeyListener {
             }
             // Make sure the numbers are always positive (so we can determine
             // the octant we're in more easily)
-            if (rotationX < 0)
+            if (rotationX < 0) {
                 rotationX = 360f + rotationX % 360;
-            if (rotationY < 0)
+            }
+            if (rotationY < 0) {
                 rotationY = 360f + rotationY % 360;
+            }
 
-            rotation.set(0, rotationY);
-            rotation.set(1, rotationX);
-            rotation.set(2, 0f); // We never rotate around the Z axis.
-            setCurrentOctant(rotation);
+            rotation.setX(rotationY);
+            rotation.setY(rotationX);
+            rotation.setZ(0f); // We never rotate around the Z axis.
         }
     }
 
@@ -149,79 +150,23 @@ public class InputHandler implements MouseListener, KeyListener {
         float newViewDist = this.viewDist;
 
         if (e.isShiftDown()) {
-            newViewDist -= e.getWheelRotation() * 2;
+            float wheelRotation = e.getRotation()[0];
+            newViewDist -= wheelRotation * .5;
         } else {
-            newViewDist -= e.getWheelRotation() * 10;
+            float wheelRotation = e.getRotation()[1];
+            newViewDist -= wheelRotation * 2;
         }
         viewDist = newViewDist;
     }
 
-    /**
-     * Setter for the current viewing 'angle' by octant.
-     * 
-     * @param rotation
-     *            The rotation from which to calculate the viewing octant.
-     */
-    private void setCurrentOctant(VecF3 rotation) {
-        float x = rotation.get(0);
-        int qx = (int) Math.floor(x / 90f);
-        float y = rotation.get(1);
-        int qy = (int) Math.floor(y / 90f);
-
-        if (qx == 0 && qy == 0) {
-            current_view_octant = octants.NPP;
-        } else if (qx == 0 && qy == 1) {
-            current_view_octant = octants.NPN;
-        } else if (qx == 0 && qy == 2) {
-            current_view_octant = octants.PPN;
-        } else if (qx == 0 && qy == 3) {
-            current_view_octant = octants.PPP;
-
-        } else if (qx == 1 && qy == 0) {
-            current_view_octant = octants.PPN;
-        } else if (qx == 1 && qy == 1) {
-            current_view_octant = octants.PPP;
-        } else if (qx == 1 && qy == 2) {
-            current_view_octant = octants.NPP;
-        } else if (qx == 1 && qy == 3) {
-            current_view_octant = octants.NPN;
-
-        } else if (qx == 2 && qy == 0) {
-            current_view_octant = octants.PNN;
-        } else if (qx == 2 && qy == 1) {
-            current_view_octant = octants.PNP;
-        } else if (qx == 2 && qy == 2) {
-            current_view_octant = octants.NNP;
-        } else if (qx == 2 && qy == 3) {
-            current_view_octant = octants.NNN;
-
-        } else if (qx == 3 && qy == 0) {
-            current_view_octant = octants.NNP;
-        } else if (qx == 3 && qy == 1) {
-            current_view_octant = octants.NNN;
-        } else if (qx == 3 && qy == 2) {
-            current_view_octant = octants.PNN;
-        } else if (qx == 3 && qy == 3) {
-            current_view_octant = octants.PNP;
-        }
-    }
-
     @Override
     public void keyPressed(KeyEvent arg0) {
-        // TODO Auto-generated method stub
-
+        // We could add something useful here
     }
 
     @Override
     public void keyReleased(KeyEvent arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void keyTyped(KeyEvent arg0) {
-        // TODO Auto-generated method stub
-
+        // We could add something useful here
     }
 
     /**
@@ -254,12 +199,5 @@ public class InputHandler implements MouseListener, KeyListener {
      */
     public void setViewDist(float viewDist) {
         this.viewDist = viewDist;
-    }
-
-    /**
-     * @return the current_view_octant (mainly used for octrees)
-     */
-    public octants getCurrentViewOctant() {
-        return current_view_octant;
     }
 }

@@ -6,7 +6,7 @@ import nl.esciencecenter.esight.math.VectorFMath;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -35,7 +35,7 @@ public class Line extends Model {
      *            The end point for the line.
      */
     public Line(VecF3 start, VecF3 end) {
-        super(vertex_format.LINES);
+        super(VertexFormat.LINES);
 
         int numVertices = 2;
 
@@ -52,9 +52,9 @@ public class Line extends Model {
         tCoords[0] = new VecF3(0, 0, 0);
         tCoords[1] = new VecF3(1, 1, 1);
 
-        this.numVertices = numVertices;
-        this.vertices = VectorFMath.toBuffer(points);
-        this.normals = VectorFMath.toBuffer(normals);
-        this.texCoords = VectorFMath.toBuffer(tCoords);
+        this.setNumVertices(numVertices);
+        this.setVertices(VectorFMath.toBuffer(points));
+        this.setNormals(VectorFMath.toBuffer(normals));
+        this.setTexCoords(VectorFMath.toBuffer(tCoords));
     }
 }

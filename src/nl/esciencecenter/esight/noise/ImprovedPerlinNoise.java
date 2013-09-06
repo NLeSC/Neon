@@ -5,38 +5,46 @@ package nl.esciencecenter.esight.noise;
 /**
  * Improved perlin noise generator , see http://mrl.nyu.edu/~perlin/noise/
  */
-public class ImprovedPerlinNoise {
+public final class ImprovedPerlinNoise {
+    private ImprovedPerlinNoise() {
+        // Utility class
+    }
+
     static public double noise(double x, double y, double z) {
+        double tmpX = x, tmpY = y, tmpZ = z;
+
         // Find unit cube that contains point.
-        int X = (int) Math.floor(x) & 255;
-        int Y = (int) Math.floor(y) & 255;
-        int Z = (int) Math.floor(z) & 255;
+        int iX = (int) Math.floor(x) & 255;
+        int iY = (int) Math.floor(tmpY) & 255;
+        int iZ = (int) Math.floor(tmpZ) & 255;
 
         // Find relative X,Y,Z of point in cube.
-        x -= Math.floor(x);
-        y -= Math.floor(y);
-        z -= Math.floor(z);
+        tmpX -= Math.floor(tmpX);
+        tmpY -= Math.floor(tmpY);
+        tmpZ -= Math.floor(tmpZ);
 
         // Compute fade curves for each X,Y,Z
-        double u = fade(x);
-        double v = fade(y);
-        double w = fade(z);
+        double u = fade(tmpX);
+        double v = fade(tmpY);
+        double w = fade(tmpZ);
 
         // Get hash coordinates of the 8 cube corners
-        int A = p[X] + Y;
-        int AA = p[A] + Z;
-        int AB = p[A + 1] + Z;
-        int B = p[X + 1] + Y;
-        int BA = p[B] + Z;
-        int BB = p[B + 1] + Z;
+        int iA = p[iX] + iY;
+        int iAA = p[iA] + iZ;
+        int iAB = p[iA + 1] + iZ;
+        int iB = p[iX + 1] + iY;
+        int iBA = p[iB] + iZ;
+        int iBB = p[iB + 1] + iZ;
 
         // Add blended results from the 8 cube corners
         return lerp(
                 w,
-                lerp(v, lerp(u, grad(p[AA], x, y, z), grad(p[BA], x - 1, y, z)),
-                        lerp(u, grad(p[AB], x, y - 1, z), grad(p[BB], x - 1, y - 1, z))),
-                lerp(v, lerp(u, grad(p[AA + 1], x, y, z - 1), grad(p[BA + 1], x - 1, y, z - 1)),
-                        lerp(u, grad(p[AB + 1], x, y - 1, z - 1), grad(p[BB + 1], x - 1, y - 1, z - 1))));
+                lerp(v, lerp(u, grad(p[iAA], tmpX, tmpY, tmpZ), grad(p[iBA], tmpX - 1, tmpY, tmpZ)),
+                        lerp(u, grad(p[iAB], tmpX, tmpY - 1, tmpZ), grad(p[iBB], tmpX - 1, tmpY - 1, tmpZ))),
+                lerp(v,
+                        lerp(u, grad(p[iAA + 1], tmpX, tmpY, tmpZ - 1), grad(p[iBA + 1], tmpX - 1, tmpY, tmpZ - 1)),
+                        lerp(u, grad(p[iAB + 1], tmpX, tmpY - 1, tmpZ - 1),
+                                grad(p[iBB + 1], tmpX - 1, tmpY - 1, tmpZ - 1))));
     }
 
     static double fade(double t) {
@@ -70,7 +78,9 @@ public class ImprovedPerlinNoise {
             78, 66, 215, 61, 156, 180 };
 
     static {
-        for (int i = 0; i < 256; i++)
-            p[256 + i] = p[i] = permutation[i];
+        for (int i = 0; i < 256; i++) {
+            p[256 + i] = permutation[i];
+            p[i] = permutation[i];
+        }
     }
 }

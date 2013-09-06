@@ -1,14 +1,17 @@
 package nl.esciencecenter.esight.textures;
 
+import java.nio.IntBuffer;
+
 import javax.media.opengl.GL3;
 
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 
-import com.jogamp.common.nio.Buffers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -29,6 +32,7 @@ import com.jogamp.common.nio.Buffers;
  * 
  */
 public abstract class Texture2D extends Texture {
+    private final static Logger logger = LoggerFactory.getLogger(Texture2D.class);
 
     /**
      * Generic constructor, should be called by all classes extending this class
@@ -54,16 +58,14 @@ public abstract class Texture2D extends Texture {
     public void init(GL3 gl) {
         if (!initialized) {
             if (pixelBuffer == null) {
-                System.err
-                        .println("Add a pixelbuffer first, by using a custom constructor. The Texture2D constructor is only meant to be extended.");
+                logger.error("Add a pixelbuffer first, by using a custom constructor. The Texture2D constructor is only meant to be extended.");
             }
 
             // Tell OpenGL we want to use 2D textures
-            gl.glEnable(GL3.GL_TEXTURE_2D);
-            gl.glActiveTexture(this.glMultiTexUnit);
+            gl.glActiveTexture(getGlMultiTexUnit());
 
             // Create a Texture Object
-            pointer = Buffers.newDirectIntBuffer(1);
+            pointer = IntBuffer.allocate(1);
             gl.glGenTextures(1, pointer);
 
             // Tell OpenGL that this texture is 2D and we want to use it
@@ -95,21 +97,11 @@ public abstract class Texture2D extends Texture {
             init(gl);
         }
 
-        gl.glEnable(GL3.GL_TEXTURE_2D);
-        gl.glActiveTexture(glMultiTexUnit);
-        gl.glBindTexture(GL3.GL_TEXTURE_2D, getPointer());
+        gl.glActiveTexture(getGlMultiTexUnit());
+        gl.glBindTexture(GL3.GL_TEXTURE_2D, getPointer().get(0));
     }
 
     public void unBind(GL3 gl) {
         gl.glBindTexture(GL3.GL_TEXTURE_2D, 0);
     }
-
-    // public Texture2D copy(GL3 gl, int glMultitexUnit) {
-    // Texture2D result = new Texture2D(glMultitexUnit);
-    // result.pixelBuffer = pixelBuffer.duplicate();
-    // result.init(gl);
-    //
-    // return result;
-    // }
-
 }

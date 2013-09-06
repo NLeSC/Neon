@@ -3,16 +3,18 @@ package nl.esciencecenter.esight.shaders;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.media.opengl.GL3;
 
 import nl.esciencecenter.esight.exceptions.CompilationFailedException;
+import nl.esciencecenter.esight.exceptions.UninitializedException;
 import nl.esciencecenter.esight.math.MatrixF;
 import nl.esciencecenter.esight.math.VectorF;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -36,7 +38,7 @@ import nl.esciencecenter.esight.math.VectorF;
  */
 public class ShaderProgramLoader {
     /** Storage for the Shader Programs */
-    private ArrayList<ShaderProgram> programs;
+    private List<ShaderProgram> programs;
 
     /**
      * Constructor, initializes storage.
@@ -241,8 +243,9 @@ public class ShaderProgramLoader {
      *            The global openGL instance.
      * @param program
      *            The program to be deleted.
+     * @throws UninitializedException
      */
-    public void deleteProgram(GL3 gl, ShaderProgram program) {
+    public void deleteProgram(GL3 gl, ShaderProgram program) throws UninitializedException {
         ArrayList<ShaderProgram> temp = new ArrayList<ShaderProgram>();
         for (ShaderProgram entry : programs) {
             if (entry == program) {
@@ -261,8 +264,9 @@ public class ShaderProgramLoader {
      * 
      * @param gl
      *            The global openGL instance.
+     * @throws UninitializedException
      */
-    public void cleanup(GL3 gl) {
+    public void cleanup(GL3 gl) throws UninitializedException {
         for (ShaderProgram entry : programs) {
             entry.detachShaders(gl);
             entry.delete(gl);

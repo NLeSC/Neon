@@ -1,8 +1,10 @@
 package nl.esciencecenter.esight.math;
 
+import java.nio.FloatBuffer;
+
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -21,16 +23,20 @@ package nl.esciencecenter.esight.math;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class VecF4 extends VectorF {
+public class VecF4 implements VectorF {
+    /** The number of elements in this vector */
+    private static final int SIZE = 4;
+
+    private float x, y, z, w;
+
     /**
      * Creates a new vector, initialized to 0.
      */
     public VecF4() {
-        super(4);
-        this.v[0] = 0f;
-        this.v[1] = 0f;
-        this.v[2] = 0f;
-        this.v[3] = 0f;
+        this.x = 0f;
+        this.y = 0f;
+        this.z = 0f;
+        this.w = 0f;
     }
 
     /**
@@ -40,11 +46,10 @@ public class VecF4 extends VectorF {
      *            The vector to be copied.
      */
     public VecF4(VecF4 v) {
-        super(4);
-        this.v[0] = v.v[0];
-        this.v[1] = v.v[1];
-        this.v[2] = v.v[2];
-        this.v[3] = v.v[3];
+        this.x = v.getX();
+        this.y = v.getY();
+        this.z = v.getZ();
+        this.w = v.getW();
     }
 
     /**
@@ -57,31 +62,10 @@ public class VecF4 extends VectorF {
      *            The additional value to be put into the fourth index.
      */
     public VecF4(VecF3 v, float v3) {
-        super(4);
-        this.v[0] = v.v[0];
-        this.v[1] = v.v[1];
-        this.v[2] = v.v[2];
-        this.v[3] = v3;
-    }
-
-    /**
-     * Creates a new vector by copying the given vector, supplemented by the
-     * scalar.
-     * 
-     * @param vector
-     *            The vector to be copied.
-     * @param f
-     *            The additional value to be put into the fourth index.
-     */
-    public VecF4(Vector vector, float f) {
-        super(4);
-        if (vector.getSize() == 3) {
-            this.v[0] = ((VecF3) vector).v[0];
-            this.v[1] = ((VecF3) vector).v[1];
-            this.v[2] = ((VecF3) vector).v[2];
-
-        }
-        // TODO Auto-generated constructor stub
+        this.x = v.getX();
+        this.y = v.getY();
+        this.z = v.getZ();
+        this.w = v3;
     }
 
     /**
@@ -97,11 +81,10 @@ public class VecF4 extends VectorF {
      *            The value to be put in the fourth position.
      */
     public VecF4(float x, float y, float z, float w) {
-        super(4);
-        this.v[0] = x;
-        this.v[1] = y;
-        this.v[2] = z;
-        this.v[3] = w;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
     }
 
     /**
@@ -111,10 +94,10 @@ public class VecF4 extends VectorF {
      */
     public VecF4 neg() {
         VecF4 result = new VecF4();
-        result.v[0] = -v[0];
-        result.v[1] = -v[1];
-        result.v[2] = -v[2];
-        result.v[3] = -v[3];
+        result.setX(-x);
+        result.setY(-y);
+        result.setZ(-z);
+        result.setW(-w);
         return result;
     }
 
@@ -127,10 +110,10 @@ public class VecF4 extends VectorF {
      */
     public VecF4 add(VecF4 u) {
         VecF4 result = new VecF4();
-        result.v[0] = v[0] + u.v[0];
-        result.v[1] = v[1] + u.v[1];
-        result.v[2] = v[2] + u.v[2];
-        result.v[3] = v[3] + u.v[3];
+        result.setX(x + u.getX());
+        result.setY(y + u.getY());
+        result.setZ(z + u.getZ());
+        result.setW(w + u.getW());
         return result;
     }
 
@@ -144,10 +127,10 @@ public class VecF4 extends VectorF {
      */
     public VecF4 add(VecF3 u) {
         VecF4 result = new VecF4();
-        result.v[0] = v[0] + u.v[0];
-        result.v[1] = v[1] + u.v[1];
-        result.v[2] = v[2] + u.v[2];
-        result.v[3] = v[3];
+        result.setX(x + u.getX());
+        result.setY(y + u.getY());
+        result.setZ(z + u.getZ());
+        result.setW(w);
         return result;
     }
 
@@ -160,10 +143,10 @@ public class VecF4 extends VectorF {
      */
     public VecF4 sub(VecF4 u) {
         VecF4 result = new VecF4();
-        result.v[0] = v[0] - u.v[0];
-        result.v[1] = v[1] - u.v[1];
-        result.v[2] = v[2] - u.v[2];
-        result.v[3] = v[3] - u.v[3];
+        result.setX(x - u.getX());
+        result.setY(y - u.getY());
+        result.setZ(z - u.getZ());
+        result.setW(w - u.getW());
         return result;
     }
 
@@ -177,26 +160,11 @@ public class VecF4 extends VectorF {
     public VecF4 mul(Number n) {
         float fn = n.floatValue();
         VecF4 result = new VecF4();
-        result.v[0] = v[0] * fn;
-        result.v[1] = v[1] * fn;
-        result.v[2] = v[2] * fn;
-        result.v[3] = v[3] * fn;
-        return result;
-    }
+        result.setX(x * fn);
+        result.setY(y * fn);
+        result.setZ(z * fn);
+        result.setW(w * fn);
 
-    /**
-     * Multiplies the given vector with this vector.
-     * 
-     * @param u
-     *            The vector to be multiplied with this one.
-     * @return The new Vector, which is a result of the multiplication.
-     */
-    public VecF4 mul(VecF4 u) {
-        VecF4 result = new VecF4();
-        result.v[0] = v[0] * u.v[0];
-        result.v[1] = v[1] * u.v[1];
-        result.v[2] = v[2] * u.v[2];
-        result.v[3] = v[3] * u.v[3];
         return result;
     }
 
@@ -208,45 +176,178 @@ public class VecF4 extends VectorF {
      * @return The new Vector, which is a result of the division.
      */
     public VecF4 div(Number n) {
-        float f = n.floatValue();
-        if (f == 0f)
+        float fn = n.floatValue();
+        if (fn == 0f) {
             return new VecF4();
-        float fn = 1f / f;
+        }
+        float divfn = 1f / fn;
 
         VecF4 result = new VecF4();
-        result.v[0] = v[0] * fn;
-        result.v[1] = v[1] * fn;
-        result.v[2] = v[2] * fn;
-        result.v[3] = v[3] * fn;
+        result.setX(x * divfn);
+        result.setY(y * divfn);
+        result.setZ(z * divfn);
+        result.setW(w * divfn);
         return result;
     }
 
     public VecF3 stripAlpha() {
-        return new VecF3(v[0], v[1], v[2]);
+        return new VecF3(x, y, z);
     }
 
     @Override
-    public VecF4 clone() {
-        return new VecF4(this);
+    public FloatBuffer asBuffer() {
+        FloatBuffer result = FloatBuffer.allocate(SIZE);
+        result.put(x);
+        result.put(y);
+        result.put(z);
+        result.put(w);
+
+        result.rewind();
+
+        return result;
     }
 
+    @Override
+    public int getSize() {
+        return SIZE;
+    }
+
+    /**
+     * Getter for x.
+     * 
+     * @return the x.
+     */
+    public float getX() {
+        return x;
+    }
+
+    /**
+     * Setter for x.
+     * 
+     * @param x
+     *            the x to set
+     */
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    /**
+     * Getter for y.
+     * 
+     * @return the y.
+     */
+    public float getY() {
+        return y;
+    }
+
+    /**
+     * Setter for y.
+     * 
+     * @param y
+     *            the y to set
+     */
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    /**
+     * Getter for z.
+     * 
+     * @return the z.
+     */
+    public float getZ() {
+        return z;
+    }
+
+    /**
+     * Setter for z.
+     * 
+     * @param z
+     *            the z to set
+     */
+    public void setZ(float z) {
+        this.z = z;
+    }
+
+    /**
+     * Getter for u.
+     * 
+     * @return the u.
+     */
+    public float getW() {
+        return w;
+    }
+
+    /**
+     * Setter for u.
+     * 
+     * @param u
+     *            the u to set
+     */
+    public void setW(float w) {
+        this.w = w;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode() {
-        int hashCode = (int) (v[0] + 23 * 6833 + v[1] + 7 * 7207 + v[2] + 11 * 7919 + v[3] + 3 * 3);
-        return hashCode;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Float.floatToIntBits(w);
+        result = prime * result + Float.floatToIntBits(x);
+        result = prime * result + Float.floatToIntBits(y);
+        result = prime * result + Float.floatToIntBits(z);
+        return result;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
-    public boolean equals(Object thatObject) {
-        if (this == thatObject)
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        if (!(thatObject instanceof VecF4))
+        }
+        if (obj == null) {
             return false;
-
-        // cast to native object is now safe
-        VecF4 that = (VecF4) thatObject;
-
-        // now a proper field-by-field evaluation can be made
-        return (v[0] == that.v[0] && v[1] == that.v[1] && v[2] == that.v[2] && v[3] == that.v[3]);
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        VecF4 other = (VecF4) obj;
+        if (Float.floatToIntBits(w) != Float.floatToIntBits(other.w)) {
+            return false;
+        }
+        if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
+            return false;
+        }
+        if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) {
+            return false;
+        }
+        if (Float.floatToIntBits(z) != Float.floatToIntBits(other.z)) {
+            return false;
+        }
+        return true;
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "VecF4 [x=" + x + ", y=" + y + ", z=" + z + ", w=" + w + "]";
+    }
+
+    public float[] asArray() {
+        return new float[] { x, y, z, w };
+    }
+
 }

@@ -10,7 +10,7 @@ import javax.swing.plaf.basic.BasicSliderUI;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -30,7 +30,7 @@ import javax.swing.plaf.basic.BasicSliderUI;
  * 
  */
 public class ColoredSliderUI extends BasicSliderUI {
-    Color thumbColor;
+    private final Color thumbColor;
 
     /**
      * Default {@link JSlider} constructor with added color value.
@@ -91,7 +91,6 @@ public class ColoredSliderUI extends BasicSliderUI {
             g.drawLine(cw, 0, cw, 3);
             g.setColor(Color.red);
             g.fillRect(1, 1, cw - 2, 4);
-            // g.drawLine(1, 1, cw - 2, 1);
 
             g.translate(-trackBounds.x, -(trackBounds.y + cy));
         } else {
@@ -108,14 +107,8 @@ public class ColoredSliderUI extends BasicSliderUI {
             g.drawLine(0, ch, 3, ch);
             g.setColor(Color.red);
             g.fillRect(1, 1, 4, ch - 2);
-            // g.drawLine(1, 1, 1, ch - 2);
 
             g.translate(-(trackBounds.x + cx), -trackBounds.y);
         }
-    }
-
-    @Override
-    public int valueForXPosition(int pos) {
-        return super.valueForXPosition(pos);
     }
 }

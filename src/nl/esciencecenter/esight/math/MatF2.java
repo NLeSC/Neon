@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -25,7 +25,7 @@ import java.util.Arrays;
  */
 public class MatF2 extends MatrixF {
     /** The number of elements in this matrix */
-    public static int SIZE = 4;
+    private static final int SIZE = 4;
 
     /**
      * Creates a new identity matrix.
@@ -39,8 +39,9 @@ public class MatF2 extends MatrixF {
      * Helper method to create a new identity matrix.
      */
     private void identity() {
-        Arrays.fill(m, 0f);
-        m[0] = m[3] = 1.0f;
+        Arrays.fill(asArray(), 0f);
+        asArray()[0] = 1.0f;
+        asArray()[3] = 1.0f;
     }
 
     /**
@@ -51,7 +52,7 @@ public class MatF2 extends MatrixF {
      */
     public MatF2(float in) {
         super(SIZE);
-        Arrays.fill(m, in);
+        Arrays.fill(asArray(), in);
     }
 
     /**
@@ -64,8 +65,11 @@ public class MatF2 extends MatrixF {
      */
     public MatF2(VecF2 v0, VecF2 v1) {
         super(SIZE);
-        buf.put(v0.asBuffer());
-        buf.put(v1.asBuffer());
+        asArray()[0] = v0.getX();
+        asArray()[1] = v0.getY();
+
+        asArray()[2] = v1.getX();
+        asArray()[3] = v1.getY();
     }
 
     /**
@@ -82,10 +86,10 @@ public class MatF2 extends MatrixF {
      */
     public MatF2(float m00, float m01, float m10, float m11) {
         super(SIZE);
-        m[0] = m00;
-        m[1] = m01;
-        m[2] = m10;
-        m[3] = m11;
+        asArray()[0] = m00;
+        asArray()[1] = m01;
+        asArray()[2] = m10;
+        asArray()[3] = m11;
     }
 
     /**
@@ -98,7 +102,7 @@ public class MatF2 extends MatrixF {
         super(SIZE);
 
         for (int i = 0; i < SIZE; i++) {
-            m[i] = n.get(i);
+            asArray()[i] = n.get(i);
         }
     }
 
@@ -112,10 +116,10 @@ public class MatF2 extends MatrixF {
     public MatF2 mul(MatF2 n) {
         MatF2 a = new MatF2(0f);
 
-        a.m[0] = m[0] * n.m[0] + m[1] * n.m[2];
-        a.m[1] = m[0] * n.m[1] + m[1] * n.m[3];
-        a.m[2] = m[2] * n.m[0] + m[3] * n.m[2];
-        a.m[3] = m[2] * n.m[1] + m[3] * n.m[3];
+        a.asArray()[0] = asArray()[0] * n.asArray()[0] + asArray()[1] * n.asArray()[2];
+        a.asArray()[1] = asArray()[0] * n.asArray()[1] + asArray()[1] * n.asArray()[3];
+        a.asArray()[2] = asArray()[2] * n.asArray()[0] + asArray()[3] * n.asArray()[2];
+        a.asArray()[3] = asArray()[2] * n.asArray()[1] + asArray()[3] * n.asArray()[3];
 
         return a;
     }
@@ -131,7 +135,7 @@ public class MatF2 extends MatrixF {
         MatF2 result = new MatF2(0f);
 
         for (int i = 0; i < SIZE; ++i) {
-            result.m[i] = m[i] + n.m[i];
+            result.asArray()[i] = asArray()[i] + n.asArray()[i];
         }
 
         return result;
@@ -148,7 +152,7 @@ public class MatF2 extends MatrixF {
         MatF2 result = new MatF2(0f);
 
         for (int i = 0; i < SIZE; ++i) {
-            result.m[i] = m[i] - n.m[i];
+            result.asArray()[i] = asArray()[i] - n.asArray()[i];
         }
 
         return result;
@@ -166,7 +170,7 @@ public class MatF2 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.m[i] = m[i] * fn;
+            result.asArray()[i] = asArray()[i] * fn;
         }
 
         return result;
@@ -184,7 +188,7 @@ public class MatF2 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.m[i] = m[i] + fn;
+            result.asArray()[i] = asArray()[i] + fn;
         }
 
         return result;
@@ -202,7 +206,7 @@ public class MatF2 extends MatrixF {
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
-            result.m[i] = m[i] - fn;
+            result.asArray()[i] = asArray()[i] - fn;
         }
 
         return result;
@@ -223,7 +227,7 @@ public class MatF2 extends MatrixF {
         float fn = 1f / n.floatValue();
 
         for (int i = 0; i < SIZE; ++i) {
-            result.m[i] = m[i] * fn;
+            result.asArray()[i] = asArray()[i] * fn;
         }
 
         return result;
@@ -237,12 +241,7 @@ public class MatF2 extends MatrixF {
      * @return The new vector that is the result of the multiplication.
      */
     public VecF2 mul(VecF2 v) {
-        return new VecF2(m[0] * v.v[0] + m[1] * v.v[1], m[2] * v.v[0] + m[3]
-                * v.v[1]);
-    }
-
-    @Override
-    public MatF2 clone() {
-        return new MatF2(this);
+        return new VecF2(asArray()[0] * v.getX() + asArray()[1] * v.getY(), asArray()[2] * v.getX() + asArray()[3]
+                * v.getY());
     }
 }

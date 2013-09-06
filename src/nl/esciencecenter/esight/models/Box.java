@@ -1,12 +1,16 @@
 package nl.esciencecenter.esight.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.esciencecenter.esight.math.Point4;
 import nl.esciencecenter.esight.math.VecF3;
+import nl.esciencecenter.esight.math.VecF4;
 import nl.esciencecenter.esight.math.VectorFMath;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -25,6 +29,9 @@ import nl.esciencecenter.esight.math.VectorFMath;
  * @author Maarten van Meersbergen <m.vanmeersbergen@esciencecenter.nl>
  */
 public class Box extends Model {
+
+    private static final int VERTICES_PER_QUAD = 6;
+
     /**
      * Basic constructor for Box. Allows for an optional bottom side.
      * 
@@ -41,58 +48,76 @@ public class Box extends Model {
      *            flag to draw either a bottom (true) or no bottom (false).
      */
     public Box(float width, float height, float depth, boolean bottom) {
-        super(vertex_format.TRIANGLES);
+        super(VertexFormat.TRIANGLES);
 
         Point4[] vertices = makeVertices(width, height, depth);
 
-        int numVertices;
+        List<VecF4> allPoints = new ArrayList<VecF4>();
+        List<VecF3> allNormals = new ArrayList<VecF3>();
+        List<VecF3> allTexCoords = new ArrayList<VecF3>();
+
+        // FRONT QUAD
+        List<Point4> points = tesselate(vertices, 1, 0, 3, 2);
+        List<VecF3> normals = createNormals(new VecF3(0, 0, -1));
+        List<VecF3> tCoords = createTexCoords();
+
+        allPoints.addAll(points);
+        allNormals.addAll(normals);
+        allTexCoords.addAll(tCoords);
+
+        // RIGHT QUAD
+        points = tesselate(vertices, 2, 3, 7, 6);
+        normals = createNormals(new VecF3(1, 0, 0));
+        tCoords = createTexCoords();
+
+        allPoints.addAll(points);
+        allNormals.addAll(normals);
+        allTexCoords.addAll(tCoords);
+
         if (bottom) {
-            numVertices = 36;
-        } else {
-            numVertices = 30;
+            // BOTTOM QUAD
+            points = tesselate(vertices, 3, 0, 4, 7);
+            normals = createNormals(new VecF3(0, -1, 0));
+            tCoords = createTexCoords();
+
+            allPoints.addAll(points);
+            allNormals.addAll(normals);
+            allTexCoords.addAll(tCoords);
         }
 
-        Point4[] points = new Point4[numVertices];
-        VecF3[] normals = new VecF3[numVertices];
-        VecF3[] tCoords = new VecF3[numVertices];
+        // TOP QUAD
+        points = tesselate(vertices, 6, 5, 1, 2);
+        normals = createNormals(new VecF3(0, 1, 0));
+        tCoords = createTexCoords();
 
-        int arrayindex = 0;
-        for (int i = arrayindex; i < arrayindex + 6; i++) {
-            normals[i] = new VecF3(0, 0, -1);
-        }
-        arrayindex = newQuad(points, tCoords, arrayindex, vertices, 1, 0, 3, 2); // FRONT
+        allPoints.addAll(points);
+        allNormals.addAll(normals);
+        allTexCoords.addAll(tCoords);
 
-        for (int i = arrayindex; i < arrayindex + 6; i++) {
-            normals[i] = new VecF3(1, 0, 0);
-        }
-        arrayindex = newQuad(points, tCoords, arrayindex, vertices, 2, 3, 7, 6); // RIGHT
+        // BACK QUAD
+        points = tesselate(vertices, 4, 5, 6, 7);
+        normals = createNormals(new VecF3(0, 0, 1));
+        tCoords = createTexCoords();
 
-        if (bottom) {
-            for (int i = arrayindex; i < arrayindex + 6; i++) {
-                normals[i] = new VecF3(0, -1, 0);
-            }
-            arrayindex = newQuad(points, tCoords, arrayindex, vertices, 3, 0, 4, 7); // BOTTOM
-        }
+        allPoints.addAll(points);
+        allNormals.addAll(normals);
+        allTexCoords.addAll(tCoords);
 
-        for (int i = arrayindex; i < arrayindex + 6; i++) {
-            normals[i] = new VecF3(0, 1, 0);
-        }
-        arrayindex = newQuad(points, tCoords, arrayindex, vertices, 6, 5, 1, 2); // TOP
+        // LEFT QUAD
+        points = tesselate(vertices, 5, 4, 0, 1);
+        normals = createNormals(new VecF3(-1, 0, 0));
+        tCoords = createTexCoords();
 
-        for (int i = arrayindex; i < arrayindex + 6; i++) {
-            normals[i] = new VecF3(0, 0, 1);
-        }
-        arrayindex = newQuad(points, tCoords, arrayindex, vertices, 4, 5, 6, 7); // BACK
+        allPoints.addAll(points);
+        allNormals.addAll(normals);
+        allTexCoords.addAll(tCoords);
 
-        for (int i = arrayindex; i < arrayindex + 6; i++) {
-            normals[i] = new VecF3(-1, 0, 0);
-        }
-        arrayindex = newQuad(points, tCoords, arrayindex, vertices, 5, 4, 0, 1); // LEFT
+        final int floatsPerVecF4 = 4;
+        this.setNumVertices(allPoints.size() / floatsPerVecF4);
 
-        this.numVertices = numVertices;
-        this.vertices = VectorFMath.toBuffer(points);
-        this.normals = VectorFMath.toBuffer(normals);
-        this.texCoords = VectorFMath.toBuffer(tCoords);
+        this.setVertices(VectorFMath.vec4ListToBuffer(allPoints));
+        this.setNormals(VectorFMath.vec3ListToBuffer(allNormals));
+        this.setTexCoords(VectorFMath.vec3ListToBuffer(allTexCoords));
     }
 
     /**
@@ -115,55 +140,86 @@ public class Box extends Model {
         float zpos = +(depth / 2f);
         float zneg = -(depth / 2f);
 
-        Point4[] result = new Point4[] { new Point4(xneg, yneg, zpos, 1.0f), new Point4(xneg, ypos, zpos, 1.0f),
-                new Point4(xpos, ypos, zpos, 1.0f), new Point4(xpos, yneg, zpos, 1.0f),
-                new Point4(xneg, yneg, zneg, 1.0f), new Point4(xneg, ypos, zneg, 1.0f),
-                new Point4(xpos, ypos, zneg, 1.0f), new Point4(xpos, yneg, zneg, 1.0f) };
+        Point4[] result = new Point4[] { new Point4(xneg, yneg, zpos), new Point4(xneg, ypos, zpos),
+                new Point4(xpos, ypos, zpos), new Point4(xpos, yneg, zpos), new Point4(xneg, yneg, zneg),
+                new Point4(xneg, ypos, zneg), new Point4(xpos, ypos, zneg), new Point4(xpos, yneg, zneg) };
 
         return result;
     }
 
     /**
-     * Helper method used to generate quads out of an array of points.
+     * Create two triangles with vertices (Points) in the correct order out of
+     * the given points.
      * 
-     * @param points
-     *            The _output_ parameter for the vertex data.
-     * @param tCoords
-     *            The _output_ array of texture coordinates.
-     * @param offset
-     *            The offset in the output arrays.
      * @param source
-     *            The source array of vertices.
+     *            The source array with base-model vertices.
      * @param a
-     *            The index of the first vertex in the input array.
+     *            The index of the first corner in the source array.
      * @param b
-     *            The index of the second vertex in the input array.
+     *            The index of the second corner in the source array.
      * @param c
-     *            The index of the third vertex in the input array.
+     *            The index of the third corner in the source array.
      * @param d
-     *            The index of the fourth vertex in the input array.
-     * @return The new array offset for the output arrays.
+     *            The index of the fourth corner in the source array.
+     * @return A list with 6 vertices representing 2 triangles.
      */
-    private int newQuad(Point4[] points, VecF3[] tCoords, int offset, Point4[] source, int a, int b, int c, int d) {
-        points[offset] = source[a];
-        tCoords[offset] = new VecF3(source[a]);
-        offset++;
-        points[offset] = source[b];
-        tCoords[offset] = new VecF3(source[b]);
-        offset++;
-        points[offset] = source[c];
-        tCoords[offset] = new VecF3(source[c]);
-        offset++;
-        points[offset] = source[a];
-        tCoords[offset] = new VecF3(source[a]);
-        offset++;
-        points[offset] = source[c];
-        tCoords[offset] = new VecF3(source[c]);
-        offset++;
-        points[offset] = source[d];
-        tCoords[offset] = new VecF3(source[d]);
-        offset++;
+    private List<Point4> tesselate(Point4[] source, int a, int b, int c, int d) {
+        ArrayList<Point4> result = new ArrayList<Point4>();
 
-        return offset;
+        result.add(source[a]);
+        result.add(source[b]);
+        result.add(source[c]);
+        result.add(source[a]);
+        result.add(source[c]);
+        result.add(source[d]);
+
+        return result;
+    }
+
+    /**
+     * Create texture coordinates for the given points.
+     * 
+     * @param source
+     *            The source array with base-model vertices.
+     * @param a
+     *            The index of the first corner in the source array.
+     * @param b
+     *            The index of the second corner in the source array.
+     * @param c
+     *            The index of the third corner in the source array.
+     * @param d
+     *            The index of the fourth corner in the source array.
+     * @return An array with 6 vectors representing texture coordinates for the
+     *         given points.
+     */
+    private List<VecF3> createTexCoords() {
+        ArrayList<VecF3> result = new ArrayList<VecF3>();
+
+        result.add(new VecF3(0, 0, 0));
+        result.add(new VecF3(0, 1, 0));
+        result.add(new VecF3(1, 1, 0));
+        result.add(new VecF3(0, 0, 0));
+        result.add(new VecF3(1, 1, 0));
+        result.add(new VecF3(1, 0, 0));
+
+        return result;
+    }
+
+    /**
+     * Create normals for the given points.
+     * 
+     * @param normalToCreate
+     *            The normal vector to copy X times ;)
+     * @return An array with 6 vectors representing normals for the given
+     *         points.
+     */
+    private List<VecF3> createNormals(VecF3 normalToCreate) {
+        ArrayList<VecF3> result = new ArrayList<VecF3>();
+
+        for (int i = 0; i < VERTICES_PER_QUAD; i++) {
+            result.add(new VecF3(normalToCreate));
+        }
+
+        return result;
     }
 }

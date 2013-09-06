@@ -1,4 +1,4 @@
-#version 150
+#version 140
 
 in vec4 MCvertex;
 in vec4 MCvertexColor;
@@ -11,8 +11,9 @@ out float vAlpha;
 
 void main(void)
 {
+	gl_PointSize = 3;
 	vColor = MCvertexColor.rgb;
 	vAlpha = MCvertexColor.a;
 	
-    gl_Position = MVMatrix * PMatrix * MCvertex;
+    gl_Position = PMatrix * MVMatrix * MCvertex;
 }

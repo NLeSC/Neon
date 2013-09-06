@@ -2,7 +2,7 @@ package nl.esciencecenter.esight.shaders;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -37,9 +37,13 @@ public class ShaderCreator {
     public String generatePostProcessShader(int rows, int columns) {
         String shaderText = "#version " + glslVersion + "\n\n";
 
-        for (int i = 0; i < rows * columns; i++) {
-            shaderText += "uniform sampler2D sphereTexture_" + i + ";\n";
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < rows * columns; ++i) {
+            buf.append("uniform sampler2D sphereTexture_");
+            buf.append(i);
+            buf.append(";\n");
         }
+        shaderText += buf.toString();
 
         shaderText += "uniform float sphereBrightness;\n";
         shaderText += "uniform int scrWidth;\n";
@@ -115,10 +119,16 @@ public class ShaderCreator {
         shaderText += "" + "    } else if (selection == 1) {\n" + "        vec2 tCoord = vec2(x,y);\n"
                 + "        sphereColor = vec4(texture(sphereTexture_0, tCoord).rgb, 1.0);\n";
 
-        for (int i = 1; i < rows * columns; i++) {
-            shaderText += "    } else if (selection == " + (i + 1) + ") {\n" + "        vec2 tCoord = vec2(x,y);\n"
-                    + "        sphereColor = vec4(texture(sphereTexture_" + (i) + ", tCoord).rgb, 1.0);\n";
+        buf = new StringBuffer();
+        for (int i = 0; i < rows * columns; ++i) {
+            buf.append("    } else if (selection == ");
+            buf.append(i + 1);
+            buf.append(") {\n" + "        vec2 tCoord = vec2(x,y);\n");
+            buf.append("        sphereColor = vec4(texture(sphereTexture_");
+            buf.append(i);
+            buf.append(", tCoord).rgb, 1.0);\n");
         }
+        shaderText += buf.toString();
 
         shaderText += "    }\n" + "    vec4 color = sphereColor;\n" + "    fragColor = vec4(color.rgb, 1.0);\n" + "}\n";
 

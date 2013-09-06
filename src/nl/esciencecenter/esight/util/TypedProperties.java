@@ -16,9 +16,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /* Copyright 2013 Netherlands eScience Center
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
@@ -37,6 +40,7 @@ import java.util.regex.Pattern;
  * @author Niels Drost <n.drost@esciencecenter.nl>
  */
 public class TypedProperties extends Properties {
+    private final static Logger logger = LoggerFactory.getLogger(TypedProperties.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -92,6 +96,7 @@ public class TypedProperties extends Properties {
         if (inputStream != null) {
             try {
                 load(inputStream);
+                logger.debug("Opened properties file: " + resourceName);
             } catch (Exception e) {
                 // IGNORE
             } finally {
@@ -116,7 +121,7 @@ public class TypedProperties extends Properties {
         for (Object key : keys) {
             Matcher matcher = pattern.matcher((String) get(key));
             while (matcher.find()) {
-                // this will be something of the form ${...}
+                // this will be something of the form "${...}"
                 String fullSystemVar = matcher.group();
                 // remove the prefix '${' and the postfix '}'
                 String strippedSystemVar = fullSystemVar.substring(2, fullSystemVar.length() - 1);
@@ -146,6 +151,7 @@ public class TypedProperties extends Properties {
 
             try {
                 load(inputStream);
+                logger.debug("Loading from properties file: " + fileName);
             } catch (IOException e) {
                 // IGNORE
             }
@@ -201,9 +207,12 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value != null) {
+            logger.debug("Boolean property loaded: " + key + "->" + value);
             return value.equals("1") || value.equals("on") || value.equals("") || value.equals("true")
                     || value.equals("yes");
         }
+
+        logger.debug("Boolean property default: " + key + "->" + defaultValue);
 
         return defaultValue;
     }
@@ -223,11 +232,16 @@ public class TypedProperties extends Properties {
         if (value == null) {
             throw new NumberFormatException("property undefined: " + key);
         }
+        logger.debug("Integer property loaded: " + key + "->" + value);
 
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Integer expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Integer expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -246,13 +260,19 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value == null) {
+            logger.debug("Integer property default: " + key + "->" + defaultValue);
             return defaultValue;
         }
+        logger.debug("Integer property loaded: " + key + "->" + value);
 
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Integer expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Integer expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -271,11 +291,16 @@ public class TypedProperties extends Properties {
         if (value == null) {
             throw new NumberFormatException("property undefined: " + key);
         }
+        logger.debug("Long property loaded: " + key + "->" + value);
 
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Long expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Long expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -294,13 +319,19 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value == null) {
+            logger.debug("Long property default: " + key + "->" + defaultValue);
             return defaultValue;
         }
+        logger.debug("Long property loaded: " + key + "->" + value);
 
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Long expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Long expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -319,11 +350,16 @@ public class TypedProperties extends Properties {
         if (value == null) {
             throw new NumberFormatException("property undefined: " + key);
         }
+        logger.debug("Short property loaded: " + key + "->" + value);
 
         try {
             return Short.parseShort(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Short expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Short expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -342,13 +378,19 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value == null) {
+            logger.debug("Short property default: " + key + "->" + defaultValue);
             return defaultValue;
         }
+        logger.debug("Short property loaded: " + key + "->" + value);
 
         try {
             return Short.parseShort(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Short expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Short expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -367,11 +409,16 @@ public class TypedProperties extends Properties {
         if (value == null) {
             throw new NumberFormatException("property undefined: " + key);
         }
+        logger.debug("Double property loaded: " + key + "->" + value);
 
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Double expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Double expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -390,13 +437,19 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value == null) {
+            logger.debug("Double property default: " + key + "->" + defaultValue);
             return defaultValue;
         }
+        logger.debug("Double property loaded: " + key + "->" + value);
 
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Double expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Double expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -415,11 +468,16 @@ public class TypedProperties extends Properties {
         if (value == null) {
             throw new NumberFormatException("property undefined: " + key);
         }
+        logger.debug("Float property loaded: " + key + "->" + value);
 
         try {
             return Float.parseFloat(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Float expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Float expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -438,14 +496,60 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value == null) {
+            logger.debug("Float property default: " + key + "->" + defaultValue);
             return defaultValue;
         }
+        logger.debug("Float property loaded: " + key + "->" + value);
 
         try {
             return Float.parseFloat(value);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Float expected for property " + key + ", not \"" + value + "\"");
+            NumberFormatException ex = new NumberFormatException("Float expected for property " + key + ", not \""
+                    + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
+    }
+
+    /**
+     * Returns the string value of property.
+     * 
+     * @return the string value of property
+     * @param key
+     *            property name
+     */
+    @Override
+    public String getProperty(String key) {
+        String value = super.getProperty(key);
+
+        logger.debug("String property loaded: " + key + "->" + value);
+
+        return value;
+    }
+
+    /**
+     * Returns the float value of property.
+     * 
+     * @return the float value of property
+     * @param key
+     *            property name
+     * @param defaultValue
+     *            default value if the property is undefined
+     * @throws NumberFormatException
+     *             if the property defined and not an Float
+     */
+    @Override
+    public String getProperty(String key, String defaultValue) {
+        String value = getProperty(key);
+
+        if (value == null) {
+            logger.debug("String property default: " + key + "->" + defaultValue);
+            return defaultValue;
+        }
+        logger.debug("String property loaded: " + key + "->" + value);
+
+        return value;
     }
 
     /**
@@ -466,6 +570,7 @@ public class TypedProperties extends Properties {
         if (value == null) {
             throw new NumberFormatException("property undefined: " + key);
         }
+        logger.debug("Size property loaded: " + key + "->" + value);
 
         return getSizeProperty(key, 0);
     }
@@ -488,8 +593,10 @@ public class TypedProperties extends Properties {
         String value = getProperty(key);
 
         if (value == null) {
+            logger.debug("Size property default: " + key + "->" + defaultValue);
             return defaultValue;
         }
+        logger.debug("Size property loaded: " + key + "->" + value);
 
         try {
 
@@ -508,8 +615,11 @@ public class TypedProperties extends Properties {
             return Long.parseLong(value);
 
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Long[G|g|M|m|K|k] expected for property " + key + ", not \"" + value
-                    + "\"");
+            NumberFormatException ex = new NumberFormatException("Long[G|g|M|m|K|k] expected for property " + key
+                    + ", not \"" + value + "\"");
+            ex.setStackTrace(e.getStackTrace());
+
+            throw ex;
         }
     }
 
@@ -629,7 +739,7 @@ public class TypedProperties extends Properties {
      * Checks all properties with the given prefix for validity.
      * 
      * @return a Property object containing all unrecognized properties.
-     * @param prefix
+     * @param tmpPrefix
      *            the prefix that should be checked
      * @param validKeys
      *            the set of valid keys (all with the prefix).
@@ -642,22 +752,23 @@ public class TypedProperties extends Properties {
      */
     public TypedProperties checkProperties(String prefix, String[] validKeys, String[] validSubPrefixes,
             boolean printWarning) {
+        String tmpPrefix = prefix;
         TypedProperties result = new TypedProperties();
 
-        if (prefix == null) {
-            prefix = "";
+        if (tmpPrefix == null) {
+            tmpPrefix = "";
         }
 
         for (Enumeration<?> e = propertyNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
 
-            if (key.startsWith(prefix)) {
-                String suffix = key.substring(prefix.length());
+            if (key.startsWith(tmpPrefix)) {
+                String suffix = key.substring(tmpPrefix.length());
                 String value = getProperty(key);
 
                 if (!startsWith(suffix, validSubPrefixes) && !contains(validKeys, key)) {
                     if (printWarning) {
-                        System.err.println("Warning, unknown property: " + key + " with value: " + value);
+                        logger.error("Warning, unknown property: " + key + " with value: " + value);
                     }
                     result.put(key, value);
                 }
@@ -670,7 +781,7 @@ public class TypedProperties extends Properties {
      * Returns all properties who's key start with a certain prefix.
      * 
      * @return a Property object containing all matching properties.
-     * @param prefix
+     * @param tmpPrefix
      *            the desired prefix
      * @param removePrefix
      *            should the prefix be removed from the property name?
@@ -679,22 +790,23 @@ public class TypedProperties extends Properties {
      *            properties?
      */
     public TypedProperties filter(String prefix, boolean removePrefix, boolean removeProperties) {
+        String tmpPrefix = prefix;
 
         TypedProperties result = new TypedProperties();
 
-        if (prefix == null) {
-            prefix = "";
+        if (tmpPrefix == null) {
+            tmpPrefix = "";
         }
 
         for (Enumeration<?> e = propertyNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
 
-            if (key.startsWith(prefix)) {
+            if (key.startsWith(tmpPrefix)) {
 
                 String value = getProperty(key);
 
                 if (removePrefix) {
-                    result.put(key.substring(prefix.length()), value);
+                    result.put(key.substring(tmpPrefix.length()), value);
                 } else {
                     result.put(key, value);
                 }
@@ -729,15 +841,16 @@ public class TypedProperties extends Properties {
      *            null, will print all properties
      */
     public void printProperties(PrintStream out, String prefix) {
-        if (prefix == null) {
-            prefix = "";
+        String tmpPrefix = prefix;
+        if (tmpPrefix == null) {
+            tmpPrefix = "";
         }
 
         for (Enumeration<?> e = propertyNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
             String value = getProperty(key);
 
-            if (key.toLowerCase().startsWith(prefix.toLowerCase())) {
+            if (key.toLowerCase().startsWith(tmpPrefix.toLowerCase())) {
                 out.println(key + " = " + value);
             }
         }
@@ -750,16 +863,16 @@ public class TypedProperties extends Properties {
      */
     @Override
     public String toString() {
-        String result = "";
+        StringBuffer buf = new StringBuffer();
 
         for (Enumeration<?> e = propertyNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
             String value = getProperty(key);
 
-            result += key + " = " + value + "\n";
+            buf.append(key + " = " + value + "\n");
         }
 
-        return result;
+        return buf.toString();
     }
 
     String[] getPropertyNames() {
@@ -773,44 +886,4 @@ public class TypedProperties extends Properties {
         return result;
     }
 
-    /**
-     * Compares this object to the specified object. They are equal if they have
-     * the same property names and values.
-     * 
-     * @param object
-     *            object to compare to.
-     * @return <code>true</code> if equal.
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof TypedProperties)) {
-            return false;
-        }
-
-        TypedProperties other = (TypedProperties) object;
-
-        String[] myProps = getPropertyNames();
-        String[] otherProps = other.getPropertyNames();
-
-        if (myProps.length != otherProps.length) {
-            return false;
-        }
-
-        int i = 0;
-
-        for (String key : myProps) {
-            if (!key.equals(otherProps[i])) {
-                return false;
-            }
-            i++;
-            String value = getProperty(key);
-
-            String otherValue = other.getProperty(key);
-
-            if (otherValue == null || !otherValue.equals(value)) {
-                return false;
-            }
-        }
-        return true;
-    }
 }
