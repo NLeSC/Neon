@@ -9,7 +9,6 @@ import javax.media.opengl.GLContext;
 
 import nl.esciencecenter.esight.ESightGLEventListener;
 import nl.esciencecenter.esight.datastructures.FBO;
-import nl.esciencecenter.esight.datastructures.IntPBO;
 import nl.esciencecenter.esight.exceptions.UninitializedException;
 import nl.esciencecenter.esight.input.InputHandler;
 import nl.esciencecenter.esight.math.Color4;
@@ -45,7 +44,7 @@ import nl.esciencecenter.esight.text.MultiColorText;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class ESightExampleGLEventListener extends ESightGLEventListener {
+public class HelloWorldGLEventListener extends ESightGLEventListener {
     // Two example shader program definitions.
     private ShaderProgram axesShaderProgram, textShaderProgram;
 
@@ -53,17 +52,8 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
     // axes are the model we wish to render (example)
     private Model xAxis, yAxis, zAxis;
 
-    // Global (singleton) settings instance.
-    private final ESightExampleSettings settings = ESightExampleSettings.getInstance();
-
-    // Pixelbuffer Object, we use this to get screenshots.
-    private IntPBO finalPBO;
-
     // Global (singleton) inputhandler instance.
-    private final ESightExampleInputHandler inputHandler = ESightExampleInputHandler.getInstance();
-
-    // State keeping variable
-    private boolean screenshotWanted;
+    private final InputHandler inputHandler = InputHandler.getInstance();
 
     // Example of text to display on screen, and the size of the font for this.
     private MultiColorText hudText;
@@ -85,7 +75,7 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
     /**
      * Basic constructor for ESightExampleGLEventListener.
      */
-    public ESightExampleGLEventListener() {
+    public HelloWorldGLEventListener() {
         super();
 
     }
@@ -184,11 +174,6 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         hudText = new MultiColorText(gl, getFont(), text, Color4.WHITE, fontSize);
         hudText.init(gl);
 
-        // Here we define a PixelBufferObject, which is used for getting
-        // screenshots.
-        finalPBO = new IntPBO(canvasWidth, canvasHeight);
-        finalPBO.init(gl);
-
         // Release the context.
         contextOff(drawable);
     }
@@ -218,6 +203,9 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         // Construct a modelview matrix out of camera viewpoint and angle.
         MatF4 modelViewMatrix = MatrixFMath.lookAt(eye, at, up);
 
+        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.translate(new VecF3(inputHandler.getTranslation().getX(),
+                inputHandler.getTranslation().getY(), 0f)));
+
         // Translate the camera backwards according to the inputhandler's view
         // distance setting.
         modelViewMatrix = modelViewMatrix.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputHandler.getViewDist())));
@@ -227,6 +215,10 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
         modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
         modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationZ(inputHandler.getRotation().getZ()));
+
+        // modelViewMatrix = modelViewMatrix.mul(MatrixFMath.translate(new
+        // VecF3(inputHandler.getTranslation().getX(),
+        // inputHandler.getTranslation().getY(), 0f)));
 
         // Render the scene with these modelview settings. In this case, the end
         // result of this action will be that the AxesFBO has been filled with
@@ -238,19 +230,6 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
             renderHUDText(gl, modelViewMatrix, textShaderProgram);
         } catch (UninitializedException e1) {
             e1.printStackTrace();
-        }
-
-        // Render the FBO's to screen, doing any post-processing actions that
-        // might be wanted.
-        // renderTexturesToScreen(gl, canvasWidth, canvasHeight);
-
-        // Make a screenshot, when wanted. The PBO copies the current
-        // framebuffer. We then set the state back because we dont want to make
-        // a screenshot 60 times a second.
-        if (screenshotWanted) {
-            finalPBO.makeScreenshotPNG(gl, settings.getScreenshotFileName());
-
-            screenshotWanted = false;
         }
 
         contextOff(drawable);
@@ -366,11 +345,6 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         canvasHeight = GLContext.getCurrent().getGLDrawable().getHeight();
         setAspect((float) canvasWidth / (float) canvasHeight);
 
-        // Resize the PixelBuffer Object that can be used for screenshots.
-        finalPBO.delete(gl);
-        finalPBO = new IntPBO(w, h);
-        finalPBO.init(gl);
-
         // Release the context.
         contextOff(drawable);
     }
@@ -393,9 +367,6 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
         // version).
         final GL3 gl = GLContext.getCurrentGL().getGL3();
 
-        // Delete the FramBuffer Objects.
-        finalPBO.delete(gl);
-
         // Let the ShaderProgramLoader clean up. This deletes all of the
         // ShaderProgram instances as well.
         try {
@@ -406,9 +377,5 @@ public class ESightExampleGLEventListener extends ESightGLEventListener {
 
         // Release the context.
         contextOff(drawable);
-    }
-
-    public InputHandler getInputHandler() {
-        return inputHandler;
     }
 }

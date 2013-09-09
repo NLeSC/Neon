@@ -57,14 +57,22 @@ public class InputHandler implements MouseListener, KeyListener {
     private float rotationY;
 
     /** Mouse drag start point in X direction */
-    private float dragLeftXorigin;
+    private float dragXorigin;
+
     /** Mouse drag start point in Y direction */
-    private float dragLeftYorigin;
+    private float dragYorigin;
 
     /** Final rotation in openGL units */
-    private VecF3 rotation;
+    private VecF3 rotation, translation;
+
     /** Final view distance (translation) in openGL units */
     private float viewDist = -5f;
+
+    private float translationX = 0f;
+    private float translationY = 0f;
+
+    private float translationXorigin = 0f;
+    private float translationYorigin = 0f;
 
     /** Current direction of the view */
 
@@ -82,7 +90,26 @@ public class InputHandler implements MouseListener, KeyListener {
     }
 
     protected InputHandler() {
+        reset();
+    }
+
+    private void reset() {
+        rotationXorigin = 0;
+        rotationX = 0;
+        rotationYorigin = 0;
+        rotationY = 0;
+
+        dragXorigin = 0;
+        dragYorigin = 0;
+
+        translationX = 0f;
+        translationXorigin = 0f;
+        translationY = 0f;
+        translationYorigin = 0f;
+
         rotation = new VecF3();
+        translation = new VecF3();
+        viewDist = -3f;
     }
 
     @Override
@@ -101,16 +128,17 @@ public class InputHandler implements MouseListener, KeyListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (e.isButtonDown(MouseEvent.BUTTON1)) {
-            dragLeftXorigin = e.getX();
-            dragLeftYorigin = e.getY();
-        }
+        dragXorigin = e.getX();
+        dragYorigin = e.getY();
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         rotationXorigin = rotationX;
         rotationYorigin = rotationY;
+
+        translationXorigin = translationX;
+        translationYorigin = translationY;
     }
 
     @Override
@@ -119,11 +147,11 @@ public class InputHandler implements MouseListener, KeyListener {
             // x/y reversed because of axis orientation. (up/down => x axis
             // rotation in OpenGL)
             if (e.isShiftDown()) {
-                rotationX = ((e.getX() - dragLeftXorigin) / 10f + rotationXorigin) % 360;
-                rotationY = ((e.getY() - dragLeftYorigin) / 10f + rotationYorigin) % 360;
+                rotationX = ((e.getX() - dragXorigin) / 10f + rotationXorigin) % 360;
+                rotationY = ((e.getY() - dragYorigin) / 10f + rotationYorigin) % 360;
             } else {
-                rotationX = ((e.getX() - dragLeftXorigin) + rotationXorigin) % 360;
-                rotationY = ((e.getY() - dragLeftYorigin) + rotationYorigin) % 360;
+                rotationX = ((e.getX() - dragXorigin) + rotationXorigin) % 360;
+                rotationY = ((e.getY() - dragYorigin) + rotationYorigin) % 360;
             }
             // Make sure the numbers are always positive (so we can determine
             // the octant we're in more easily)
@@ -137,6 +165,17 @@ public class InputHandler implements MouseListener, KeyListener {
             rotation.setX(rotationY);
             rotation.setY(rotationX);
             rotation.setZ(0f); // We never rotate around the Z axis.
+        } else if (e.isButtonDown(MouseEvent.BUTTON3)) {
+            if (e.isShiftDown()) {
+                translationX = (.0001f * (e.getX() - dragXorigin)) + translationXorigin;
+                translationY = (-.0001f * (e.getY() - dragYorigin)) + translationYorigin;
+            } else {
+                translationX = (.01f * (e.getX() - dragXorigin)) + translationXorigin;
+                translationY = (-.01f * (e.getY() - dragYorigin)) + translationYorigin;
+            }
+
+            translation.setX(translationX);
+            translation.setY(translationY);
         }
     }
 
@@ -199,5 +238,21 @@ public class InputHandler implements MouseListener, KeyListener {
      */
     public void setViewDist(float viewDist) {
         this.viewDist = viewDist;
+    }
+
+    /**
+     * 
+     * @return the current OpenGL ModelView translation variable
+     */
+    public VecF3 getTranslation() {
+        return translation;
+    }
+
+    /**
+     * @param rotation
+     *            the OpenGL ModelView translation variable to set
+     */
+    public void setTranslation(VecF3 translation) {
+        this.translation = translation;
     }
 }

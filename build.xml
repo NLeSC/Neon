@@ -38,7 +38,7 @@
 		<mkdir dir="dist" />
 		
 		<!-- Compile the java code from src into classes -->
-		<javac srcdir="src" destdir="build/classes" debug="on">
+		<javac srcdir="src" destdir="build/classes" debug="on" source="1.6" target="1.6">
 			<include name="**/*.java"/>
 			<exclude name="**/*Test*"/>
 			

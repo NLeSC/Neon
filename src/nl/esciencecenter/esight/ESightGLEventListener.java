@@ -43,24 +43,24 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public abstract class ESightGLEventListener implements GLEventListener {
-    private static final Logger       logger  = LoggerFactory.getLogger(ESightGLEventListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(ESightGLEventListener.class);
 
     /** General radius variable needed for lookAt method */
-    private static final float        radius  = 1.0f;
+    private static final float radius = 1.0f;
     /** General ftheta variable needed for lookAt method */
-    private static final float        ftheta  = 0.0f;
+    private static final float ftheta = 0.0f;
     /** General phi variable needed for lookAt method */
-    private static final float        phi     = 0.0f;
+    private static final float phi = 0.0f;
 
     /**
      * General Field of View Y-direction variable needed for a default
      * perspective
      */
-    private static final float        fovy    = 45.0f;
+    private static final float fovy = 45.0f;
     /** General Near clipping plane variable needed for a default perspective */
-    private static final float        zNear   = 0.1f;
+    private static final float zNear = 0.1f;
     /** General Far clipping plane variable needed for a default perspective */
-    private static final float        zFar    = 1000000.0f;
+    private static final float zFar = 1000000.0f;
 
     /**
      * A default implementation of the ProgramLoader, needed for programmable
@@ -71,37 +71,37 @@ public abstract class ESightGLEventListener implements GLEventListener {
     /**
      * Aspect ratio variable, normally set by the reshape function
      */
-    private float                     aspect;
+    private float aspect;
 
     /** Ubuntu fontset is used for HUD elements */
-    private static final int          fontSet = FontFactory.UBUNTU;
+    private static final int fontSet = FontFactory.UBUNTU;
     /** font is used for HUD elements @see fontSet */
-    private final Font                font;
+    private final Font font;
 
     /**
      * This variable is used (among others) in the lookAt helper function to
      * define the ModelView matrix, if no inputHandler was specified when
      * constructing this class.
      */
-    private float                     inputRotationX;
+    private float inputRotationX;
     /**
      * This variable is used (among others) in the lookAt helper function to
      * define the ModelView matrix, if no inputHandler was specified when
      * constructing this class.
      */
-    private float                     inputRotationY;
+    private float inputRotationY;
     /**
      * This variable is used (among others) in the lookAt helper function to
      * define the ModelView matrix, if no inputHandler was specified when
      * constructing this class.
      */
-    private float                     inputViewDistance;
+    private float inputViewDistance;
 
     /**
      * This inputHandler is used to define the Modelview Matrix in the lookAt
      * helper function if it is specified upon constructing this class.
      */
-    private InputHandler              inputHandler;
+    private InputHandler inputHandler;
 
     /**
      * Creates a new GLEventListener
@@ -125,7 +125,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
         this.inputHandler = inputHandler;
     }
 
-    public static void contextOn(GLAutoDrawable drawable) {
+    public static GL3 contextOn(GLAutoDrawable drawable) {
         try {
             final int status = drawable.getContext().makeCurrent();
             if ((status != GLContext.CONTEXT_CURRENT) && (status != GLContext.CONTEXT_CURRENT_NEW)) {
@@ -135,6 +135,7 @@ public abstract class ESightGLEventListener implements GLEventListener {
             logger.error("Exception while swapping context to onscreen.");
             logger.error(e.getMessage());
         }
+        return GLContext.getCurrentGL().getGL3();
     }
 
     public static void contextOff(GLAutoDrawable drawable) {
@@ -148,36 +149,78 @@ public abstract class ESightGLEventListener implements GLEventListener {
 
     @Override
     public void init(GLAutoDrawable drawable) {
-        contextOn(drawable);
+        final GL3 gl = contextOn(drawable);
 
-        final GL3 gl = drawable.getGL().getGL3();
-
-        // Enable Anti-Aliasing
-        gl.glEnable(GL3.GL_LINE_SMOOTH);
-        gl.glHint(GL3.GL_LINE_SMOOTH_HINT, GL3.GL_NICEST);
-        gl.glEnable(GL3.GL_POLYGON_SMOOTH);
-        gl.glHint(GL3.GL_POLYGON_SMOOTH_HINT, GL3.GL_NICEST);
-
-        // Enable Depth testing
-        gl.glEnable(GL3.GL_DEPTH_TEST);
-        gl.glDepthFunc(GL3.GL_LEQUAL);
-        gl.glClearDepth(1.0f);
-
-        // Enable Culling
-        gl.glEnable(GL3.GL_CULL_FACE);
-        gl.glCullFace(GL3.GL_BACK);
-
-        // Enable Blending (needed for both Transparency and Anti-Aliasing
-        gl.glBlendFunc(GL3.GL_SRC_ALPHA, GL3.GL_ONE_MINUS_SRC_ALPHA);
-        gl.glEnable(GL3.GL_BLEND);
-
-        // Enable Vertical Sync
-        gl.setSwapInterval(1);
+        setDefaultGraphicsOptions(gl, true);
 
         // Set black background
         gl.glClearColor(0f, 0f, 0f, 0f);
 
         contextOff(drawable);
+    }
+
+    public void setDefaultGraphicsOptions(GL3 gl, boolean value) {
+        setAntiAliasing(gl, value);
+        setDepthTesting(gl, value);
+        setCulling(gl, value);
+        setBlending(gl, value);
+        setVerticalSync(gl, value);
+    }
+
+    public void setAntiAliasing(GL3 gl, boolean value) {
+        if (value) {
+            gl.glEnable(GL3.GL_LINE_SMOOTH);
+            gl.glHint(GL3.GL_LINE_SMOOTH_HINT, GL3.GL_NICEST);
+            gl.glEnable(GL3.GL_POLYGON_SMOOTH);
+            gl.glHint(GL3.GL_POLYGON_SMOOTH_HINT, GL3.GL_NICEST);
+        } else {
+            gl.glDisable(GL3.GL_LINE_SMOOTH);
+            gl.glDisable(GL3.GL_POLYGON_SMOOTH);
+        }
+    }
+
+    public void setDepthTesting(GL3 gl, boolean value) {
+        if (value) {
+            gl.glEnable(GL3.GL_DEPTH_TEST);
+            gl.glDepthFunc(GL3.GL_LEQUAL);
+            gl.glClearDepth(1.0f);
+        } else {
+            gl.glDisable(GL3.GL_DEPTH_TEST);
+        }
+    }
+
+    public void setBlending(GL3 gl, boolean value) {
+        if (value) {
+            gl.glBlendFunc(GL3.GL_SRC_ALPHA, GL3.GL_ONE_MINUS_SRC_ALPHA);
+            gl.glEnable(GL3.GL_BLEND);
+        } else {
+            gl.glDisable(GL3.GL_BLEND);
+        }
+    }
+
+    public void setVerticalSync(GL3 gl, boolean value) {
+        if (value) {
+            gl.setSwapInterval(1);
+        } else {
+            gl.setSwapInterval(0);
+        }
+    }
+
+    public void setCulling(GL3 gl, boolean value) {
+        if (value) {
+            gl.glEnable(GL3.GL_CULL_FACE);
+            gl.glCullFace(GL3.GL_BACK);
+        } else {
+            gl.glDisable(GL3.GL_CULL_FACE);
+        }
+    }
+
+    public void setProgrammablePointSize(GL3 gl, boolean value) {
+        if (value) {
+            gl.glEnable(GL3.GL_PROGRAM_POINT_SIZE);
+        } else {
+            gl.glDisable(GL3.GL_PROGRAM_POINT_SIZE);
+        }
     }
 
     @Override

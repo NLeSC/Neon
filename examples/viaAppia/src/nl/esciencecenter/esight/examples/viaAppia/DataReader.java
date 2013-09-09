@@ -127,7 +127,7 @@ public class DataReader implements Runnable {
     public void run() {
         int tally = 0;
         File dataFile;
-        for (int sequenceNumber = 12; sequenceNumber < 17; sequenceNumber++) {
+        for (int sequenceNumber = 1; sequenceNumber < 10; sequenceNumber++) {
             dataFile = new File("examples/viaAppia/data/Rome-000" + String.format("%03d", sequenceNumber) + ".las.txt");
             if (dataFile != null && dataFile.exists()) {
                 System.out.println("Scanning:" + dataFile.getAbsolutePath());

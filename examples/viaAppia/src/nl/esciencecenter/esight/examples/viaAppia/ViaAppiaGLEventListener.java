@@ -559,7 +559,7 @@ public class ViaAppiaGLEventListener extends ESightGLEventListener {
         // Stage the Perspective and Modelview matrixes in the ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
         program.setUniformMatrix("MVMatrix",
-                mv.mul(MatrixFMath.translate(-0.5f, 0, 0.5f)).mul(MatrixFMath.rotationX(-90)));
+                mv.mul(MatrixFMath.translate(-0.5f, 0, 4.5f)).mul(MatrixFMath.rotationX(-90)));
 
         // Load all staged variables into the GPU, check for errors and
         // omissions.
