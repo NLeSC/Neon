@@ -3,7 +3,7 @@
 Neon
 ======
 
-Copyright 2013 The Netherlands eScience Center
+Copyright 2013 The Netherlands eScience Center !
 
 What is it?
 -----------
