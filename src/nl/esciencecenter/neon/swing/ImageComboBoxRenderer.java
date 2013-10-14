@@ -38,8 +38,8 @@ package nl.esciencecenter.neon.swing;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -50,13 +50,12 @@ import javax.swing.ListCellRenderer;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class ImageComboBoxRenderer extends JLabel implements ListCellRenderer {
+public class ImageComboBoxRenderer extends JLabel implements ListCellRenderer<SimpleImageIcon> {
     private static final long serialVersionUID = -6243517743093061609L;
 
     private Font descriptionFont;
 
-    private final String[] descriptions;
-    private final ImageIcon[] images;
+    private final ArrayList<SimpleImageIcon> simpleImageIcons;
 
     /**
      * Default constructor, sets alignment.
@@ -67,51 +66,15 @@ public class ImageComboBoxRenderer extends JLabel implements ListCellRenderer {
      * @param images
      *            The images to use for the list elements.
      */
-    public ImageComboBoxRenderer(String[] descriptions, ImageIcon[] images) {
+    public ImageComboBoxRenderer(SimpleImageIcon[] simpleImageIcons) {
         setOpaque(true);
         setHorizontalAlignment(CENTER);
         setVerticalAlignment(CENTER);
 
-        this.descriptions = new String[descriptions.length];
-        for (int i = 0; i < descriptions.length; i++) {
-            this.descriptions[i] = descriptions[i];
+        this.simpleImageIcons = new ArrayList<SimpleImageIcon>();
+        for (int i = 0; i < simpleImageIcons.length; i++) {
+            this.simpleImageIcons.add(simpleImageIcons[i]);
         }
-        this.images = new ImageIcon[images.length];
-        for (int i = 0; i < images.length; i++) {
-            this.images[i] = images[i];
-        }
-    }
-
-    /*
-     * This method finds the image and text corresponding to the selected value
-     * and returns the label, set up to display the text and image.
-     */
-    @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-            boolean cellHasFocus) {
-        // Get the selected index. (The index param isn't
-        // always valid, so just use the value.)
-        int selectedIndex = ((Integer) value).intValue();
-
-        if (isSelected) {
-            setBackground(list.getSelectionBackground());
-            setForeground(list.getSelectionForeground());
-        } else {
-            setBackground(list.getBackground());
-            setForeground(list.getForeground());
-        }
-
-        // Set the icon and text. If icon was null, say so.
-        ImageIcon icon = images[selectedIndex];
-        String description = descriptions[selectedIndex];
-        setIcon(icon);
-        if (icon != null) {
-            setFont(list.getFont());
-        } else {
-            setDescription(description, list.getFont());
-        }
-
-        return this;
     }
 
     /**
@@ -128,5 +91,29 @@ public class ImageComboBoxRenderer extends JLabel implements ListCellRenderer {
         }
         setFont(descriptionFont);
         setText(description);
+    }
+
+    @Override
+    public Component getListCellRendererComponent(JList<? extends SimpleImageIcon> list, SimpleImageIcon value,
+            int index, boolean isSelected, boolean cellHasFocus) {
+        // Get the selected index. (The index param isn't always valid, so just
+        // use the value.)
+        int selectedIndex = simpleImageIcons.indexOf(value);
+
+        if (isSelected) {
+            setBackground(list.getSelectionBackground());
+            setForeground(list.getSelectionForeground());
+        } else {
+            setBackground(list.getBackground());
+            setForeground(list.getForeground());
+        }
+
+        // Set the icon and text. If icon was null, say so.
+        SimpleImageIcon icon = simpleImageIcons.get(selectedIndex);
+
+        setIcon(icon.getImageIcon());
+        setFont(list.getFont());
+
+        return this;
     }
 }

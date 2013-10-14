@@ -23,14 +23,14 @@ import java.util.Arrays;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class MatF4 extends MatrixF {
+public class Float4Matrix extends FloatMatrix {
     /** The number of elements in this matrix */
     private static final int SIZE = 16;
 
     /**
      * Creates a new identity matrix.
      */
-    public MatF4() {
+    public Float4Matrix() {
         super(SIZE);
         identity();
     }
@@ -53,7 +53,7 @@ public class MatF4 extends MatrixF {
      * @param in
      *            The value to be put in all matrix fields.
      */
-    public MatF4(float in) {
+    public Float4Matrix(float in) {
         super(SIZE);
         Arrays.fill(asArray(), in);
     }
@@ -70,7 +70,7 @@ public class MatF4 extends MatrixF {
      * @param v3
      *            The fourth row of the matrix.
      */
-    public MatF4(VecF4 v0, VecF4 v1, VecF4 v2, VecF4 v3) {
+    public Float4Matrix(Float4Vector v0, Float4Vector v1, Float4Vector v2, Float4Vector v3) {
         super(SIZE);
         asArray()[0] = v0.getX();
         asArray()[1] = v0.getY();
@@ -129,7 +129,7 @@ public class MatF4 extends MatrixF {
      * @param m33
      *            The parameter on position 3x3.
      */
-    public MatF4(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20,
+    public Float4Matrix(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20,
             float m21, float m22, float m23, float m30, float m31, float m32, float m33) {
         super(SIZE);
         asArray()[0] = m00;
@@ -156,7 +156,7 @@ public class MatF4 extends MatrixF {
      * @param n
      *            The old matrix to be copied.
      */
-    public MatF4(MatF4 n) {
+    public Float4Matrix(Float4Matrix n) {
         super(SIZE);
 
         for (int i = 0; i < SIZE; i++) {
@@ -171,8 +171,8 @@ public class MatF4 extends MatrixF {
      *            The matrix to be multiplied with the current matrix.
      * @return The new 4x4 matrix that is the result of the multiplication.
      */
-    public MatF4 mul(MatF4 n) {
-        MatF4 a = new MatF4(0f);
+    public Float4Matrix mul(Float4Matrix n) {
+        Float4Matrix a = new Float4Matrix(0f);
 
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
@@ -192,8 +192,8 @@ public class MatF4 extends MatrixF {
      *            The matrix to be added to the current matrix.
      * @return The new matrix that is the result of the addition.
      */
-    public MatF4 add(MatF4 n) {
-        MatF4 result = new MatF4(0f);
+    public Float4Matrix add(Float4Matrix n) {
+        Float4Matrix result = new Float4Matrix(0f);
 
         for (int i = 0; i < SIZE; ++i) {
             result.asArray()[i] = asArray()[i] + n.asArray()[i];
@@ -209,8 +209,8 @@ public class MatF4 extends MatrixF {
      *            The matrix to be substracted from to the current matrix.
      * @return The new matrix that is the result of the substraction.
      */
-    public MatF4 sub(MatF4 n) {
-        MatF4 result = new MatF4(0f);
+    public Float4Matrix sub(Float4Matrix n) {
+        Float4Matrix result = new Float4Matrix(0f);
 
         for (int i = 0; i < SIZE; ++i) {
             result.asArray()[i] = asArray()[i] - n.asArray()[i];
@@ -226,8 +226,8 @@ public class MatF4 extends MatrixF {
      *            The scalar to be multiplied with the current matrix.
      * @return The new matrix that is the result of the multiplication.
      */
-    public MatF4 mul(Number n) {
-        MatF4 result = new MatF4(0f);
+    public Float4Matrix mul(Number n) {
+        Float4Matrix result = new Float4Matrix(0f);
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
@@ -244,8 +244,8 @@ public class MatF4 extends MatrixF {
      *            The scalar to be multiplied with the current matrix.
      * @return The new matrix that is the result of the multiplication.
      */
-    public MatF4 add(Number n) {
-        MatF4 result = new MatF4(0f);
+    public Float4Matrix add(Number n) {
+        Float4Matrix result = new Float4Matrix(0f);
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
@@ -262,8 +262,8 @@ public class MatF4 extends MatrixF {
      *            The scalar to be multiplied with the current matrix.
      * @return The new matrix that is the result of the multiplication.
      */
-    public MatF4 sub(Number n) {
-        MatF4 result = new MatF4(0f);
+    public Float4Matrix sub(Number n) {
+        Float4Matrix result = new Float4Matrix(0f);
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
@@ -282,8 +282,8 @@ public class MatF4 extends MatrixF {
      *            matrix.
      * @return The new matrix that is the result of the division.
      */
-    public MatF4 div(Number n) {
-        MatF4 result = new MatF4(0f);
+    public Float4Matrix div(Number n) {
+        Float4Matrix result = new Float4Matrix(0f);
 
         float fn = 1f / n.floatValue();
 
@@ -301,8 +301,8 @@ public class MatF4 extends MatrixF {
      *            The vector to be multiplied with the current matrix.
      * @return The new vector that is the result of the multiplication.
      */
-    public VecF4 mul(VecF4 v) {
-        return new VecF4(asArray()[0] * v.getX() + asArray()[1] * v.getY() + asArray()[2] * v.getZ() + asArray()[3]
+    public Float4Vector mul(Float4Vector v) {
+        return new Float4Vector(asArray()[0] * v.getX() + asArray()[1] * v.getY() + asArray()[2] * v.getZ() + asArray()[3]
                 * v.getW(), asArray()[4] * v.getX() + asArray()[5] * v.getY() + asArray()[6] * v.getZ() + asArray()[7]
                 * v.getW(), asArray()[8] * v.getX() + asArray()[9] * v.getY() + asArray()[10] * v.getZ()
                 + asArray()[11] * v.getW(), asArray()[12] * v.getX() + asArray()[13] * v.getY() + asArray()[14]

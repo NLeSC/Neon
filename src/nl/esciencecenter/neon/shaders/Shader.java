@@ -71,13 +71,13 @@ public abstract class Shader {
      * @throws FileNotFoundException
      *             If the file given was not found.
      */
-    public Shader(String shaderName, File path) throws FileNotFoundException {
+    public Shader(String shaderName, File file) throws FileNotFoundException {
         this.shaderName = shaderName;
-        this.filename = path.getName();
+        this.filename = file.getName();
 
         // Read file
         StringBuffer buf = new StringBuffer();
-        Scanner scan = new Scanner(ClassLoader.getSystemClassLoader().getResourceAsStream(path.getPath()));
+        Scanner scan = new Scanner(ClassLoader.getSystemClassLoader().getResourceAsStream(file.getPath()));
 
         ins = new HashMap<String, Class>();
         outs = new HashMap<String, Class>();
@@ -90,6 +90,8 @@ public abstract class Shader {
 
             parseVariables(line);
         }
+
+        scan.close();
 
         source = new String[] { buf.toString() };
     }
@@ -120,6 +122,8 @@ public abstract class Shader {
 
             parseVariables(line);
         }
+
+        scan.close();
 
         source = new String[] { buf.toString() };
     }

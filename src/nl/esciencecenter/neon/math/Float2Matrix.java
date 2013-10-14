@@ -23,14 +23,14 @@ import java.util.Arrays;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class MatF2 extends MatrixF {
+public class Float2Matrix extends FloatMatrix {
     /** The number of elements in this matrix */
     private static final int SIZE = 4;
 
     /**
      * Creates a new identity matrix.
      */
-    public MatF2() {
+    public Float2Matrix() {
         super(SIZE);
         identity();
     }
@@ -50,7 +50,7 @@ public class MatF2 extends MatrixF {
      * @param in
      *            The value to be put in all matrix fields.
      */
-    public MatF2(float in) {
+    public Float2Matrix(float in) {
         super(SIZE);
         Arrays.fill(asArray(), in);
     }
@@ -63,7 +63,7 @@ public class MatF2 extends MatrixF {
      * @param v1
      *            The second row of the matrix.
      */
-    public MatF2(VecF2 v0, VecF2 v1) {
+    public Float2Matrix(Float2Vector v0, Float2Vector v1) {
         super(SIZE);
         asArray()[0] = v0.getX();
         asArray()[1] = v0.getY();
@@ -84,7 +84,7 @@ public class MatF2 extends MatrixF {
      * @param m11
      *            The parameter on position 1x1.
      */
-    public MatF2(float m00, float m01, float m10, float m11) {
+    public Float2Matrix(float m00, float m01, float m10, float m11) {
         super(SIZE);
         asArray()[0] = m00;
         asArray()[1] = m01;
@@ -98,7 +98,7 @@ public class MatF2 extends MatrixF {
      * @param n
      *            The old matrix to be copied.
      */
-    public MatF2(MatF2 n) {
+    public Float2Matrix(Float2Matrix n) {
         super(SIZE);
 
         for (int i = 0; i < SIZE; i++) {
@@ -113,8 +113,8 @@ public class MatF2 extends MatrixF {
      *            The matrix to be multiplied with the current matrix.
      * @return The new matrix that is the result of the multiplication.
      */
-    public MatF2 mul(MatF2 n) {
-        MatF2 a = new MatF2(0f);
+    public Float2Matrix mul(Float2Matrix n) {
+        Float2Matrix a = new Float2Matrix(0f);
 
         a.asArray()[0] = asArray()[0] * n.asArray()[0] + asArray()[1] * n.asArray()[2];
         a.asArray()[1] = asArray()[0] * n.asArray()[1] + asArray()[1] * n.asArray()[3];
@@ -131,8 +131,8 @@ public class MatF2 extends MatrixF {
      *            The matrix to be added to the current matrix.
      * @return The new matrix that is the result of the addition.
      */
-    public MatF2 add(MatF2 n) {
-        MatF2 result = new MatF2(0f);
+    public Float2Matrix add(Float2Matrix n) {
+        Float2Matrix result = new Float2Matrix(0f);
 
         for (int i = 0; i < SIZE; ++i) {
             result.asArray()[i] = asArray()[i] + n.asArray()[i];
@@ -148,8 +148,8 @@ public class MatF2 extends MatrixF {
      *            The matrix to be substracted from to the current matrix.
      * @return The new matrix that is the result of the substraction.
      */
-    public MatF2 sub(MatF2 n) {
-        MatF2 result = new MatF2(0f);
+    public Float2Matrix sub(Float2Matrix n) {
+        Float2Matrix result = new Float2Matrix(0f);
 
         for (int i = 0; i < SIZE; ++i) {
             result.asArray()[i] = asArray()[i] - n.asArray()[i];
@@ -165,8 +165,8 @@ public class MatF2 extends MatrixF {
      *            The scalar to be multiplied with the current matrix.
      * @return The new matrix that is the result of the multiplication.
      */
-    public MatF2 mul(Number n) {
-        MatF2 result = new MatF2(0f);
+    public Float2Matrix mul(Number n) {
+        Float2Matrix result = new Float2Matrix(0f);
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
@@ -183,8 +183,8 @@ public class MatF2 extends MatrixF {
      *            The scalar to be multiplied with the current matrix.
      * @return The new matrix that is the result of the multiplication.
      */
-    public MatF2 add(Number n) {
-        MatF2 result = new MatF2();
+    public Float2Matrix add(Number n) {
+        Float2Matrix result = new Float2Matrix();
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
@@ -201,8 +201,8 @@ public class MatF2 extends MatrixF {
      *            The scalar to be multiplied with the current matrix.
      * @return The new matrix that is the result of the multiplication.
      */
-    public MatF2 sub(Number n) {
-        MatF2 result = new MatF2(0f);
+    public Float2Matrix sub(Number n) {
+        Float2Matrix result = new Float2Matrix(0f);
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
@@ -221,8 +221,8 @@ public class MatF2 extends MatrixF {
      *            matrix.
      * @return The new matrix that is the result of the division.
      */
-    public MatF2 div(Number n) {
-        MatF2 result = new MatF2(0f);
+    public Float2Matrix div(Number n) {
+        Float2Matrix result = new Float2Matrix(0f);
 
         float fn = 1f / n.floatValue();
 
@@ -240,8 +240,8 @@ public class MatF2 extends MatrixF {
      *            The vector to be multiplied with the current matrix.
      * @return The new vector that is the result of the multiplication.
      */
-    public VecF2 mul(VecF2 v) {
-        return new VecF2(asArray()[0] * v.getX() + asArray()[1] * v.getY(), asArray()[2] * v.getX() + asArray()[3]
+    public Float2Vector mul(Float2Vector v) {
+        return new Float2Vector(asArray()[0] * v.getX() + asArray()[1] * v.getY(), asArray()[2] * v.getX() + asArray()[3]
                 * v.getY());
     }
 }

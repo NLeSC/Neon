@@ -3,8 +3,8 @@ package nl.esciencecenter.neon.datastructures;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.esciencecenter.neon.math.VecF2;
-import nl.esciencecenter.neon.math.VectorFMath;
+import nl.esciencecenter.neon.math.Float2Vector;
+import nl.esciencecenter.neon.math.FloatVectorMath;
 
 public class InterpolatedGeoGrid {
     private class GridPointData {
@@ -22,14 +22,14 @@ public class InterpolatedGeoGrid {
             return data;
         }
 
-        public float distanceTo(VecF2 targetCoordinates) {
-            VecF2 myCoords = new VecF2(longitude, latitude);
-            float distance = VectorFMath.length(myCoords.sub(targetCoordinates));
+        public float distanceTo(Float2Vector targetCoordinates) {
+            Float2Vector myCoords = new Float2Vector(longitude, latitude);
+            float distance = FloatVectorMath.length(myCoords.sub(targetCoordinates));
 
             return distance;
         }
 
-        public int compareTo(VecF2 targetCoordinates, GridPointData other) {
+        public int compareTo(Float2Vector targetCoordinates, GridPointData other) {
             final int BEFORE = -1;
             final int EQUAL = 0;
             final int AFTER = 1;
@@ -105,7 +105,7 @@ public class InterpolatedGeoGrid {
                     int visualIndex = latIndex * numberOfLatitudeCoordinates + lonIndex;
 
                     float gridPointLongitude = (float) lonIndex / (float) numberOfLongitudeCoordinates;
-                    VecF2 targetCoordinates = new VecF2(gridPointLongitude, gridPointLatitude);
+                    Float2Vector targetCoordinates = new Float2Vector(gridPointLongitude, gridPointLatitude);
 
                     GridPointData[] closestDataPoints = determineClosestData(targetCoordinates);
 
@@ -123,7 +123,7 @@ public class InterpolatedGeoGrid {
         return null;
     }
 
-    private float[] dataWeigthedAverages(VecF2 targetCoordinates, GridPointData[] input) {
+    private float[] dataWeigthedAverages(Float2Vector targetCoordinates, GridPointData[] input) {
         int numDataFields = input[0].getData().length;
 
         float totalValue;
@@ -149,7 +149,7 @@ public class InterpolatedGeoGrid {
         return weightedAverages;
     }
 
-    private GridPointData[] determineClosestData(VecF2 targetCoordinates) {
+    private GridPointData[] determineClosestData(Float2Vector targetCoordinates) {
         GridPointData[] closestPoints = new GridPointData[4];
 
         // Determine the 4 closest points that we have actual data about

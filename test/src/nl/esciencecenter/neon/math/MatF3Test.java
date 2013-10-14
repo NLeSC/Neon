@@ -5,9 +5,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.nio.FloatBuffer;
 
-import nl.esciencecenter.neon.math.MatF3;
-import nl.esciencecenter.neon.math.MatrixFMath;
-import nl.esciencecenter.neon.math.VecF3;
+import nl.esciencecenter.neon.math.Float3Matrix;
+import nl.esciencecenter.neon.math.FloatMatrixMath;
+import nl.esciencecenter.neon.math.Float3Vector;
 
 import org.junit.Test;
 
@@ -15,252 +15,252 @@ public class MatF3Test {
 
     @Test
     public final void testMatF3() {
-        MatF3 input1 = new MatF3();
-        MatF3 expected = new MatF3(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f);
+        Float3Matrix input1 = new Float3Matrix();
+        Float3Matrix expected = new Float3Matrix(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f);
 
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
         for (int i = 0; i < 9; i++) {
             if (i == 0 || i == 4 || i == 8) {
-                assertEquals(1, input1.asArray()[i], MatrixFMath.getEpsilon());
+                assertEquals(1, input1.asArray()[i], FloatMatrixMath.getEpsilon());
             } else {
-                assertEquals(0, input1.asArray()[i], MatrixFMath.getEpsilon());
+                assertEquals(0, input1.asArray()[i], FloatMatrixMath.getEpsilon());
             }
         }
     }
 
     @Test
     public final void testMatF3Float() {
-        MatF3 input1 = new MatF3(0f);
-        MatF3 expected = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        Float3Matrix input1 = new Float3Matrix(0f);
+        Float3Matrix expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(1f);
-        expected = new MatF3(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f);
+        input1 = new Float3Matrix(1f);
+        expected = new Float3Matrix(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f);
 
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testMatF3VecF3VecF3VecF3VecF3() {
-        MatF3 input1 = new MatF3(new VecF3(), new VecF3(), new VecF3());
-        MatF3 expected = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        Float3Matrix input1 = new Float3Matrix(new Float3Vector(), new Float3Vector(), new Float3Vector());
+        Float3Matrix expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(new VecF3(1, 0, 0), new VecF3(1, 0, 0), new VecF3(1, 0, 0));
-        expected = new MatF3(1f, 0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f);
+        input1 = new Float3Matrix(new Float3Vector(1, 0, 0), new Float3Vector(1, 0, 0), new Float3Vector(1, 0, 0));
+        expected = new Float3Matrix(1f, 0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f);
 
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testMatF3FloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloat() {
-        MatF3 input1 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
-        MatF3 expected = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix expected = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
 
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f);
-        expected = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        input1 = new Float3Matrix(0f);
+        expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testMatF3MatF3() {
-        MatF3 input1 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
-        MatF3 expected = new MatF3(input1);
+        Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix expected = new Float3Matrix(input1);
 
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f);
-        expected = new MatF3(input1);
+        input1 = new Float3Matrix(0f);
+        expected = new Float3Matrix(input1);
 
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testMulMatF3() {
-        MatF3 input1 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
-        MatF3 input2 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
-        MatF3 expected = new MatF3(0.21780002f, 0.0f, 0.21780002f, 0.32670003f, 0.10890001f, 0.32670003f, 0.21780002f,
+        Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix input2 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix expected = new Float3Matrix(0.21780002f, 0.0f, 0.21780002f, 0.32670003f, 0.10890001f, 0.32670003f, 0.21780002f,
                 0.0f, 0.21780002f);
 
-        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f);
-        input2 = new MatF3(0f);
-        expected = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        input1 = new Float3Matrix(0f);
+        input2 = new Float3Matrix(0f);
+        expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
-        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
-        input2 = new MatF3();
-        expected = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        input2 = new Float3Matrix();
+        expected = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
 
-        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testAddMatF3() {
-        MatF3 input1 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
-        MatF3 input2 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
-        MatF3 expected = new MatF3(0.66f, 0.0f, 0.66f, 0.66f, 0.66f, 0.66f, 0.66f, 0.0f, 0.66f);
+        Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix input2 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix expected = new Float3Matrix(0.66f, 0.0f, 0.66f, 0.66f, 0.66f, 0.66f, 0.66f, 0.0f, 0.66f);
 
-        assertArrayEquals(expected.asArray(), input1.add(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.add(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f);
-        input2 = new MatF3(0f);
-        expected = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        input1 = new Float3Matrix(0f);
+        input2 = new Float3Matrix(0f);
+        expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
-        assertArrayEquals(expected.asArray(), input1.add(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.add(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
-        input2 = new MatF3();
-        expected = new MatF3(1.33f, 0.0f, 0.33f, 0.33f, 1.33f, 0.33f, 0.33f, 0.0f, 1.33f);
+        input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        input2 = new Float3Matrix();
+        expected = new Float3Matrix(1.33f, 0.0f, 0.33f, 0.33f, 1.33f, 0.33f, 0.33f, 0.0f, 1.33f);
 
-        assertArrayEquals(expected.asArray(), input1.add(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.add(input2).asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testSubMatF3() {
-        MatF3 input1 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
-        MatF3 input2 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
-        MatF3 expected = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix input2 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
-        assertArrayEquals(expected.asArray(), input1.sub(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.sub(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f);
-        input2 = new MatF3(0f);
-        expected = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        input1 = new Float3Matrix(0f);
+        input2 = new Float3Matrix(0f);
+        expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
-        assertArrayEquals(expected.asArray(), input1.sub(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.sub(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
-        input2 = new MatF3();
-        expected = new MatF3(-0.66999996f, 0.0f, 0.33f, 0.33f, -0.66999996f, 0.33f, 0.33f, 0.0f, -0.66999996f);
+        input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        input2 = new Float3Matrix();
+        expected = new Float3Matrix(-0.66999996f, 0.0f, 0.33f, 0.33f, -0.66999996f, 0.33f, 0.33f, 0.0f, -0.66999996f);
 
-        assertArrayEquals(expected.asArray(), input1.sub(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.sub(input2).asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testMulNumber() {
-        MatF3 input1 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
         float input2 = 1f;
-        MatF3 expected = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix expected = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
 
-        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f);
+        input1 = new Float3Matrix(0f);
         input2 = 0f;
-        expected = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
-        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
+        input1 = new Float3Matrix(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
                 0.3333333333f, 0.000f, 0.3333333333f);
         input2 = 3f;
-        expected = new MatF3(1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f);
+        expected = new Float3Matrix(1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f);
 
-        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testAddNumber() {
-        MatF3 input1 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
         float input2 = 1f;
-        MatF3 expected = new MatF3(1.33f, 1.0f, 1.33f, 1.33f, 1.33f, 1.33f, 1.33f, 1.0f, 1.33f);
+        Float3Matrix expected = new Float3Matrix(1.33f, 1.0f, 1.33f, 1.33f, 1.33f, 1.33f, 1.33f, 1.0f, 1.33f);
 
-        assertArrayEquals(expected.asArray(), input1.add(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.add(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f);
+        input1 = new Float3Matrix(0f);
         input2 = 0f;
-        expected = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
-        assertArrayEquals(expected.asArray(), input1.add(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.add(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
+        input1 = new Float3Matrix(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
                 0.3333333333f, 0.000f, 0.3333333333f);
         input2 = 0.6666666666f;
-        expected = new MatF3(1.0f, 0.6666667f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.6666667f, 1.0f);
+        expected = new Float3Matrix(1.0f, 0.6666667f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.6666667f, 1.0f);
 
-        assertArrayEquals(expected.asArray(), input1.add(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.add(input2).asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testSubNumber() {
-        MatF3 input1 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
         float input2 = 1f;
-        MatF3 expected = new MatF3(-0.66999996f, -1.0f, -0.66999996f, -0.66999996f, -0.66999996f, -0.66999996f,
+        Float3Matrix expected = new Float3Matrix(-0.66999996f, -1.0f, -0.66999996f, -0.66999996f, -0.66999996f, -0.66999996f,
                 -0.66999996f, -1.0f, -0.66999996f);
 
-        assertArrayEquals(expected.asArray(), input1.sub(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.sub(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f);
+        input1 = new Float3Matrix(0f);
         input2 = 0f;
-        expected = new MatF3(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
-        assertArrayEquals(expected.asArray(), input1.sub(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.sub(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
+        input1 = new Float3Matrix(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
                 0.3333333333f, 0.000f, 0.3333333333f);
         input2 = 0.6666666666f;
-        expected = new MatF3(-0.33333334f, -0.6666667f, -0.33333334f, -0.33333334f, -0.33333334f, -0.33333334f,
+        expected = new Float3Matrix(-0.33333334f, -0.6666667f, -0.33333334f, -0.33333334f, -0.33333334f, -0.33333334f,
                 -0.33333334f, -0.6666667f, -0.33333334f);
 
-        assertArrayEquals(expected.asArray(), input1.sub(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.sub(input2).asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testDiv() {
-        MatF3 input1 = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
         float input2 = 1f;
-        MatF3 expected = new MatF3(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
+        Float3Matrix expected = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
 
-        assertArrayEquals(expected.asArray(), input1.div(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.div(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f);
+        input1 = new Float3Matrix(0f);
         input2 = 0f;
-        expected = new MatF3(Float.NaN);
+        expected = new Float3Matrix(Float.NaN);
 
-        assertArrayEquals(expected.asArray(), input1.div(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.div(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
+        input1 = new Float3Matrix(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
                 0.3333333333f, 0.000f, 0.3333333333f);
         input2 = 3f;
-        expected = new MatF3(0.11111112f, 0.0f, 0.11111112f, 0.11111112f, 0.11111112f, 0.11111112f, 0.11111112f, 0.0f,
+        expected = new Float3Matrix(0.11111112f, 0.0f, 0.11111112f, 0.11111112f, 0.11111112f, 0.11111112f, 0.11111112f, 0.0f,
                 0.11111112f);
 
-        assertArrayEquals(expected.asArray(), input1.div(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.div(input2).asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testMulVecF3() {
-        MatF3 input1 = new MatF3(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
+        Float3Matrix input1 = new Float3Matrix(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
                 0.3333333333f, 0.000f, 0.3333333333f);
-        VecF3 input2 = new VecF3(1f, 1f, 1f);
-        VecF3 expected = new VecF3(0.6666667f, 1f, 0.6666667f);
+        Float3Vector input2 = new Float3Vector(1f, 1f, 1f);
+        Float3Vector expected = new Float3Vector(0.6666667f, 1f, 0.6666667f);
 
-        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f);
-        input2 = new VecF3(0f, 0f, 0f);
-        expected = new VecF3(0f, 0f, 0f);
+        input1 = new Float3Matrix(0f);
+        input2 = new Float3Vector(0f, 0f, 0f);
+        expected = new Float3Vector(0f, 0f, 0f);
 
-        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
+        input1 = new Float3Matrix(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
                 0.3333333333f, 0.000f, 0.3333333333f);
-        input2 = new VecF3(3f, 3f, 3f);
-        expected = new VecF3(2f, 3f, 2f);
+        input2 = new Float3Vector(3f, 3f, 3f);
+        expected = new Float3Vector(2f, 3f, 2f);
 
-        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), MatrixFMath.getEpsilon());
+        assertArrayEquals(expected.asArray(), input1.mul(input2).asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testAsBuffer() {
-        MatF3 input1 = new MatF3(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
+        Float3Matrix input1 = new Float3Matrix(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
                 0.3333333333f, 0.000f, 0.3333333333f);
 
         FloatBuffer expected = FloatBuffer.allocate(9);
@@ -277,7 +277,7 @@ public class MatF3Test {
 
         assertEquals(expected, input1.asBuffer());
 
-        input1 = new MatF3();
+        input1 = new Float3Matrix();
 
         expected = FloatBuffer.allocate(9);
         expected.put(1f);
@@ -297,100 +297,100 @@ public class MatF3Test {
 
     @Test
     public final void testGetIntInt() {
-        MatF3 input1 = new MatF3(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        Float3Matrix input1 = new Float3Matrix(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
 
         float expected = 0f;
-        assertEquals(expected, input1.get(0, 0), MatrixFMath.getEpsilon());
+        assertEquals(expected, input1.get(0, 0), FloatMatrixMath.getEpsilon());
 
         expected = 1f;
-        assertEquals(expected, input1.get(0, 1), MatrixFMath.getEpsilon());
+        assertEquals(expected, input1.get(0, 1), FloatMatrixMath.getEpsilon());
 
         expected = 2f;
-        assertEquals(expected, input1.get(0, 2), MatrixFMath.getEpsilon());
+        assertEquals(expected, input1.get(0, 2), FloatMatrixMath.getEpsilon());
 
         expected = 3f;
-        assertEquals(expected, input1.get(1, 0), MatrixFMath.getEpsilon());
+        assertEquals(expected, input1.get(1, 0), FloatMatrixMath.getEpsilon());
 
         expected = 6f;
-        assertEquals(expected, input1.get(2, 0), MatrixFMath.getEpsilon());
+        assertEquals(expected, input1.get(2, 0), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testGetInt() {
-        MatF3 input1 = new MatF3(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        Float3Matrix input1 = new Float3Matrix(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
 
         float expected = 0f;
-        assertEquals(expected, input1.get(0), MatrixFMath.getEpsilon());
+        assertEquals(expected, input1.get(0), FloatMatrixMath.getEpsilon());
 
         expected = 1f;
-        assertEquals(expected, input1.get(1), MatrixFMath.getEpsilon());
+        assertEquals(expected, input1.get(1), FloatMatrixMath.getEpsilon());
 
         expected = 2f;
-        assertEquals(expected, input1.get(2), MatrixFMath.getEpsilon());
+        assertEquals(expected, input1.get(2), FloatMatrixMath.getEpsilon());
 
         expected = 5f;
-        assertEquals(expected, input1.get(5), MatrixFMath.getEpsilon());
+        assertEquals(expected, input1.get(5), FloatMatrixMath.getEpsilon());
 
         expected = 8f;
-        assertEquals(expected, input1.get(8), MatrixFMath.getEpsilon());
+        assertEquals(expected, input1.get(8), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testSetIntIntFloat() {
-        MatF3 input1 = new MatF3(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        Float3Matrix input1 = new Float3Matrix(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
 
         float input2 = 345f;
         input1.set(0, 0, input2);
-        MatF3 expected = new MatF3(345f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        Float3Matrix expected = new Float3Matrix(345f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        input1 = new Float3Matrix(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
 
         input2 = 0f;
         input1.set(0, 1, input2);
-        expected = new MatF3(0f, 0f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        expected = new Float3Matrix(0f, 0f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        input1 = new Float3Matrix(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
 
         input2 = Float.NaN;
         input1.set(1, 1, input2);
-        expected = new MatF3(0f, 1f, 2f, 3f, Float.NaN, 5f, 6f, 7f, 8f);
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        expected = new Float3Matrix(0f, 1f, 2f, 3f, Float.NaN, 5f, 6f, 7f, 8f);
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testSetIntFloat() {
-        MatF3 input1 = new MatF3(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        Float3Matrix input1 = new Float3Matrix(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
 
         float input2 = 345f;
         input1.set(0, input2);
-        MatF3 expected = new MatF3(345f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        Float3Matrix expected = new Float3Matrix(345f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        input1 = new Float3Matrix(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
 
         input2 = 0f;
         input1.set(1, input2);
-        expected = new MatF3(0f, 0f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        expected = new Float3Matrix(0f, 0f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
 
-        input1 = new MatF3(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        input1 = new Float3Matrix(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
 
         input2 = Float.NaN;
         input1.set(5, input2);
-        expected = new MatF3(0f, 1f, 2f, 3f, 4f, Float.NaN, 6f, 7f, 8f);
-        assertArrayEquals(expected.asArray(), input1.asArray(), MatrixFMath.getEpsilon());
+        expected = new Float3Matrix(0f, 1f, 2f, 3f, 4f, Float.NaN, 6f, 7f, 8f);
+        assertArrayEquals(expected.asArray(), input1.asArray(), FloatMatrixMath.getEpsilon());
     }
 
     @Test
     public final void testGetSize() {
-        MatF3 input1 = new MatF3(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
+        Float3Matrix input1 = new Float3Matrix(0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f);
         int expected = 9;
 
         assertEquals(expected, input1.getSize());
 
-        input1 = new MatF3();
+        input1 = new Float3Matrix();
         expected = 9;
 
         assertEquals(expected, input1.getSize());

@@ -1,7 +1,7 @@
 package nl.esciencecenter.neon.examples.viaAppia;
 
 import nl.esciencecenter.neon.input.InputHandler;
-import nl.esciencecenter.neon.math.VecF3;
+import nl.esciencecenter.neon.math.Float3Vector;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
@@ -64,7 +64,7 @@ public class ViaAppiaInputHandler extends InputHandler implements MouseListener,
     private float dragYorigin;
 
     /** Final rotation and translationin openGL units */
-    private VecF3 rotation, translation;
+    private Float3Vector rotation, translation;
 
     /** Final view distance (translation) in openGL units */
     private float viewDist = -5f;
@@ -95,8 +95,8 @@ public class ViaAppiaInputHandler extends InputHandler implements MouseListener,
         translationY = 0f;
         translationYorigin = 0f;
 
-        rotation = new VecF3();
-        translation = new VecF3();
+        rotation = new Float3Vector();
+        translation = new Float3Vector();
         viewDist = -3f;
     }
 
@@ -201,7 +201,7 @@ public class ViaAppiaInputHandler extends InputHandler implements MouseListener,
      * @return the current OpenGL ModelView rotation variable
      */
     @Override
-    public VecF3 getRotation() {
+    public Float3Vector getRotation() {
         return rotation;
     }
 
@@ -210,7 +210,7 @@ public class ViaAppiaInputHandler extends InputHandler implements MouseListener,
      *            the current OpenGL ModelView rotation variable to set
      */
     @Override
-    public void setRotation(VecF3 rotation) {
+    public void setRotation(Float3Vector rotation) {
         this.rotation = rotation;
     }
 
@@ -218,7 +218,7 @@ public class ViaAppiaInputHandler extends InputHandler implements MouseListener,
      * 
      * @return the current OpenGL ModelView translation variable
      */
-    public VecF3 getTranslation() {
+    public Float3Vector getTranslation() {
         return translation;
     }
 
@@ -226,7 +226,7 @@ public class ViaAppiaInputHandler extends InputHandler implements MouseListener,
      * @param rotation
      *            the OpenGL ModelView translation variable to set
      */
-    public void setTranslation(VecF3 translation) {
+    public void setTranslation(Float3Vector translation) {
         this.translation = translation;
     }
 

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.esciencecenter.neon.math.Point4;
-import nl.esciencecenter.neon.math.VecF3;
-import nl.esciencecenter.neon.math.VecF4;
-import nl.esciencecenter.neon.math.VectorFMath;
+import nl.esciencecenter.neon.math.Float3Vector;
+import nl.esciencecenter.neon.math.Float4Vector;
+import nl.esciencecenter.neon.math.FloatVectorMath;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
@@ -52,14 +52,14 @@ public class Box extends Model {
 
         Point4[] vertices = makeVertices(width, height, depth);
 
-        List<VecF4> allPoints = new ArrayList<VecF4>();
-        List<VecF3> allNormals = new ArrayList<VecF3>();
-        List<VecF3> allTexCoords = new ArrayList<VecF3>();
+        List<Float4Vector> allPoints = new ArrayList<Float4Vector>();
+        List<Float3Vector> allNormals = new ArrayList<Float3Vector>();
+        List<Float3Vector> allTexCoords = new ArrayList<Float3Vector>();
 
         // FRONT QUAD
         List<Point4> points = tesselate(vertices, 1, 0, 3, 2);
-        List<VecF3> normals = createNormals(new VecF3(0, 0, -1));
-        List<VecF3> tCoords = createTexCoords();
+        List<Float3Vector> normals = createNormals(new Float3Vector(0, 0, -1));
+        List<Float3Vector> tCoords = createTexCoords();
 
         allPoints.addAll(points);
         allNormals.addAll(normals);
@@ -67,7 +67,7 @@ public class Box extends Model {
 
         // RIGHT QUAD
         points = tesselate(vertices, 2, 3, 7, 6);
-        normals = createNormals(new VecF3(1, 0, 0));
+        normals = createNormals(new Float3Vector(1, 0, 0));
         tCoords = createTexCoords();
 
         allPoints.addAll(points);
@@ -77,7 +77,7 @@ public class Box extends Model {
         if (bottom) {
             // BOTTOM QUAD
             points = tesselate(vertices, 3, 0, 4, 7);
-            normals = createNormals(new VecF3(0, -1, 0));
+            normals = createNormals(new Float3Vector(0, -1, 0));
             tCoords = createTexCoords();
 
             allPoints.addAll(points);
@@ -87,7 +87,7 @@ public class Box extends Model {
 
         // TOP QUAD
         points = tesselate(vertices, 6, 5, 1, 2);
-        normals = createNormals(new VecF3(0, 1, 0));
+        normals = createNormals(new Float3Vector(0, 1, 0));
         tCoords = createTexCoords();
 
         allPoints.addAll(points);
@@ -96,7 +96,7 @@ public class Box extends Model {
 
         // BACK QUAD
         points = tesselate(vertices, 4, 5, 6, 7);
-        normals = createNormals(new VecF3(0, 0, 1));
+        normals = createNormals(new Float3Vector(0, 0, 1));
         tCoords = createTexCoords();
 
         allPoints.addAll(points);
@@ -105,7 +105,7 @@ public class Box extends Model {
 
         // LEFT QUAD
         points = tesselate(vertices, 5, 4, 0, 1);
-        normals = createNormals(new VecF3(-1, 0, 0));
+        normals = createNormals(new Float3Vector(-1, 0, 0));
         tCoords = createTexCoords();
 
         allPoints.addAll(points);
@@ -115,9 +115,9 @@ public class Box extends Model {
         final int floatsPerVecF4 = 4;
         this.setNumVertices(allPoints.size() / floatsPerVecF4);
 
-        this.setVertices(VectorFMath.vec4ListToBuffer(allPoints));
-        this.setNormals(VectorFMath.vec3ListToBuffer(allNormals));
-        this.setTexCoords(VectorFMath.vec3ListToBuffer(allTexCoords));
+        this.setVertices(FloatVectorMath.vec4ListToBuffer(allPoints));
+        this.setNormals(FloatVectorMath.vec3ListToBuffer(allNormals));
+        this.setTexCoords(FloatVectorMath.vec3ListToBuffer(allTexCoords));
     }
 
     /**
@@ -192,15 +192,15 @@ public class Box extends Model {
      * @return An array with 6 vectors representing texture coordinates for the
      *         given points.
      */
-    private List<VecF3> createTexCoords() {
-        ArrayList<VecF3> result = new ArrayList<VecF3>();
+    private List<Float3Vector> createTexCoords() {
+        ArrayList<Float3Vector> result = new ArrayList<Float3Vector>();
 
-        result.add(new VecF3(0, 0, 0));
-        result.add(new VecF3(0, 1, 0));
-        result.add(new VecF3(1, 1, 0));
-        result.add(new VecF3(0, 0, 0));
-        result.add(new VecF3(1, 1, 0));
-        result.add(new VecF3(1, 0, 0));
+        result.add(new Float3Vector(0, 0, 0));
+        result.add(new Float3Vector(0, 1, 0));
+        result.add(new Float3Vector(1, 1, 0));
+        result.add(new Float3Vector(0, 0, 0));
+        result.add(new Float3Vector(1, 1, 0));
+        result.add(new Float3Vector(1, 0, 0));
 
         return result;
     }
@@ -213,11 +213,11 @@ public class Box extends Model {
      * @return An array with 6 vectors representing normals for the given
      *         points.
      */
-    private List<VecF3> createNormals(VecF3 normalToCreate) {
-        ArrayList<VecF3> result = new ArrayList<VecF3>();
+    private List<Float3Vector> createNormals(Float3Vector normalToCreate) {
+        ArrayList<Float3Vector> result = new ArrayList<Float3Vector>();
 
         for (int i = 0; i < VERTICES_PER_QUAD; i++) {
-            result.add(new VecF3(normalToCreate));
+            result.add(new Float3Vector(normalToCreate));
         }
 
         return result;

@@ -1,8 +1,8 @@
 package nl.esciencecenter.neon.models;
 
-import nl.esciencecenter.neon.math.VecF3;
-import nl.esciencecenter.neon.math.VecF4;
-import nl.esciencecenter.neon.math.VectorFMath;
+import nl.esciencecenter.neon.math.Float3Vector;
+import nl.esciencecenter.neon.math.Float4Vector;
+import nl.esciencecenter.neon.math.FloatVectorMath;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
@@ -34,27 +34,27 @@ public class Line extends Model {
      * @param end
      *            The end point for the line.
      */
-    public Line(VecF3 start, VecF3 end) {
+    public Line(Float3Vector start, Float3Vector end) {
         super(VertexFormat.LINES);
 
         int numVertices = 2;
 
-        VecF4[] points = new VecF4[numVertices];
-        VecF3[] normals = new VecF3[numVertices];
-        VecF3[] tCoords = new VecF3[numVertices];
+        Float4Vector[] points = new Float4Vector[numVertices];
+        Float3Vector[] normals = new Float3Vector[numVertices];
+        Float3Vector[] tCoords = new Float3Vector[numVertices];
 
-        points[0] = new VecF4(start, 1f);
-        points[1] = new VecF4(end, 1f);
+        points[0] = new Float4Vector(start, 1f);
+        points[1] = new Float4Vector(end, 1f);
 
-        normals[0] = VectorFMath.normalize(start).neg();
-        normals[1] = VectorFMath.normalize(end).neg();
+        normals[0] = FloatVectorMath.normalize(start).neg();
+        normals[1] = FloatVectorMath.normalize(end).neg();
 
-        tCoords[0] = new VecF3(0, 0, 0);
-        tCoords[1] = new VecF3(1, 1, 1);
+        tCoords[0] = new Float3Vector(0, 0, 0);
+        tCoords[1] = new Float3Vector(1, 1, 1);
 
         this.setNumVertices(numVertices);
-        this.setVertices(VectorFMath.toBuffer(points));
-        this.setNormals(VectorFMath.toBuffer(normals));
-        this.setTexCoords(VectorFMath.toBuffer(tCoords));
+        this.setVertices(FloatVectorMath.toBuffer(points));
+        this.setNormals(FloatVectorMath.toBuffer(normals));
+        this.setTexCoords(FloatVectorMath.toBuffer(tCoords));
     }
 }

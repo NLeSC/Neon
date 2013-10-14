@@ -23,14 +23,14 @@ import java.util.Arrays;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class MatF3 extends MatrixF {
+public class Float3Matrix extends FloatMatrix {
     /** The number of elements in this matrix */
     private static final int SIZE = 9;
 
     /**
      * Creates a new 3x3 identity matrix.
      */
-    public MatF3() {
+    public Float3Matrix() {
         super(SIZE);
         identity();
     }
@@ -51,7 +51,7 @@ public class MatF3 extends MatrixF {
      * @param in
      *            The value to be put in all matrix fields.
      */
-    public MatF3(float in) {
+    public Float3Matrix(float in) {
         super(SIZE);
         Arrays.fill(asArray(), in);
     }
@@ -66,7 +66,7 @@ public class MatF3 extends MatrixF {
      * @param v2
      *            The third row of the matrix.
      */
-    public MatF3(VecF3 v0, VecF3 v1, VecF3 v2) {
+    public Float3Matrix(Float3Vector v0, Float3Vector v1, Float3Vector v2) {
         super(SIZE);
         asArray()[0] = v0.getX();
         asArray()[1] = v0.getY();
@@ -103,7 +103,7 @@ public class MatF3 extends MatrixF {
      * @param m22
      *            The parameter on position 2x2.
      */
-    public MatF3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) {
+    public Float3Matrix(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) {
         super(SIZE);
         asArray()[0] = m00;
         asArray()[1] = m01;
@@ -122,7 +122,7 @@ public class MatF3 extends MatrixF {
      * @param n
      *            The old matrix to be copied.
      */
-    public MatF3(MatF3 n) {
+    public Float3Matrix(Float3Matrix n) {
         super(SIZE);
 
         for (int i = 0; i < SIZE; i++) {
@@ -137,8 +137,8 @@ public class MatF3 extends MatrixF {
      *            The matrix to be multiplied with the current matrix.
      * @return The new matrix that is the result of the multiplication.
      */
-    public MatF3 mul(MatF3 n) {
-        MatF3 result = new MatF3(0f);
+    public Float3Matrix mul(Float3Matrix n) {
+        Float3Matrix result = new Float3Matrix(0f);
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
@@ -158,8 +158,8 @@ public class MatF3 extends MatrixF {
      *            The matrix to be added to the current matrix.
      * @return The new matrix that is the result of the addition.
      */
-    public MatF3 add(MatF3 n) {
-        MatF3 result = new MatF3(0f);
+    public Float3Matrix add(Float3Matrix n) {
+        Float3Matrix result = new Float3Matrix(0f);
 
         for (int i = 0; i < SIZE; ++i) {
             result.asArray()[i] = asArray()[i] + n.asArray()[i];
@@ -175,8 +175,8 @@ public class MatF3 extends MatrixF {
      *            The matrix to be substracted from to the current matrix.
      * @return The new matrix that is the result of the substraction.
      */
-    public MatF3 sub(MatF3 n) {
-        MatF3 result = new MatF3(0f);
+    public Float3Matrix sub(Float3Matrix n) {
+        Float3Matrix result = new Float3Matrix(0f);
 
         for (int i = 0; i < SIZE; ++i) {
             result.asArray()[i] = asArray()[i] - n.asArray()[i];
@@ -192,8 +192,8 @@ public class MatF3 extends MatrixF {
      *            The scalar to be multiplied with the current matrix.
      * @return The new matrix that is the result of the multiplication.
      */
-    public MatF3 mul(Number n) {
-        MatF3 result = new MatF3(0f);
+    public Float3Matrix mul(Number n) {
+        Float3Matrix result = new Float3Matrix(0f);
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
@@ -210,8 +210,8 @@ public class MatF3 extends MatrixF {
      *            The scalar to be multiplied with the current matrix.
      * @return The new matrix that is the result of the multiplication.
      */
-    public MatF3 add(Number n) {
-        MatF3 result = new MatF3(0f);
+    public Float3Matrix add(Number n) {
+        Float3Matrix result = new Float3Matrix(0f);
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
@@ -228,8 +228,8 @@ public class MatF3 extends MatrixF {
      *            The scalar to be multiplied with the current matrix.
      * @return The new matrix that is the result of the multiplication.
      */
-    public MatF3 sub(Number n) {
-        MatF3 result = new MatF3(0f);
+    public Float3Matrix sub(Number n) {
+        Float3Matrix result = new Float3Matrix(0f);
 
         float fn = n.floatValue();
         for (int i = 0; i < SIZE; ++i) {
@@ -248,8 +248,8 @@ public class MatF3 extends MatrixF {
      *            matrix.
      * @return The new matrix that is the result of the division.
      */
-    public MatF3 div(Number n) {
-        MatF3 result = new MatF3(0f);
+    public Float3Matrix div(Number n) {
+        Float3Matrix result = new Float3Matrix(0f);
 
         float fn = 1f / n.floatValue();
 
@@ -267,8 +267,8 @@ public class MatF3 extends MatrixF {
      *            The vector to be multiplied with the current matrix.
      * @return The new vector that is the result of the multiplication.
      */
-    public VecF3 mul(VecF3 v) {
-        VecF3 result = new VecF3(asArray()[0] * v.getX() + asArray()[1] * v.getY() + asArray()[2] * v.getZ(),
+    public Float3Vector mul(Float3Vector v) {
+        Float3Vector result = new Float3Vector(asArray()[0] * v.getX() + asArray()[1] * v.getY() + asArray()[2] * v.getZ(),
                 asArray()[3] * v.getX() + asArray()[4] * v.getY() + asArray()[5] * v.getZ(), asArray()[6] * v.getX()
                         + asArray()[7] * v.getY() + asArray()[8] * v.getZ());
         return result;

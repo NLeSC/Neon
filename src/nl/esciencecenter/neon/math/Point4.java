@@ -16,12 +16,12 @@ package nl.esciencecenter.neon.math;
  */
 
 /**
- * A optional, more specific {@link VecF4} implementation for points.
+ * A optional, more specific {@link Float4Vector} implementation for points.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class Point4 extends VecF4 {
+public class Point4 extends Float4Vector {
     /**
      * Stand-in for a 4-place vector, where the fourth place is always 1f.
      */
@@ -35,7 +35,7 @@ public class Point4 extends VecF4 {
      * @param vec
      *            The xyz values of this point.
      */
-    public Point4(VecF3 vec) {
+    public Point4(Float3Vector vec) {
         super(vec, 1f);
     }
 
@@ -46,7 +46,7 @@ public class Point4 extends VecF4 {
      *            A vector of which the fourth place will be discarded and
      *            replaced by 1f.
      */
-    public Point4(VecF4 v) {
+    public Point4(Float4Vector v) {
         super(v.getX(), v.getY(), v.getZ(), 1f);
     }
 
@@ -59,8 +59,6 @@ public class Point4 extends VecF4 {
      *            The y value of this point.
      * @param z
      *            The z value of this point.
-     * @param w
-     *            This value is discarded in favour of 1f.
      */
     public Point4(float x, float y, float z) {
         super(x, y, z, 1f);

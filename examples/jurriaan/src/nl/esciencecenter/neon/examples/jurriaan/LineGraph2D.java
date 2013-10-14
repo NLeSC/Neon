@@ -8,9 +8,9 @@ import javax.media.opengl.GL3;
 
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.math.Color4;
-import nl.esciencecenter.neon.math.MatF4;
-import nl.esciencecenter.neon.math.MatrixFMath;
-import nl.esciencecenter.neon.math.VecF3;
+import nl.esciencecenter.neon.math.Float4Matrix;
+import nl.esciencecenter.neon.math.FloatMatrixMath;
+import nl.esciencecenter.neon.math.Float3Vector;
 import nl.esciencecenter.neon.shaders.ShaderProgram;
 import nl.esciencecenter.neon.text.MultiColorText;
 import nl.esciencecenter.neon.text.jogampexperimental.Font;
@@ -132,11 +132,11 @@ public class LineGraph2D {
         }
     }
 
-    public void draw(GL3 gl, MatF4 mv, ModelViewStack mvStack, ShaderProgram program) throws UninitializedException {
+    public void draw(GL3 gl, Float4Matrix mv, ModelViewStack mvStack, ShaderProgram program) throws UninitializedException {
         int i = 0;
         for (SegmentedLine sl : segmentedLines.values()) {
             ModelViewStack linesStack = new ModelViewStack(mvStack);
-            linesStack.putBottom(MatrixFMath.translate(0f, 0f, i * (width / colors.length)));
+            linesStack.putBottom(FloatMatrixMath.translate(0f, 0f, i * (width / colors.length)));
             program.setUniformMatrix("MVMatrix", linesStack.calc(mv));
 
             gl.glLineWidth(3f);
@@ -146,16 +146,16 @@ public class LineGraph2D {
         }
     }
 
-    public void drawLabels(GL3 gl, MatF4 mv, ModelViewStack mvStack, ShaderProgram program)
+    public void drawLabels(GL3 gl, Float4Matrix mv, ModelViewStack mvStack, ShaderProgram program)
             throws UninitializedException {
         float widthPerSegment = width / horizontalSegments;
 
         float scale = .0025f;
 
-        MatF4 scaleMatrix = MatrixFMath.scale(scale);
+        Float4Matrix scaleMatrix = FloatMatrixMath.scale(scale);
 
         ModelViewStack horizontalAxisTextStack = new ModelViewStack(mvStack);
-        MatF4 horizontalAxisTranslation = MatrixFMath.translate(new VecF3(0f, -0.15f, width));
+        Float4Matrix horizontalAxisTranslation = FloatMatrixMath.translate(new Float3Vector(0f, -0.15f, width));
         horizontalAxisTextStack.putTop(horizontalAxisTranslation);
         horizontalAxisTextStack.putTop(scaleMatrix);
         program.setUniformMatrix("MVMatrix", horizontalAxisTextStack.calc(mv));
@@ -165,7 +165,7 @@ public class LineGraph2D {
             MultiColorText label = seperateColorLabels[i];
 
             ModelViewStack colorLabelStack = new ModelViewStack(mvStack);
-            MatF4 colorLabelTranslation = MatrixFMath.translate(new VecF3(0f, -0.2f, i * (width / colors.length)));
+            Float4Matrix colorLabelTranslation = FloatMatrixMath.translate(new Float3Vector(0f, -0.2f, i * (width / colors.length)));
             colorLabelStack.putTop(colorLabelTranslation);
             colorLabelStack.putTop(scaleMatrix);
             program.setUniformMatrix("MVMatrix", colorLabelStack.calc(mv));
@@ -173,22 +173,22 @@ public class LineGraph2D {
         }
 
         ModelViewStack verticalAxisTextStack = new ModelViewStack(mvStack);
-        MatF4 verticalAxisRotation = MatrixFMath.rotationZ(90f);
+        Float4Matrix verticalAxisRotation = FloatMatrixMath.rotationZ(90f);
         verticalAxisTextStack.putTop(verticalAxisRotation);
 
-        MatF4 verticalAxisTranslation = MatrixFMath.translate(new VecF3(.15f, 0.05f, width));
+        Float4Matrix verticalAxisTranslation = FloatMatrixMath.translate(new Float3Vector(.15f, 0.05f, width));
         verticalAxisTextStack.putTop(verticalAxisTranslation);
 
         verticalAxisTextStack.putTop(scaleMatrix);
         program.setUniformMatrix("MVMatrix", verticalAxisTextStack.calc(mv));
         verticalAxisText.draw(gl, program);
 
-        MatF4 horizontalLabelRotationMatrix = MatrixFMath.rotationZ(-90f);
+        Float4Matrix horizontalLabelRotationMatrix = FloatMatrixMath.rotationZ(-90f);
 
         for (int i = 0; i < NR_OF_HORIZONTAL_LABELS; i++) {
             MultiColorText label = horizontalLabels[i];
 
-            MatF4 horizontalLabelTranslation = MatrixFMath.translate(0.2f,
+            Float4Matrix horizontalLabelTranslation = FloatMatrixMath.translate(0.2f,
                     (widthPerSegment * i * horizontalSegments / NR_OF_HORIZONTAL_LABELS) + (.2f * widthPerSegment),
                     width);
 

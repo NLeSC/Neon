@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.esciencecenter.neon.math.Point4;
-import nl.esciencecenter.neon.math.VecF3;
-import nl.esciencecenter.neon.math.VecF4;
-import nl.esciencecenter.neon.math.VectorFMath;
+import nl.esciencecenter.neon.math.Float3Vector;
+import nl.esciencecenter.neon.math.Float4Vector;
+import nl.esciencecenter.neon.math.FloatVectorMath;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
@@ -47,19 +47,19 @@ public class LeftBottomQuad extends Model {
      * @param leftBottom
      *            The left bottom location of this quad.
      */
-    public LeftBottomQuad(float height, float width, VecF3 leftBottom) {
+    public LeftBottomQuad(float height, float width, Float3Vector leftBottom) {
         super(VertexFormat.TRIANGLES);
 
         Point4[] vertices = makeVertices(height, width, leftBottom);
 
-        List<VecF4> allPoints = new ArrayList<VecF4>();
-        List<VecF3> allNormals = new ArrayList<VecF3>();
-        List<VecF3> allTexCoords = new ArrayList<VecF3>();
+        List<Float4Vector> allPoints = new ArrayList<Float4Vector>();
+        List<Float3Vector> allNormals = new ArrayList<Float3Vector>();
+        List<Float3Vector> allTexCoords = new ArrayList<Float3Vector>();
 
         // FRONT QUAD
         List<Point4> listPoints = tesselate(vertices, 1, 0, 3, 2);
-        List<VecF3> listNormals = createNormals(new VecF3(0, 0, -1));
-        List<VecF3> listTCoords = createTexCoords();
+        List<Float3Vector> listNormals = createNormals(new Float3Vector(0, 0, -1));
+        List<Float3Vector> listTCoords = createTexCoords();
 
         allPoints.addAll(listPoints);
         allNormals.addAll(listNormals);
@@ -67,9 +67,9 @@ public class LeftBottomQuad extends Model {
 
         this.setNumVertices(allPoints.size());
 
-        this.setVertices(VectorFMath.vec4ListToBuffer(allPoints));
-        this.setNormals(VectorFMath.vec3ListToBuffer(allNormals));
-        this.setTexCoords(VectorFMath.vec3ListToBuffer(allTexCoords));
+        this.setVertices(FloatVectorMath.vec4ListToBuffer(allPoints));
+        this.setNormals(FloatVectorMath.vec3ListToBuffer(allNormals));
+        this.setTexCoords(FloatVectorMath.vec3ListToBuffer(allTexCoords));
     }
 
     /**
@@ -84,7 +84,7 @@ public class LeftBottomQuad extends Model {
      *            The left Bottom location for this Model.
      * @return The points(vertices) that make up the composition of this Model.
      */
-    private Point4[] makeVertices(float height, float width, VecF3 leftBottomCoordinates) {
+    private Point4[] makeVertices(float height, float width, Float3Vector leftBottomCoordinates) {
         float x = leftBottomCoordinates.getX();
         float y = leftBottomCoordinates.getY();
 
@@ -152,15 +152,15 @@ public class LeftBottomQuad extends Model {
      * @return An array with 6 vectors representing texture coordinates for the
      *         given points.
      */
-    private List<VecF3> createTexCoords() {
-        ArrayList<VecF3> result = new ArrayList<VecF3>();
+    private List<Float3Vector> createTexCoords() {
+        ArrayList<Float3Vector> result = new ArrayList<Float3Vector>();
 
-        result.add(new VecF3(0, 0, 0));
-        result.add(new VecF3(0, 1, 0));
-        result.add(new VecF3(1, 1, 0));
-        result.add(new VecF3(0, 0, 0));
-        result.add(new VecF3(1, 1, 0));
-        result.add(new VecF3(1, 0, 0));
+        result.add(new Float3Vector(0, 0, 0));
+        result.add(new Float3Vector(0, 1, 0));
+        result.add(new Float3Vector(1, 1, 0));
+        result.add(new Float3Vector(0, 0, 0));
+        result.add(new Float3Vector(1, 1, 0));
+        result.add(new Float3Vector(1, 0, 0));
 
         return result;
     }
@@ -173,11 +173,11 @@ public class LeftBottomQuad extends Model {
      * @return An array with 6 vectors representing normals for the given
      *         points.
      */
-    private List<VecF3> createNormals(VecF3 normalToCreate) {
-        ArrayList<VecF3> result = new ArrayList<VecF3>();
+    private List<Float3Vector> createNormals(Float3Vector normalToCreate) {
+        ArrayList<Float3Vector> result = new ArrayList<Float3Vector>();
 
         for (int i = 0; i < VERTICES_PER_QUAD; i++) {
-            result.add(new VecF3(normalToCreate));
+            result.add(new Float3Vector(normalToCreate));
         }
 
         return result;

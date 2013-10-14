@@ -12,16 +12,16 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLContext;
 
 import nl.esciencecenter.neon.NeonGLEventListener;
-import nl.esciencecenter.neon.datastructures.FBO;
-import nl.esciencecenter.neon.datastructures.IntPBO;
+import nl.esciencecenter.neon.datastructures.FrameBufferObject;
+import nl.esciencecenter.neon.datastructures.IntPixelBufferObject;
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.input.InputHandler;
 import nl.esciencecenter.neon.math.Color4;
-import nl.esciencecenter.neon.math.MatF4;
-import nl.esciencecenter.neon.math.MatrixFMath;
+import nl.esciencecenter.neon.math.Float4Matrix;
+import nl.esciencecenter.neon.math.FloatMatrixMath;
 import nl.esciencecenter.neon.math.Point4;
-import nl.esciencecenter.neon.math.VecF3;
-import nl.esciencecenter.neon.math.VecF4;
+import nl.esciencecenter.neon.math.Float3Vector;
+import nl.esciencecenter.neon.math.Float4Vector;
 import nl.esciencecenter.neon.models.GeoSphere;
 import nl.esciencecenter.neon.models.Quad;
 import nl.esciencecenter.neon.models.Sphere;
@@ -67,7 +67,7 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
     private ShaderProgram textureShaderProgram, textShaderProgram, postprocessShader;
 
     // Example framebuffer objects for rendering to textures.
-    private FBO geoSphereFBO, sceneFBO, hudFBO;
+    private FrameBufferObject geoSphereFBO, sceneFBO, hudFBO;
 
     // Model definitions, the quad is necessary for Full-screen rendering. The
     // axes are the model we wish to render (example)
@@ -82,7 +82,7 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
     private final ColormapExampleSettings settings = ColormapExampleSettings.getInstance();
 
     // Pixelbuffer Object, we use this to get screenshots.
-    private IntPBO finalPBO;
+    private IntPixelBufferObject finalPBO;
 
     // Global (singleton) inputhandler instance.
     private final ColormapExampleInputHandler inputHandler = ColormapExampleInputHandler.getInstance();
@@ -105,7 +105,7 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
             (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
             (float) (getRadius() * Math.cos(getFtheta())));
     final Point4 at = new Point4(0.0f, 0.0f, 0.0f);
-    final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
+    final Float4Vector up = new Float4Vector(0.0f, 1.0f, 0.0f, 0.0f);
 
     private int cachedColormapIndex, cachedDataModeIndex, cachedVariableindex, cachedRangeSliderLowerValue,
             cachedRangeSliderUpperValue;
@@ -123,7 +123,7 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
         setInputRotationY(settings.getInitialRotationY());
         setInputViewDistance(settings.getInitialZoom());
 
-        inputHandler.setRotation(new VecF3(getInputRotationX(), getInputRotationY(), 0.0f));
+        inputHandler.setRotation(new Float3Vector(getInputRotationX(), getInputRotationY(), 0.0f));
         inputHandler.setViewDist(getInputViewDistance());
 
     }
@@ -231,21 +231,21 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
 
         // Here we define the Full screen quad model (for postprocessing), and
         // initialize it.
-        FSQ_postprocess = new Quad(2, 2, new VecF3(0, 0, 0.1f));
+        FSQ_postprocess = new Quad(2, 2, new Float3Vector(0, 0, 0.1f));
         FSQ_postprocess.init(gl);
 
         // Here we define some intermediate-step full screen textures (which are
         // needed for post processing), done with FrameBufferObjects, so we can
         // render directly to them.
-        hudFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
-        sceneFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
+        hudFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
+        sceneFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
 
         hudFBO.init(gl);
         sceneFBO.init(gl);
 
         // Here we define a PixelBufferObject, which is used for getting
         // screenshots.
-        finalPBO = new IntPBO(canvasWidth, canvasHeight);
+        finalPBO = new IntPixelBufferObject(canvasWidth, canvasHeight);
         finalPBO.init(gl);
 
         // Release the context.
@@ -275,18 +275,18 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
         // Construct a modelview matrix out of camera viewpoint and angle.
-        MatF4 modelViewMatrix = MatrixFMath.lookAt(eye, at, up);
+        Float4Matrix modelViewMatrix = FloatMatrixMath.lookAt(eye, at, up);
 
         // Translate the camera backwards according to the inputhandler's view
         // distance setting.
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputHandler.getViewDist())));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.translate(new Float3Vector(0f, 0f, inputHandler.getViewDist())));
 
         // Rotate tha camera according to the rotation angles defined in the
         // inputhandler.
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.rotationX(inputHandler.getRotation().getX()));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.rotationY(inputHandler.getRotation().getY()));
         // modelViewMatrix =
-        // modelViewMatrix.mul(MatrixFMath.rotationZ(inputHandler.getRotation().get(2)));
+        // modelViewMatrix.mul(FloatMatrixMath.rotationZ(inputHandler.getRotation().get(2)));
 
         // Render the scene with these modelview settings. In this case, the end
         // result of this action will be that the AxesFBO has been filled with
@@ -300,7 +300,7 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
             e1.printStackTrace();
         }
 
-        // Render the FBO's to screen, doing any post-processing actions that
+        // Render the FrameBufferObject's to screen, doing any post-processing actions that
         // might be wanted.
         renderTexturesToScreen(gl, canvasWidth, canvasHeight);
 
@@ -317,8 +317,8 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
         contextOff(drawable);
     }
 
-    private MatF4 makePerspectiveMatrix() {
-        return MatrixFMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
+    private Float4Matrix makePerspectiveMatrix() {
+        return FloatMatrixMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
     }
 
     /**
@@ -330,7 +330,7 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
      * @param mv
      *            The current modelview matrix.
      */
-    private void renderScene(GL3 gl, MatF4 mv) {
+    private void renderScene(GL3 gl, Float4Matrix mv) {
         try {
             rebuildColormapDependentTexturesIfNecessary(gl);
 
@@ -340,8 +340,8 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
             // Clear the renderbuffer to start with a clean (black) slate
             gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
 
-            renderGeoSphere(gl, new MatF4(mv), textureShaderProgram);
-            renderSphere(gl, new MatF4(mv), textureShaderProgram);
+            renderGeoSphere(gl, new Float4Matrix(mv), textureShaderProgram);
+            renderSphere(gl, new Float4Matrix(mv), textureShaderProgram);
 
             // Unbind the FrameBufferObject, making it available for texture
             // extraction.
@@ -412,7 +412,7 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
     }
 
     /**
-     * GeoSphere rendering method. This assumes rendering to an {@link FBO}.
+     * GeoSphere rendering method. This assumes rendering to an {@link FrameBufferObject}.
      * This is not a necessity, but it allows for post processing.
      * 
      * @param gl
@@ -422,10 +422,10 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
      * @param target
      *            The {@link ShaderProgram} to use for rendering.
      * @throws UninitializedException
-     *             if either the shader Program or FBO used in this method are
+     *             if either the shader Program or FrameBufferObject used in this method are
      *             uninitialized before use.
      */
-    private void renderGeoSphere(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+    private void renderGeoSphere(GL3 gl, Float4Matrix mv, ShaderProgram program) throws UninitializedException {
 
         // Stage the Perspective and Modelview matrixes in the
         // ShaderProgram.
@@ -445,7 +445,7 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
     }
 
     /**
-     * GeoSphere rendering method. This assumes rendering to an {@link FBO}.
+     * GeoSphere rendering method. This assumes rendering to an {@link FrameBufferObject}.
      * This is not a necessity, but it allows for post processing.
      * 
      * @param gl
@@ -455,16 +455,16 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
      * @param target
      *            The {@link ShaderProgram} to use for rendering.
      * @throws UninitializedException
-     *             if either the shader Program or FBO used in this method are
+     *             if either the shader Program or FrameBufferObject used in this method are
      *             uninitialized before use.
      */
-    private void renderSphere(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+    private void renderSphere(GL3 gl, Float4Matrix mv, ShaderProgram program) throws UninitializedException {
         // Stage the Perspective and Modelview matrixes in the ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
 
         // Translate and scale the 'moon'
-        mv = mv.mul(MatrixFMath.translate(100f, 0f, 0f));
-        mv = mv.mul(MatrixFMath.scale(10f, 10f, 10f));
+        mv = mv.mul(FloatMatrixMath.translate(100f, 0f, 0f));
+        mv = mv.mul(FloatMatrixMath.scale(10f, 10f, 10f));
         program.setUniformMatrix("MVMatrix", mv);
 
         // Stage the pointer to the texture
@@ -490,11 +490,11 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
      * @param target
      *            The {@link ShaderProgram} to use for rendering.
      * @param target
-     *            The target {@link FBO} to render to.
+     *            The target {@link FrameBufferObject} to render to.
      * @throws UninitializedException
-     *             if the FBO used in this method is uninitialized before use.
+     *             if the FrameBufferObject used in this method is uninitialized before use.
      */
-    private void renderHUDText(GL3 gl, MatF4 mv, ShaderProgram program, FBO target) throws UninitializedException {
+    private void renderHUDText(GL3 gl, Float4Matrix mv, ShaderProgram program, FrameBufferObject target) throws UninitializedException {
         // Set a new text for the string
         String randomString = "Colormap test, random: " + Math.random();
         hudText.setString(gl, randomString, Color4.WHITE, fontSize);
@@ -537,8 +537,8 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
         // Stage the Perspective and Modelview matrixes in the ShaderProgram.
         // Because we want to render at point-blank range in this stage, we set
         // these to identity matrices.
-        postprocessShader.setUniformMatrix("MVMatrix", new MatF4());
-        postprocessShader.setUniformMatrix("PMatrix", new MatF4());
+        postprocessShader.setUniformMatrix("MVMatrix", new Float4Matrix());
+        postprocessShader.setUniformMatrix("PMatrix", new Float4Matrix());
 
         // Stage the width and height.
         postprocessShader.setUniform("scrWidth", width);
@@ -585,15 +585,15 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
         sceneFBO.delete(gl);
         hudFBO.delete(gl);
 
-        hudFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
-        sceneFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
+        hudFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
+        sceneFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
 
         sceneFBO.init(gl);
         hudFBO.init(gl);
 
         // Resize the PixelBuffer Object that can be used for screenshots.
         finalPBO.delete(gl);
-        finalPBO = new IntPBO(w, h);
+        finalPBO = new IntPixelBufferObject(w, h);
         finalPBO.init(gl);
 
         // Release the context.

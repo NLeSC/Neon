@@ -5,8 +5,8 @@ import java.nio.FloatBuffer;
 import javax.media.opengl.GL3;
 
 import nl.esciencecenter.neon.NeonGLEventListener;
-import nl.esciencecenter.neon.datastructures.GLSLAttrib;
-import nl.esciencecenter.neon.datastructures.VBO;
+import nl.esciencecenter.neon.datastructures.GLSLAttribute;
+import nl.esciencecenter.neon.datastructures.VertexBufferObject;
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.shaders.ShaderProgram;
 
@@ -26,13 +26,13 @@ import nl.esciencecenter.neon.shaders.ShaderProgram;
  */
 
 /**
- * General extendible class representing a model with a {@link VBO}.
+ * General extendible class representing a model with a {@link VertexBufferObject}.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  */
 public abstract class Model {
     /**
-     * The OpenGL-internal vertex format rules the vertexes in the VBO can
+     * The OpenGL-internal vertex format rules the vertexes in the VertexBufferObject can
      * follow.
      */
     public static enum VertexFormat {
@@ -40,7 +40,7 @@ public abstract class Model {
     };
 
     /**
-     * The OpenGL-internal vertex format rules the vertexes in the VBO are going
+     * The OpenGL-internal vertex format rules the vertexes in the VertexBufferObject are going
      * to follow.
      */
     private VertexFormat format;
@@ -52,8 +52,8 @@ public abstract class Model {
 
     private FloatBuffer texCoords;
 
-    /** The resulting {@link VBO}. */
-    private VBO vbo;
+    /** The resulting {@link VertexBufferObject}. */
+    private VertexBufferObject vertexBufferObject;
 
     /** The number of vertices stored in this model. */
     private int numVertices;
@@ -77,7 +77,7 @@ public abstract class Model {
     }
 
     /**
-     * Initializes the model by constructing the {@link VBO} out of the
+     * Initializes the model by constructing the {@link VertexBufferObject} out of the
      * vertices, normals and texCoords buffers.
      * 
      * @param gl
@@ -85,18 +85,18 @@ public abstract class Model {
      */
     public void init(GL3 gl) {
         if (!initialized) {
-            GLSLAttrib vAttrib = new GLSLAttrib(getVertices(), "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
-            GLSLAttrib nAttrib = new GLSLAttrib(getNormals(), "MCnormal", GLSLAttrib.SIZE_FLOAT, 3);
-            GLSLAttrib tAttrib = new GLSLAttrib(getTexCoords(), "MCtexCoord", GLSLAttrib.SIZE_FLOAT, 3);
+            GLSLAttribute vAttrib = new GLSLAttribute(getVertices(), "MCvertex", GLSLAttribute.SIZE_FLOAT, 4);
+            GLSLAttribute nAttrib = new GLSLAttribute(getNormals(), "MCnormal", GLSLAttribute.SIZE_FLOAT, 3);
+            GLSLAttribute tAttrib = new GLSLAttribute(getTexCoords(), "MCtexCoord", GLSLAttribute.SIZE_FLOAT, 3);
 
-            setVbo(new VBO(gl, vAttrib, nAttrib, tAttrib));
+            setVbo(new VertexBufferObject(gl, vAttrib, nAttrib, tAttrib));
 
             initialized = true;
         }
     }
 
     /**
-     * Deletes this model and its {@link VBO} nicely from memory.
+     * Deletes this model and its {@link VertexBufferObject} nicely from memory.
      * 
      * @param gl
      *            The global openGL instance.
@@ -112,11 +112,11 @@ public abstract class Model {
     }
 
     /**
-     * Getter method for the {@link VBO}.
+     * Getter method for the {@link VertexBufferObject}.
      * 
-     * @return the {@link VBO} constructed by this class.
+     * @return the {@link VertexBufferObject} constructed by this class.
      */
-    public VBO getVBO() throws UninitializedException {
+    public VertexBufferObject getVBO() throws UninitializedException {
         if (initialized) {
             return getVbo();
         } else {
@@ -135,7 +135,7 @@ public abstract class Model {
     }
 
     /**
-     * Draw method for this model. Links its VBO attributes and calls OpenGL
+     * Draw method for this model. Links its VertexBufferObject attributes and calls OpenGL
      * DrawArrays.
      * 
      * @param gl
@@ -239,22 +239,22 @@ public abstract class Model {
     }
 
     /**
-     * Getter for vbo.
+     * Getter for vertexBufferObject.
      * 
-     * @return the vbo.
+     * @return the vertexBufferObject.
      */
-    public VBO getVbo() {
-        return vbo;
+    public VertexBufferObject getVbo() {
+        return vertexBufferObject;
     }
 
     /**
-     * Setter for vbo.
+     * Setter for vertexBufferObject.
      * 
-     * @param vbo
-     *            the vbo to set
+     * @param vertexBufferObject
+     *            the vertexBufferObject to set
      */
-    public void setVbo(VBO vbo) {
-        this.vbo = vbo;
+    public void setVbo(VertexBufferObject vertexBufferObject) {
+        this.vertexBufferObject = vertexBufferObject;
     }
 
     /**

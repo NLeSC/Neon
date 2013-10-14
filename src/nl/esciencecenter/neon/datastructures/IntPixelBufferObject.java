@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  */
-public class IntPBO {
-    private static final Logger logger = LoggerFactory.getLogger(IntPBO.class);
+public class IntPixelBufferObject {
+    private static final Logger logger = LoggerFactory.getLogger(IntPixelBufferObject.class);
     private static final int BYTES_PER_PIXEL = 4;
 
     /** Internal OpenGL pointer to the PBO */
@@ -52,14 +52,14 @@ public class IntPBO {
     private ByteBuffer data;
 
     /**
-     * Basic constructor for IntPBO.
+     * Basic constructor for IntPixelBufferObject.
      * 
      * @param width
      *            The width of the canvas to take a screenshot of.
      * @param height
      *            The height of the canvas to take a screenshot of.
      */
-    public IntPBO(int width, int height) {
+    public IntPixelBufferObject(int width, int height) {
         this.width = width;
         this.height = height;
 
@@ -88,7 +88,7 @@ public class IntPBO {
 
         checkNoError(gl, "POST: ", false);
 
-        // Unbind. The FBO is now ready for use.
+        // Unbind. The FrameBufferObject is now ready for use.
         gl.glBindBuffer(GL3.GL_PIXEL_PACK_BUFFER, 0);
 
         initialized = true;

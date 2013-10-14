@@ -40,8 +40,8 @@ public class Perlin3D extends Texture3D {
      * @param depth
      *            The depth of this texture.
      */
-    public Perlin3D(int gLMultiTexUnit, int width, int height, int depth) {
-        super(gLMultiTexUnit);
+    public Perlin3D(int glMultitexUnit, int width, int height, int depth) {
+        super(glMultitexUnit);
 
         this.width = width;
         this.height = height;

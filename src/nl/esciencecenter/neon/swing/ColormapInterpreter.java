@@ -531,19 +531,17 @@ public final class ColormapInterpreter {
      *            The dimensions of the combobox to be returned.
      * @return The combobox.
      */
-    public static JComboBox getLegendJComboBox(Dimension preferredDimensions) {
+    public static JComboBox<SimpleImageIcon> getLegendJComboBox(Dimension preferredDimensions) {
+
         int width = (int) (preferredDimensions.width * .8), height = (int) (preferredDimensions.height * .8);
 
-        ImageIcon[] images = new ImageIcon[legends.size()];
+        SimpleImageIcon[] simpleImageIcons = new SimpleImageIcon[legends.size()];
 
         int i = 0;
-        Integer[] intArray = new Integer[legends.size()];
-        String[] names = new String[legends.size()];
         for (Entry<String, Color[][]> entry : legends.entrySet()) {
-            String name = entry.getKey();
-            Color[][] legendImageBuffer = makeLegendImage(width, height, colorMaps.get(name));
+            String description = entry.getKey();
+            Color[][] legendImageBuffer = makeLegendImage(width, height, colorMaps.get(description));
 
-            intArray[i] = Integer.valueOf(i);
             BufferedImage legend = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
             WritableRaster raster = legend.getRaster();
 
@@ -555,18 +553,17 @@ public final class ColormapInterpreter {
                 }
             }
 
-            images[i] = new ImageIcon(legend);
-            if (images[i] != null) {
-                images[i].setDescription(name);
-            }
+            ImageIcon icon = new ImageIcon(legend);
 
-            names[i] = name;
+            SimpleImageIcon simpleImageIcon = new SimpleImageIcon(description, icon);
 
+            simpleImageIcons[i] = simpleImageIcon;
             i++;
         }
 
-        JComboBox legendList = new JComboBox(intArray);
-        ImageComboBoxRenderer renderer = new ImageComboBoxRenderer(names, images);
+        JComboBox<SimpleImageIcon> legendList = new JComboBox<SimpleImageIcon>(simpleImageIcons);
+
+        ImageComboBoxRenderer renderer = new ImageComboBoxRenderer(simpleImageIcons);
         renderer.setPreferredSize(preferredDimensions);
         legendList.setRenderer(renderer);
         legendList.setMaximumRowCount(10);

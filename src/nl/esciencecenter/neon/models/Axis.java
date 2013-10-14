@@ -1,8 +1,8 @@
 package nl.esciencecenter.neon.models;
 
-import nl.esciencecenter.neon.math.VecF3;
-import nl.esciencecenter.neon.math.VecF4;
-import nl.esciencecenter.neon.math.VectorFMath;
+import nl.esciencecenter.neon.math.Float3Vector;
+import nl.esciencecenter.neon.math.Float4Vector;
+import nl.esciencecenter.neon.math.FloatVectorMath;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
@@ -39,42 +39,42 @@ public class Axis extends Model {
      * @param minorInterval
      *            The minor interval for ticks.
      */
-    public Axis(VecF3 start, VecF3 end, float majorInterval, float minorInterval) {
+    public Axis(Float3Vector start, Float3Vector end, float majorInterval, float minorInterval) {
         super(VertexFormat.LINES);
 
-        float length = VectorFMath.length(end.sub(start));
+        float length = FloatVectorMath.length(end.sub(start));
         int numMajorIntervals = (int) Math.floor(length / majorInterval);
         int numMinorIntervals = (int) Math.floor(length / minorInterval);
 
         int numVertices = 2 + (numMajorIntervals * 2) - 4 + (numMinorIntervals * 2) - 4;
 
-        VecF4[] points = new VecF4[numVertices];
-        VecF3[] normals = new VecF3[numVertices];
-        VecF3[] tCoords = new VecF3[numVertices];
+        Float4Vector[] points = new Float4Vector[numVertices];
+        Float3Vector[] normals = new Float3Vector[numVertices];
+        Float3Vector[] tCoords = new Float3Vector[numVertices];
 
         int arrayindex = 0;
-        points[0] = new VecF4(start, 1f);
-        points[1] = new VecF4(end, 1f);
+        points[0] = new Float4Vector(start, 1f);
+        points[1] = new Float4Vector(end, 1f);
 
-        normals[0] = VectorFMath.normalize(start).neg();
-        normals[1] = VectorFMath.normalize(end).neg();
+        normals[0] = FloatVectorMath.normalize(start).neg();
+        normals[1] = FloatVectorMath.normalize(end).neg();
 
-        tCoords[0] = new VecF3(0, 0, 0);
-        tCoords[1] = new VecF3(1, 1, 1);
+        tCoords[0] = new Float3Vector(0, 0, 0);
+        tCoords[1] = new Float3Vector(1, 1, 1);
 
         arrayindex += 2;
 
-        VecF3 perpendicular;
-        VecF3 vec = VectorFMath.normalize((end.sub(start)));
+        Float3Vector perpendicular;
+        Float3Vector vec = FloatVectorMath.normalize((end.sub(start)));
         if (vec.getX() > 0.5f) {
-            perpendicular = new VecF3(0f, 0f, 1f);
+            perpendicular = new Float3Vector(0f, 0f, 1f);
         } else if (vec.getY() > 0.5f) {
-            perpendicular = new VecF3(1f, 0f, 0f);
+            perpendicular = new Float3Vector(1f, 0f, 0f);
         } else {
-            perpendicular = new VecF3(0f, 1f, 0f);
+            perpendicular = new Float3Vector(0f, 1f, 0f);
         }
 
-        VecF3 nil = new VecF3();
+        Float3Vector nil = new Float3Vector();
 
         float majorIntervalSize = length / 100f;
         float minorIntervalSize = length / 300f;
@@ -95,9 +95,9 @@ public class Axis extends Model {
         }
 
         this.setNumVertices(numVertices);
-        this.setVertices(VectorFMath.toBuffer(points));
-        this.setNormals(VectorFMath.toBuffer(normals));
-        this.setTexCoords(VectorFMath.toBuffer(tCoords));
+        this.setVertices(FloatVectorMath.toBuffer(points));
+        this.setNormals(FloatVectorMath.toBuffer(normals));
+        this.setTexCoords(FloatVectorMath.toBuffer(tCoords));
     }
 
     /**
@@ -119,16 +119,16 @@ public class Axis extends Model {
      *            the size of the tick to paint.
      * @return the new index in the ouput arrays.
      */
-    private int addInterval(VecF4[] points, VecF3[] normals, VecF3[] tCoords, int offset, VecF3 center,
-            VecF3 alignment, float size) {
+    private int addInterval(Float4Vector[] points, Float3Vector[] normals, Float3Vector[] tCoords, int offset, Float3Vector center,
+            Float3Vector alignment, float size) {
         int tmpOffset = offset;
-        points[tmpOffset] = new VecF4(center.add(alignment.mul(size)), 1f);
-        normals[tmpOffset] = VectorFMath.normalize(alignment);
-        tCoords[tmpOffset] = new VecF3(0, 0, 0);
+        points[tmpOffset] = new Float4Vector(center.add(alignment.mul(size)), 1f);
+        normals[tmpOffset] = FloatVectorMath.normalize(alignment);
+        tCoords[tmpOffset] = new Float3Vector(0, 0, 0);
         tmpOffset++;
-        points[tmpOffset] = new VecF4(center.sub(alignment.mul(size)), 1f);
-        normals[tmpOffset] = VectorFMath.normalize(alignment).neg();
-        tCoords[tmpOffset] = new VecF3(1, 1, 1);
+        points[tmpOffset] = new Float4Vector(center.sub(alignment.mul(size)), 1f);
+        normals[tmpOffset] = FloatVectorMath.normalize(alignment).neg();
+        tCoords[tmpOffset] = new Float3Vector(1, 1, 1);
         tmpOffset++;
         return tmpOffset;
     }

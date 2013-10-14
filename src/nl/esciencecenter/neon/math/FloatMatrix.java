@@ -23,7 +23,7 @@ import java.nio.FloatBuffer;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public abstract class MatrixF {
+public abstract class FloatMatrix {
     /** The main storage array for this matrix. */
     private float m[];
 
@@ -32,12 +32,12 @@ public abstract class MatrixF {
     private int size;
 
     /**
-     * Basic constructor for MatrixF.
+     * Basic constructor for FloatMatrix.
      * 
      * @param size
      *            the number of floats to be stored in this matrix.
      */
-    protected MatrixF(int size) {
+    protected FloatMatrix(int size) {
         this.size = size;
         m = new float[size];
     }

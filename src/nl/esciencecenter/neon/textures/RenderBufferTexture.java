@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class RBOTexture extends Texture2D {
-    private final static Logger logger = LoggerFactory.getLogger(RBOTexture.class);
+public class RenderBufferTexture extends Texture2D {
+    private final static Logger logger = LoggerFactory.getLogger(RenderBufferTexture.class);
 
     /**
      * Default constructor, use this in combination with RenderBuffer. Do not
@@ -50,7 +50,7 @@ public class RBOTexture extends Texture2D {
      *            The height of this texture. Generally the same size as the
      *            canvas height.
      */
-    public RBOTexture(int width, int height, int glMultiTexUnit) {
+    public RenderBufferTexture(int width, int height, int glMultiTexUnit) {
         super(glMultiTexUnit);
         this.height = height;
         this.width = width;
@@ -127,7 +127,7 @@ public class RBOTexture extends Texture2D {
                 logger.error("GL ERROR(s) " + exceptionMessage + " : ");
                 while (GL.GL_NO_ERROR != error) {
                     GLException exception = new GLException(" GL Error 0x" + Integer.toHexString(error));
-                    logger.error("Error in OpenGL operation while initializing FBO", exception);
+                    logger.error("Error in OpenGL operation while initializing FrameBufferObject", exception);
                     error = gl.glGetError();
                 }
                 return false;

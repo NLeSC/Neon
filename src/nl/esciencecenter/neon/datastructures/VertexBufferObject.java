@@ -27,15 +27,15 @@ import com.jogamp.common.nio.Buffers;
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  */
-public class VBO {
-    /** The internal OpenGL pointer to the VBO */
+public class VertexBufferObject {
+    /** The internal OpenGL pointer to the VertexBufferObject */
     private final IntBuffer vboPointer;
 
     /** The internal OpenGL pointer to the Array Buffer */
     private final IntBuffer bufferPointer;
 
-    /** The array of GLSL attributes associated with this VBO */
-    private GLSLAttrib[] attribs;
+    /** The array of GLSL attributes associated with this VertexBufferObject */
+    private GLSLAttribute[] attribs;
 
     /**
      * Constructor that creates a Vertex Buffer Object with the specified GLSL
@@ -44,13 +44,13 @@ public class VBO {
      * @param gl
      *            The global openGL instance.
      * @param attribs
-     *            One or more attributes that represent this VBO, @see
-     *            GLSLAttrib
+     *            One or more attributes that represent this VertexBufferObject, @see
+     *            GLSLAttribute
      */
-    public VBO(GL3 gl, GLSLAttrib... attribs) {
+    public VertexBufferObject(GL3 gl, GLSLAttribute... attribs) {
         this.attribs = attribs;
 
-        // Generate a new internal OpenGL VBO pointer
+        // Generate a new internal OpenGL VertexBufferObject pointer
         this.vboPointer = Buffers.newDirectIntBuffer(1);
         gl.glGenVertexArrays(1, this.vboPointer);
         gl.glBindVertexArray(this.vboPointer.get(0));
@@ -62,7 +62,7 @@ public class VBO {
 
         // Allocate enough memory
         int size = 0;
-        for (final GLSLAttrib attrib : attribs) {
+        for (final GLSLAttribute attrib : attribs) {
             size += attrib.getBuffer().capacity() * Buffers.SIZEOF_FLOAT;
         }
 
@@ -70,7 +70,7 @@ public class VBO {
 
         // Copy the GLSL Attribute data into the internal OpenGL buffer
         int nextStart = 0;
-        for (final GLSLAttrib attrib : attribs) {
+        for (final GLSLAttribute attrib : attribs) {
             gl.glBufferSubData(GL3.GL_ARRAY_BUFFER, nextStart, attrib.getBuffer().capacity() * Buffers.SIZEOF_FLOAT,
                     attrib.getBuffer());
             nextStart += attrib.getBuffer().capacity() * Buffers.SIZEOF_FLOAT;
@@ -78,7 +78,7 @@ public class VBO {
     }
 
     /**
-     * Bind the VBO, so that it is ready for use.
+     * Bind the VertexBufferObject, so that it is ready for use.
      * 
      * @param gl
      *            The global openGL instance.
@@ -90,7 +90,7 @@ public class VBO {
     }
 
     /**
-     * Delete this VBO properly.
+     * Delete this VertexBufferObject properly.
      * 
      * @param gl
      *            The global openGL instance.
@@ -102,27 +102,27 @@ public class VBO {
     }
 
     /**
-     * Retrieve the GLSL Attributes that make up this VBO
+     * Retrieve the GLSL Attributes that make up this VertexBufferObject
      * 
      * @return The GLSL Attributes
      */
-    public GLSLAttrib[] getAttribs() {
-        GLSLAttrib[] copy = new GLSLAttrib[attribs.length];
+    public GLSLAttribute[] getAttribs() {
+        GLSLAttribute[] copy = new GLSLAttribute[attribs.length];
         System.arraycopy(attribs, 0, copy, 0, attribs.length);
 
         return copy;
     }
 
     /**
-     * Update this VBO with (potentially) new data.
+     * Update this VertexBufferObject with (potentially) new data.
      * 
      * @param gl
      *            The global openGL instance.
      * @param attribs
-     *            One or more attributes that represent this VBO, @see
-     *            GLSLAttrib
+     *            One or more attributes that represent this VertexBufferObject, @see
+     *            GLSLAttribute
      */
-    public void update(GL3 gl, GLSLAttrib... attribs) {
+    public void update(GL3 gl, GLSLAttribute... attribs) {
         this.attribs = attribs;
 
         gl.glBindVertexArray(this.vboPointer.get(0));
@@ -130,7 +130,7 @@ public class VBO {
 
         // Allocate enough memory
         int size = 0;
-        for (final GLSLAttrib attrib : attribs) {
+        for (final GLSLAttribute attrib : attribs) {
             size += attrib.getBuffer().capacity() * Buffers.SIZEOF_FLOAT;
         }
 
@@ -138,7 +138,7 @@ public class VBO {
 
         // Copy the GLSL Attribute data into the internal OpenGL buffer
         int nextStart = 0;
-        for (final GLSLAttrib attrib : attribs) {
+        for (final GLSLAttribute attrib : attribs) {
             gl.glBufferSubData(GL3.GL_ARRAY_BUFFER, nextStart, attrib.getBuffer().capacity() * Buffers.SIZEOF_FLOAT,
                     attrib.getBuffer());
             nextStart += attrib.getBuffer().capacity() * Buffers.SIZEOF_FLOAT;

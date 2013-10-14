@@ -24,8 +24,8 @@ import java.util.List;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public final class VectorFMath {
-    private VectorFMath() {
+public final class FloatVectorMath {
+    private FloatVectorMath() {
         // Utility class
     }
 
@@ -38,7 +38,7 @@ public final class VectorFMath {
      *            The second vector.
      * @return The dot product of the two vectors.
      */
-    public static float dot(VecF2 u, VecF2 v) {
+    public static float dot(Float2Vector u, Float2Vector v) {
         return u.getX() * v.getX() + u.getY() * v.getY();
     }
 
@@ -51,7 +51,7 @@ public final class VectorFMath {
      *            The second vector.
      * @return The dot product of the two vectors.
      */
-    public static float dot(VecF3 u, VecF3 v) {
+    public static float dot(Float3Vector u, Float3Vector v) {
         return u.getX() * v.getX() + u.getY() * v.getY() + u.getZ() * v.getZ();
     }
 
@@ -64,7 +64,7 @@ public final class VectorFMath {
      *            The second vector.
      * @return The dot product of the two vectors.
      */
-    public static float dot(VecF4 u, VecF4 v) {
+    public static float dot(Float4Vector u, Float4Vector v) {
         return u.getX() * v.getX() + u.getY() * v.getY() + u.getZ() * v.getZ() + u.getW() * v.getW();
     }
 
@@ -75,7 +75,7 @@ public final class VectorFMath {
      *            The vector.
      * @return The length of the vector.
      */
-    public static float length(VecF2 v) {
+    public static float length(Float2Vector v) {
         return (float) Math.sqrt(dot(v, v));
     }
 
@@ -86,7 +86,7 @@ public final class VectorFMath {
      *            The vector.
      * @return The length of the vector.
      */
-    public static float length(VecF3 v) {
+    public static float length(Float3Vector v) {
         return (float) Math.sqrt(dot(v, v));
     }
 
@@ -97,7 +97,7 @@ public final class VectorFMath {
      *            The vector.
      * @return The length of the vector.
      */
-    public static float length(VecF4 v) {
+    public static float length(Float4Vector v) {
         return (float) Math.sqrt(dot(v, v));
     }
 
@@ -108,7 +108,7 @@ public final class VectorFMath {
      *            The vector.
      * @return The normal of the vector.
      */
-    public static VecF2 normalize(VecF2 v) {
+    public static Float2Vector normalize(Float2Vector v) {
         return v.div(length(v));
     }
 
@@ -119,7 +119,7 @@ public final class VectorFMath {
      *            The vector.
      * @return The normal of the vector.
      */
-    public static VecF3 normalize(VecF3 v) {
+    public static Float3Vector normalize(Float3Vector v) {
         return v.div(length(v));
     }
 
@@ -130,7 +130,7 @@ public final class VectorFMath {
      *            The vector.
      * @return The normal of the vector.
      */
-    public static VecF4 normalize(VecF4 v) {
+    public static Float4Vector normalize(Float4Vector v) {
         return v.div(length(v));
     }
 
@@ -143,9 +143,9 @@ public final class VectorFMath {
      *            The second vector.
      * @return The new vector, which is the cross product of the two vectors.
      */
-    public static VecF3 cross(VecF3 u, VecF3 v) {
-        return new VecF3(u.getY() * v.getZ() - u.getZ() * v.getY(), u.getZ() * v.getX() - u.getX() * v.getZ(), u.getX()
-                * v.getY() - u.getY() * v.getX());
+    public static Float3Vector cross(Float3Vector u, Float3Vector v) {
+        return new Float3Vector(u.getY() * v.getZ() - u.getZ() * v.getY(), u.getZ() * v.getX() - u.getX() * v.getZ(),
+                u.getX() * v.getY() - u.getY() * v.getX());
     }
 
     /**
@@ -157,9 +157,9 @@ public final class VectorFMath {
      *            The second vector.
      * @return The new vector, which is the cross product of the two vectors.
      */
-    public static VecF4 cross(VecF4 u, VecF4 v) {
-        return new VecF4(u.getY() * v.getZ() - u.getZ() * v.getY(), u.getZ() * v.getX() - u.getX() * v.getZ(), u.getX()
-                * v.getY() - u.getY() * v.getX(), 0.0f);
+    public static Float4Vector cross(Float4Vector u, Float4Vector v) {
+        return new Float4Vector(u.getY() * v.getZ() - u.getZ() * v.getY(), u.getZ() * v.getX() - u.getX() * v.getZ(),
+                u.getX() * v.getY() - u.getY() * v.getX(), 0.0f);
     }
 
     /**
@@ -184,7 +184,7 @@ public final class VectorFMath {
      *            The array of vectors.
      * @return The new FloatBuffer
      */
-    public static FloatBuffer toBuffer(VecF2[] array) {
+    public static FloatBuffer toBuffer(Float2Vector[] array) {
         FloatBuffer result = FloatBuffer.allocate(array.length * 2);
 
         for (int i = 0; i < array.length; i++) {
@@ -203,7 +203,7 @@ public final class VectorFMath {
      *            The array of vectors.
      * @return The new FloatBuffer
      */
-    public static FloatBuffer toBuffer(VecF3[] array) {
+    public static FloatBuffer toBuffer(Float3Vector[] array) {
         FloatBuffer result = FloatBuffer.allocate(array.length * 3);
 
         for (int i = 0; i < array.length; i++) {
@@ -222,7 +222,7 @@ public final class VectorFMath {
      *            The array of vectors.
      * @return The new FloatBuffer
      */
-    public static FloatBuffer toBuffer(VecF4[] array) {
+    public static FloatBuffer toBuffer(Float4Vector[] array) {
         FloatBuffer result = FloatBuffer.allocate(array.length * 4);
 
         for (int i = 0; i < array.length; i++) {
@@ -237,7 +237,7 @@ public final class VectorFMath {
     /**
      * Helper method to create a FloatBuffer from an list of vectors.
      * 
-     * @param array
+     * @param list
      *            The List of vectors.
      * @return The new FloatBuffer
      */
@@ -260,10 +260,10 @@ public final class VectorFMath {
      *            The List of vectors.
      * @return The new FloatBuffer
      */
-    public static FloatBuffer vec2ListToBuffer(List<VecF2> list) {
+    public static FloatBuffer vec2ListToBuffer(List<Float2Vector> list) {
         FloatBuffer result = FloatBuffer.allocate(list.size() * 2);
 
-        for (VecF2 v : list) {
+        for (Float2Vector v : list) {
             result.put(v.asBuffer());
         }
 
@@ -279,10 +279,10 @@ public final class VectorFMath {
      *            The List of vectors.
      * @return The new FloatBuffer
      */
-    public static FloatBuffer vec3ListToBuffer(List<VecF3> list) {
+    public static FloatBuffer vec3ListToBuffer(List<Float3Vector> list) {
         FloatBuffer result = FloatBuffer.allocate(list.size() * 3);
 
-        for (VecF3 v : list) {
+        for (Float3Vector v : list) {
             result.put(v.asBuffer());
         }
 
@@ -298,10 +298,10 @@ public final class VectorFMath {
      *            The List of vectors.
      * @return The new FloatBuffer
      */
-    public static FloatBuffer vec4ListToBuffer(List<VecF4> list) {
+    public static FloatBuffer vec4ListToBuffer(List<Float4Vector> list) {
         FloatBuffer result = FloatBuffer.allocate(list.size() * 4);
 
-        for (VecF4 v : list) {
+        for (Float4Vector v : list) {
             result.put(v.asBuffer());
         }
 
@@ -326,11 +326,11 @@ public final class VectorFMath {
      *            The end point's control vector.
      * @return The array of points on the new bezier curve.
      */
-    public static VecF4[] bezierCurve(int steps, VecF4 startLocation, VecF3 startControl, VecF3 endControl,
-            VecF4 endLocation) {
-        VecF4[] newBezierPoints = new VecF4[steps];
+    public static Float4Vector[] bezierCurve(int steps, Float4Vector startLocation, Float3Vector startControl,
+            Float3Vector endControl, Float4Vector endLocation) {
+        Float4Vector[] newBezierPoints = new Float4Vector[steps];
         for (int i = 0; i < steps; i++) {
-            newBezierPoints[i] = new VecF4(0f, 0f, 0f, 1f);
+            newBezierPoints[i] = new Float4Vector(0f, 0f, 0f, 1f);
         }
 
         float t = 1f / steps;
@@ -414,11 +414,11 @@ public final class VectorFMath {
      *            The end point's control vector.
      * @return The array of points on the new bezier curve.
      */
-    public static VecF3[] degreesBezierCurve(int steps, VecF3 startLocation, VecF3 startControl, VecF3 endControl,
-            VecF3 endLocation) {
-        VecF3[] newBezierPoints = new VecF3[steps];
+    public static Float3Vector[] degreesBezierCurve(int steps, Float3Vector startLocation, Float3Vector startControl,
+            Float3Vector endControl, Float3Vector endLocation) {
+        Float3Vector[] newBezierPoints = new Float3Vector[steps];
         for (int i = 0; i < steps; i++) {
-            newBezierPoints[i] = new VecF3();
+            newBezierPoints[i] = new Float3Vector();
         }
 
         float t = 1f / steps;

@@ -37,11 +37,9 @@ public class Perlin2D extends Texture2D {
      *            The width of this texture.
      * @param height
      *            The height of this texture.
-     * @param depth
-     *            The depth of this texture.
      */
-    public Perlin2D(int gLMultiTexUnit, int width, int height) {
-        super(gLMultiTexUnit);
+    public Perlin2D(int glMultitexUnit, int width, int height) {
+        super(glMultitexUnit);
 
         this.width = width;
         this.height = height;

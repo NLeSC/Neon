@@ -6,7 +6,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 
 import nl.esciencecenter.neon.exceptions.UninitializedException;
-import nl.esciencecenter.neon.textures.RBOTexture;
+import nl.esciencecenter.neon.textures.RenderBufferTexture;
 import nl.esciencecenter.neon.textures.Texture2D;
 
 import org.slf4j.Logger;
@@ -34,15 +34,15 @@ import org.slf4j.LoggerFactory;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class FBO {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FBO.class);
+public class FrameBufferObject {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FrameBufferObject.class);
 
     /** OpenGL internal pointer to the framebuffer */
     private final IntBuffer fboPointer;
     /** OpenGL internal pointer to the renderbuffer */
     private final IntBuffer rboPointer;
     /** OpenGL internal pointer to the renderbuffer texture (storage) */
-    private final RBOTexture rboTexture;
+    private final RenderBufferTexture rboTexture;
 
     /** The width and height for this framebuffer */
     private final int width, height;
@@ -51,7 +51,7 @@ public class FBO {
     private boolean initialized = false;
 
     /**
-     * Basic constructor for FBO.
+     * Basic constructor for FrameBufferObject.
      * 
      * @param width
      *            The width for this framebuffer object and it's final output
@@ -61,20 +61,20 @@ public class FBO {
      *            texture.
      * @param glMultitexUnit
      *            The OpenGL-internal multitexture unit to be associated with
-     *            this FBO's storage texture.
+     *            this FrameBufferObject's storage texture.
      */
-    public FBO(int width, int height, int glMultitexUnit) {
+    public FrameBufferObject(int width, int height, int glMultitexUnit) {
         this.width = width;
         this.height = height;
 
         fboPointer = IntBuffer.allocate(1);
         rboPointer = IntBuffer.allocate(1);
 
-        rboTexture = new RBOTexture(width, height, glMultitexUnit);
+        rboTexture = new RenderBufferTexture(width, height, glMultitexUnit);
     }
 
     /**
-     * OpenGL initialization method. Call this before using this FBO.
+     * OpenGL initialization method. Call this before using this FrameBufferObject.
      * 
      * @param gl
      *            The opengl instance.
@@ -125,7 +125,7 @@ public class FBO {
                 LOGGER.error(e.getMessage());
             }
 
-            // Unbind. The FBO is now ready for use.
+            // Unbind. The FrameBufferObject is now ready for use.
             gl.glBindFramebuffer(GL3.GL_FRAMEBUFFER, 0);
 
             initialized = true;
@@ -151,7 +151,7 @@ public class FBO {
                 LOGGER.error("GL ERROR(s) " + exceptionMessage + " : ");
                 while (GL.GL_NO_ERROR != error) {
                     Exception exception = new Exception(" GL Error 0x" + Integer.toHexString(error));
-                    LOGGER.error("Error in OpenGL operation while initializing FBO", exception);
+                    LOGGER.error("Error in OpenGL operation while initializing FrameBufferObject", exception);
                     error = gl.glGetError();
                 }
                 return false;
@@ -205,7 +205,7 @@ public class FBO {
      * @param gl
      *            The opengl instance
      * @throws UninitializedException
-     *             if this FBO was not initialized before use with the
+     *             if this FrameBufferObject was not initialized before use with the
      *             {@link #init(GL3)} method.
      */
     public void bind(GL3 gl) throws UninitializedException {
@@ -213,12 +213,12 @@ public class FBO {
             rboTexture.use(gl);
             gl.glBindFramebuffer(GL3.GL_FRAMEBUFFER, fboPointer.get(0));
         } else {
-            throw new UninitializedException("FBO not initialized.");
+            throw new UninitializedException("FrameBufferObject not initialized.");
         }
     }
 
     /**
-     * Getter for the internal storage texture for this FBO.
+     * Getter for the internal storage texture for this FrameBufferObject.
      * 
      * @return The storage texture.
      */
@@ -227,7 +227,7 @@ public class FBO {
     }
 
     /**
-     * Method to unbind this (and any other) FBO, once again outputting any
+     * Method to unbind this (and any other) FrameBufferObject, once again outputting any
      * render actions directly to the screen.
      * 
      * @param gl
@@ -238,7 +238,7 @@ public class FBO {
     }
 
     /**
-     * Safely remove this FBO completely from the opengl context.
+     * Safely remove this FrameBufferObject completely from the opengl context.
      * 
      * @param gl
      *            The opengl instance.

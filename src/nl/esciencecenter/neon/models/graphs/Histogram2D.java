@@ -4,9 +4,9 @@ import javax.media.opengl.GL3;
 
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.math.Color4;
-import nl.esciencecenter.neon.math.MatF4;
-import nl.esciencecenter.neon.math.MatrixFMath;
-import nl.esciencecenter.neon.math.VecF3;
+import nl.esciencecenter.neon.math.Float4Matrix;
+import nl.esciencecenter.neon.math.FloatMatrixMath;
+import nl.esciencecenter.neon.math.Float3Vector;
 import nl.esciencecenter.neon.models.LeftBottomQuad;
 import nl.esciencecenter.neon.shaders.ShaderProgram;
 import nl.esciencecenter.neon.text.MultiColorText;
@@ -23,7 +23,7 @@ public class Histogram2D {
     private static final float DEFAULT_WIDTH = 1f;
     private static final float DEFAULT_HEIGHT = 1f;
 
-    private final VecF3 leftBottomCoordinates;
+    private final Float3Vector leftBottomCoordinates;
 
     /** Ubuntu fontset is used for HUD elements */
     private static final int fontSet = FontFactory.UBUNTU;
@@ -32,7 +32,7 @@ public class Histogram2D {
     private final int FONTSIZE = 20;
 
     public Histogram2D(Color4[] barColors, String[] labels) {
-        this.leftBottomCoordinates = new VecF3();
+        this.leftBottomCoordinates = new Float3Vector();
 
         int numBars = barColors.length;
 
@@ -43,7 +43,7 @@ public class Histogram2D {
         for (int i = 0; i < numBars; i++) {
             data[i] = 0f;
 
-            VecF3 newLeftBottom = leftBottomCoordinates.add(new VecF3(i * widthPerQuad, 0f, 0f));
+            Float3Vector newLeftBottom = leftBottomCoordinates.add(new Float3Vector(i * widthPerQuad, 0f, 0f));
             bars[i] = new LeftBottomQuad(DEFAULT_HEIGHT, widthPerQuad, newLeftBottom);
         }
 
@@ -82,20 +82,20 @@ public class Histogram2D {
         }
     }
 
-    public void drawLabels(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+    public void drawLabels(GL3 gl, Float4Matrix mv, ShaderProgram program) throws UninitializedException {
         float widthPerQuad = DEFAULT_WIDTH / bars.length;
 
         float scale = .0025f;
 
-        MatF4 scaleMatrix = MatrixFMath.scale(scale);
-        MatF4 scaledRotationMatrix = scaleMatrix.mul(MatrixFMath.rotationZ(-90f));
+        Float4Matrix scaleMatrix = FloatMatrixMath.scale(scale);
+        Float4Matrix scaledRotationMatrix = scaleMatrix.mul(FloatMatrixMath.rotationZ(-90f));
 
         for (int i = 0; i < bars.length; i++) {
             MultiColorText label = barLabels[i];
-            VecF3 newLeftBottom = leftBottomCoordinates.add(new VecF3(0.5f, ((widthPerQuad / scale) * i)
+            Float3Vector newLeftBottom = leftBottomCoordinates.add(new Float3Vector(0.5f, ((widthPerQuad / scale) * i)
                     + ((.2f * widthPerQuad / scale)), 0f));
 
-            MatF4 scaledRotationTranslatedMatrix = scaledRotationMatrix.mul(MatrixFMath.translate(newLeftBottom));
+            Float4Matrix scaledRotationTranslatedMatrix = scaledRotationMatrix.mul(FloatMatrixMath.translate(newLeftBottom));
 
             program.setUniformMatrix("MVMatrix", mv.mul(scaledRotationTranslatedMatrix));
 
@@ -115,7 +115,7 @@ public class Histogram2D {
         for (int i = 0; i < bars.length; i++) {
             bars[i].delete(gl);
 
-            VecF3 newLeftBottom = leftBottomCoordinates.add(new VecF3(i * widthPerQuad, 0f, 0f));
+            Float3Vector newLeftBottom = leftBottomCoordinates.add(new Float3Vector(i * widthPerQuad, 0f, 0f));
             bars[i] = new LeftBottomQuad(newData[i] * DEFAULT_HEIGHT, widthPerQuad, newLeftBottom);
             bars[i].init(gl);
         }

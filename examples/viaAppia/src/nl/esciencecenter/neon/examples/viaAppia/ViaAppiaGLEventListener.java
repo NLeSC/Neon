@@ -8,17 +8,17 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLContext;
 
 import nl.esciencecenter.neon.NeonGLEventListener;
-import nl.esciencecenter.neon.datastructures.IntPBO;
+import nl.esciencecenter.neon.datastructures.IntPixelBufferObject;
 import nl.esciencecenter.neon.datastructures.InterpolatedGeoGrid;
 import nl.esciencecenter.neon.exceptions.InverseNotAvailableException;
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.input.InputHandler;
 import nl.esciencecenter.neon.math.Color4;
-import nl.esciencecenter.neon.math.MatF4;
-import nl.esciencecenter.neon.math.MatrixFMath;
+import nl.esciencecenter.neon.math.Float4Matrix;
+import nl.esciencecenter.neon.math.FloatMatrixMath;
 import nl.esciencecenter.neon.math.Point4;
-import nl.esciencecenter.neon.math.VecF3;
-import nl.esciencecenter.neon.math.VecF4;
+import nl.esciencecenter.neon.math.Float3Vector;
+import nl.esciencecenter.neon.math.Float4Vector;
 import nl.esciencecenter.neon.models.Axis;
 import nl.esciencecenter.neon.models.Model;
 import nl.esciencecenter.neon.models.graphs.BezierGraph2D;
@@ -81,7 +81,7 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
     private final ViaAppiaSettings settings = ViaAppiaSettings.getInstance();
 
     // Pixelbuffer Object, we use this to get screenshots.
-    private IntPBO finalPBO;
+    private IntPixelBufferObject finalPBO;
 
     // Global (singleton) inputhandler instance.
     private final ViaAppiaInputHandler inputHandler = ViaAppiaInputHandler.getInstance();
@@ -100,7 +100,7 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
             (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
             (float) (getRadius() * Math.cos(getFtheta())));
     final Point4 at = new Point4(0.0f, 0.0f, 0.0f);
-    final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
+    final Float4Vector up = new Float4Vector(0.0f, 1.0f, 0.0f, 0.0f);
 
     /**
      * Basic constructor for NeonExampleGLEventListener.
@@ -193,16 +193,16 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
         }
 
         // Here we define the Axis models, and initialize them.
-        xAxis = new Axis(new VecF3(-1f, 0f, 0f), new VecF3(1f, 0f, 0f), .1f, .02f);
+        xAxis = new Axis(new Float3Vector(-1f, 0f, 0f), new Float3Vector(1f, 0f, 0f), .1f, .02f);
         xAxis.init(gl);
-        yAxis = new Axis(new VecF3(0f, -1f, 0f), new VecF3(0f, 1f, 0f), .1f, .02f);
+        yAxis = new Axis(new Float3Vector(0f, -1f, 0f), new Float3Vector(0f, 1f, 0f), .1f, .02f);
         yAxis.init(gl);
-        zAxis = new Axis(new VecF3(0f, 0f, -1f), new VecF3(0f, 0f, 1f), .1f, .02f);
+        zAxis = new Axis(new Float3Vector(0f, 0f, -1f), new Float3Vector(0f, 0f, 1f), .1f, .02f);
         zAxis.init(gl);
 
         // Here we define a PixelBufferObject, which is used for getting
         // screenshots.
-        finalPBO = new IntPBO(canvasWidth, canvasHeight);
+        finalPBO = new IntPixelBufferObject(canvasWidth, canvasHeight);
         finalPBO.init(gl);
 
         Color4[] vegetationColors = new Color4[] { Color4.BLUE, new Color4("00755E"), new Color4("014421"),
@@ -232,14 +232,14 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
         // float[][] gridifiedData = intpGeoGrid.calculate();
         //
         // if (gridifiedData != null) {
-        // VecF4[][] points = new VecF4[GRID_HEIGHT][GRID_WIDTH], colors =
-        // new VecF4[GRID_HEIGHT][GRID_WIDTH];
+        // Float4Vector[][] points = new Float4Vector[GRID_HEIGHT][GRID_WIDTH], colors =
+        // new Float4Vector[GRID_HEIGHT][GRID_WIDTH];
         //
         // Dimensions dims = new Dimensions(0f, 1f);
         //
         // for (int latIndex = 0; latIndex < GRID_HEIGHT; latIndex++) {
         // for (int lonIndex = 0; lonIndex < GRID_WIDTH; lonIndex++) {
-        // points[latIndex][lonIndex] = new VecF4((float) latIndex / (float)
+        // points[latIndex][lonIndex] = new Float4Vector((float) latIndex / (float)
         // GRID_HEIGHT, 0f,
         // (float) lonIndex / (float) GRID_WIDTH, 1f);
         //
@@ -303,18 +303,18 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
         // Construct a modelview matrix out of camera viewpoint and angle.
-        MatF4 modelViewMatrix = MatrixFMath.lookAt(eye, at, up);
+        Float4Matrix modelViewMatrix = FloatMatrixMath.lookAt(eye, at, up);
 
         // Translate the camera backwards according to the inputhandler's view
         // distance setting.
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.translate(new VecF3(inputHandler.getTranslation().getX(),
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.translate(new Float3Vector(inputHandler.getTranslation().getX(),
                 inputHandler.getTranslation().getY(), inputHandler.getViewDist())));
 
         // Rotate tha camera according to the rotation angles defined in the
         // inputhandler.
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationZ(inputHandler.getRotation().getZ()));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.rotationX(inputHandler.getRotation().getX()));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.rotationY(inputHandler.getRotation().getY()));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.rotationZ(inputHandler.getRotation().getZ()));
 
         // Render the scene with these modelview settings. In this case, the end
         // result of this action will be that the AxesFBO has been filled with
@@ -325,12 +325,12 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
 
         if (pr != null) {
             try {
-                VecF4 pickResult = MatrixFMathExt.unProject(makePerspectiveMatrix(), modelViewMatrix, new float[] { 0,
-                        0, canvasWidth, canvasHeight }, new VecF3(pr.x, pr.y, -1f));
+                Float4Vector pickResult = MatrixFMathExt.unProject(makePerspectiveMatrix(), modelViewMatrix, new float[] { 0,
+                        0, canvasWidth, canvasHeight }, new Float3Vector(pr.x, pr.y, -1f));
                 System.out.println("Pick result 1: " + pickResult);
 
                 pickResult = MatrixFMathExt.unProject(makePerspectiveMatrix(), modelViewMatrix, new float[] { 0, 0,
-                        canvasWidth, canvasHeight }, new VecF3(pr.x, pr.y, 1f));
+                        canvasWidth, canvasHeight }, new Float3Vector(pr.x, pr.y, 1f));
                 System.out.println("Pick result 2: " + pickResult);
             } catch (InverseNotAvailableException e) {
                 e.printStackTrace();
@@ -349,8 +349,8 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
         contextOff(drawable);
     }
 
-    private MatF4 makePerspectiveMatrix() {
-        return MatrixFMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
+    private Float4Matrix makePerspectiveMatrix() {
+        return FloatMatrixMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
     }
 
     /**
@@ -362,9 +362,9 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
      * @param mv
      *            The current modelview matrix.
      */
-    private void renderScene(GL3 gl, MatF4 mv) {
+    private void renderScene(GL3 gl, Float4Matrix mv) {
         try {
-            // renderAxes(gl, new MatF4(mv), axesShaderProgram);
+            // renderAxes(gl, new Float4Matrix(mv), axesShaderProgram);
 
             renderScatterplot(gl, mv, textShaderProgram);
 
@@ -377,15 +377,15 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
             // renderHistogram(gl, mv, axesShaderProgram);
             // textShaderProgram.setUniformMatrix("PMatrix",
             // makePerspectiveMatrix());
-            // hist.drawLabels(gl, mv.mul(MatrixFMath.translate(1, 0, 0)),
+            // hist.drawLabels(gl, mv.mul(FloatMatrixMath.translate(1, 0, 0)),
             // textShaderProgram);
             //
             // ModelViewStack mvStack = new ModelViewStack();
-            // mvStack.putTop(MatrixFMath.translate(-1f, 0f, -1f));
+            // mvStack.putTop(FloatMatrixMath.translate(-1f, 0f, -1f));
             // lineGraph.drawLabels(gl, mv, mvStack, textShaderProgram);
             //
             // mvStack = new ModelViewStack();
-            // mvStack.putTop(MatrixFMath.translate(-1f, 0f, 0f));
+            // mvStack.putTop(FloatMatrixMath.translate(-1f, 0f, 0f));
             // bezierGraph.drawLabels(gl, mv, mvStack, textShaderProgram);
 
         } catch (final UninitializedException e) {
@@ -394,7 +394,7 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
     }
 
     // /**
-    // * Axes rendering method. This assumes rendering to an {@link FBO}. This
+    // * Axes rendering method. This assumes rendering to an {@link FrameBufferObject}. This
     // is
     // * not a necessity, but it allows for post processing.
     // *
@@ -405,19 +405,19 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
     // * @param target
     // * The {@link ShaderProgram} to use for rendering.
     // * @param target
-    // * The target {@link FBO} to render to.
+    // * The target {@link FrameBufferObject} to render to.
     // * @throws UninitializedException
-    // * if either the shader Program or FBO used in this method are
+    // * if either the shader Program or FrameBufferObject used in this method are
     // * uninitialized before use.
     // */
-    // private void renderAxes(GL3 gl, MatF4 mv, ShaderProgram program) throws
+    // private void renderAxes(GL3 gl, Float4Matrix mv, ShaderProgram program) throws
     // UninitializedException {
     // // Stage the Perspective and Modelview matrixes in the ShaderProgram.
     // program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
     // program.setUniformMatrix("MVMatrix", mv);
     //
     // // Stage the Color vector in the ShaderProgram.
-    // program.setUniformVector("Color", new VecF4(1f, 0f, 0f, 1f));
+    // program.setUniformVector("Color", new Float4Vector(1f, 0f, 0f, 1f));
     //
     // // Load all staged variables into the GPU, check for errors and
     // // omissions.
@@ -427,11 +427,11 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
     // xAxis.draw(gl, program);
     //
     // // Do this 2 more times, with different colors and models.
-    // program.setUniformVector("Color", new VecF4(0f, 1f, 0f, 1f));
+    // program.setUniformVector("Color", new Float4Vector(0f, 1f, 0f, 1f));
     // program.use(gl);
     // yAxis.draw(gl, program);
     //
-    // program.setUniformVector("Color", new VecF4(0f, 0f, 1f, 1f));
+    // program.setUniformVector("Color", new Float4Vector(0f, 0f, 1f, 1f));
     // program.use(gl);
     // zAxis.draw(gl, program);
     // }
@@ -447,11 +447,11 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
     // * The {@link ShaderProgram} to use for rendering.
     // * @throws UninitializedException
     // */
-    // private void renderHistogram(GL3 gl, MatF4 mv, ShaderProgram program)
+    // private void renderHistogram(GL3 gl, Float4Matrix mv, ShaderProgram program)
     // throws UninitializedException {
     // // Stage the Perspective and Modelview matrixes in the ShaderProgram.
     // program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
-    // program.setUniformMatrix("MVMatrix", mv.mul(MatrixFMath.translate(1, 0,
+    // program.setUniformMatrix("MVMatrix", mv.mul(FloatMatrixMath.translate(1, 0,
     // 0)));
     //
     // // Load all staged variables into the GPU, check for errors and
@@ -498,7 +498,7 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
     // * The {@link ShaderProgram} to use for rendering.
     // * @throws UninitializedException
     // */
-    // private void renderLineGraph(GL3 gl, MatF4 mv, ShaderProgram program)
+    // private void renderLineGraph(GL3 gl, Float4Matrix mv, ShaderProgram program)
     // throws UninitializedException {
     // // Stage the Perspective and Modelview matrixes in the ShaderProgram.
     // program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
@@ -511,7 +511,7 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
     // }
     //
     // ModelViewStack mvStack = new ModelViewStack();
-    // mvStack.putTop(MatrixFMath.translate(-1f, 0f, -1f));
+    // mvStack.putTop(FloatMatrixMath.translate(-1f, 0f, -1f));
     //
     // lineGraph.draw(gl, mv, mvStack, program);
     // }
@@ -527,7 +527,7 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
     // * The {@link ShaderProgram} to use for rendering.
     // * @throws UninitializedException
     // */
-    // private void renderBezierGraph(GL3 gl, MatF4 mv, ShaderProgram program)
+    // private void renderBezierGraph(GL3 gl, Float4Matrix mv, ShaderProgram program)
     // throws UninitializedException {
     // // Stage the Perspective and Modelview matrixes in the ShaderProgram.
     // program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
@@ -539,7 +539,7 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
     // }
     //
     // ModelViewStack mvStack = new ModelViewStack();
-    // mvStack.putTop(MatrixFMath.translate(-1f, 0f, 0f));
+    // mvStack.putTop(FloatMatrixMath.translate(-1f, 0f, 0f));
     //
     // bezierGraph.draw(gl, mv, mvStack, program);
     // }
@@ -555,11 +555,11 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
      *            The {@link ShaderProgram} to use for rendering.
      * @throws UninitializedException
      */
-    private void renderScatterplot(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+    private void renderScatterplot(GL3 gl, Float4Matrix mv, ShaderProgram program) throws UninitializedException {
         // Stage the Perspective and Modelview matrixes in the ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
         program.setUniformMatrix("MVMatrix",
-                mv.mul(MatrixFMath.translate(-0.5f, 0, 4.5f)).mul(MatrixFMath.rotationX(-90)));
+                mv.mul(FloatMatrixMath.translate(-0.5f, 0, 4.5f)).mul(FloatMatrixMath.rotationX(-90)));
 
         // Load all staged variables into the GPU, check for errors and
         // omissions.
@@ -582,11 +582,11 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
      *            The {@link ShaderProgram} to use for rendering.
      * @throws UninitializedException
      */
-    private void renderVisualGrid(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+    private void renderVisualGrid(GL3 gl, Float4Matrix mv, ShaderProgram program) throws UninitializedException {
         // Stage the Perspective and Modelview matrixes in the ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
         program.setUniformMatrix("MVMatrix",
-                mv.mul(MatrixFMath.rotationX(180)).mul(MatrixFMath.rotationY(90)).mul(MatrixFMath.rotationZ(180)));
+                mv.mul(FloatMatrixMath.rotationX(180)).mul(FloatMatrixMath.rotationY(90)).mul(FloatMatrixMath.rotationZ(180)));
 
         // Load all staged variables into the GPU, check for errors and
         // omissions.
@@ -626,7 +626,7 @@ public class ViaAppiaGLEventListener extends NeonGLEventListener {
 
         // Resize the PixelBuffer Object that can be used for screenshots.
         finalPBO.delete(gl);
-        finalPBO = new IntPBO(w, h);
+        finalPBO = new IntPixelBufferObject(w, h);
         finalPBO.init(gl);
 
         // Release the context.

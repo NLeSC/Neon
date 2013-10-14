@@ -1,7 +1,7 @@
 package nl.esciencecenter.neon.models;
 
 import nl.esciencecenter.neon.exceptions.UninitializedException;
-import nl.esciencecenter.neon.math.VecF3;
+import nl.esciencecenter.neon.math.Float3Vector;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
@@ -51,7 +51,7 @@ public class BoundingBox {
      * @param newEntry
      *            A new vertex in the model to which this bounding box applies.
      */
-    public void resize(VecF3 newEntry) {
+    public void resize(Float3Vector newEntry) {
         if (initialized) {
             minX = Math.min(minX, newEntry.getX());
             minY = Math.min(minY, newEntry.getY());
@@ -81,11 +81,11 @@ public class BoundingBox {
      *             if this box was not initialized before this method was
      *             called.
      */
-    public VecF3 getMin() throws UninitializedException {
+    public Float3Vector getMin() throws UninitializedException {
         if (!initialized) {
             throw new UninitializedException("BoundingBox not initialized.");
         }
-        return new VecF3(minX, minY, minZ);
+        return new Float3Vector(minX, minY, minZ);
     }
 
     /**
@@ -96,11 +96,11 @@ public class BoundingBox {
      *             if this box was not initialized before this method was
      *             called.
      */
-    public VecF3 getMax() throws UninitializedException {
+    public Float3Vector getMax() throws UninitializedException {
         if (!initialized) {
             throw new UninitializedException("BoundingBox not initialized.");
         }
-        return new VecF3(maxX, maxY, maxZ);
+        return new Float3Vector(maxX, maxY, maxZ);
     }
 
     /**
@@ -135,11 +135,11 @@ public class BoundingBox {
      * 
      * @return The center point of this box.
      */
-    public VecF3 getCenter() {
+    public Float3Vector getCenter() {
         float x = maxX - (0.5f * getWidth());
         float y = maxY - (0.5f * getHeight());
         float z = maxZ - (0.5f * getDepth());
 
-        return new VecF3(x, y, z);
+        return new Float3Vector(x, y, z);
     }
 }

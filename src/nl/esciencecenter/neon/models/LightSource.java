@@ -1,7 +1,7 @@
 package nl.esciencecenter.neon.models;
 
 import nl.esciencecenter.neon.math.Color4;
-import nl.esciencecenter.neon.math.VecF3;
+import nl.esciencecenter.neon.math.Float3Vector;
 import nl.esciencecenter.neon.shaders.ShaderProgram;
 
 /* Copyright [2013] [Netherlands eScience Center]
@@ -28,9 +28,9 @@ import nl.esciencecenter.neon.shaders.ShaderProgram;
  */
 public class LightSource {
     private final Color4 color;
-    private final VecF3 position;
+    private final Float3Vector position;
 
-    public LightSource(Color4 color, VecF3 position) {
+    public LightSource(Color4 color, Float3Vector position) {
         this.color = color;
         this.position = position;
     }

@@ -45,7 +45,7 @@ import com.jogamp.opengl.math.geom.AABBox;
 public abstract class Region {
     /**
      * View based Anti-Aliasing, A Two pass region rendering, slower and more
-     * resource hungry (FBO), but AA is perfect. Otherwise the default fast one
+     * resource hungry (FrameBufferObject), but AA is perfect. Otherwise the default fast one
      * pass MSAA region rendering is being used.
      */
     public static final int VBAA_RENDERING_BIT = 1 << 0;

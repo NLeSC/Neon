@@ -25,7 +25,7 @@ import java.nio.Buffer;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class GLSLAttrib {
+public class GLSLAttribute {
     public static final int SIZE_FLOAT = 4;
     public static final int SIZE_SHORT = 2;
 
@@ -35,7 +35,7 @@ public class GLSLAttrib {
     private int vectorSize;
 
     /**
-     * Basic constructor for GLSLAttrib.
+     * Basic constructor for GLSLAttribute.
      * 
      * @param buffer
      *            The buffer to be associated with this attribute. The size for
@@ -48,7 +48,7 @@ public class GLSLAttrib {
      * @param vectorSize
      *            The size (number of places) per vector.
      */
-    public GLSLAttrib(Buffer buffer, String name, int numVectors, int vectorSize) {
+    public GLSLAttribute(Buffer buffer, String name, int numVectors, int vectorSize) {
         this.buffer = buffer;
         this.name = name;
         this.numVectors = numVectors;

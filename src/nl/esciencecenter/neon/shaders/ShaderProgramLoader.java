@@ -9,8 +9,8 @@ import javax.media.opengl.GL3;
 
 import nl.esciencecenter.neon.exceptions.CompilationFailedException;
 import nl.esciencecenter.neon.exceptions.UninitializedException;
-import nl.esciencecenter.neon.math.MatrixF;
-import nl.esciencecenter.neon.math.VectorF;
+import nl.esciencecenter.neon.math.FloatMatrix;
+import nl.esciencecenter.neon.math.FloatVector;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
@@ -283,7 +283,7 @@ public class ShaderProgramLoader {
      * @param var
      *            The value to be staged.
      */
-    public void setUniformVector(String pointerNameInShader, VectorF var) {
+    public void setUniformVector(String pointerNameInShader, FloatVector var) {
         for (ShaderProgram p : programs) {
             p.setUniformVector(pointerNameInShader, var);
         }
@@ -298,7 +298,7 @@ public class ShaderProgramLoader {
      * @param var
      *            The value to be staged.
      */
-    public void setUniformMatrix(String pointerNameInShader, MatrixF var) {
+    public void setUniformMatrix(String pointerNameInShader, FloatMatrix var) {
         for (ShaderProgram p : programs) {
             p.setUniformMatrix(pointerNameInShader, var);
         }

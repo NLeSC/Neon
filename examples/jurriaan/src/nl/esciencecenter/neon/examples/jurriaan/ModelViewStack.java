@@ -3,33 +3,33 @@ package nl.esciencecenter.neon.examples.jurriaan;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.esciencecenter.neon.math.MatF4;
+import nl.esciencecenter.neon.math.Float4Matrix;
 
 public class ModelViewStack {
-    private final List<MatF4> stack;
+    private final List<Float4Matrix> stack;
 
     public ModelViewStack() {
-        stack = new ArrayList<MatF4>();
+        stack = new ArrayList<Float4Matrix>();
     }
 
     public ModelViewStack(ModelViewStack old) {
-        stack = new ArrayList<MatF4>();
-        for (MatF4 oMV : old.stack) {
+        stack = new ArrayList<Float4Matrix>();
+        for (Float4Matrix oMV : old.stack) {
             stack.add(oMV);
         }
     }
 
-    public void putTop(MatF4 mv) {
+    public void putTop(Float4Matrix mv) {
         stack.add(mv);
     }
 
-    public void putBottom(MatF4 mv) {
+    public void putBottom(Float4Matrix mv) {
         stack.add(0, mv);
     }
 
-    public MatF4 calc(MatF4 input) {
-        MatF4 result = new MatF4(input);
-        for (MatF4 element : stack) {
+    public Float4Matrix calc(Float4Matrix input) {
+        Float4Matrix result = new Float4Matrix(input);
+        for (Float4Matrix element : stack) {
             result = result.mul(element);
         }
         return result;

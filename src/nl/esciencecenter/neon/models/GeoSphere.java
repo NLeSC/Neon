@@ -3,9 +3,9 @@ package nl.esciencecenter.neon.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.esciencecenter.neon.math.VecF3;
-import nl.esciencecenter.neon.math.VecF4;
-import nl.esciencecenter.neon.math.VectorFMath;
+import nl.esciencecenter.neon.math.Float3Vector;
+import nl.esciencecenter.neon.math.Float4Vector;
+import nl.esciencecenter.neon.math.FloatVectorMath;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
@@ -55,13 +55,13 @@ public class GeoSphere extends Model {
         this.latRibs = latRibs;
         this.lonRibs = lonRibs;
 
-        List<VecF4> points4List = new ArrayList<VecF4>();
-        List<VecF3> normals3List = new ArrayList<VecF3>();
-        List<VecF3> tCoords3List = new ArrayList<VecF3>();
+        List<Float4Vector> points4List = new ArrayList<Float4Vector>();
+        List<Float3Vector> normals3List = new ArrayList<Float3Vector>();
+        List<Float3Vector> tCoords3List = new ArrayList<Float3Vector>();
 
         for (int lon = 0; lon < lonRibs; lon++) {
             for (int lat = 0; lat < latRibs; lat++) {
-                VecF3[] quad = makeQuad(lat, lon, radius);
+                Float3Vector[] quad = makeQuad(lat, lon, radius);
 
                 points4List.addAll(makeVertices(quad));
                 normals3List.addAll(makeNormals(quad));
@@ -71,9 +71,9 @@ public class GeoSphere extends Model {
 
         setNumVertices(points4List.size());
 
-        setVertices(VectorFMath.vec4ListToBuffer(points4List));
-        setNormals(VectorFMath.vec3ListToBuffer(normals3List));
-        setTexCoords(VectorFMath.vec3ListToBuffer(tCoords3List));
+        setVertices(FloatVectorMath.vec4ListToBuffer(points4List));
+        setNormals(FloatVectorMath.vec3ListToBuffer(normals3List));
+        setTexCoords(FloatVectorMath.vec3ListToBuffer(tCoords3List));
     }
 
     /**
@@ -88,7 +88,7 @@ public class GeoSphere extends Model {
      *            The radius of the sphere.
      * @return a curved quad on the sphere surface.
      */
-    private VecF3[] makeQuad(int latRib, int lonRib, float radius) {
+    private Float3Vector[] makeQuad(int latRib, int lonRib, float radius) {
         float lonAnglePerRib = (float) ((2 * Math.PI) / lonRibs);
         float latAnglePerRib = (float) ((Math.PI) / latRibs);
 
@@ -113,11 +113,11 @@ public class GeoSphere extends Model {
         float z01 = (float) (Math.sin(startLatAngle) * Math.sin(stopLonAngle));
         float z11 = (float) (Math.sin(stopLatAngle) * Math.sin(stopLonAngle));
 
-        VecF3[] result = new VecF3[] { new VecF3(x00, y00, z00).mul(radius), new VecF3(x01, y01, z01).mul(radius),
-                new VecF3(x11, y11, z11).mul(radius),
+        Float3Vector[] result = new Float3Vector[] { new Float3Vector(x00, y00, z00).mul(radius), new Float3Vector(x01, y01, z01).mul(radius),
+                new Float3Vector(x11, y11, z11).mul(radius),
 
-                new VecF3(x00, y00, z00).mul(radius), new VecF3(x11, y11, z11).mul(radius),
-                new VecF3(x10, y10, z10).mul(radius) };
+                new Float3Vector(x00, y00, z00).mul(radius), new Float3Vector(x11, y11, z11).mul(radius),
+                new Float3Vector(x10, y10, z10).mul(radius) };
 
         return result;
     }
@@ -135,16 +135,16 @@ public class GeoSphere extends Model {
      *            The radius of the sphere.
      * @return The vertex coordinates corresponding to the given quad.
      */
-    private List<VecF4> makeVertices(VecF3[] quad) {
-        List<VecF4> vertices = new ArrayList<VecF4>();
+    private List<Float4Vector> makeVertices(Float3Vector[] quad) {
+        List<Float4Vector> vertices = new ArrayList<Float4Vector>();
 
-        vertices.add(new VecF4(quad[0], 1f));
-        vertices.add(new VecF4(quad[1], 1f));
-        vertices.add(new VecF4(quad[2], 1f));
+        vertices.add(new Float4Vector(quad[0], 1f));
+        vertices.add(new Float4Vector(quad[1], 1f));
+        vertices.add(new Float4Vector(quad[2], 1f));
 
-        vertices.add(new VecF4(quad[3], 1f));
-        vertices.add(new VecF4(quad[4], 1f));
-        vertices.add(new VecF4(quad[5], 1f));
+        vertices.add(new Float4Vector(quad[3], 1f));
+        vertices.add(new Float4Vector(quad[4], 1f));
+        vertices.add(new Float4Vector(quad[5], 1f));
 
         return vertices;
     }
@@ -162,16 +162,16 @@ public class GeoSphere extends Model {
      *            The radius of the sphere.
      * @return The normals corresponding to the given quad.
      */
-    private List<VecF3> makeNormals(VecF3[] quad) {
-        List<VecF3> normals = new ArrayList<VecF3>();
+    private List<Float3Vector> makeNormals(Float3Vector[] quad) {
+        List<Float3Vector> normals = new ArrayList<Float3Vector>();
 
-        normals.add(VectorFMath.normalize(quad[0]));
-        normals.add(VectorFMath.normalize(quad[1]));
-        normals.add(VectorFMath.normalize(quad[2]));
+        normals.add(FloatVectorMath.normalize(quad[0]));
+        normals.add(FloatVectorMath.normalize(quad[1]));
+        normals.add(FloatVectorMath.normalize(quad[2]));
 
-        normals.add(VectorFMath.normalize(quad[3]));
-        normals.add(VectorFMath.normalize(quad[4]));
-        normals.add(VectorFMath.normalize(quad[5]));
+        normals.add(FloatVectorMath.normalize(quad[3]));
+        normals.add(FloatVectorMath.normalize(quad[4]));
+        normals.add(FloatVectorMath.normalize(quad[5]));
 
         return normals;
     }
@@ -189,25 +189,25 @@ public class GeoSphere extends Model {
      *            The radius of the sphere.
      * @return The texture coordinates corresponding to the given quad.
      */
-    private List<VecF3> makeTexCoords(VecF3[] quad, int latRib, int lonRib) {
-        List<VecF3> texCoords = new ArrayList<VecF3>();
+    private List<Float3Vector> makeTexCoords(Float3Vector[] quad, int latRib, int lonRib) {
+        List<Float3Vector> texCoords = new ArrayList<Float3Vector>();
 
         if (texCoordsIn3D) {
-            texCoords.add((quad[0].add(new VecF3(1f, 1f, 1f))).div(2f));
-            texCoords.add((quad[1].add(new VecF3(1f, 1f, 1f))).div(2f));
-            texCoords.add((quad[2].add(new VecF3(1f, 1f, 1f))).div(2f));
+            texCoords.add((quad[0].add(new Float3Vector(1f, 1f, 1f))).div(2f));
+            texCoords.add((quad[1].add(new Float3Vector(1f, 1f, 1f))).div(2f));
+            texCoords.add((quad[2].add(new Float3Vector(1f, 1f, 1f))).div(2f));
 
-            texCoords.add((quad[3].add(new VecF3(1f, 1f, 1f))).div(2f));
-            texCoords.add((quad[4].add(new VecF3(1f, 1f, 1f))).div(2f));
-            texCoords.add((quad[5].add(new VecF3(1f, 1f, 1f))).div(2f));
+            texCoords.add((quad[3].add(new Float3Vector(1f, 1f, 1f))).div(2f));
+            texCoords.add((quad[4].add(new Float3Vector(1f, 1f, 1f))).div(2f));
+            texCoords.add((quad[5].add(new Float3Vector(1f, 1f, 1f))).div(2f));
         } else {
-            texCoords.add(new VecF3(((float) lonRib / (float) lonRibs), ((float) latRib / (float) latRibs), 0));
-            texCoords.add(new VecF3(((lonRib + 1f) / lonRibs), ((float) latRib / (float) latRibs), 0));
-            texCoords.add(new VecF3(((lonRib + 1f) / lonRibs), ((latRib + 1f) / latRibs), 0));
+            texCoords.add(new Float3Vector(((float) lonRib / (float) lonRibs), ((float) latRib / (float) latRibs), 0));
+            texCoords.add(new Float3Vector(((lonRib + 1f) / lonRibs), ((float) latRib / (float) latRibs), 0));
+            texCoords.add(new Float3Vector(((lonRib + 1f) / lonRibs), ((latRib + 1f) / latRibs), 0));
 
-            texCoords.add(new VecF3(((float) lonRib / lonRibs), (((float) latRib / (float) latRibs)), 0));
-            texCoords.add(new VecF3(((lonRib + 1f) / lonRibs), ((latRib + 1f) / latRibs), 0));
-            texCoords.add(new VecF3(((float) lonRib / lonRibs), ((latRib + 1f) / latRibs), 0));
+            texCoords.add(new Float3Vector(((float) lonRib / lonRibs), (((float) latRib / (float) latRibs)), 0));
+            texCoords.add(new Float3Vector(((lonRib + 1f) / lonRibs), ((latRib + 1f) / latRibs), 0));
+            texCoords.add(new Float3Vector(((float) lonRib / lonRibs), ((latRib + 1f) / latRibs), 0));
         }
 
         return texCoords;

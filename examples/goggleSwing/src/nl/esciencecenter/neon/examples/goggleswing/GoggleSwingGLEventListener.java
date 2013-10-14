@@ -8,16 +8,16 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLContext;
 
 import nl.esciencecenter.neon.NeonGLEventListener;
-import nl.esciencecenter.neon.datastructures.FBO;
-import nl.esciencecenter.neon.datastructures.IntPBO;
+import nl.esciencecenter.neon.datastructures.FrameBufferObject;
+import nl.esciencecenter.neon.datastructures.IntPixelBufferObject;
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.input.InputHandler;
 import nl.esciencecenter.neon.math.Color4;
-import nl.esciencecenter.neon.math.MatF4;
-import nl.esciencecenter.neon.math.MatrixFMath;
+import nl.esciencecenter.neon.math.Float4Matrix;
+import nl.esciencecenter.neon.math.FloatMatrixMath;
 import nl.esciencecenter.neon.math.Point4;
-import nl.esciencecenter.neon.math.VecF3;
-import nl.esciencecenter.neon.math.VecF4;
+import nl.esciencecenter.neon.math.Float3Vector;
+import nl.esciencecenter.neon.math.Float4Vector;
 import nl.esciencecenter.neon.models.Axis;
 import nl.esciencecenter.neon.models.Model;
 import nl.esciencecenter.neon.models.Quad;
@@ -51,7 +51,7 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
     private ShaderProgram axesShaderProgram, textShaderProgram, postprocessShader;
 
     // Example framebuffer objects for rendering to textures.
-    private FBO axesFBO, hudFBO;
+    private FrameBufferObject axesFBO, hudFBO;
 
     // Model definitions, the quad is necessary for Full-screen rendering. The
     // axes are the model we wish to render (example)
@@ -62,7 +62,7 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
     private final GoggleSwingSettings settings = GoggleSwingSettings.getInstance();
 
     // Pixelbuffer Object, we use this to get screenshots.
-    private IntPBO finalPBO;
+    private IntPixelBufferObject finalPBO;
 
     // Global (singleton) inputhandler instance.
     private final GoggleSwingInputHandler inputHandler = GoggleSwingInputHandler.getInstance();
@@ -85,7 +85,7 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
             (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
             (float) (getRadius() * Math.cos(getFtheta())));
     final Point4 at = new Point4(0.0f, 0.0f, 0.0f);
-    final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
+    final Float4Vector up = new Float4Vector(0.0f, 1.0f, 0.0f, 0.0f);
 
     /**
      * Basic constructor for GoggleSwingGLEventListener.
@@ -174,11 +174,11 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
         }
 
         // Here we define the Axis models, and initialize them.
-        xAxis = new Axis(new VecF3(-1f, 0f, 0f), new VecF3(1f, 0f, 0f), .1f, .02f);
+        xAxis = new Axis(new Float3Vector(-1f, 0f, 0f), new Float3Vector(1f, 0f, 0f), .1f, .02f);
         xAxis.init(gl);
-        yAxis = new Axis(new VecF3(0f, -1f, 0f), new VecF3(0f, 1f, 0f), .1f, .02f);
+        yAxis = new Axis(new Float3Vector(0f, -1f, 0f), new Float3Vector(0f, 1f, 0f), .1f, .02f);
         yAxis.init(gl);
-        zAxis = new Axis(new VecF3(0f, 0f, -1f), new VecF3(0f, 0f, 1f), .1f, .02f);
+        zAxis = new Axis(new Float3Vector(0f, 0f, -1f), new Float3Vector(0f, 0f, 1f), .1f, .02f);
         zAxis.init(gl);
 
         // Here we implement some text to show on the Heads-Up-Display (HUD),
@@ -190,20 +190,20 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
 
         // Here we define the Full screen quad model (for postprocessing), and
         // initialize it.
-        FSQ_postprocess = new Quad(2, 2, new VecF3(0, 0, 0.1f));
+        FSQ_postprocess = new Quad(2, 2, new Float3Vector(0, 0, 0.1f));
         FSQ_postprocess.init(gl);
 
         // Here we define some intermediate-step full screen textures (which are
         // needed for post processing), done with FrameBufferObjects, so we can
         // render directly to them.
-        axesFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
-        hudFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
+        axesFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
+        hudFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
         axesFBO.init(gl);
         hudFBO.init(gl);
 
         // Here we define a PixelBufferObject, which is used for getting
         // screenshots.
-        finalPBO = new IntPBO(canvasWidth, canvasHeight);
+        finalPBO = new IntPixelBufferObject(canvasWidth, canvasHeight);
         finalPBO.init(gl);
 
         // Release the context.
@@ -233,17 +233,17 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
         // Construct a modelview matrix out of camera viewpoint and angle.
-        MatF4 modelViewMatrix = MatrixFMath.lookAt(eye, at, up);
+        Float4Matrix modelViewMatrix = FloatMatrixMath.lookAt(eye, at, up);
 
         // Translate the camera backwards according to the inputhandler's view
         // distance setting.
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputHandler.getViewDist())));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.translate(new Float3Vector(0f, 0f, inputHandler.getViewDist())));
 
         // Rotate tha camera according to the rotation angles defined in the
         // inputhandler.
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationZ(inputHandler.getRotation().getZ()));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.rotationX(inputHandler.getRotation().getX()));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.rotationY(inputHandler.getRotation().getY()));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.rotationZ(inputHandler.getRotation().getZ()));
 
         // Render the scene with these modelview settings. In this case, the end
         // result of this action will be that the AxesFBO has been filled with
@@ -257,7 +257,7 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
             e1.printStackTrace();
         }
 
-        // Render the FBO's to screen, doing any post-processing actions that
+        // Render the FrameBufferObject's to screen, doing any post-processing actions that
         // might be wanted.
         renderTexturesToScreen(gl, canvasWidth, canvasHeight);
 
@@ -273,8 +273,8 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
         contextOff(drawable);
     }
 
-    private MatF4 makePerspectiveMatrix() {
-        return MatrixFMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
+    private Float4Matrix makePerspectiveMatrix() {
+        return FloatMatrixMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
     }
 
     /**
@@ -286,16 +286,16 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
      * @param mv
      *            The current modelview matrix.
      */
-    private void renderScene(GL3 gl, MatF4 mv) {
+    private void renderScene(GL3 gl, Float4Matrix mv) {
         try {
-            renderAxes(gl, new MatF4(mv), axesShaderProgram, axesFBO);
+            renderAxes(gl, new Float4Matrix(mv), axesShaderProgram, axesFBO);
         } catch (final UninitializedException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Axes rendering method. This assumes rendering to an {@link FBO}. This is
+     * Axes rendering method. This assumes rendering to an {@link FrameBufferObject}. This is
      * not a necessity, but it allows for post processing.
      * 
      * @param gl
@@ -305,12 +305,12 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
      * @param target
      *            The {@link ShaderProgram} to use for rendering.
      * @param target
-     *            The target {@link FBO} to render to.
+     *            The target {@link FrameBufferObject} to render to.
      * @throws UninitializedException
-     *             if either the shader Program or FBO used in this method are
+     *             if either the shader Program or FrameBufferObject used in this method are
      *             uninitialized before use.
      */
-    private void renderAxes(GL3 gl, MatF4 mv, ShaderProgram program, FBO target) throws UninitializedException {
+    private void renderAxes(GL3 gl, Float4Matrix mv, ShaderProgram program, FrameBufferObject target) throws UninitializedException {
         // Bind the FrameBufferObject so we can start rendering to it
         target.bind(gl);
         // Clear the renderbuffer to start with a clean (black) slate
@@ -321,7 +321,7 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
         program.setUniformMatrix("MVMatrix", mv);
 
         // Stage the Color vector in the ShaderProgram.
-        program.setUniformVector("Color", new VecF4(1f, 0f, 0f, 1f));
+        program.setUniformVector("Color", new Float4Vector(1f, 0f, 0f, 1f));
 
         // Load all staged variables into the GPU, check for errors and
         // omissions.
@@ -331,11 +331,11 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
         xAxis.draw(gl, program);
 
         // Do this 2 more times, with different colors and models.
-        program.setUniformVector("Color", new VecF4(0f, 1f, 0f, 1f));
+        program.setUniformVector("Color", new Float4Vector(0f, 1f, 0f, 1f));
         program.use(gl);
         yAxis.draw(gl, program);
 
-        program.setUniformVector("Color", new VecF4(0f, 0f, 1f, 1f));
+        program.setUniformVector("Color", new Float4Vector(0f, 0f, 1f, 1f));
         program.use(gl);
         zAxis.draw(gl, program);
 
@@ -355,11 +355,11 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
      * @param target
      *            The {@link ShaderProgram} to use for rendering.
      * @param target
-     *            The target {@link FBO} to render to.
+     *            The target {@link FrameBufferObject} to render to.
      * @throws UninitializedException
-     *             if the FBO used in this method is uninitialized before use.
+     *             if the FrameBufferObject used in this method is uninitialized before use.
      */
-    private void renderHUDText(GL3 gl, MatF4 mv, ShaderProgram program, FBO target) throws UninitializedException {
+    private void renderHUDText(GL3 gl, Float4Matrix mv, ShaderProgram program, FrameBufferObject target) throws UninitializedException {
         // Set a new text for the string
         String randomString = "Basic Test, random: " + Math.random();
         hudText.setString(gl, randomString, Color4.WHITE, fontSize);
@@ -402,8 +402,8 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
         // Stage the Perspective and Modelview matrixes in the ShaderProgram.
         // Because we want to render at point-blank range in this stage, we set
         // these to identity matrices.
-        postprocessShader.setUniformMatrix("MVMatrix", new MatF4());
-        postprocessShader.setUniformMatrix("PMatrix", new MatF4());
+        postprocessShader.setUniformMatrix("MVMatrix", new Float4Matrix());
+        postprocessShader.setUniformMatrix("PMatrix", new Float4Matrix());
 
         // Stage the width and height.
         postprocessShader.setUniform("scrWidth", width);
@@ -450,15 +450,15 @@ public class GoggleSwingGLEventListener extends NeonGLEventListener {
         axesFBO.delete(gl);
         hudFBO.delete(gl);
 
-        axesFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
-        hudFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
+        axesFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE0);
+        hudFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
 
         axesFBO.init(gl);
         hudFBO.init(gl);
 
         // Resize the PixelBuffer Object that can be used for screenshots.
         finalPBO.delete(gl);
-        finalPBO = new IntPBO(w, h);
+        finalPBO = new IntPixelBufferObject(w, h);
         finalPBO.init(gl);
 
         // Release the context.

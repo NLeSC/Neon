@@ -8,11 +8,11 @@ import javax.media.opengl.GLException;
 
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.input.InputHandler;
-import nl.esciencecenter.neon.math.MatF4;
-import nl.esciencecenter.neon.math.MatrixFMath;
+import nl.esciencecenter.neon.math.Float4Matrix;
+import nl.esciencecenter.neon.math.FloatMatrixMath;
 import nl.esciencecenter.neon.math.Point4;
-import nl.esciencecenter.neon.math.VecF3;
-import nl.esciencecenter.neon.math.VecF4;
+import nl.esciencecenter.neon.math.Float3Vector;
+import nl.esciencecenter.neon.math.Float4Vector;
 import nl.esciencecenter.neon.shaders.ShaderProgramLoader;
 import nl.esciencecenter.neon.text.jogampexperimental.Font;
 import nl.esciencecenter.neon.text.jogampexperimental.FontFactory;
@@ -243,23 +243,23 @@ public abstract class NeonGLEventListener implements GLEventListener {
      * @return A new Modelview Matrix that defines a rotated and translated view
      *         at coordinates (0,0,0).
      */
-    public MatF4 lookAt() {
+    public Float4Matrix lookAt() {
         Point4 eye = new Point4((float) (getRadius() * Math.sin(getFtheta()) * Math.cos(getPhi())),
                 (float) (getRadius() * Math.sin(getFtheta()) * Math.sin(getPhi())),
                 (float) (getRadius() * Math.cos(getFtheta())));
         Point4 at = new Point4(0.0f, 0.0f, 0.0f);
-        VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
+        Float4Vector up = new Float4Vector(0.0f, 1.0f, 0.0f, 0.0f);
 
-        MatF4 mv = MatrixFMath.lookAt(eye, at, up);
+        Float4Matrix mv = FloatMatrixMath.lookAt(eye, at, up);
 
         if (inputHandler == null) {
-            mv = mv.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputViewDistance)));
-            mv = mv.mul(MatrixFMath.rotationX(inputRotationX));
-            mv = mv.mul(MatrixFMath.rotationY(inputRotationY));
+            mv = mv.mul(FloatMatrixMath.translate(new Float3Vector(0f, 0f, inputViewDistance)));
+            mv = mv.mul(FloatMatrixMath.rotationX(inputRotationX));
+            mv = mv.mul(FloatMatrixMath.rotationY(inputRotationY));
         } else {
-            mv = mv.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputHandler.getViewDist())));
-            mv = mv.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
-            mv = mv.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
+            mv = mv.mul(FloatMatrixMath.translate(new Float3Vector(0f, 0f, inputHandler.getViewDist())));
+            mv = mv.mul(FloatMatrixMath.rotationX(inputHandler.getRotation().getX()));
+            mv = mv.mul(FloatMatrixMath.rotationY(inputHandler.getRotation().getY()));
         }
 
         return mv;
@@ -272,8 +272,8 @@ public abstract class NeonGLEventListener implements GLEventListener {
      * @return A new Perspective Matrix that defines a common perspective
      *         frustum.
      */
-    public MatF4 perspective() {
-        return MatrixFMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
+    public Float4Matrix perspective() {
+        return FloatMatrixMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
 
     }
 

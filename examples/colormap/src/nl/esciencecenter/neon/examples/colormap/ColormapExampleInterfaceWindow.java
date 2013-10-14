@@ -25,6 +25,7 @@ import nl.esciencecenter.neon.swing.ColormapInterpreter;
 import nl.esciencecenter.neon.swing.GoggleSwing;
 import nl.esciencecenter.neon.swing.RangeSlider;
 import nl.esciencecenter.neon.swing.RangeSliderUI;
+import nl.esciencecenter.neon.swing.SimpleImageIcon;
 
 /* Copyright 2013 Netherlands eScience Center
  * 
@@ -118,13 +119,17 @@ public class ColormapExampleInterfaceWindow extends JPanel {
 
         final ArrayList<Component> screenHcomponents = new ArrayList<Component>();
 
-        JComboBox dataModeComboBox = new JComboBox(settings.getDataModes());
+        JComboBox<String> dataModeComboBox = new JComboBox<String>(settings.getDataModes());
         ActionListener al = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JComboBox cb = (JComboBox) e.getSource();
+                if (e != null && e.getSource() instanceof JComboBox
+                        && e.getSource().getClass().getComponentType() == String.class) {
+                    @SuppressWarnings("unchecked")
+                    JComboBox<String> cb = (JComboBox<String>) e.getSource();
 
-                settings.selectDataMode(cb.getSelectedIndex());
+                    settings.selectDataMode(cb.getSelectedIndex());
+                }
             }
         };
         dataModeComboBox.addActionListener(al);
@@ -135,7 +140,7 @@ public class ColormapExampleInterfaceWindow extends JPanel {
 
         screenHcomponents.add(Box.createHorizontalGlue());
 
-        final JComboBox variablesComboBox = new JComboBox(settings.getVariables());
+        final JComboBox<String> variablesComboBox = new JComboBox<String>(settings.getVariables());
         variablesComboBox.setSelectedItem(settings.getSelectedVariableIndex());
         variablesComboBox.setMinimumSize(new Dimension(50, DEFAULT_HEIGHT));
         variablesComboBox.setMaximumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
@@ -143,8 +148,8 @@ public class ColormapExampleInterfaceWindow extends JPanel {
 
         screenVcomponents.add(GoggleSwing.hBoxedComponents(screenHcomponents, true));
 
-        final JComboBox colorMapsComboBox = ColormapInterpreter.getLegendJComboBox(new Dimension(DEFAULT_WIDTH,
-                DEFAULT_HEIGHT));
+        final JComboBox<SimpleImageIcon> colorMapsComboBox = ColormapInterpreter.getLegendJComboBox(new Dimension(
+                DEFAULT_WIDTH, DEFAULT_HEIGHT));
         colorMapsComboBox.setSelectedItem(settings.getSelectedColormapName());
         colorMapsComboBox.setMinimumSize(new Dimension(100, DEFAULT_HEIGHT));
         colorMapsComboBox.setMaximumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));

@@ -10,11 +10,11 @@ import javax.media.opengl.GLContext;
 import nl.esciencecenter.neon.NeonGLEventListener;
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.input.InputHandler;
-import nl.esciencecenter.neon.math.MatF4;
-import nl.esciencecenter.neon.math.MatrixFMath;
+import nl.esciencecenter.neon.math.Float4Matrix;
+import nl.esciencecenter.neon.math.FloatMatrixMath;
 import nl.esciencecenter.neon.math.Point4;
-import nl.esciencecenter.neon.math.VecF3;
-import nl.esciencecenter.neon.math.VecF4;
+import nl.esciencecenter.neon.math.Float3Vector;
+import nl.esciencecenter.neon.math.Float4Vector;
 import nl.esciencecenter.neon.models.GeoSphere;
 import nl.esciencecenter.neon.models.InvertedGeoSphere;
 import nl.esciencecenter.neon.shaders.ShaderProgram;
@@ -76,7 +76,7 @@ public class RealisticEarthGLEventListener extends NeonGLEventListener {
                                                                                 .sin(getPhi())),
                                                                         (float) (getRadius() * Math.cos(getFtheta())));
     final Point4                             at                 = new Point4(0.0f, 0.0f, 0.0f);
-    final VecF4                              up                 = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
+    final Float4Vector                              up                 = new Float4Vector(0.0f, 1.0f, 0.0f, 0.0f);
 
     long                                     time               = System.currentTimeMillis();
     double                                   totalMinutesPassed = 0.0;
@@ -91,7 +91,7 @@ public class RealisticEarthGLEventListener extends NeonGLEventListener {
         setInputRotationY(settings.getInitialRotationY());
         setInputViewDistance(settings.getInitialZoom());
 
-        inputHandler.setRotation(new VecF3(getInputRotationX(), getInputRotationY(), 0.0f));
+        inputHandler.setRotation(new Float3Vector(getInputRotationX(), getInputRotationY(), 0.0f));
         inputHandler.setViewDist(getInputViewDistance());
 
     }
@@ -233,16 +233,16 @@ public class RealisticEarthGLEventListener extends NeonGLEventListener {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
         // Construct a modelview matrix out of camera viewpoint and angle.
-        MatF4 modelViewMatrix = MatrixFMath.lookAt(eye, at, up);
+        Float4Matrix modelViewMatrix = FloatMatrixMath.lookAt(eye, at, up);
 
         // Translate the camera backwards according to the inputhandler's view
         // distance setting.
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputHandler.getViewDist())));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.translate(new Float3Vector(0f, 0f, inputHandler.getViewDist())));
 
         // Rotate tha camera according to the rotation angles defined in the
         // inputhandler.
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
-        modelViewMatrix = modelViewMatrix.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.rotationX(inputHandler.getRotation().getX()));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.rotationY(inputHandler.getRotation().getY()));
 
         // Render the scene with these modelview settings. In this case, the end
         // result of this action will be that the AxesFBO has been filled with
@@ -253,8 +253,8 @@ public class RealisticEarthGLEventListener extends NeonGLEventListener {
         contextOff(drawable);
     }
 
-    private MatF4 makePerspectiveMatrix() {
-        return MatrixFMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
+    private Float4Matrix makePerspectiveMatrix() {
+        return FloatMatrixMath.perspective(getFovy(), getAspect(), getzNear(), getzFar());
     }
 
     /**
@@ -266,7 +266,7 @@ public class RealisticEarthGLEventListener extends NeonGLEventListener {
      * @param mv
      *            The current modelview matrix.
      */
-    private void renderScene(GL3 gl, MatF4 mv) {
+    private void renderScene(GL3 gl, Float4Matrix mv) {
         try {
             // Bind the FrameBufferObject so we can start rendering to it
 
@@ -280,10 +280,10 @@ public class RealisticEarthGLEventListener extends NeonGLEventListener {
             double minutesPassed = timePassed / 60000.0;
             totalMinutesPassed += minutesPassed;
 
-            renderUniverse(gl, new MatF4(mv), shaderProgram_Universe);
-            renderGeoSphere(gl, new MatF4(mv), shaderProgram_Earth);
-            renderMoon(gl, new MatF4(mv), shaderProgram_Universe);
-            renderAtmosphere(gl, new MatF4(mv), shaderProgram_Atmosphere);
+            renderUniverse(gl, new Float4Matrix(mv), shaderProgram_Universe);
+            renderGeoSphere(gl, new Float4Matrix(mv), shaderProgram_Earth);
+            renderMoon(gl, new Float4Matrix(mv), shaderProgram_Universe);
+            renderAtmosphere(gl, new Float4Matrix(mv), shaderProgram_Atmosphere);
 
             // Unbind the FrameBufferObject, making it available for texture
             // extraction.
@@ -302,16 +302,16 @@ public class RealisticEarthGLEventListener extends NeonGLEventListener {
      * @param program
      *            The {@link ShaderProgram} to use for rendering.
      * @throws UninitializedException
-     *             if either the shader Program or FBO used in this method are
+     *             if either the shader Program or FrameBufferObject used in this method are
      *             uninitialized before use.
      */
-    private void renderUniverse(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+    private void renderUniverse(GL3 gl, Float4Matrix mv, ShaderProgram program) throws UninitializedException {
 
         // Stage the Perspective and Modelview matrixes in the
         // ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
         program.setUniformMatrix("MVMatrix", mv);
-        program.setUniformMatrix("NMatrix", MatrixFMath.getNormalMatrix(mv));
+        program.setUniformMatrix("NMatrix", FloatMatrixMath.getNormalMatrix(mv));
 
         // Stage the pointer to the textures
         program.setUniform("texture_map", universeTex.getMultitexNumber());
@@ -335,21 +335,21 @@ public class RealisticEarthGLEventListener extends NeonGLEventListener {
      * @param program
      *            The {@link ShaderProgram} to use for rendering.
      * @throws UninitializedException
-     *             if either the shader Program or FBO used in this method are
+     *             if either the shader Program or FrameBufferObject used in this method are
      *             uninitialized before use.
      */
-    private void renderGeoSphere(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+    private void renderGeoSphere(GL3 gl, Float4Matrix mv, ShaderProgram program) throws UninitializedException {
 
-        VecF4 rawLightPos = new VecF4(-30.0f, 4.0f, -20.0f, 0f);
+        Float4Vector rawLightPos = new Float4Vector(-30.0f, 4.0f, -20.0f, 0f);
         program.setUniformVector("lightPos", rawLightPos);
 
-        MatF4 yRotatedMV = mv.mul(MatrixFMath.rotationY((float) (totalMinutesPassed * 360f)));
+        Float4Matrix yRotatedMV = mv.mul(FloatMatrixMath.rotationY((float) (totalMinutesPassed * 360f)));
 
         // Stage the Perspective and Modelview matrixes in the
         // ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
         program.setUniformMatrix("MVMatrix", yRotatedMV);
-        program.setUniformMatrix("NMatrix", MatrixFMath.getNormalMatrix(mv));
+        program.setUniformMatrix("NMatrix", FloatMatrixMath.getNormalMatrix(mv));
 
         // Stage the pointer to the textures
         program.setUniform("colorTex", colorTex.getMultitexNumber());
@@ -375,16 +375,16 @@ public class RealisticEarthGLEventListener extends NeonGLEventListener {
      * @param program
      *            The {@link ShaderProgram} to use for rendering.
      * @throws UninitializedException
-     *             if either the shader Program or FBO used in this method are
+     *             if either the shader Program or FrameBufferObject used in this method are
      *             uninitialized before use.
      */
-    private void renderMoon(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+    private void renderMoon(GL3 gl, Float4Matrix mv, ShaderProgram program) throws UninitializedException {
 
         // Stage the Perspective and Modelview matrixes in the
         // ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
-        program.setUniformMatrix("MVMatrix", mv.mul(MatrixFMath.translate(785, 0, 0)));
-        program.setUniformMatrix("NMatrix", MatrixFMath.getNormalMatrix(mv));
+        program.setUniformMatrix("MVMatrix", mv.mul(FloatMatrixMath.translate(785, 0, 0)));
+        program.setUniformMatrix("NMatrix", FloatMatrixMath.getNormalMatrix(mv));
 
         // Stage the pointer to the textures
         program.setUniform("texture_map", moonTex.getMultitexNumber());
@@ -408,21 +408,21 @@ public class RealisticEarthGLEventListener extends NeonGLEventListener {
      * @param program
      *            The {@link ShaderProgram} to use for rendering.
      * @throws UninitializedException
-     *             if either the shader Program or FBO used in this method are
+     *             if either the shader Program or FrameBufferObject used in this method are
      *             uninitialized before use.
      */
-    private void renderAtmosphere(GL3 gl, MatF4 mv, ShaderProgram program) throws UninitializedException {
+    private void renderAtmosphere(GL3 gl, Float4Matrix mv, ShaderProgram program) throws UninitializedException {
 
-        VecF4 rawLightPos = new VecF4(-30.0f, 4.0f, -20.0f, 0f);
+        Float4Vector rawLightPos = new Float4Vector(-30.0f, 4.0f, -20.0f, 0f);
         program.setUniformVector("lightPos", rawLightPos);
 
-        MatF4 yRotatedMV = mv.mul(MatrixFMath.rotationY((float) (totalMinutesPassed * 360f)));
+        Float4Matrix yRotatedMV = mv.mul(FloatMatrixMath.rotationY((float) (totalMinutesPassed * 360f)));
 
         // Stage the Perspective and Modelview matrixes in the
         // ShaderProgram.
         program.setUniformMatrix("PMatrix", makePerspectiveMatrix());
         program.setUniformMatrix("MVMatrix", yRotatedMV);
-        program.setUniformMatrix("NMatrix", MatrixFMath.getNormalMatrix(mv));
+        program.setUniformMatrix("NMatrix", FloatMatrixMath.getNormalMatrix(mv));
 
         // Stage the pointer to the textures
         program.setUniform("cloudTex", cloudTex.getMultitexNumber());

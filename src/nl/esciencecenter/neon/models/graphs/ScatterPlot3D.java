@@ -6,13 +6,13 @@ import java.util.List;
 
 import javax.media.opengl.GL3;
 
-import nl.esciencecenter.neon.datastructures.GLSLAttrib;
-import nl.esciencecenter.neon.datastructures.VBO;
+import nl.esciencecenter.neon.datastructures.GLSLAttribute;
+import nl.esciencecenter.neon.datastructures.VertexBufferObject;
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.math.Color4;
 import nl.esciencecenter.neon.math.Point4;
-import nl.esciencecenter.neon.math.VecF4;
-import nl.esciencecenter.neon.math.VectorFMath;
+import nl.esciencecenter.neon.math.Float4Vector;
+import nl.esciencecenter.neon.math.FloatVectorMath;
 import nl.esciencecenter.neon.models.Model;
 import nl.esciencecenter.neon.shaders.ShaderProgram;
 
@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
 public class ScatterPlot3D extends Model {
     private final static Logger LOGGER = LoggerFactory.getLogger(ScatterPlot3D.class);
 
-    private final List<VecF4> points;
-    private final List<VecF4> colors;
+    private final List<Float4Vector> points;
+    private final List<Float4Vector> colors;
 
     private FloatBuffer vertexColors;
     private FloatBuffer newVertices, newColors;
@@ -33,8 +33,8 @@ public class ScatterPlot3D extends Model {
     public ScatterPlot3D() {
         super(VertexFormat.POINTS);
 
-        points = new ArrayList<VecF4>();
-        colors = new ArrayList<VecF4>();
+        points = new ArrayList<Float4Vector>();
+        colors = new ArrayList<Float4Vector>();
 
         this.setVertices(FloatBuffer.allocate(0));
         vertexColors = FloatBuffer.allocate(0);
@@ -76,8 +76,8 @@ public class ScatterPlot3D extends Model {
     }
 
     public void prepareBuffers() {
-        newVertices = VectorFMath.vec4ListToBuffer(points);
-        newColors = VectorFMath.vec4ListToBuffer(colors);
+        newVertices = FloatVectorMath.vec4ListToBuffer(points);
+        newColors = FloatVectorMath.vec4ListToBuffer(colors);
     }
 
     @Override
@@ -86,21 +86,21 @@ public class ScatterPlot3D extends Model {
             delete(gl);
 
             if (newVertices == null) {
-                this.setVertices(VectorFMath.vec4ListToBuffer(points));
+                this.setVertices(FloatVectorMath.vec4ListToBuffer(points));
             } else {
                 this.setVertices(newVertices);
             }
 
             if (newColors == null) {
-                this.vertexColors = VectorFMath.vec4ListToBuffer(colors);
+                this.vertexColors = FloatVectorMath.vec4ListToBuffer(colors);
             } else {
                 this.vertexColors = newColors;
             }
 
-            GLSLAttrib vAttrib = new GLSLAttrib(this.getVertices(), "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
-            GLSLAttrib cAttrib = new GLSLAttrib(this.vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
+            GLSLAttribute vAttrib = new GLSLAttribute(this.getVertices(), "MCvertex", GLSLAttribute.SIZE_FLOAT, 4);
+            GLSLAttribute cAttrib = new GLSLAttribute(this.vertexColors, "MCvertexColor", GLSLAttribute.SIZE_FLOAT, 4);
 
-            setVbo(new VBO(gl, vAttrib, cAttrib));
+            setVbo(new VertexBufferObject(gl, vAttrib, cAttrib));
 
             this.setNumVertices(getVertices().capacity() / 4);
 

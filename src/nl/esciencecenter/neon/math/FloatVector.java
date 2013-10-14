@@ -23,7 +23,7 @@ import java.nio.FloatBuffer;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public interface VectorF {
+public interface FloatVector {
 
     /**
      * Returns the FloatBuffer associated with this vector.

@@ -16,12 +16,12 @@ package nl.esciencecenter.neon.math;
  */
 
 /**
- * More specific implementation of a color VecF4.
+ * More specific implementation of a color Float4Vector.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class Color4 extends VecF4 {
+public class Color4 extends Float4Vector {
     public static final Color4 BLACK = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
     public static final Color4 WHITE = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -48,7 +48,7 @@ public class Color4 extends VecF4 {
      * @param v
      *            A vector to be cloned as a color value.
      */
-    public Color4(VecF4 v) {
+    public Color4(Float4Vector v) {
         super(v);
     }
 

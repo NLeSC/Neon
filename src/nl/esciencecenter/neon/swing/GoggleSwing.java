@@ -417,7 +417,7 @@ public final class GoggleSwing {
         final ArrayList<Component> hcomponents = new ArrayList<Component>();
 
         for (DropdownBoxesBoxItem boxItem : boxItems) {
-            JComboBox comboBox = new JComboBox();
+            JComboBox<String> comboBox = new JComboBox<String>();
             int index = 0;
             for (DropdownBoxItem optionItem : boxItem.items) {
                 comboBox.addItem(optionItem.label);

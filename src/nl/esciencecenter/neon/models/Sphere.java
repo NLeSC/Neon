@@ -3,9 +3,9 @@ package nl.esciencecenter.neon.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.esciencecenter.neon.math.VecF3;
-import nl.esciencecenter.neon.math.VecF4;
-import nl.esciencecenter.neon.math.VectorFMath;
+import nl.esciencecenter.neon.math.Float3Vector;
+import nl.esciencecenter.neon.math.Float4Vector;
+import nl.esciencecenter.neon.math.FloatVectorMath;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
@@ -36,10 +36,10 @@ public class Sphere extends Model {
     private static final float X = 0.525731112119133606f;
     private static final float Z = 0.850650808352039932f;
 
-    private static final VecF3[] vdata = { new VecF3(-X, 0f, Z), new VecF3(X, 0f, Z), new VecF3(-X, 0f, -Z),
-            new VecF3(X, 0f, -Z), new VecF3(0f, Z, X), new VecF3(0f, Z, -X), new VecF3(0f, -Z, X),
-            new VecF3(0f, -Z, -X), new VecF3(Z, X, 0f), new VecF3(-Z, X, 0f), new VecF3(Z, -X, 0f),
-            new VecF3(-Z, -X, 0f) };
+    private static final Float3Vector[] vdata = { new Float3Vector(-X, 0f, Z), new Float3Vector(X, 0f, Z), new Float3Vector(-X, 0f, -Z),
+            new Float3Vector(X, 0f, -Z), new Float3Vector(0f, Z, X), new Float3Vector(0f, Z, -X), new Float3Vector(0f, -Z, X),
+            new Float3Vector(0f, -Z, -X), new Float3Vector(Z, X, 0f), new Float3Vector(-Z, X, 0f), new Float3Vector(Z, -X, 0f),
+            new Float3Vector(-Z, -X, 0f) };
 
     private static final int[][] tindices = { { 1, 4, 0 }, { 4, 9, 0 }, { 4, 5, 9 }, { 8, 5, 4 }, { 1, 8, 4 },
             { 1, 10, 8 }, { 10, 3, 8 }, { 8, 3, 5 }, { 3, 2, 5 }, { 3, 7, 2 }, { 3, 10, 7 }, { 10, 6, 7 },
@@ -56,26 +56,26 @@ public class Sphere extends Model {
     public Sphere(int divisions, boolean texCoordsIn3D) {
         super(VertexFormat.TRIANGLES);
 
-        List<VecF3> points3List = new ArrayList<VecF3>();
+        List<Float3Vector> points3List = new ArrayList<Float3Vector>();
 
         for (int i = 0; i < tindices.length; i++) {
             makeVertices(points3List, vdata[tindices[i][0]], vdata[tindices[i][1]], vdata[tindices[i][2]], divisions);
         }
 
-        List<VecF4> points4List = new ArrayList<VecF4>();
+        List<Float4Vector> points4List = new ArrayList<Float4Vector>();
 
         for (int i = 0; i < points3List.size(); i++) {
-            points4List.add(new VecF4(points3List.get(i), 1f));
+            points4List.add(new Float4Vector(points3List.get(i), 1f));
         }
 
-        setNormals(VectorFMath.vec3ListToBuffer(points3List));
+        setNormals(FloatVectorMath.vec3ListToBuffer(points3List));
         if (texCoordsIn3D) {
-            setTexCoords(VectorFMath.vec3ListToBuffer(points3List));
+            setTexCoords(FloatVectorMath.vec3ListToBuffer(points3List));
         } else {
-            ArrayList<VecF3> texCoords2D = new ArrayList<VecF3>();
+            ArrayList<Float3Vector> texCoords2D = new ArrayList<Float3Vector>();
             float minPhi = 0f, maxPhi = 0f;
             float maxTheta = 0f;
-            for (VecF3 point : points3List) {
+            for (Float3Vector point : points3List) {
                 double x = point.getX();
                 double y = point.getY();
                 double z = point.getZ();
@@ -95,12 +95,12 @@ public class Sphere extends Model {
                 if (theta > maxTheta) {
                     maxTheta = theta;
                 }
-                texCoords2D.add(new VecF3(phi, theta, 0f));
+                texCoords2D.add(new Float3Vector(phi, theta, 0f));
             }
 
-            setTexCoords(VectorFMath.vec3ListToBuffer(texCoords2D));
+            setTexCoords(FloatVectorMath.vec3ListToBuffer(texCoords2D));
         }
-        setVertices(VectorFMath.vec4ListToBuffer(points4List));
+        setVertices(FloatVectorMath.vec4ListToBuffer(points4List));
 
         setNumVertices(points3List.size());
     }
@@ -120,15 +120,15 @@ public class Sphere extends Model {
      * @param div
      *            The The number of divisions for this triangle.
      */
-    private void makeVertices(List<VecF3> pointsList, VecF3 a, VecF3 b, VecF3 c, int div) {
+    private void makeVertices(List<Float3Vector> pointsList, Float3Vector a, Float3Vector b, Float3Vector c, int div) {
         if (div <= 0) {
             pointsList.add(a);
             pointsList.add(b);
             pointsList.add(c);
         } else {
-            VecF3 ab = new VecF3();
-            VecF3 ac = new VecF3();
-            VecF3 bc = new VecF3();
+            Float3Vector ab = new Float3Vector();
+            Float3Vector ac = new Float3Vector();
+            Float3Vector bc = new Float3Vector();
 
             ab.setX((a.getX() + b.getX()));
             ac.setX((a.getX() + c.getX()));
@@ -142,9 +142,9 @@ public class Sphere extends Model {
             ac.setZ((a.getZ() + c.getZ()));
             bc.setZ((b.getZ() + c.getZ()));
 
-            ab = VectorFMath.normalize(ab);
-            ac = VectorFMath.normalize(ac);
-            bc = VectorFMath.normalize(bc);
+            ab = FloatVectorMath.normalize(ab);
+            ac = FloatVectorMath.normalize(ac);
+            bc = FloatVectorMath.normalize(bc);
 
             makeVertices(pointsList, a, ab, ac, div - 1);
             makeVertices(pointsList, b, bc, ab, div - 1);

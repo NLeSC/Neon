@@ -6,13 +6,13 @@ import java.util.List;
 
 import javax.media.opengl.GL3;
 
-import nl.esciencecenter.neon.datastructures.GLSLAttrib;
-import nl.esciencecenter.neon.datastructures.VBO;
+import nl.esciencecenter.neon.datastructures.GLSLAttribute;
+import nl.esciencecenter.neon.datastructures.VertexBufferObject;
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.math.Color4;
 import nl.esciencecenter.neon.math.Point4;
-import nl.esciencecenter.neon.math.VecF4;
-import nl.esciencecenter.neon.math.VectorFMath;
+import nl.esciencecenter.neon.math.Float4Vector;
+import nl.esciencecenter.neon.math.FloatVectorMath;
 import nl.esciencecenter.neon.models.Model;
 import nl.esciencecenter.neon.shaders.ShaderProgram;
 
@@ -22,10 +22,10 @@ import org.slf4j.LoggerFactory;
 public class ScatterPlot3D extends Model {
     private final static Logger LOGGER = LoggerFactory.getLogger(ScatterPlot3D.class);
 
-    private final List<VecF4> points;
-    private final List<VecF4> colors;
+    private final List<Float4Vector> points;
+    private final List<Float4Vector> colors;
 
-    private final List<VecF4> drawableVertices;
+    private final List<Float4Vector> drawableVertices;
 
     private FloatBuffer vertexColors;
 
@@ -38,9 +38,9 @@ public class ScatterPlot3D extends Model {
     public ScatterPlot3D() {
         super(VertexFormat.POINTS);
 
-        points = new ArrayList<VecF4>();
-        colors = new ArrayList<VecF4>();
-        drawableVertices = new ArrayList<VecF4>();
+        points = new ArrayList<Float4Vector>();
+        colors = new ArrayList<Float4Vector>();
+        drawableVertices = new ArrayList<Float4Vector>();
 
         this.setVertices(FloatBuffer.allocate(0));
         vertexColors = FloatBuffer.allocate(0);
@@ -87,7 +87,7 @@ public class ScatterPlot3D extends Model {
     }
 
     public void finalizeSimpleAdd() {
-        for (VecF4 point : points) {
+        for (Float4Vector point : points) {
             if (point.getX() < minX) {
                 minX = point.getX();
             }
@@ -122,12 +122,12 @@ public class ScatterPlot3D extends Model {
         int numPoints = points.size();
 
         for (int i = 0; i < numPoints; i++) {
-            VecF4 current = points.get(i);
+            Float4Vector current = points.get(i);
             float newX = ((current.getX() - minX) / diffX);
             float newY = ((current.getY() - minY) / diffY);
             float newZ = ((current.getZ() - minZ) / diffZ);
 
-            drawableVertices.add(new VecF4(newX, newY, newZ, 1f));
+            drawableVertices.add(new Float4Vector(newX, newY, newZ, 1f));
         }
     }
 
@@ -135,13 +135,13 @@ public class ScatterPlot3D extends Model {
     public void init(GL3 gl) {
         delete(gl);
 
-        this.setVertices(VectorFMath.vec4ListToBuffer(drawableVertices));
-        this.vertexColors = VectorFMath.vec4ListToBuffer(colors);
+        this.setVertices(FloatVectorMath.vec4ListToBuffer(drawableVertices));
+        this.vertexColors = FloatVectorMath.vec4ListToBuffer(colors);
 
-        GLSLAttrib vAttrib = new GLSLAttrib(this.getVertices(), "MCvertex", GLSLAttrib.SIZE_FLOAT, 4);
-        GLSLAttrib cAttrib = new GLSLAttrib(this.vertexColors, "MCvertexColor", GLSLAttrib.SIZE_FLOAT, 4);
+        GLSLAttribute vAttrib = new GLSLAttribute(this.getVertices(), "MCvertex", GLSLAttribute.SIZE_FLOAT, 4);
+        GLSLAttribute cAttrib = new GLSLAttribute(this.vertexColors, "MCvertexColor", GLSLAttribute.SIZE_FLOAT, 4);
 
-        setVbo(new VBO(gl, vAttrib, cAttrib));
+        setVbo(new VertexBufferObject(gl, vAttrib, cAttrib));
 
         this.setNumVertices(points.size());
 

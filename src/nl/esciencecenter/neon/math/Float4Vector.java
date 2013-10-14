@@ -23,7 +23,7 @@ import java.nio.FloatBuffer;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class VecF4 implements VectorF {
+public class Float4Vector implements FloatVector {
     /** The number of elements in this vector */
     private static final int SIZE = 4;
 
@@ -32,7 +32,7 @@ public class VecF4 implements VectorF {
     /**
      * Creates a new vector, initialized to 0.
      */
-    public VecF4() {
+    public Float4Vector() {
         this.x = 0f;
         this.y = 0f;
         this.z = 0f;
@@ -45,7 +45,7 @@ public class VecF4 implements VectorF {
      * @param v
      *            The vector to be copied.
      */
-    public VecF4(VecF4 v) {
+    public Float4Vector(Float4Vector v) {
         this.x = v.getX();
         this.y = v.getY();
         this.z = v.getZ();
@@ -61,7 +61,7 @@ public class VecF4 implements VectorF {
      * @param v3
      *            The additional value to be put into the fourth index.
      */
-    public VecF4(VecF3 v, float v3) {
+    public Float4Vector(Float3Vector v, float v3) {
         this.x = v.getX();
         this.y = v.getY();
         this.z = v.getZ();
@@ -80,7 +80,7 @@ public class VecF4 implements VectorF {
      * @param w
      *            The value to be put in the fourth position.
      */
-    public VecF4(float x, float y, float z, float w) {
+    public Float4Vector(float x, float y, float z, float w) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -92,8 +92,8 @@ public class VecF4 implements VectorF {
      * 
      * @return The new negated vector.
      */
-    public VecF4 neg() {
-        VecF4 result = new VecF4();
+    public Float4Vector neg() {
+        Float4Vector result = new Float4Vector();
         result.setX(-x);
         result.setY(-y);
         result.setZ(-z);
@@ -108,8 +108,8 @@ public class VecF4 implements VectorF {
      *            The vector to be added to this vector.
      * @return The new vector.
      */
-    public VecF4 add(VecF4 u) {
-        VecF4 result = new VecF4();
+    public Float4Vector add(Float4Vector u) {
+        Float4Vector result = new Float4Vector();
         result.setX(x + u.getX());
         result.setY(y + u.getY());
         result.setZ(z + u.getZ());
@@ -125,8 +125,8 @@ public class VecF4 implements VectorF {
      *            The vector to be added to this vector.
      * @return The new vector.
      */
-    public VecF4 add(VecF3 u) {
-        VecF4 result = new VecF4();
+    public Float4Vector add(Float3Vector u) {
+        Float4Vector result = new Float4Vector();
         result.setX(x + u.getX());
         result.setY(y + u.getY());
         result.setZ(z + u.getZ());
@@ -141,8 +141,8 @@ public class VecF4 implements VectorF {
      *            The vector to be substracted from this one.
      * @return The new Vector, which is a result of the substraction.
      */
-    public VecF4 sub(VecF4 u) {
-        VecF4 result = new VecF4();
+    public Float4Vector sub(Float4Vector u) {
+        Float4Vector result = new Float4Vector();
         result.setX(x - u.getX());
         result.setY(y - u.getY());
         result.setZ(z - u.getZ());
@@ -157,9 +157,9 @@ public class VecF4 implements VectorF {
      *            The scalar to be multiplied with this one.
      * @return The new Vector, which is a result of the multiplication.
      */
-    public VecF4 mul(Number n) {
+    public Float4Vector mul(Number n) {
         float fn = n.floatValue();
-        VecF4 result = new VecF4();
+        Float4Vector result = new Float4Vector();
         result.setX(x * fn);
         result.setY(y * fn);
         result.setZ(z * fn);
@@ -175,14 +175,14 @@ public class VecF4 implements VectorF {
      *            The scalar to be divided with.
      * @return The new Vector, which is a result of the division.
      */
-    public VecF4 div(Number n) {
+    public Float4Vector div(Number n) {
         float fn = n.floatValue();
         if (fn == 0f) {
-            return new VecF4();
+            return new Float4Vector();
         }
         float divfn = 1f / fn;
 
-        VecF4 result = new VecF4();
+        Float4Vector result = new Float4Vector();
         result.setX(x * divfn);
         result.setY(y * divfn);
         result.setZ(z * divfn);
@@ -190,8 +190,8 @@ public class VecF4 implements VectorF {
         return result;
     }
 
-    public VecF3 stripAlpha() {
-        return new VecF3(x, y, z);
+    public Float3Vector stripAlpha() {
+        return new Float3Vector(x, y, z);
     }
 
     @Override
@@ -279,10 +279,10 @@ public class VecF4 implements VectorF {
     }
 
     /**
-     * Setter for u.
+     * Setter for w.
      * 
-     * @param u
-     *            the u to set
+     * @param w
+     *            the w to set
      */
     public void setW(float w) {
         this.w = w;
@@ -320,7 +320,7 @@ public class VecF4 implements VectorF {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        VecF4 other = (VecF4) obj;
+        Float4Vector other = (Float4Vector) obj;
         if (Float.floatToIntBits(w) != Float.floatToIntBits(other.w)) {
             return false;
         }
@@ -343,7 +343,7 @@ public class VecF4 implements VectorF {
      */
     @Override
     public String toString() {
-        return "VecF4 [x=" + x + ", y=" + y + ", z=" + z + ", w=" + w + "]";
+        return "Float4Vector [x=" + x + ", y=" + y + ", z=" + z + ", w=" + w + "]";
     }
 
     public float[] asArray() {

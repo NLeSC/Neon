@@ -9,16 +9,16 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLContext;
 
 import nl.esciencecenter.neon.NeonGLEventListener;
-import nl.esciencecenter.neon.datastructures.FBO;
+import nl.esciencecenter.neon.datastructures.FrameBufferObject;
 import nl.esciencecenter.neon.exceptions.CompilationFailedException;
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.math.Color4;
-import nl.esciencecenter.neon.math.MatF3;
-import nl.esciencecenter.neon.math.MatF4;
-import nl.esciencecenter.neon.math.MatrixFMath;
+import nl.esciencecenter.neon.math.Float3Matrix;
+import nl.esciencecenter.neon.math.Float4Matrix;
+import nl.esciencecenter.neon.math.FloatMatrixMath;
 import nl.esciencecenter.neon.math.Point4;
-import nl.esciencecenter.neon.math.VecF3;
-import nl.esciencecenter.neon.math.VecF4;
+import nl.esciencecenter.neon.math.Float3Vector;
+import nl.esciencecenter.neon.math.Float4Vector;
 import nl.esciencecenter.neon.models.Axis;
 import nl.esciencecenter.neon.models.Model;
 import nl.esciencecenter.neon.models.Quad;
@@ -33,7 +33,7 @@ import nl.esciencecenter.neon.text.jogampexperimental.FontFactory;
 public class LiveShaderEditorGLEventListener extends NeonGLEventListener {
     private ShaderProgram liveShader, postprocessShader, axesShader, textShader;
 
-    private FBO starFBO, hudFBO, axesFBO;
+    private FrameBufferObject starFBO, hudFBO, axesFBO;
     private Model FSQ_postprocess;
     private Model xAxis, yAxis, zAxis;
 
@@ -116,18 +116,18 @@ public class LiveShaderEditorGLEventListener extends NeonGLEventListener {
         final Point4 eye = new Point4((float) (radius * Math.sin(ftheta) * Math.cos(phi)), (float) (radius
                 * Math.sin(ftheta) * Math.sin(phi)), (float) (radius * Math.cos(ftheta)));
         final Point4 at = new Point4(0.0f, 0.0f, 0.0f);
-        final VecF4 up = new VecF4(0.0f, 1.0f, 0.0f, 0.0f);
+        final Float4Vector up = new Float4Vector(0.0f, 1.0f, 0.0f, 0.0f);
 
-        MatF4 mv = MatrixFMath.lookAt(eye, at, up);
-        mv = mv.mul(MatrixFMath.translate(new VecF3(0f, 0f, inputHandler.getViewDist())));
-        mv = mv.mul(MatrixFMath.rotationX(inputHandler.getRotation().getX()));
-        mv = mv.mul(MatrixFMath.rotationY(inputHandler.getRotation().getY()));
+        Float4Matrix mv = FloatMatrixMath.lookAt(eye, at, up);
+        mv = mv.mul(FloatMatrixMath.translate(new Float3Vector(0f, 0f, inputHandler.getViewDist())));
+        mv = mv.mul(FloatMatrixMath.rotationX(inputHandler.getRotation().getX()));
+        mv = mv.mul(FloatMatrixMath.rotationY(inputHandler.getRotation().getY()));
 
         // Vertex shader variables
 
         try {
-            renderScene(gl, new MatF4(mv));
-            renderHUDText(gl, new MatF4(mv));
+            renderScene(gl, new Float4Matrix(mv));
+            renderHUDText(gl, new Float4Matrix(mv));
 
             renderTexturesToScreen(gl, width, height);
         } catch (final UninitializedException e) {
@@ -135,23 +135,23 @@ public class LiveShaderEditorGLEventListener extends NeonGLEventListener {
         }
     }
 
-    private void renderAxes(GL3 gl, MatF4 mv) throws UninitializedException {
+    private void renderAxes(GL3 gl, Float4Matrix mv) throws UninitializedException {
         axesFBO.bind(gl);
         gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
 
-        final MatF4 p = MatrixFMath.perspective(fovy, aspect, zNear, zFar);
+        final Float4Matrix p = FloatMatrixMath.perspective(fovy, aspect, zNear, zFar);
         axesShader.setUniformMatrix("PMatrix", p);
         axesShader.setUniformMatrix("MVMatrix", mv);
 
-        axesShader.setUniformVector("Color", new VecF4(1f, 0f, 0f, 1f));
+        axesShader.setUniformVector("Color", new Float4Vector(1f, 0f, 0f, 1f));
         axesShader.use(gl);
         xAxis.draw(gl, axesShader);
 
-        axesShader.setUniformVector("Color", new VecF4(0f, 1f, 0f, 1f));
+        axesShader.setUniformVector("Color", new Float4Vector(0f, 1f, 0f, 1f));
         axesShader.use(gl);
         yAxis.draw(gl, axesShader);
 
-        axesShader.setUniformVector("Color", new VecF4(0f, 0f, 1f, 1f));
+        axesShader.setUniformVector("Color", new Float4Vector(0f, 0f, 1f, 1f));
         axesShader.use(gl);
         zAxis.draw(gl, axesShader);
 
@@ -240,11 +240,11 @@ public class LiveShaderEditorGLEventListener extends NeonGLEventListener {
         }
 
         // AXES
-        xAxis = new Axis(new VecF3(-1f, 0f, 0f), new VecF3(1f, 0f, 0f), .1f, .02f);
+        xAxis = new Axis(new Float3Vector(-1f, 0f, 0f), new Float3Vector(1f, 0f, 0f), .1f, .02f);
         xAxis.init(gl);
-        yAxis = new Axis(new VecF3(0f, -1f, 0f), new VecF3(0f, 1f, 0f), .1f, .02f);
+        yAxis = new Axis(new Float3Vector(0f, -1f, 0f), new Float3Vector(0f, 1f, 0f), .1f, .02f);
         yAxis.init(gl);
-        zAxis = new Axis(new VecF3(0f, 0f, -1f), new VecF3(0f, 0f, 1f), .1f, .02f);
+        zAxis = new Axis(new Float3Vector(0f, 0f, -1f), new Float3Vector(0f, 0f, 1f), .1f, .02f);
         zAxis.init(gl);
 
         // TEST MODEL
@@ -260,17 +260,17 @@ public class LiveShaderEditorGLEventListener extends NeonGLEventListener {
         myText.init(gl);
 
         // FULL SCREEN QUADS
-        FSQ_postprocess = new Quad(2f, 2f, new VecF3(0, 0, 0.1f));
+        FSQ_postprocess = new Quad(2f, 2f, new Float3Vector(0, 0, 0.1f));
         FSQ_postprocess.init(gl);
 
         // TEXTURES
         noiseTex = new Perlin3D(GL.GL_TEXTURE0, 128, 128, 128);
         noiseTex.init(gl);
 
-        // Full screen textures (for post processing) done with FBO's
-        starFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
-        hudFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE2);
-        axesFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE3);
+        // Full screen textures (for post processing) done with FrameBufferObject's
+        starFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
+        hudFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE2);
+        axesFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE3);
 
         starFBO.init(gl);
         hudFBO.init(gl);
@@ -279,7 +279,7 @@ public class LiveShaderEditorGLEventListener extends NeonGLEventListener {
         contextOff(drawable);
     }
 
-    private void renderHUDText(GL3 gl, MatF4 mv) throws UninitializedException {
+    private void renderHUDText(GL3 gl, Float4Matrix mv) throws UninitializedException {
         hudFBO.bind(gl);
         gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
 
@@ -304,7 +304,7 @@ public class LiveShaderEditorGLEventListener extends NeonGLEventListener {
         myText.finalizeColorScheme(gl);
     }
 
-    private void renderScene(GL3 gl, MatF4 mv) throws UninitializedException {
+    private void renderScene(GL3 gl, Float4Matrix mv) throws UninitializedException {
         starFBO.bind(gl);
         gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -316,11 +316,11 @@ public class LiveShaderEditorGLEventListener extends NeonGLEventListener {
         noiseTex.use(gl);
         liveShader.setUniform("Noise", noiseTex.getMultitexNumber());
 
-        final MatF4 p = MatrixFMath.perspective(fovy, aspect, zNear, zFar);
+        final Float4Matrix p = FloatMatrixMath.perspective(fovy, aspect, zNear, zFar);
         liveShader.setUniformMatrix("PMatrix", p);
         liveShader.setUniformMatrix("MVMatrix", mv);
-        liveShader.setUniformMatrix("ScaleMatrix", MatrixFMath.scale(1f));
-        liveShader.setUniformMatrix("SMatrix", MatrixFMath.scale(1f));
+        liveShader.setUniformMatrix("ScaleMatrix", FloatMatrixMath.scale(1f));
+        liveShader.setUniformMatrix("SMatrix", FloatMatrixMath.scale(1f));
         liveShader.setUniform("Offset", offset);
         liveShader.setUniform("OffsetRandomValue", 1f);
 
@@ -342,8 +342,8 @@ public class LiveShaderEditorGLEventListener extends NeonGLEventListener {
         postprocessShader.setUniform("hudBrightness", 4f);
         postprocessShader.setUniform("overallBrightness", 4f);
 
-        postprocessShader.setUniformMatrix("PMatrix", new MatF4());
-        postprocessShader.setUniformMatrix("MVMatrix", new MatF4());
+        postprocessShader.setUniformMatrix("PMatrix", new Float4Matrix());
+        postprocessShader.setUniformMatrix("MVMatrix", new Float4Matrix());
         postprocessShader.setUniform("scrWidth", width);
         postprocessShader.setUniform("scrHeight", height);
 
@@ -366,9 +366,9 @@ public class LiveShaderEditorGLEventListener extends NeonGLEventListener {
 
         final GL3 gl = drawable.getGL().getGL3();
 
-        starFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
-        hudFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE2);
-        axesFBO = new FBO(canvasWidth, canvasHeight, GL.GL_TEXTURE3);
+        starFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE1);
+        hudFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE2);
+        axesFBO = new FrameBufferObject(canvasWidth, canvasHeight, GL.GL_TEXTURE3);
 
         starFBO.init(gl);
         hudFBO.init(gl);
@@ -432,10 +432,10 @@ public class LiveShaderEditorGLEventListener extends NeonGLEventListener {
                 ShaderProgram temp = liveShader;
                 liveShader = editedShader;
 
-                liveShader.setUniformMatrix("NormalMatrix", new MatF3());
-                final MatF4 p = MatrixFMath.perspective(fovy, aspect, zNear, zFar);
+                liveShader.setUniformMatrix("NormalMatrix", new Float3Matrix());
+                final Float4Matrix p = FloatMatrixMath.perspective(fovy, aspect, zNear, zFar);
                 liveShader.setUniformMatrix("PMatrix", p);
-                liveShader.setUniformMatrix("SMatrix", MatrixFMath.scale(1));
+                liveShader.setUniformMatrix("SMatrix", FloatMatrixMath.scale(1));
                 temp.delete(gl);
 
                 baseColor = Color4.GREEN;

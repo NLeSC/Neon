@@ -18,23 +18,24 @@ import java.nio.FloatBuffer;
  */
 
 /**
- * A 2-place float vector implementation.
+ * A 3-place float vector implementation
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
-public class VecF2 implements VectorF {
+public class Float3Vector implements FloatVector {
     /** The number of elements in this vector */
-    private static final int SIZE = 2;
+    private static final int SIZE = 3;
 
-    private float x, y;
+    private float x, y, z;
 
     /**
      * Creates a new vector, initialized to 0.
      */
-    public VecF2() {
+    public Float3Vector() {
         this.x = 0f;
         this.y = 0f;
+        this.z = 0f;
     }
 
     /**
@@ -43,9 +44,10 @@ public class VecF2 implements VectorF {
      * @param v
      *            The vector to be copied.
      */
-    public VecF2(VecF2 v) {
+    public Float3Vector(Float3Vector v) {
         this.x = v.getX();
         this.y = v.getY();
+        this.z = v.getZ();
     }
 
     /**
@@ -57,12 +59,11 @@ public class VecF2 implements VectorF {
      *            The value to be put in the second position.
      * @param z
      *            The value to be put in the third position.
-     * @param w
-     *            The value to be put in the fourth position.
      */
-    public VecF2(float x, float y) {
+    public Float3Vector(float x, float y, float z) {
         this.x = x;
         this.y = y;
+        this.z = z;
     }
 
     /**
@@ -70,10 +71,11 @@ public class VecF2 implements VectorF {
      * 
      * @return The new negated vector.
      */
-    public VecF2 neg() {
-        VecF2 result = new VecF2();
+    public Float3Vector neg() {
+        Float3Vector result = new Float3Vector();
         result.setX(-x);
         result.setY(-y);
+        result.setZ(-z);
         return result;
     }
 
@@ -84,10 +86,11 @@ public class VecF2 implements VectorF {
      *            The vector to be added to this vector.
      * @return The new vector.
      */
-    public VecF2 add(VecF2 u) {
-        VecF2 result = new VecF2();
+    public Float3Vector add(Float3Vector u) {
+        Float3Vector result = new Float3Vector();
         result.setX(x + u.getX());
         result.setY(y + u.getY());
+        result.setZ(z + u.getZ());
         return result;
     }
 
@@ -98,10 +101,11 @@ public class VecF2 implements VectorF {
      *            The vector to be substracted from this one.
      * @return The new Vector, which is a result of the substraction.
      */
-    public VecF2 sub(VecF2 u) {
-        VecF2 result = new VecF2();
+    public Float3Vector sub(Float3Vector u) {
+        Float3Vector result = new Float3Vector();
         result.setX(x - u.getX());
         result.setY(y - u.getY());
+        result.setZ(z - u.getZ());
         return result;
     }
 
@@ -112,11 +116,12 @@ public class VecF2 implements VectorF {
      *            The scalar to be multiplied with this one.
      * @return The new Vector, which is a result of the multiplication.
      */
-    public VecF2 mul(Number n) {
+    public Float3Vector mul(Number n) {
         float fn = n.floatValue();
-        VecF2 result = new VecF2();
+        Float3Vector result = new Float3Vector();
         result.setX(x * fn);
         result.setY(y * fn);
+        result.setZ(z * fn);
 
         return result;
     }
@@ -128,16 +133,17 @@ public class VecF2 implements VectorF {
      *            The scalar to be divided with.
      * @return The new Vector, which is a result of the division.
      */
-    public VecF2 div(Number n) {
+    public Float3Vector div(Number n) {
         float fn = n.floatValue();
         if (fn == 0f) {
-            return new VecF2();
+            return new Float3Vector();
         }
         float divfn = 1f / fn;
 
-        VecF2 result = new VecF2();
+        Float3Vector result = new Float3Vector();
         result.setX(x * divfn);
         result.setY(y * divfn);
+        result.setZ(z * divfn);
 
         return result;
     }
@@ -147,6 +153,7 @@ public class VecF2 implements VectorF {
         FloatBuffer result = FloatBuffer.allocate(SIZE);
         result.put(x);
         result.put(y);
+        result.put(z);
 
         result.rewind();
 
@@ -196,6 +203,25 @@ public class VecF2 implements VectorF {
         this.y = y;
     }
 
+    /**
+     * Getter for z.
+     * 
+     * @return the z.
+     */
+    public float getZ() {
+        return z;
+    }
+
+    /**
+     * Setter for z.
+     * 
+     * @param z
+     *            the z to set
+     */
+    public void setZ(float z) {
+        this.z = z;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -207,6 +233,7 @@ public class VecF2 implements VectorF {
         int result = 1;
         result = prime * result + Float.floatToIntBits(x);
         result = prime * result + Float.floatToIntBits(y);
+        result = prime * result + Float.floatToIntBits(z);
         return result;
     }
 
@@ -226,11 +253,14 @@ public class VecF2 implements VectorF {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        VecF2 other = (VecF2) obj;
+        Float3Vector other = (Float3Vector) obj;
         if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
             return false;
         }
         if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) {
+            return false;
+        }
+        if (Float.floatToIntBits(z) != Float.floatToIntBits(other.z)) {
             return false;
         }
         return true;
@@ -243,11 +273,11 @@ public class VecF2 implements VectorF {
      */
     @Override
     public String toString() {
-        return "VecF2 [x=" + x + ", y=" + y + "]";
+        return "Float3Vector [x=" + x + ", y=" + y + ", z=" + z + "]";
     }
 
     public float[] asArray() {
-        return new float[] { x, y };
+        return new float[] { x, y, z };
     }
 
 }

@@ -9,11 +9,11 @@ import java.util.Map.Entry;
 
 import javax.media.opengl.GL3;
 
-import nl.esciencecenter.neon.datastructures.GLSLAttrib;
-import nl.esciencecenter.neon.datastructures.VBO;
+import nl.esciencecenter.neon.datastructures.GLSLAttribute;
+import nl.esciencecenter.neon.datastructures.VertexBufferObject;
 import nl.esciencecenter.neon.exceptions.UninitializedException;
-import nl.esciencecenter.neon.math.MatrixF;
-import nl.esciencecenter.neon.math.VectorF;
+import nl.esciencecenter.neon.math.FloatMatrix;
+import nl.esciencecenter.neon.math.FloatVector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ import com.jogamp.common.nio.Buffers;
  * 
  * while(displayCycle) { 
  *   3. Set Uniforms
- *   4. Link attributes / Vertex Buffer Object, @see {@link VBO}
+ *   4. Link attributes / Vertex Buffer Object, @see {@link VertexBufferObject}
  *   5. Use
  * }
  * 
@@ -276,14 +276,14 @@ public class ShaderProgram {
      * @return true if the shader's uniforms are all present.
      */
     @SuppressWarnings("rawtypes")
-    private boolean checkIns(Shader vs, GLSLAttrib... attribs) {
+    private boolean checkIns(Shader vs, GLSLAttribute... attribs) {
         Map<String, Class> vsIns = vs.getIns();
         boolean allPresent = true;
 
         if (!warningsGiven || logger.isDebugEnabled()) {
             for (Map.Entry<String, Class> inEntry : vsIns.entrySet()) {
                 boolean thisEntryAvailable = false;
-                for (GLSLAttrib attr : attribs) {
+                for (GLSLAttribute attr : attribs) {
                     if (attr.getName().compareTo(inEntry.getKey()) == 0) {
                         thisEntryAvailable = true;
                     }
@@ -390,10 +390,10 @@ public class ShaderProgram {
      *            The list of attributes to link.
      * @throws UninitializedException
      */
-    public void linkAttribs(GL3 gl, GLSLAttrib... attribs) throws UninitializedException {
+    public void linkAttribs(GL3 gl, GLSLAttribute... attribs) throws UninitializedException {
         if (initialized) {
             int nextStart = 0;
-            for (GLSLAttrib attrib : attribs) {
+            for (GLSLAttribute attrib : attribs) {
                 int ptr = gl.glGetAttribLocation(getPointer(), attrib.getName());
                 gl.glVertexAttribPointer(ptr, attrib.getVectorSize(), GL3.GL_FLOAT, false, 0, nextStart);
                 gl.glEnableVertexAttribArray(ptr);
@@ -435,7 +435,7 @@ public class ShaderProgram {
      * @param var
      *            The Vector to stage.
      */
-    public void setUniformVector(String name, VectorF var) {
+    public void setUniformVector(String name, FloatVector var) {
         if (!uniformFloatVectors.containsKey(name)) {
             warningsGiven = false;
         }
@@ -452,7 +452,7 @@ public class ShaderProgram {
      * @param var
      *            The Matrix to stage.
      */
-    public void setUniformMatrix(String name, MatrixF var) {
+    public void setUniformMatrix(String name, FloatMatrix var) {
         if (!uniformFloatMatrices.containsKey(name)) {
             warningsGiven = false;
         }
@@ -513,8 +513,8 @@ public class ShaderProgram {
      * Method used to pass uniform variables directly to the shader without
      * staging them beforehand. Using this method to set shader variables
      * interferes directly with the error checking code present in this class.
-     * Use is not recommended. Use {@link #setUniformVector(String, VectorF)}
-     * instead.
+     * Use is not recommended. Use
+     * {@link ShaderProgram#setUniformVector(String, FloatVector)} instead.
      * 
      * @param gl
      *            The OpenGL instance.
@@ -542,8 +542,8 @@ public class ShaderProgram {
      * Method used to pass uniform variables directly to the shader without
      * staging them beforehand. Using this method to set shader variables
      * interferes directly with the error checking code present in this class.
-     * Use is not recommended. Use {@link #setUniformVector(String, VectorF)}
-     * instead.
+     * Use is not recommended. Use
+     * {@link ShaderProgram#setUniformVector(String, FloatVector)} instead.
      * 
      * @param gl
      *            The OpenGL instance.
@@ -570,8 +570,8 @@ public class ShaderProgram {
      * Method used to pass uniform variables directly to the shader without
      * staging them beforehand. Using this method to set shader variables
      * interferes directly with the error checking code present in this class.
-     * Use is not recommended. Use {@link #setUniformVector(String, VectorS)}
-     * instead.
+     * Use is not recommended. Use
+     * {@link ShaderProgram#setUniformVector(String, VectorS)} instead.
      * 
      * @param gl
      *            The OpenGL instance.
@@ -598,8 +598,8 @@ public class ShaderProgram {
      * Method used to pass uniform variables directly to the shader without
      * staging them beforehand. Using this method to set shader variables
      * interferes directly with the error checking code present in this class.
-     * Use is not recommended. Use {@link #setUniformMatrix(String, MatrixF)}
-     * instead.
+     * Use is not recommended. Use
+     * {@link ShaderProgram#setUniformMatrix(String, FloatMatrix)} instead.
      * 
      * @param gl
      *            The OpenGL instance.
@@ -625,7 +625,8 @@ public class ShaderProgram {
      * Method used to pass uniform variables directly to the shader without
      * staging them beforehand. Using this method to set shader variables
      * interferes directly with the error checking code present in this class.
-     * Use is not recommended. Use {@link #setUniform(String, boolean)} instead.
+     * Use is not recommended. Use
+     * {@link ShaderProgram#setUniform(String, boolean)} instead.
      * 
      * @param gl
      *            The OpenGL instance.
@@ -647,7 +648,8 @@ public class ShaderProgram {
      * Method used to pass uniform variables directly to the shader without
      * staging them beforehand. Using this method to set shader variables
      * interferes directly with the error checking code present in this class.
-     * Use is not recommended. Use {@link #setUniform(String, int)} instead.
+     * Use is not recommended. Use {@link ShaderProgram#setUniform(String, int)}
+     * instead.
      * 
      * @param gl
      *            The OpenGL instance.
@@ -666,7 +668,8 @@ public class ShaderProgram {
      * Method used to pass uniform variables directly to the shader without
      * staging them beforehand. Using this method to set shader variables
      * interferes directly with the error checking code present in this class.
-     * Use is not recommended. Use {@link #setUniform(String, float)} instead.
+     * Use is not recommended. Use
+     * {@link ShaderProgram#setUniform(String, float)} instead.
      * 
      * @param gl
      *            The OpenGL instance.

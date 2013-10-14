@@ -1,6 +1,6 @@
 package nl.esciencecenter.neon.input;
 
-import nl.esciencecenter.neon.math.VecF3;
+import nl.esciencecenter.neon.math.Float3Vector;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
@@ -63,7 +63,7 @@ public class InputHandler implements MouseListener, KeyListener {
     private float dragYorigin;
 
     /** Final rotation in openGL units */
-    private VecF3 rotation, translation;
+    private Float3Vector rotation, translation;
 
     /** Final view distance (translation) in openGL units */
     private float viewDist = -5f;
@@ -107,8 +107,8 @@ public class InputHandler implements MouseListener, KeyListener {
         translationY = 0f;
         translationYorigin = 0f;
 
-        rotation = new VecF3();
-        translation = new VecF3();
+        rotation = new Float3Vector();
+        translation = new Float3Vector();
         viewDist = -3f;
     }
 
@@ -212,7 +212,7 @@ public class InputHandler implements MouseListener, KeyListener {
      * 
      * @return the current OpenGL ModelView rotation variable
      */
-    public VecF3 getRotation() {
+    public Float3Vector getRotation() {
         return rotation;
     }
 
@@ -220,7 +220,7 @@ public class InputHandler implements MouseListener, KeyListener {
      * @param rotation
      *            the current OpenGL ModelView rotation variable to set
      */
-    public void setRotation(VecF3 rotation) {
+    public void setRotation(Float3Vector rotation) {
         this.rotation = rotation;
     }
 
@@ -244,15 +244,15 @@ public class InputHandler implements MouseListener, KeyListener {
      * 
      * @return the current OpenGL ModelView translation variable
      */
-    public VecF3 getTranslation() {
+    public Float3Vector getTranslation() {
         return translation;
     }
 
     /**
-     * @param rotation
+     * @param translation
      *            the OpenGL ModelView translation variable to set
      */
-    public void setTranslation(VecF3 translation) {
+    public void setTranslation(Float3Vector translation) {
         this.translation = translation;
     }
 }
