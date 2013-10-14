@@ -106,4 +106,4 @@ This product includes the SLF4J library, which is Copyright (c) 2004-2013 QOS.ch
 
 This project includes the JUnit library. See "notices/LICENSE.junit.txt" for the licence information of the JUnit library.
 
-This project includes the JOGL library. See "notices/LICENSE.jogl.txt" for the licence information of the JUnit library.
+This project includes the JOGL library. See "notices/LICENSE.jogl.txt" for the licence information of the JOGL library.
