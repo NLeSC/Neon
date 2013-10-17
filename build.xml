@@ -82,6 +82,7 @@
 	<target name="clean" description="clean up">
 		<delete dir="build" />
 		<delete dir="dist" />
+		<delete dir="doc" />
 
 		<!--<ant dir="test" target="clean" /> -->
 	</target>
