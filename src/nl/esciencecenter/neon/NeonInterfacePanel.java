@@ -21,7 +21,9 @@ import javax.swing.JPopupMenu;
  */
 
 /**
- * @author maarten Common (extendible) class for a separate Interface Panel.
+ * Common (extendible) class for a separate Interface Panel.
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
 public abstract class NeonInterfacePanel extends JPanel {

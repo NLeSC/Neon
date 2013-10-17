@@ -1,6 +1,6 @@
 package nl.esciencecenter.neon;
 
-import nl.esciencecenter.neon.examples.jurriaan.GraphsExample;
+import nl.esciencecenter.neon.examples.graphs.GraphsExample;
 
 import org.junit.Test;
 

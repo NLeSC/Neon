@@ -20,7 +20,8 @@ import nl.esciencecenter.neon.util.Settings;
  */
 
 /**
- * Example implementation of the main class for an Neon application.
+ * Example implementation of the main class for an Neon application. This
+ * example focuses on the very basics, displaying only a set of axes.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
@@ -50,8 +51,7 @@ public class HelloWorldExample {
         exampleGLEventListener = new HelloWorldGLEventListener();
 
         // Create the default Neon OpenGL window.
-        new NeonNewtWindow(true, InputHandler.getInstance(), exampleGLEventListener,
-                settings.getDefaultScreenWidth(), settings.getDefaultScreenHeight(),
-                "NeonExample - example Visualization Tool");
+        new NeonNewtWindow(true, InputHandler.getInstance(), exampleGLEventListener, settings.getDefaultScreenWidth(),
+                settings.getDefaultScreenHeight(), "NeonExample - example Visualization Tool");
     }
 }

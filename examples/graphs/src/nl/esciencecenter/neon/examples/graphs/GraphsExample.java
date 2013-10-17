@@ -20,7 +20,9 @@ import nl.esciencecenter.neon.NeonNewtWindow;
  */
 
 /**
- * Example implementation of the main class for an Neon application.
+ * Example implementation of the main class for an Neon application. This
+ * example focuses on the Graphs subsection, displaying several different types
+ * of graphs based on a dataset found in a corner of the internet.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 

@@ -20,7 +20,9 @@ import nl.esciencecenter.neon.NeonNewtWindow;
  */
 
 /**
- * Example implementation of the main class for an Neon application.
+ * Example implementation of the main class for an Neon application. This
+ * example focuses on the colormap substructure, using generated Perlin noise as
+ * a randomized dataset.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 

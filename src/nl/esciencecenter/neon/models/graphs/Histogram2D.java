@@ -4,15 +4,36 @@ import javax.media.opengl.GL3;
 
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.math.Color4;
+import nl.esciencecenter.neon.math.Float3Vector;
 import nl.esciencecenter.neon.math.Float4Matrix;
 import nl.esciencecenter.neon.math.FloatMatrixMath;
-import nl.esciencecenter.neon.math.Float3Vector;
 import nl.esciencecenter.neon.models.LeftBottomQuad;
 import nl.esciencecenter.neon.shaders.ShaderProgram;
 import nl.esciencecenter.neon.text.MultiColorText;
 import nl.esciencecenter.neon.text.jogampexperimental.Font;
 import nl.esciencecenter.neon.text.jogampexperimental.FontFactory;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Convenience class to create a 2D Histogram graph model.
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
 public class Histogram2D {
     private final float[] data;
     private final LeftBottomQuad[] bars;
@@ -95,7 +116,8 @@ public class Histogram2D {
             Float3Vector newLeftBottom = leftBottomCoordinates.add(new Float3Vector(0.5f, ((widthPerQuad / scale) * i)
                     + ((.2f * widthPerQuad / scale)), 0f));
 
-            Float4Matrix scaledRotationTranslatedMatrix = scaledRotationMatrix.mul(FloatMatrixMath.translate(newLeftBottom));
+            Float4Matrix scaledRotationTranslatedMatrix = scaledRotationMatrix.mul(FloatMatrixMath
+                    .translate(newLeftBottom));
 
             program.setUniformMatrix("MVMatrix", mv.mul(scaledRotationTranslatedMatrix));
 

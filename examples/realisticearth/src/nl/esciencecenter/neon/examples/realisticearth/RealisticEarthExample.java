@@ -1,6 +1,5 @@
 package nl.esciencecenter.neon.examples.realisticearth;
 
-
 import javax.swing.JFrame;
 
 import nl.esciencecenter.neon.NeonNewtWindow;
@@ -21,7 +20,9 @@ import nl.esciencecenter.neon.NeonNewtWindow;
  */
 
 /**
- * Example implementation of the main class for an Neon application.
+ * Example implementation of the main class for an Neon application. This
+ * example focuses on getting realistic and pretty rendering effects, by
+ * displaying an earth-textured globe in the milky way.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 

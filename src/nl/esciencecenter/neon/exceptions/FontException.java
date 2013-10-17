@@ -19,6 +19,8 @@ package nl.esciencecenter.neon.exceptions;
  */
 
 /**
+ * Exception class for the font subsection of this library
+ * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */

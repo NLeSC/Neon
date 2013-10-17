@@ -7,9 +7,9 @@ import javax.media.opengl.GL3;
 
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.math.Color4;
+import nl.esciencecenter.neon.math.Float3Vector;
 import nl.esciencecenter.neon.math.Float4Matrix;
 import nl.esciencecenter.neon.math.FloatMatrixMath;
-import nl.esciencecenter.neon.math.Float3Vector;
 import nl.esciencecenter.neon.shaders.ShaderProgram;
 import nl.esciencecenter.neon.text.MultiColorText;
 import nl.esciencecenter.neon.text.jogampexperimental.Font;
@@ -19,6 +19,27 @@ import nl.esciencecenter.neon.util.ModelViewStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Convenience class to create a 2D Line graph model.
+ * 
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
 public class LineGraph2D {
     private final static Logger LOGGER = LoggerFactory.getLogger(LineGraph2D.class);
 
@@ -128,7 +149,8 @@ public class LineGraph2D {
         }
     }
 
-    public void draw(GL3 gl, Float4Matrix mv, ModelViewStack mvStack, ShaderProgram program) throws UninitializedException {
+    public void draw(GL3 gl, Float4Matrix mv, ModelViewStack mvStack, ShaderProgram program)
+            throws UninitializedException {
         int i = 0;
         for (SegmentedLine sl : segmentedLines.values()) {
             ModelViewStack linesStack = new ModelViewStack(mvStack);
@@ -185,9 +207,9 @@ public class LineGraph2D {
         for (int i = 0; i < NR_OF_HORIZONTAL_LABELS; i++) {
             MultiColorText label = horizontalLabels[i];
 
-            Float4Matrix horizontalLabelTranslation = FloatMatrixMath.translate(0.2f,
-                    (widthPerSegment * i * horizontalSegments / NR_OF_HORIZONTAL_LABELS) + (.2f * widthPerSegment),
-                    DEFAULT_WIDTH);
+            Float4Matrix horizontalLabelTranslation = FloatMatrixMath.translate(0.2f, (widthPerSegment * i
+                    * horizontalSegments / NR_OF_HORIZONTAL_LABELS)
+                    + (.2f * widthPerSegment), DEFAULT_WIDTH);
 
             ModelViewStack horizontalLabelStack = new ModelViewStack(mvStack);
             horizontalLabelStack.putTop(horizontalLabelRotationMatrix);

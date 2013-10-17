@@ -20,7 +20,9 @@ import nl.esciencecenter.neon.NeonNewtWindow;
  */
 
 /**
- * Example implementation of the main class for an Neon application.
+ * Example implementation of the main class for an Neon application. This
+ * example focuses on the Interface panel (built with the GoggleSwing utility
+ * toolbox) present in this library.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
