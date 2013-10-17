@@ -50,8 +50,8 @@ public class RenderBufferTexture extends Texture2D {
      *            The height of this texture. Generally the same size as the
      *            canvas height.
      */
-    public RenderBufferTexture(int width, int height, int glMultiTexUnit) {
-        super(glMultiTexUnit);
+    public RenderBufferTexture(int width, int height, int glMultitexUnit) {
+        super(glMultitexUnit);
         this.height = height;
         this.width = width;
     }

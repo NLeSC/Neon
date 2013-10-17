@@ -38,8 +38,8 @@ public class PostProcessTexture extends Texture2D {
      * @param height
      *            The height of this texture.
      */
-    public PostProcessTexture(int width, int height, int gLMultiTexUnit) {
-        super(gLMultiTexUnit);
+    public PostProcessTexture(int width, int height, int glMultitexUnit) {
+        super(glMultitexUnit);
         this.height = height;
         this.width = width;
 

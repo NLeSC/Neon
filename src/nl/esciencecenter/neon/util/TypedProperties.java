@@ -739,7 +739,7 @@ public class TypedProperties extends Properties {
      * Checks all properties with the given prefix for validity.
      * 
      * @return a Property object containing all unrecognized properties.
-     * @param tmpPrefix
+     * @param prefix
      *            the prefix that should be checked
      * @param validKeys
      *            the set of valid keys (all with the prefix).
@@ -781,7 +781,7 @@ public class TypedProperties extends Properties {
      * Returns all properties who's key start with a certain prefix.
      * 
      * @return a Property object containing all matching properties.
-     * @param tmpPrefix
+     * @param prefix
      *            the desired prefix
      * @param removePrefix
      *            should the prefix be removed from the property name?

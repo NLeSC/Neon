@@ -43,10 +43,6 @@ import org.slf4j.LoggerFactory;
 import com.jogamp.graph.geom.Vertex;
 import com.jogamp.graph.geom.Vertex.Factory;
 
-/**
- * Factory to build a {@link com.jogamp.graph.geom.Path2D Path2D} from
- * {@link jogamp.graph.font.typecast.ot.OTGlyph Glyph}s.
- */
 public final class TypecastRenderer {
     private static final Logger logger = LoggerFactory.getLogger(TypecastRenderer.class);
 
@@ -156,11 +152,6 @@ public final class TypecastRenderer {
         }
     }
 
-    /**
-     * Build a {@link com.jogamp.graph.geom.Path2D Path2D} from a
-     * {@link jogamp.graph.font.typecast.ot.OTGlyph Glyph}. This glyph path can
-     * then be transformed and rendered.
-     */
     public static Path2D buildPath(OTGlyph glyph) {
 
         if (glyph == null) {

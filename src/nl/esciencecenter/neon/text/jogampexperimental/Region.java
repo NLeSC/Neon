@@ -45,8 +45,8 @@ import com.jogamp.opengl.math.geom.AABBox;
 public abstract class Region {
     /**
      * View based Anti-Aliasing, A Two pass region rendering, slower and more
-     * resource hungry (FrameBufferObject), but AA is perfect. Otherwise the default fast one
-     * pass MSAA region rendering is being used.
+     * resource hungry (FrameBufferObject), but AA is perfect. Otherwise the
+     * default fast one pass MSAA region rendering is being used.
      */
     public static final int VBAA_RENDERING_BIT = 1 << 0;
 
@@ -126,12 +126,10 @@ public abstract class Region {
 
     /**
      * Adds a {@link Triangle} object to the Region This triangle will be bound
-     * to OGL objects on the next call to {@code update}
+     * to OGL objects on the next call to update
      * 
      * @param tri
      *            a triangle object
-     * 
-     * @see update(GL2ES2)
      */
     public void addTriangle(Triangle tri) {
         triangles.add(tri);
@@ -140,12 +138,10 @@ public abstract class Region {
 
     /**
      * Adds a list of {@link Triangle} objects to the Region These triangles are
-     * to be binded to OGL objects on the next call to {@code update}
+     * to be binded to OGL objects on the next call to update
      * 
      * @param tris
      *            an arraylist of triangle objects
-     * 
-     * @see update(GL2ES2)
      */
     public void addTriangles(List<Triangle> tris) {
         triangles.addAll(tris);
@@ -154,12 +150,10 @@ public abstract class Region {
 
     /**
      * Adds a {@link Vertex} object to the Region This vertex will be bound to
-     * OGL objects on the next call to {@code update}
+     * OGL objects on the next call to update
      * 
      * @param vert
      *            a vertex objects
-     * 
-     * @see update(GL2ES2)
      */
     public void addVertex(Vertex vert) {
         vertices.add(vert);
@@ -169,12 +163,10 @@ public abstract class Region {
 
     /**
      * Adds a list of {@link Vertex} objects to the Region These vertices are to
-     * be binded to OGL objects on the next call to {@code update}
+     * be binded to OGL objects on the next call to update
      * 
      * @param verts
      *            an arraylist of vertex objects
-     * 
-     * @see update(GL2ES2)
      */
     public void addVertices(List<Vertex> verts) {
         vertices.addAll(verts);
@@ -194,8 +186,6 @@ public abstract class Region {
      * Vertices, Triangles, and or Lines are added after a call to update()
      * 
      * @return true if region is Dirty, false otherwise
-     * 
-     * @see update(GL2ES2)
      */
     public final boolean isDirty() {
         return dirty;
