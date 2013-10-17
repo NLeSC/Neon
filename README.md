@@ -1,12 +1,19 @@
-eSight
+![logo](images/NLeSC_Neon_logo.png "Neon Logo")
+
+Neon
 ======
+
+Copyright 2013 The Netherlands eScience Center !
+
+What is it?
+-----------
 
 OpenGL and Java (JOGL) based Object-Oriented Visualization library for OpenGL 3.0+ with GLSL shader support and vector/matrix math library. 
 
 Aims
 ----
 
-The eSight library aims to make it easy for users to create OpenGL 3.0+ based visualizations in Java. This is especially needed in cases 
+The Neon library aims to make it easy for users to create OpenGL 3.0+ based visualizations in Java. This is especially needed in cases 
 where programmable shaders can make a significant difference in performance. This ensures that the resulting visualization can be interactive, 
 where it otherwise would need to be pre-rendered to achieve the same visual quality.
 
@@ -25,7 +32,7 @@ http://www.youtube.com/watch?v=dNvDsFQGt5o
 Limitations / System requirements
 ---------------------------------
 
-The library assumes hardware that can support OpenGL 3.0 or greater. It is also written for Java 1.6+. This limits the use of this library 
+The library assumes hardware that can support OpenGL 3.0 or greater. It is also written for Java 1.7+. This limits the use of this library 
 for both Desktop and mobile devices, except through remote rendering (for which direct support will be implemented at a later date).
 
 Getting started
@@ -38,11 +45,11 @@ Eclipse IDE for Java developers (or some other IDE of your choice): http://www.e
 Useage
 ------
 
-To create a new eSight-powered project without including all of the eSight source code (just the JAR):
+To create a new Neon-powered project without including all of the Neon source code (just the JAR):
 
-1. Compile by running ant in the root directory of the eSight project.
+1. Compile by running ant in the root directory of the Neon project.
 
-2. Create a new java 1.6 project.
+2. Create a new java 1.7 project.
 
 3. Copy all of the files in the dist/ folder to your lib/ folder.
 
@@ -54,32 +61,32 @@ To create a new eSight-powered project without including all of the eSight sourc
 
 7. Include the root folder of your new project in your classpath.
 
-8. Implement an extension of ESightGLEventListener.
+8. Implement an extension of NeonGLEventListener.
 
-9. Implement a main class that creates a new ESightNewtWindow, using your new GLEventlistener as a parameter.
+9. Implement a main class that creates a new NeonNewtWindow, using your new GLEventlistener as a parameter.
  
 As a starting point for the implementations in step 8 and 9, you can use the HelloWorldExample, as mentioned below.
 
-PS: If you want to create a project with all of the source code included, please make sure to include the root directory of the eSight library.
+PS: If you want to create a project with all of the source code included, please make sure to include the root directory of the Neon library.
 
 Example implementation
 ----------------------
 
-Example implementations can be found in the examples directory. Typical implementations consist of at least 2 classes, namely a main class, and a class that extends the ESightGLEventListener class.
-Taking the HelloWorldExample as a model implementation, the two files indicated are HelloWorldExample.java for the main class, and HelloWorldGLEventListener.java as the extension of the ESightGLEventListener class.
+Example implementations can be found in the examples directory. Typical implementations consist of at least 2 classes, namely a main class, and a class that extends the NeonGLEventListener class.
+Taking the HelloWorldExample as a model implementation, the two files indicated are HelloWorldExample.java for the main class, and HelloWorldGLEventListener.java as the extension of the NeonGLEventListener class.
 
-To run the HellowWorld example (as well as all other example implementations), the root directory of the project should be included in the classpath. This is done because the projects need some additional files, like the GLSL shaders and the font files. Since the eSight library searches for these files in a directory relative to the directories on the classpath, store these in shaders/ and fonts/ respectively. 
+To run the HellowWorld example (as well as all other example implementations), the root directory of the project should be included in the classpath. This is done because the projects need some additional files, like the GLSL shaders and the font files. Since the Neon library searches for these files in a directory relative to the directories on the classpath, store these in shaders/ and fonts/ respectively. 
 
 The Latest Version
 ------------------
-Details of the latest version can be found on the eSight library web site at:  
+Details of the latest version can be found on the Neon library web site at:  
 
-<https://github.com/NLeSC/eSight>
+<https://github.com/NLeSC/Neon>
 
 Javadoc
 -------
 
-The javadoc of eSight library is available in "doc/index.html".
+The javadoc of Neon library is available in "doc/index.html".
 
 Licensing
 ---------
@@ -90,4 +97,13 @@ This software is licensed under the terms you may find in the file named "LICENS
 Notice
 ------
 
-If you find this software useful, please give credit to the Netherlands eScience center (www.esciencenter.nl) for developing it.
+If you find this software useful, please give credit to the Netherlands eScience center (www.esciencecenter.nl) for developing it.
+
+Third party libraries
+---------------------
+
+This product includes the SLF4J library, which is Copyright (c) 2004-2013 QOS.ch See "notices/LICENSE.slf4j.txt" for the licence information of the SLF4J library.
+
+This project includes the JUnit library. See "notices/LICENSE.junit.txt" for the licence information of the JUnit library.
+
+This project includes the JOGL library. See "notices/LICENSE.jogl.txt" for the licence information of the JOGL library.
