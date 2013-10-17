@@ -44,6 +44,44 @@ import org.slf4j.LoggerFactory;
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  * 
  */
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ *
+ */
+/* Copyright 2013 Netherlands eScience Center
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
+ * 
+ */
 public final class ColormapInterpreter {
     private final static Logger logger = LoggerFactory.getLogger(ColormapInterpreter.class);
 
@@ -572,11 +610,16 @@ public final class ColormapInterpreter {
     }
 
     /**
-     * Function that returns an 'image' of the entire colormap.
+     * Function that makes a Legend for a colormap.
      * 
-     * @param preferredDimensions
-     *            The dimensions of the image to be returned.
-     * @return The image, in a Color[][].
+     * @param width
+     *            The width of the image to create.
+     * @param height
+     *            The hieght of the image to create.
+     * @param colorMap
+     *            The colormap to create a legend of.
+     * @return A Color[][] that holds the pixels corresponding to an image for a
+     *         colormap legend.
      */
     private static Color[][] makeLegendImage(int width, int height, List<Color> colorMap) {
         Color[][] outBuf = new Color[width][height];

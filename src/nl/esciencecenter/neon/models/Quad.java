@@ -3,10 +3,10 @@ package nl.esciencecenter.neon.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.esciencecenter.neon.math.Point4;
 import nl.esciencecenter.neon.math.Float3Vector;
 import nl.esciencecenter.neon.math.Float4Vector;
 import nl.esciencecenter.neon.math.FloatVectorMath;
+import nl.esciencecenter.neon.math.Point4;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
@@ -137,18 +137,8 @@ public class Quad extends Model {
     }
 
     /**
-     * Create texture coordinates for the given points.
+     * Create texture coordinates for the Quad.
      * 
-     * @param source
-     *            The source array with base-model vertices.
-     * @param a
-     *            The index of the first corner in the source array.
-     * @param b
-     *            The index of the second corner in the source array.
-     * @param c
-     *            The index of the third corner in the source array.
-     * @param d
-     *            The index of the fourth corner in the source array.
      * @return An array with 6 vectors representing texture coordinates for the
      *         given points.
      */

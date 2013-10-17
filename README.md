@@ -32,7 +32,7 @@ http://www.youtube.com/watch?v=dNvDsFQGt5o
 Limitations / System requirements
 ---------------------------------
 
-The library assumes hardware that can support OpenGL 3.0 or greater. It is also written for Java 1.6+. This limits the use of this library 
+The library assumes hardware that can support OpenGL 3.0 or greater. It is also written for Java 1.7+. This limits the use of this library 
 for both Desktop and mobile devices, except through remote rendering (for which direct support will be implemented at a later date).
 
 Getting started
@@ -49,7 +49,7 @@ To create a new Neon-powered project without including all of the Neon source co
 
 1. Compile by running ant in the root directory of the Neon project.
 
-2. Create a new java 1.6 project.
+2. Create a new java 1.7 project.
 
 3. Copy all of the files in the dist/ folder to your lib/ folder.
 

@@ -113,8 +113,8 @@ public class GeoSphere extends Model {
         float z01 = (float) (Math.sin(startLatAngle) * Math.sin(stopLonAngle));
         float z11 = (float) (Math.sin(stopLatAngle) * Math.sin(stopLonAngle));
 
-        Float3Vector[] result = new Float3Vector[] { new Float3Vector(x00, y00, z00).mul(radius), new Float3Vector(x01, y01, z01).mul(radius),
-                new Float3Vector(x11, y11, z11).mul(radius),
+        Float3Vector[] result = new Float3Vector[] { new Float3Vector(x00, y00, z00).mul(radius),
+                new Float3Vector(x01, y01, z01).mul(radius), new Float3Vector(x11, y11, z11).mul(radius),
 
                 new Float3Vector(x00, y00, z00).mul(radius), new Float3Vector(x11, y11, z11).mul(radius),
                 new Float3Vector(x10, y10, z10).mul(radius) };
@@ -127,12 +127,6 @@ public class GeoSphere extends Model {
      * 
      * @param quad
      *            The quad to make coordinates for.
-     * @param latRib
-     *            The latitude rib to make coordinates for.
-     * @param lonRib
-     *            The longitude rib to make coordinates for.
-     * @param radius
-     *            The radius of the sphere.
      * @return The vertex coordinates corresponding to the given quad.
      */
     private List<Float4Vector> makeVertices(Float3Vector[] quad) {
@@ -154,12 +148,6 @@ public class GeoSphere extends Model {
      * 
      * @param quad
      *            The quad to make normals for.
-     * @param latRib
-     *            The latitude rib to make normals for.
-     * @param lonRib
-     *            The longitude rib to make normals for.
-     * @param radius
-     *            The radius of the sphere.
      * @return The normals corresponding to the given quad.
      */
     private List<Float3Vector> makeNormals(Float3Vector[] quad) {
@@ -185,8 +173,6 @@ public class GeoSphere extends Model {
      *            The latitude rib to make coordinates for.
      * @param lonRib
      *            The longitude rib to make coordinates for.
-     * @param radius
-     *            The radius of the sphere.
      * @return The texture coordinates corresponding to the given quad.
      */
     private List<Float3Vector> makeTexCoords(Float3Vector[] quad, int latRib, int lonRib) {
