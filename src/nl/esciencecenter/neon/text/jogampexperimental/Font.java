@@ -122,7 +122,6 @@ public interface Font {
 
     boolean isPrintableChar(char c);
 
-    /** Shall return {@link #getFullFamilyName()} */
     @Override
     String toString();
 }

@@ -126,7 +126,7 @@ public class ShaderProgramLoader {
      *            The global openGL instance.
      * @param programName
      *            Internal name for this Shader Program.
-     * @param vsSourceFile
+     * @param vsSourceCode
      *            Source for {@link VertexShader}.
      * @param fsSourceFile
      *            Source for {@link FragmentShader}.
@@ -161,7 +161,7 @@ public class ShaderProgramLoader {
      *            Internal name for this Shader Program.
      * @param vsSourceFile
      *            Source for {@link VertexShader}.
-     * @param fsSourceFile
+     * @param fsSourceCode
      *            Source for {@link FragmentShader}.
      * @return The shader program just created.
      * @throws FileNotFoundException
@@ -192,9 +192,9 @@ public class ShaderProgramLoader {
      *            The global openGL instance.
      * @param programName
      *            Internal name for this Shader Program.
-     * @param vsSourceFile
+     * @param vsSourceCode
      *            Source for {@link VertexShader}.
-     * @param fsSourceFile
+     * @param fsSourceCode
      *            Source for {@link FragmentShader}.
      * @return The shader program just created.
      * @throws FileNotFoundException

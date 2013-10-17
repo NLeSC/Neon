@@ -405,7 +405,7 @@ public final class ColormapInterpreter {
      *            The dimensions in the dataset to pick a color value between.
      * @param var
      *            The value to use.
-     * @param var
+     * @param fillValue
      *            The 'fill value' of the dataset, where no actual data exists.
      *            this will become black.
      * @return The color.

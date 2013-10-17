@@ -571,34 +571,6 @@ public class ShaderProgram {
      * staging them beforehand. Using this method to set shader variables
      * interferes directly with the error checking code present in this class.
      * Use is not recommended. Use
-     * {@link ShaderProgram#setUniformVector(String, VectorS)} instead.
-     * 
-     * @param gl
-     *            The OpenGL instance.
-     * @param pointerNameInShader
-     *            The name in the GLSL code for this uniform variable.
-     * @param var
-     *            The uniform variable to pas to the shader.
-     */
-    public void passUniformVecArray(GL3 gl, String pointerNameInShader, IntBuffer var, int vecSize, int count) {
-        int ptr = gl.glGetUniformLocation(getPointer(), pointerNameInShader);
-
-        if (vecSize == 1) {
-            gl.glUniform1iv(ptr, count, var);
-        } else if (vecSize == 2) {
-            gl.glUniform2iv(ptr, count, var);
-        } else if (vecSize == 3) {
-            gl.glUniform3iv(ptr, count, var);
-        } else if (vecSize == 4) {
-            gl.glUniform4iv(ptr, count, var);
-        }
-    }
-
-    /**
-     * Method used to pass uniform variables directly to the shader without
-     * staging them beforehand. Using this method to set shader variables
-     * interferes directly with the error checking code present in this class.
-     * Use is not recommended. Use
      * {@link ShaderProgram#setUniformMatrix(String, FloatMatrix)} instead.
      * 
      * @param gl
@@ -626,7 +598,7 @@ public class ShaderProgram {
      * staging them beforehand. Using this method to set shader variables
      * interferes directly with the error checking code present in this class.
      * Use is not recommended. Use
-     * {@link ShaderProgram#setUniform(String, boolean)} instead.
+     * {@link ShaderProgram#setUniform(String, Boolean)} instead.
      * 
      * @param gl
      *            The OpenGL instance.
@@ -648,8 +620,8 @@ public class ShaderProgram {
      * Method used to pass uniform variables directly to the shader without
      * staging them beforehand. Using this method to set shader variables
      * interferes directly with the error checking code present in this class.
-     * Use is not recommended. Use {@link ShaderProgram#setUniform(String, int)}
-     * instead.
+     * Use is not recommended. Use
+     * {@link ShaderProgram#setUniform(String, Integer)} instead.
      * 
      * @param gl
      *            The OpenGL instance.
@@ -669,7 +641,7 @@ public class ShaderProgram {
      * staging them beforehand. Using this method to set shader variables
      * interferes directly with the error checking code present in this class.
      * Use is not recommended. Use
-     * {@link ShaderProgram#setUniform(String, float)} instead.
+     * {@link ShaderProgram#setUniform(String, Float)} instead.
      * 
      * @param gl
      *            The OpenGL instance.

@@ -45,8 +45,8 @@ public class SimpleImageIcon {
      * @param icon
      *            the icon to set
      */
-    public void setImageIcon(ImageIcon image) {
-        this.icon = image;
+    public void setImageIcon(ImageIcon icon) {
+        this.icon = icon;
     }
 
 }

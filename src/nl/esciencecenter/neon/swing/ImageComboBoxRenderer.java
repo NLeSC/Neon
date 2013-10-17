@@ -60,10 +60,7 @@ public class ImageComboBoxRenderer extends JLabel implements ListCellRenderer<Si
     /**
      * Default constructor, sets alignment.
      * 
-     * @param descriptions
-     *            The descriptions of the list elements. These are only used if
-     *            images were not found.
-     * @param images
+     * @param simpleImageIcons
      *            The images to use for the list elements.
      */
     public ImageComboBoxRenderer(SimpleImageIcon[] simpleImageIcons) {
