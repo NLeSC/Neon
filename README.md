@@ -97,7 +97,7 @@ This software is licensed under the terms you may find in the file named "LICENS
 Notice
 ------
 
-If you find this software useful, please give credit to the Netherlands eScience center (www.esciencenter.nl) for developing it.
+If you find this software useful, please give credit to the Netherlands eScience center (www.esciencecenter.nl) for developing it.
 
 Third party libraries
 ---------------------
