@@ -1,6 +1,6 @@
-<project name="eSight" default="build" basedir=".">
+<project name="Neon" default="build" basedir=".">
 	<description>
-		Build file for eSight Library
+		Build file for Neon Library
     </description>
 
 	<property name="build.sysclasspath" value="ignore" />
