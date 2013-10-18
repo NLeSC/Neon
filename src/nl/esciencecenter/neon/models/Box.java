@@ -112,8 +112,8 @@ public class Box extends Model {
         allNormals.addAll(normals);
         allTexCoords.addAll(tCoords);
 
-        final int floatsPerVecF4 = 4;
-        this.setNumVertices(allPoints.size() / floatsPerVecF4);
+        final int floatsPerFloat4Vector = 4;
+        this.setNumVertices(allPoints.size() / floatsPerFloat4Vector);
 
         this.setVertices(FloatVectorMath.vec4ListToBuffer(allPoints));
         this.setNormals(FloatVectorMath.vec3ListToBuffer(allNormals));
