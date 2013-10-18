@@ -11,10 +11,10 @@ import nl.esciencecenter.neon.math.Float2Vector;
 
 import org.junit.Test;
 
-public class MatF2Test {
+public class Float2MatrixTest {
 
     @Test
-    public final void testMatF2() {
+    public final void testFloat2Matrix() {
         Float2Matrix input1 = new Float2Matrix();
         Float2Matrix expected = new Float2Matrix(1f, 0f, 0f, 1f);
 
@@ -29,7 +29,7 @@ public class MatF2Test {
     }
 
     @Test
-    public final void testMatF2Float() {
+    public final void testFloat2MatrixFloat() {
         Float2Matrix input1 = new Float2Matrix(0f);
         Float2Matrix expected = new Float2Matrix(0f, 0f, 0f, 0f);
 
@@ -42,7 +42,7 @@ public class MatF2Test {
     }
 
     @Test
-    public final void testMatF2VecF2VecF2VecF2VecF2() {
+    public final void testFloat2MatrixFloat2VectorFloat2VectorFloat2VectorFloat2Vector() {
         Float2Matrix input1 = new Float2Matrix(new Float2Vector(), new Float2Vector());
         Float2Matrix expected = new Float2Matrix(0f, 0f, 0f, 0f);
 
@@ -55,7 +55,7 @@ public class MatF2Test {
     }
 
     @Test
-    public final void testMatF2FloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloat() {
+    public final void testFloat2MatrixFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloat() {
         Float2Matrix input1 = new Float2Matrix(0.330f, 0.000f, 0.330f, 0.330f);
         Float2Matrix expected = new Float2Matrix(0.330f, 0.000f, 0.330f, 0.330f);
 
@@ -68,7 +68,7 @@ public class MatF2Test {
     }
 
     @Test
-    public final void testMatF2MatF2() {
+    public final void testFloat2MatrixFloat2Matrix() {
         Float2Matrix input1 = new Float2Matrix(0.330f, 0.000f, 0.330f, 0.330f);
         Float2Matrix expected = new Float2Matrix(input1);
 
@@ -81,7 +81,7 @@ public class MatF2Test {
     }
 
     @Test
-    public final void testMulMatF2() {
+    public final void testMulFloat2Matrix() {
         Float2Matrix input1 = new Float2Matrix(0.330f, 0.000f, 0.330f, 0.330f);
         Float2Matrix input2 = new Float2Matrix(0.330f, 0.000f, 0.330f, 0.330f);
         Float2Matrix expected = new Float2Matrix(0.10890001f, 0.0f, 0.21780002f, 0.10890001f);
@@ -102,7 +102,7 @@ public class MatF2Test {
     }
 
     @Test
-    public final void testAddMatF2() {
+    public final void testAddFloat2Matrix() {
         Float2Matrix input1 = new Float2Matrix(0.330f, 0.000f, 0.330f, 0.330f);
         Float2Matrix input2 = new Float2Matrix(0.330f, 0.000f, 0.330f, 0.330f);
         Float2Matrix expected = new Float2Matrix(0.66f, 0.0f, 0.66f, 0.66f);
@@ -123,7 +123,7 @@ public class MatF2Test {
     }
 
     @Test
-    public final void testSubMatF2() {
+    public final void testSubFloat2Matrix() {
         Float2Matrix input1 = new Float2Matrix(0.330f, 0.000f, 0.330f, 0.330f);
         Float2Matrix input2 = new Float2Matrix(0.330f, 0.000f, 0.330f, 0.330f);
         Float2Matrix expected = new Float2Matrix(0f, 0f, 0f, 0f);
@@ -228,7 +228,7 @@ public class MatF2Test {
     }
 
     @Test
-    public final void testMulVecF2() {
+    public final void testMulFloat2Vector() {
         Float2Matrix input1 = new Float2Matrix(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f);
         Float2Vector input2 = new Float2Vector(1f, 1f);
         Float2Vector expected = new Float2Vector(0.33333334f, 0.6666667f);

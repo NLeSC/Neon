@@ -10,10 +10,10 @@ import nl.esciencecenter.neon.math.Float4Vector;
 
 import org.junit.Test;
 
-public class VecF4Test {
+public class Float4VectorTest {
 
     @Test
-    public final void testVecF4() {
+    public final void testFloat4Vector() {
         Float4Vector input = new Float4Vector();
         Float4Vector expected = new Float4Vector(0, 0, 0, 0);
 
@@ -25,7 +25,7 @@ public class VecF4Test {
     }
 
     @Test
-    public final void testVecF4VecF4() {
+    public final void testFloat4VectorFloat4Vector() {
         // Test normal case
         Float4Vector input = new Float4Vector(new Float4Vector());
         Float4Vector expected = new Float4Vector(0, 0, 0, 0);
@@ -58,7 +58,7 @@ public class VecF4Test {
     }
 
     @Test
-    public final void testVecF4VecF3Float() {
+    public final void testFloat4VectorFloat3VectorFloat() {
         // Test normal case
         Float4Vector input = new Float4Vector(new Float3Vector(), 0f);
         Float4Vector expected = new Float4Vector(0, 0, 0, 0);
@@ -101,7 +101,7 @@ public class VecF4Test {
     }
 
     @Test
-    public final void testVecF4FloatFloatFloatFloat() {
+    public final void testFloat4VectorFloatFloatFloatFloat() {
         // Test normal case
         Float4Vector input = new Float4Vector(0f, 0f, 0f, 0f);
         Float4Vector expected = new Float4Vector();
@@ -187,7 +187,7 @@ public class VecF4Test {
     }
 
     @Test
-    public final void testAddVecF4() {
+    public final void testAddFloat4Vector() {
         // Test normal case
         Float4Vector input1 = new Float4Vector(0f, 0f, 0f, 0f);
         Float4Vector input2 = new Float4Vector(0f, 0f, 0f, 0f);
@@ -225,7 +225,7 @@ public class VecF4Test {
     }
 
     @Test
-    public final void testAddVecF3() {
+    public final void testAddFloat3Vector() {
         // Test normal case
         Float4Vector input1 = new Float4Vector(0f, 0f, 0f, 0f);
         Float3Vector input2 = new Float3Vector(0f, 0f, 0f);

@@ -11,10 +11,10 @@ import nl.esciencecenter.neon.math.Float3Vector;
 
 import org.junit.Test;
 
-public class MatF3Test {
+public class Float3MatrixTest {
 
     @Test
-    public final void testMatF3() {
+    public final void testFloat3Matrix() {
         Float3Matrix input1 = new Float3Matrix();
         Float3Matrix expected = new Float3Matrix(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f);
 
@@ -29,7 +29,7 @@ public class MatF3Test {
     }
 
     @Test
-    public final void testMatF3Float() {
+    public final void testFloat3MatrixFloat() {
         Float3Matrix input1 = new Float3Matrix(0f);
         Float3Matrix expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
@@ -42,7 +42,7 @@ public class MatF3Test {
     }
 
     @Test
-    public final void testMatF3VecF3VecF3VecF3VecF3() {
+    public final void testFloat3MatrixFloat3VectorFloat3VectorFloat3VectorFloat3Vector() {
         Float3Matrix input1 = new Float3Matrix(new Float3Vector(), new Float3Vector(), new Float3Vector());
         Float3Matrix expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
@@ -55,7 +55,7 @@ public class MatF3Test {
     }
 
     @Test
-    public final void testMatF3FloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloat() {
+    public final void testFloat3MatrixFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloat() {
         Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
         Float3Matrix expected = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
 
@@ -68,7 +68,7 @@ public class MatF3Test {
     }
 
     @Test
-    public final void testMatF3MatF3() {
+    public final void testFloat3MatrixFloat3Matrix() {
         Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
         Float3Matrix expected = new Float3Matrix(input1);
 
@@ -81,7 +81,7 @@ public class MatF3Test {
     }
 
     @Test
-    public final void testMulMatF3() {
+    public final void testMulFloat3Matrix() {
         Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
         Float3Matrix input2 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
         Float3Matrix expected = new Float3Matrix(0.21780002f, 0.0f, 0.21780002f, 0.32670003f, 0.10890001f, 0.32670003f, 0.21780002f,
@@ -103,7 +103,7 @@ public class MatF3Test {
     }
 
     @Test
-    public final void testAddMatF3() {
+    public final void testAddFloat3Matrix() {
         Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
         Float3Matrix input2 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
         Float3Matrix expected = new Float3Matrix(0.66f, 0.0f, 0.66f, 0.66f, 0.66f, 0.66f, 0.66f, 0.0f, 0.66f);
@@ -124,7 +124,7 @@ public class MatF3Test {
     }
 
     @Test
-    public final void testSubMatF3() {
+    public final void testSubFloat3Matrix() {
         Float3Matrix input1 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
         Float3Matrix input2 = new Float3Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f);
         Float3Matrix expected = new Float3Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
@@ -236,7 +236,7 @@ public class MatF3Test {
     }
 
     @Test
-    public final void testMulVecF3() {
+    public final void testMulFloat3Vector() {
         Float3Matrix input1 = new Float3Matrix(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
                 0.3333333333f, 0.000f, 0.3333333333f);
         Float3Vector input2 = new Float3Vector(1f, 1f, 1f);

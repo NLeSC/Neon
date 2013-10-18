@@ -9,10 +9,10 @@ import nl.esciencecenter.neon.math.Float2Vector;
 
 import org.junit.Test;
 
-public class VecF2Test {
+public class Float2VectorTest {
 
     @Test
-    public final void testVecF2() {
+    public final void testFloat2Vector() {
         Float2Vector input = new Float2Vector();
         Float2Vector expected = new Float2Vector(0, 0);
 
@@ -23,7 +23,7 @@ public class VecF2Test {
     }
 
     @Test
-    public final void testVecF2VecF2() {
+    public final void testFloat2VectorFloat2Vector() {
         // Test normal case
         Float2Vector input = new Float2Vector(new Float2Vector());
         Float2Vector expected = new Float2Vector(0, 0);
@@ -51,7 +51,7 @@ public class VecF2Test {
     }
 
     @Test
-    public final void testVecF2FloatFloatFloat() {
+    public final void testFloat2VectorFloatFloatFloat() {
         // Test normal case
         Float2Vector input = new Float2Vector(0f, 0f);
         Float2Vector expected = new Float2Vector();
@@ -123,7 +123,7 @@ public class VecF2Test {
     }
 
     @Test
-    public final void testAddVecF2() {
+    public final void testAddFloat2Vector() {
         // Test normal case
         Float2Vector input1 = new Float2Vector(0f, 0f);
         Float2Vector input2 = new Float2Vector(0f, 0f);

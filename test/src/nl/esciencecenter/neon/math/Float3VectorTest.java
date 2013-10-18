@@ -9,10 +9,10 @@ import nl.esciencecenter.neon.math.Float3Vector;
 
 import org.junit.Test;
 
-public class VecF3Test {
+public class Float3VectorTest {
 
     @Test
-    public final void testVecF3() {
+    public final void testFloat3Vector() {
         Float3Vector input = new Float3Vector();
         Float3Vector expected = new Float3Vector(0, 0, 0);
 
@@ -23,7 +23,7 @@ public class VecF3Test {
     }
 
     @Test
-    public final void testVecF3VecF3() {
+    public final void testFloat3VectorFloat3Vector() {
         // Test normal case
         Float3Vector input = new Float3Vector(new Float3Vector());
         Float3Vector expected = new Float3Vector(0, 0, 0);
@@ -53,7 +53,7 @@ public class VecF3Test {
     }
 
     @Test
-    public final void testVecF3FloatFloatFloat() {
+    public final void testFloat3VectorFloatFloatFloat() {
         // Test normal case
         Float3Vector input = new Float3Vector(0f, 0f, 0f);
         Float3Vector expected = new Float3Vector();
@@ -131,7 +131,7 @@ public class VecF3Test {
     }
 
     @Test
-    public final void testAddVecF3() {
+    public final void testAddFloat3Vector() {
         // Test normal case
         Float3Vector input1 = new Float3Vector(0f, 0f, 0f);
         Float3Vector input2 = new Float3Vector(0f, 0f, 0f);

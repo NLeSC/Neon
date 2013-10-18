@@ -11,10 +11,10 @@ import nl.esciencecenter.neon.math.Float4Vector;
 
 import org.junit.Test;
 
-public class MatF4Test {
+public class Float4MatrixTest {
 
     @Test
-    public final void testMatF4() {
+    public final void testFloat4Matrix() {
         Float4Matrix input1 = new Float4Matrix();
         Float4Matrix expected = new Float4Matrix(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f);
 
@@ -29,7 +29,7 @@ public class MatF4Test {
     }
 
     @Test
-    public final void testMatF4Float() {
+    public final void testFloat4MatrixFloat() {
         Float4Matrix input1 = new Float4Matrix(0f);
         Float4Matrix expected = new Float4Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
@@ -42,7 +42,7 @@ public class MatF4Test {
     }
 
     @Test
-    public final void testMatF4VecF4VecF4VecF4VecF4() {
+    public final void testFloat4MatrixFloat4VectorFloat4VectorFloat4VectorFloat4Vector() {
         Float4Matrix input1 = new Float4Matrix(new Float4Vector(), new Float4Vector(), new Float4Vector(), new Float4Vector());
         Float4Matrix expected = new Float4Matrix(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
 
@@ -55,7 +55,7 @@ public class MatF4Test {
     }
 
     @Test
-    public final void testMatF4FloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloat() {
+    public final void testFloat4MatrixFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloatFloat() {
         Float4Matrix input1 = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f,
                 0.000f, 0.330f, 0.000f, 0.330f, 0.330f, 0.330f);
         Float4Matrix expected = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f,
@@ -70,7 +70,7 @@ public class MatF4Test {
     }
 
     @Test
-    public final void testMatF4MatF4() {
+    public final void testFloat4MatrixFloat4Matrix() {
         Float4Matrix input1 = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f,
                 0.000f, 0.330f, 0.000f, 0.330f, 0.330f, 0.330f);
         Float4Matrix expected = new Float4Matrix(input1);
@@ -84,7 +84,7 @@ public class MatF4Test {
     }
 
     @Test
-    public final void testMulMatF4() {
+    public final void testMulFloat4Matrix() {
         Float4Matrix input1 = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f,
                 0.000f, 0.330f, 0.000f, 0.330f, 0.330f, 0.330f);
         Float4Matrix input2 = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f,
@@ -111,7 +111,7 @@ public class MatF4Test {
     }
 
     @Test
-    public final void testAddMatF4() {
+    public final void testAddFloat4Matrix() {
         Float4Matrix input1 = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f,
                 0.000f, 0.330f, 0.000f, 0.330f, 0.330f, 0.330f);
         Float4Matrix input2 = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f,
@@ -137,7 +137,7 @@ public class MatF4Test {
     }
 
     @Test
-    public final void testSubMatF4() {
+    public final void testSubFloat4Matrix() {
         Float4Matrix input1 = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f,
                 0.000f, 0.330f, 0.000f, 0.330f, 0.330f, 0.330f);
         Float4Matrix input2 = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f,
@@ -267,7 +267,7 @@ public class MatF4Test {
     }
 
     @Test
-    public final void testMulVecF4() {
+    public final void testMulFloat4Vector() {
         Float4Matrix input1 = new Float4Matrix(0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.3333333333f, 0.3333333333f,
                 0.3333333333f, 0.000f, 0.3333333333f, 0.3333333333f, 0.000f, 0.3333333333f, 0.000f, 0.3333333333f,
                 0.3333333333f, 0.3333333333f);

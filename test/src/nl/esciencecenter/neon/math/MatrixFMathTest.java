@@ -335,7 +335,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testTranslateVecF3() {
+    public final void testTranslateFloat3Vector() {
         // Regression test, there are no cases where this could fail.
         float x = 1f, y = 1f, z = 1f;
         Float4Matrix expected = new Float4Matrix(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
@@ -350,7 +350,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testTranslateVecF4() {
+    public final void testTranslateFloat4Vector() {
         // Regression test, there are no cases where this could fail.
         float x = 1f, y = 1f, z = 1f;
         Float4Matrix expected = new Float4Matrix(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
@@ -392,7 +392,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testScaleVecF3() {
+    public final void testScaleFloat3Vector() {
         // Regression test, there are no cases where this could fail.
         float x = 1f, y = 1f, z = 1f;
         Float4Matrix expected = new Float4Matrix(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
@@ -406,7 +406,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testScaleVecF4() {
+    public final void testScaleFloat4Vector() {
         // Regression test, there are no cases where this could fail.
         float x = 1f, y = 1f, z = 1f;
         Float4Matrix expected = new Float4Matrix(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
@@ -492,7 +492,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testRotateFloatVecF3() {
+    public final void testRotateFloatFloat3Vector() {
         // Regression test, there are no cases where this could fail.
         float deg = 0.3f;
         Float3Vector axis = new Float3Vector(0.5f, 0f, 0.5f);
@@ -508,7 +508,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testRotateFloatVecF4() {
+    public final void testRotateFloatFloat4Vector() {
         // Regression test, there are no cases where this could fail.
         float deg = 0.3f;
         Float4Vector axis = new Float4Vector(0.5f, 0f, 0.5f, 0.5f);
@@ -525,7 +525,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testDeterminantMatF2() {
+    public final void testDeterminantFloat2Matrix() {
         // Regression test, there are no cases where this could fail.
         Float2Matrix input = new Float2Matrix(0.5f, 1f, 0f, 3f);
         float expected = 1.5f;
@@ -543,7 +543,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testDeterminantMatF3() {
+    public final void testDeterminantFloat3Matrix() {
         // Regression test, there are no cases where this could fail.
         Float3Matrix input = new Float3Matrix(0.5f, 0f, 0.5f, 0.5f, 0.5f, 0f, 0f, 0.5f, 0.5f);
         float expected = .25f;
@@ -561,7 +561,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testDeterminantMatF4() {
+    public final void testDeterminantFloat4Matrix() {
         // Regression test, there are no cases where this could fail.
         Float4Matrix input = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f, 0.000f,
                 0.330f, 0.000f, 0.330f, 0.330f, 0.330f);
@@ -580,7 +580,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testCofactorsMatF3() {
+    public final void testCofactorsFloat3Matrix() {
         // Regression test, there are no cases where this could fail.
         Float3Matrix input = new Float3Matrix(3f, 0f, 2f, 2f, 0f, -2f, 0f, 1f, 1f);
         Float3Matrix expected = new Float3Matrix(2f, -2f, 2f, 2f, 3f, -3f, 0f, 10f, 0f);
@@ -594,7 +594,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testCofactorsMatF4() {
+    public final void testCofactorsFloat4Matrix() {
         // Regression test, there are no cases where this could fail.
         Float4Matrix input = new Float4Matrix(1f, 0f, 0f, 1f, 0f, 2f, 1f, 2f, 2f, 1f, 0f, 1f, 2f, 0f, 1f, 4f);
         Float4Matrix expected = new Float4Matrix(-4f, 2f, -16f, 6f, -1f, 1f, -2f, 1f, 2f, 0f, 4f, -2f, 1f, -1f, 4f, -1f);
@@ -608,7 +608,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testMinorsMatF3() {
+    public final void testMinorsFloat3Matrix() {
         // Regression test, there are no cases where this could fail.
         Float3Matrix input = new Float3Matrix(3f, 0f, 2f, 2f, 0f, -2f, 0f, 1f, 1f);
         Float3Matrix expected = new Float3Matrix(2f, 2f, 2f, -2f, 3f, 3f, 0f, -10f, 0f);
@@ -622,7 +622,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testMinorsMatF4() {
+    public final void testMinorsFloat4Matrix() {
         // Regression test, there are no cases where this could fail.
         Float4Matrix input = new Float4Matrix(1f, 0f, 0f, 1f, 0f, 2f, 1f, 2f, 2f, 1f, 0f, 1f, 2f, 0f, 1f, 4f);
         Float4Matrix expected = new Float4Matrix(-4.0f, -2.0f, -16.0f, -6.0f, 1.0f, 1.0f, 2.0f, 1.0f, 2.0f, 0.0f, 4.0f, 2.0f, -1.0f,
@@ -637,7 +637,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testExcludeMatF3() {
+    public final void testExcludeFloat3Matrix() {
         // Regression test, there are no cases where this could fail.
         Float3Matrix input = new Float3Matrix(0.5f, 0f, 0.5f, 0.5f, 0.5f, 0f, 0f, 0.5f, 0.5f);
         int col = 0;
@@ -666,7 +666,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testExcludeMatF4() {
+    public final void testExcludeFloat4Matrix() {
         Float4Matrix input = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f, 0.000f,
                 0.330f, 0.000f, 0.330f, 0.330f, 0.330f);
         int col = 0;
@@ -695,7 +695,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testTransposeMatF2() {
+    public final void testTransposeFloat2Matrix() {
         Float2Matrix input = new Float2Matrix(0.5f, 1f, 0f, 3f);
         Float2Matrix expected = new Float2Matrix(0.5f, 0f, 1f, 3f);
 
@@ -713,7 +713,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testTransposeMatF3() {
+    public final void testTransposeFloat3Matrix() {
         Float3Matrix input = new Float3Matrix(0.5f, 0f, 0.5f, 0.5f, 0.5f, 0f, 0f, 0.5f, 0.5f);
         Float3Matrix expected = new Float3Matrix(0.5f, 0.5f, 0.0f, 0f, 0.5f, 0.5f, 0.5f, 0f, 0.5f);
 
@@ -731,7 +731,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testTransposeMatF4() {
+    public final void testTransposeFloat4Matrix() {
         Float4Matrix input = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f, 0.000f,
                 0.330f, 0.000f, 0.330f, 0.330f, 0.330f);
         Float4Matrix expected = new Float4Matrix(0.330f, 0.330f, 0.330f, 0.000f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f,
@@ -751,7 +751,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testAdjointMatF2() {
+    public final void testAdjointFloat2Matrix() {
         Float2Matrix input = new Float2Matrix(0.5f, 1f, 0f, 3f);
         Float2Matrix expected = new Float2Matrix(3f, -1f, 0f, 0.5f);
 
@@ -765,7 +765,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testAdjointMatF3() {
+    public final void testAdjointFloat3Matrix() {
         Float3Matrix input = new Float3Matrix(0.5f, 0f, 0.5f, 0.5f, 0.5f, 0f, 0f, 0.5f, 0.5f);
         Float3Matrix expected = new Float3Matrix(0.25f, 0.25f, -0.25f, -0.25f, 0.25f, 0.25f, 0.25f, -0.25f, 0.25f);
 
@@ -788,7 +788,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testAdjointMatF4() {
+    public final void testAdjointFloat4Matrix() {
         Float4Matrix input = new Float4Matrix(0f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f, 11f, 12f, 13f, 14f, 15f, 16f);
         Float4Matrix expected = new Float4Matrix(0f, 0f, 0f, 0f, 0f, 4f, -8f, 4f, 0f, -8f, 16f, -8f, 0f, 4f, -8f, 4f);
 
@@ -817,7 +817,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testInverseMatF2() {
+    public final void testInverseFloat2Matrix() {
         Float2Matrix input = new Float2Matrix(0.5f, 1f, 0f, 3f);
         Float2Matrix expected = new Float2Matrix(2f, -2f / 3f, 0f, 1f / 3f);
         try {
@@ -841,7 +841,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testInverseMatF3() {
+    public final void testInverseFloat3Matrix() {
         Float3Matrix input = new Float3Matrix(0.5f, 0f, 0.5f, 0.5f, 0.5f, 0f, 0f, 0.5f, 0.5f);
         Float3Matrix expected = new Float3Matrix(1f, 1f, -1f, -1f, 1f, 1f, 1f, -1f, 1f);
         try {
@@ -872,7 +872,7 @@ public class MatrixFMathTest {
      * .
      */
     @Test
-    public final void testInverseMatF4() {
+    public final void testInverseFloat4Matrix() {
         Float4Matrix input = new Float4Matrix(0.330f, 0.000f, 0.330f, 0.330f, 0.330f, 0.330f, 0.330f, 0.000f, 0.330f, 0.330f, 0.000f,
                 0.330f, 0.000f, 0.330f, 0.330f, 0.330f);
         Float4Matrix expected = new Float4Matrix(1.010101f, 1.010101f, 1.010101f, -2.020202f, -2.020202f, 1.010101f, 1.010101f,

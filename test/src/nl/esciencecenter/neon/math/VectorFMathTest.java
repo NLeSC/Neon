@@ -40,7 +40,7 @@ public class VectorFMathTest {
     float EPSILON = 0.000001f;
 
     @Test
-    public final void testDotVecF2VecF2() {
+    public final void testDotFloat2VectorFloat2Vector() {
         Float2Vector input1 = new Float2Vector(0.3f, 0.2f);
         Float2Vector input2 = new Float2Vector(0.6f, 0.2f);
         float expected = 0.22f;
@@ -74,7 +74,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testDotVecF3VecF3() {
+    public final void testDotFloat3VectorFloat3Vector() {
         Float3Vector input1 = new Float3Vector(0.3f, 0.2f, 0.5f);
         Float3Vector input2 = new Float3Vector(0.6f, 0.2f, 0.8f);
         float expected = 0.62f;
@@ -107,7 +107,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testDotVecF4VecF4() {
+    public final void testDotFloat4VectorFloat4Vector() {
         Float4Vector input1 = new Float4Vector(0.3f, 0.2f, 0.5f, 0.1f);
         Float4Vector input2 = new Float4Vector(0.6f, 0.2f, 0.8f, 1.0f);
         float expected = 0.72f;
@@ -140,7 +140,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testLengthVecF2() {
+    public final void testLengthFloat2Vector() {
         Float2Vector input1 = new Float2Vector(0.3f, 0.2f);
         float expected = 0.360555f;
         assertEquals(expected, FloatVectorMath.length(input1), EPSILON);
@@ -167,7 +167,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testLengthVecF3() {
+    public final void testLengthFloat3Vector() {
         Float3Vector input1 = new Float3Vector(0.3f, 0.2f, 0.5f);
         float expected = 0.616441f;
         assertEquals(expected, FloatVectorMath.length(input1), EPSILON);
@@ -194,7 +194,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testLengthVecF4() {
+    public final void testLengthFloat4Vector() {
         Float4Vector input1 = new Float4Vector(0.3f, 0.2f, 0.5f, 0.1f);
         float expected = 0.6245f;
         assertEquals(expected, FloatVectorMath.length(input1), EPSILON);
@@ -221,7 +221,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testNormalizeVecF2() {
+    public final void testNormalizeFloat2Vector() {
         Float2Vector input1 = new Float2Vector(0.3f, 0.2f);
         Float2Vector expected = new Float2Vector(0.8320503f, 0.5547002f);
         assertEquals(expected, FloatVectorMath.normalize(input1));
@@ -248,7 +248,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testNormalizeVecF3() {
+    public final void testNormalizeFloat3Vector() {
         Float3Vector input1 = new Float3Vector(0.3f, 0.2f, 0.5f);
         Float3Vector expected = new Float3Vector(0.48666432f, 0.32444286f, 0.81110716f);
         assertEquals(expected, FloatVectorMath.normalize(input1));
@@ -275,7 +275,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testNormalizeVecF4() {
+    public final void testNormalizeFloat4Vector() {
         Float4Vector input1 = new Float4Vector(0.3f, 0.2f, 0.5f, 0.1f);
         Float4Vector expected = new Float4Vector(0.48038447f, 0.32025632f, 0.80064076f, 0.16012816f);
         assertEquals(expected, FloatVectorMath.normalize(input1));
@@ -302,7 +302,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testCrossVecF3VecF3() {
+    public final void testCrossFloat3VectorFloat3Vector() {
         Float3Vector input1 = new Float3Vector(0.3f, 0.2f, 0.5f);
         Float3Vector input2 = new Float3Vector(0.6f, 0.2f, 0.8f);
         Float3Vector expected = new Float3Vector(0.06000001f, 0.060000002f, -0.060000002f);
@@ -335,7 +335,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testCrossVecF4VecF4() {
+    public final void testCrossFloat4VectorFloat4Vector() {
         Float4Vector input1 = new Float4Vector(0.3f, 0.2f, 0.5f, 0.1f);
         Float4Vector input2 = new Float4Vector(0.6f, 0.2f, 0.8f, 1.0f);
         Float4Vector expected = new Float4Vector(0.06000001f, 0.060000002f, -0.060000002f, 0.0f);
@@ -379,7 +379,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testToBufferVecF2Array() {
+    public final void testToBufferFloat2VectorArray() {
         Float2Vector[] input = new Float2Vector[] { new Float2Vector(0f, 1f), new Float2Vector(2f, 3f), new Float2Vector(4f, 5f) };
 
         float[] expectedArray = new float[] { 0f, 1f, 2f, 3f, 4f, 5f };
@@ -391,7 +391,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testToBufferVecF3Array() {
+    public final void testToBufferFloat3VectorArray() {
         Float3Vector[] input = new Float3Vector[] { new Float3Vector(0f, 1f, 2f), new Float3Vector(3f, 4f, 5f) };
 
         float[] expectedArray = new float[] { 0f, 1f, 2f, 3f, 4f, 5f };
@@ -403,7 +403,7 @@ public class VectorFMathTest {
     }
 
     @Test
-    public final void testToBufferVecF4Array() {
+    public final void testToBufferFloat4VectorArray() {
         Float4Vector[] input = new Float4Vector[] { new Float4Vector(0f, 1f, 2f, 3f), new Float4Vector(3f, 4f, 5f, 6f) };
 
         float[] expectedArray = new float[] { 0f, 1f, 2f, 3f, 3f, 4f, 5f, 6f };
