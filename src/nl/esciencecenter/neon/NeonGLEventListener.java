@@ -8,11 +8,11 @@ import javax.media.opengl.GLException;
 
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.input.InputHandler;
+import nl.esciencecenter.neon.math.Float3Vector;
 import nl.esciencecenter.neon.math.Float4Matrix;
+import nl.esciencecenter.neon.math.Float4Vector;
 import nl.esciencecenter.neon.math.FloatMatrixMath;
 import nl.esciencecenter.neon.math.Point4;
-import nl.esciencecenter.neon.math.Float3Vector;
-import nl.esciencecenter.neon.math.Float4Vector;
 import nl.esciencecenter.neon.shaders.ShaderProgramLoader;
 import nl.esciencecenter.neon.text.jogampexperimental.Font;
 import nl.esciencecenter.neon.text.jogampexperimental.FontFactory;
@@ -58,9 +58,9 @@ public abstract class NeonGLEventListener implements GLEventListener {
      */
     private static final float fovy = 45.0f;
     /** General Near clipping plane variable needed for a default perspective */
-    private static final float zNear = 0.1f;
+    private static final float zNear = 0.0001f;
     /** General Far clipping plane variable needed for a default perspective */
-    private static final float zFar = 1000000.0f;
+    private static final float zFar = 1000.0f;
 
     /**
      * A default implementation of the ProgramLoader, needed for programmable

@@ -6,12 +6,6 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.esciencecenter.neon.math.Color4;
-import nl.esciencecenter.neon.math.Float2Vector;
-import nl.esciencecenter.neon.math.Float3Vector;
-import nl.esciencecenter.neon.math.Float4Vector;
-import nl.esciencecenter.neon.math.FloatVectorMath;
-
 import org.junit.Test;
 
 /* Copyright 2013 Netherlands eScience Center
@@ -380,7 +374,8 @@ public class VectorFMathTest {
 
     @Test
     public final void testToBufferFloat2VectorArray() {
-        Float2Vector[] input = new Float2Vector[] { new Float2Vector(0f, 1f), new Float2Vector(2f, 3f), new Float2Vector(4f, 5f) };
+        Float2Vector[] input = new Float2Vector[] { new Float2Vector(0f, 1f), new Float2Vector(2f, 3f),
+                new Float2Vector(4f, 5f) };
 
         float[] expectedArray = new float[] { 0f, 1f, 2f, 3f, 4f, 5f };
         FloatBuffer expected = FloatBuffer.allocate(expectedArray.length);
@@ -536,13 +531,17 @@ public class VectorFMathTest {
         Float3Vector endControl = new Float3Vector(0f, 0f, 1f);
         Float3Vector endPoint = new Float3Vector(10f, 10f, 10f);
 
-        Float3Vector[] expected = { new Float3Vector(360.0f, 360.0f, 360.0f), new Float3Vector(262.96298f, 262.72f, 262.693f),
-                new Float3Vector(185.74397f, 185.36f, 185.26399f), new Float3Vector(126.08098f, 125.64f, 125.451004f),
-                new Float3Vector(81.71199f, 81.28f, 80.99202f), new Float3Vector(50.374992f, 49.999996f, 49.625034f),
-                new Float3Vector(29.807993f, 29.51999f, 29.088047f), new Float3Vector(17.748993f, 17.559984f, 17.11906f),
-                new Float3Vector(11.935992f, 11.839972f, 11.456075f), new Float3Vector(10.106991f, 10.079955f, 9.83709f) };
+        Float3Vector[] expected = { new Float3Vector(360.0f, 360.0f, 360.0f),
+                new Float3Vector(262.96298f, 262.72f, 262.693f), new Float3Vector(185.74397f, 185.36f, 185.26399f),
+                new Float3Vector(126.08098f, 125.64f, 125.451004f), new Float3Vector(81.71199f, 81.28f, 80.99202f),
+                new Float3Vector(50.374992f, 49.999996f, 49.625034f),
+                new Float3Vector(29.807993f, 29.51999f, 29.088047f),
+                new Float3Vector(17.748993f, 17.559984f, 17.11906f),
+                new Float3Vector(11.935992f, 11.839972f, 11.456075f),
+                new Float3Vector(10.106991f, 10.079955f, 9.83709f) };
 
-        Float3Vector[] bezierPoints = FloatVectorMath.degreesBezierCurve(10, startPoint, startControl, endControl, endPoint);
+        Float3Vector[] bezierPoints = FloatVectorMath.degreesBezierCurve(10, startPoint, startControl, endControl,
+                endPoint);
 
         for (int i = 0; i < 10; i++) {
             assertEquals(expected[i], bezierPoints[i]);

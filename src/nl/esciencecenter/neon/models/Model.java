@@ -2,13 +2,18 @@ package nl.esciencecenter.neon.models;
 
 import java.nio.FloatBuffer;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
+import javax.media.opengl.GLException;
 
 import nl.esciencecenter.neon.NeonGLEventListener;
 import nl.esciencecenter.neon.datastructures.GLSLAttribute;
 import nl.esciencecenter.neon.datastructures.VertexBufferObject;
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.shaders.ShaderProgram;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /* Copyright [2013] [Netherlands eScience Center]
  * 
@@ -26,22 +31,25 @@ import nl.esciencecenter.neon.shaders.ShaderProgram;
  */
 
 /**
- * General extendible class representing a model with a {@link VertexBufferObject}.
+ * General extendible class representing a model with a
+ * {@link VertexBufferObject}.
  * 
  * @author Maarten van Meersbergen <m.van.meersbergen@esciencecenter.nl>
  */
 public abstract class Model {
+    private final static Logger logger = LoggerFactory.getLogger(Model.class);
+
     /**
-     * The OpenGL-internal vertex format rules the vertexes in the VertexBufferObject can
-     * follow.
+     * The OpenGL-internal vertex format rules the vertexes in the
+     * VertexBufferObject can follow.
      */
     public static enum VertexFormat {
         TRIANGLES, POINTS, LINES
     };
 
     /**
-     * The OpenGL-internal vertex format rules the vertexes in the VertexBufferObject are going
-     * to follow.
+     * The OpenGL-internal vertex format rules the vertexes in the
+     * VertexBufferObject are going to follow.
      */
     private VertexFormat format;
 
@@ -77,8 +85,8 @@ public abstract class Model {
     }
 
     /**
-     * Initializes the model by constructing the {@link VertexBufferObject} out of the
-     * vertices, normals and texCoords buffers.
+     * Initializes the model by constructing the {@link VertexBufferObject} out
+     * of the vertices, normals and texCoords buffers.
      * 
      * @param gl
      *            The global openGL instance.
@@ -135,8 +143,8 @@ public abstract class Model {
     }
 
     /**
-     * Draw method for this model. Links its VertexBufferObject attributes and calls OpenGL
-     * DrawArrays.
+     * Draw method for this model. Links its VertexBufferObject attributes and
+     * calls OpenGL DrawArrays.
      * 
      * @param gl
      *            The global openGL instance.
@@ -149,6 +157,7 @@ public abstract class Model {
             getVbo().bind(gl);
 
             program.linkAttribs(gl, getVbo().getAttribs());
+            program.use(gl);
 
             if (getFormat() == VertexFormat.TRIANGLES) {
                 gl.glDrawArrays(GL3.GL_TRIANGLES, 0, getNumVertices());
@@ -265,5 +274,36 @@ public abstract class Model {
      */
     public void setNumVertices(int numVertices) {
         this.numVertices = numVertices;
+    }
+
+    /**
+     * Internal method to check for OpenGL errorsLogs errors if there were any.
+     * 
+     * @param gl
+     *            The opengl instance.
+     * @param exceptionMessage
+     *            The message Prefix.
+     * @param quietlyRemoveAllPreviousErrors
+     *            Set whether this method should focus on the current error
+     *            only, or print all errors that are buffered by opengl.
+     * @return true if there was no error.
+     */
+    private boolean checkNoError(GL gl, String exceptionMessage, boolean quietlyRemoveAllPreviousErrors) {
+        int error = gl.glGetError();
+        if (!quietlyRemoveAllPreviousErrors) {
+            if (GL.GL_NO_ERROR != error) {
+                while (GL.GL_NO_ERROR != error) {
+                    GLException exception = new GLException(" GL Error 0x" + Integer.toHexString(error));
+                    logger.error("Error in OpenGL operation " + exceptionMessage + " : ", exception);
+                    error = gl.glGetError();
+                }
+                return false;
+            }
+        } else {
+            while (GL.GL_NO_ERROR != error) {
+                error = gl.glGetError();
+            }
+        }
+        return true;
     }
 }

@@ -10,6 +10,7 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLContext;
+import javax.media.opengl.GLException;
 
 import nl.esciencecenter.neon.NeonGLEventListener;
 import nl.esciencecenter.neon.datastructures.FrameBufferObject;
@@ -17,11 +18,11 @@ import nl.esciencecenter.neon.datastructures.IntPixelBufferObject;
 import nl.esciencecenter.neon.exceptions.UninitializedException;
 import nl.esciencecenter.neon.input.InputHandler;
 import nl.esciencecenter.neon.math.Color4;
+import nl.esciencecenter.neon.math.Float3Vector;
 import nl.esciencecenter.neon.math.Float4Matrix;
+import nl.esciencecenter.neon.math.Float4Vector;
 import nl.esciencecenter.neon.math.FloatMatrixMath;
 import nl.esciencecenter.neon.math.Point4;
-import nl.esciencecenter.neon.math.Float3Vector;
-import nl.esciencecenter.neon.math.Float4Vector;
 import nl.esciencecenter.neon.models.GeoSphere;
 import nl.esciencecenter.neon.models.Quad;
 import nl.esciencecenter.neon.models.Sphere;
@@ -34,6 +35,9 @@ import nl.esciencecenter.neon.text.MultiColorText;
 import nl.esciencecenter.neon.textures.ByteBufferTexture;
 import nl.esciencecenter.neon.textures.ImageTexture;
 import nl.esciencecenter.neon.textures.Texture2D;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jogamp.common.nio.Buffers;
 
@@ -60,6 +64,7 @@ import com.jogamp.common.nio.Buffers;
  * 
  */
 public class ColormapExampleGLEventListener extends NeonGLEventListener {
+    private final static Logger logger = LoggerFactory.getLogger(ColormapExampleGLEventListener.class);
     private static final int NOISE_LONS = 2000;
     private static final int NOISE_LATS = 1000;
 
@@ -279,7 +284,8 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
 
         // Translate the camera backwards according to the inputhandler's view
         // distance setting.
-        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.translate(new Float3Vector(0f, 0f, inputHandler.getViewDist())));
+        modelViewMatrix = modelViewMatrix.mul(FloatMatrixMath.translate(new Float3Vector(0f, 0f, inputHandler
+                .getViewDist())));
 
         // Rotate tha camera according to the rotation angles defined in the
         // inputhandler.
@@ -300,7 +306,8 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
             e1.printStackTrace();
         }
 
-        // Render the FrameBufferObject's to screen, doing any post-processing actions that
+        // Render the FrameBufferObject's to screen, doing any post-processing
+        // actions that
         // might be wanted.
         renderTexturesToScreen(gl, canvasWidth, canvasHeight);
 
@@ -332,7 +339,13 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
      */
     private void renderScene(GL3 gl, Float4Matrix mv) {
         try {
+            // if (!checkNoError(gl, "pre rebuild", false)) {
+            // System.exit(0);
+            // }
             rebuildColormapDependentTexturesIfNecessary(gl);
+            // if (!checkNoError(gl, "post rebuild", false)) {
+            // System.exit(0);
+            // }
 
             // Bind the FrameBufferObject so we can start rendering to it
             sceneFBO.bind(gl);
@@ -341,11 +354,13 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
             gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
 
             renderGeoSphere(gl, new Float4Matrix(mv), textureShaderProgram);
+
             renderSphere(gl, new Float4Matrix(mv), textureShaderProgram);
 
             // Unbind the FrameBufferObject, making it available for texture
             // extraction.
             sceneFBO.unBind(gl);
+
         } catch (final UninitializedException e) {
             e.printStackTrace();
         }
@@ -361,6 +376,22 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
         if (cachedColormapIndex != colormapIndex || cachedDataModeIndex != dataModeIndex
                 || cachedVariableindex != variableIndex || cachedRangeSliderLowerValue != rangeSliderLowerValue
                 || cachedRangeSliderUpperValue != rangeSliderUpperValue) {
+            if (logger.isDebugEnabled()) {
+                String reason = "Just because";
+                if (cachedColormapIndex != colormapIndex) {
+                    reason = "cachedColormapIndex !=colormapIndex";
+                } else if (cachedDataModeIndex != dataModeIndex) {
+                    reason = "cachedDataModeIndex != dataModeIndex";
+                } else if (cachedVariableindex != variableIndex) {
+                    reason = "cachedVariableindex != variableIndex";
+                } else if (cachedRangeSliderLowerValue != rangeSliderLowerValue) {
+                    reason = "cachedRangeSliderLowerValue != rangeSliderLowerValue";
+                } else if (cachedRangeSliderUpperValue != rangeSliderUpperValue) {
+                    reason = "cachedRangeSliderUpperValue != rangeSliderUpperValue";
+                }
+
+                logger.debug("Rebuilding surface texture : " + reason);
+            }
 
             if (surfaceTex != null) {
                 surfaceTex.delete(gl);
@@ -400,20 +431,28 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
                     surfaceBuffer.put((byte) 0);
                 }
             }
-            System.out.println("min: " + noiseMin);
-            System.out.println("max: " + noiseMax);
-            System.out.println("avg: " + total / (NOISE_LATS * NOISE_LONS));
+            // System.out.println("min: " + noiseMin);
+            // System.out.println("max: " + noiseMax);
+            // System.out.println("avg: " + total / (NOISE_LATS * NOISE_LONS));
 
             surfaceBuffer.flip();
 
             surfaceTex = new ByteBufferTexture(GL3.GL_TEXTURE3, surfaceBuffer, NOISE_LONS, NOISE_LATS);
+
             surfaceTex.init(gl);
+
+            cachedColormapIndex = colormapIndex;
+            cachedDataModeIndex = dataModeIndex;
+            cachedVariableindex = variableIndex;
+            cachedRangeSliderLowerValue = rangeSliderLowerValue;
+            cachedRangeSliderUpperValue = rangeSliderUpperValue;
         }
     }
 
     /**
-     * GeoSphere rendering method. This assumes rendering to an {@link FrameBufferObject}.
-     * This is not a necessity, but it allows for post processing.
+     * GeoSphere rendering method. This assumes rendering to an
+     * {@link FrameBufferObject}. This is not a necessity, but it allows for
+     * post processing.
      * 
      * @param gl
      *            The current openGL instance.
@@ -422,8 +461,8 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
      * @param target
      *            The {@link ShaderProgram} to use for rendering.
      * @throws UninitializedException
-     *             if either the shader Program or FrameBufferObject used in this method are
-     *             uninitialized before use.
+     *             if either the shader Program or FrameBufferObject used in
+     *             this method are uninitialized before use.
      */
     private void renderGeoSphere(GL3 gl, Float4Matrix mv, ShaderProgram program) throws UninitializedException {
 
@@ -433,20 +472,34 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
         program.setUniformMatrix("MVMatrix", mv);
 
         // Stage the pointer to the texture
+        // if (!checkNoError(gl, "pre tex use", false)) {
+        // System.exit(0);
+        // }
         sphereTex.use(gl);
+        // if (!checkNoError(gl, "post tex use", false)) {
+        // System.exit(0);
+        // }
+
         program.setUniform("texture_map", surfaceTex.getMultitexNumber());
 
         // Load all staged variables into the GPU, check for errors and
         // omissions.
-        program.use(gl);
+        // if (!checkNoError(gl, "pre program use", false)) {
+        // System.exit(0);
+        // }
+        // program.use(gl);
+        // if (!checkNoError(gl, "post program use", false)) {
+        // System.exit(0);
+        // }
         // Call the model's draw method, this links the model's VertexBuffer to
         // the ShaderProgram and then calls the OpenGL draw method.
         geoSphere.draw(gl, program);
     }
 
     /**
-     * GeoSphere rendering method. This assumes rendering to an {@link FrameBufferObject}.
-     * This is not a necessity, but it allows for post processing.
+     * GeoSphere rendering method. This assumes rendering to an
+     * {@link FrameBufferObject}. This is not a necessity, but it allows for
+     * post processing.
      * 
      * @param gl
      *            The current openGL instance.
@@ -455,8 +508,8 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
      * @param target
      *            The {@link ShaderProgram} to use for rendering.
      * @throws UninitializedException
-     *             if either the shader Program or FrameBufferObject used in this method are
-     *             uninitialized before use.
+     *             if either the shader Program or FrameBufferObject used in
+     *             this method are uninitialized before use.
      */
     private void renderSphere(GL3 gl, Float4Matrix mv, ShaderProgram program) throws UninitializedException {
         // Stage the Perspective and Modelview matrixes in the ShaderProgram.
@@ -473,7 +526,7 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
 
         // Load all staged variables into the GPU, check for errors and
         // omissions.
-        program.use(gl);
+        // program.use(gl);
         // Call the model's draw method, this links the model's VertexBuffer to
         // the ShaderProgram and then calls the OpenGL draw method.
         sphere.draw(gl, program);
@@ -492,9 +545,11 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
      * @param target
      *            The target {@link FrameBufferObject} to render to.
      * @throws UninitializedException
-     *             if the FrameBufferObject used in this method is uninitialized before use.
+     *             if the FrameBufferObject used in this method is uninitialized
+     *             before use.
      */
-    private void renderHUDText(GL3 gl, Float4Matrix mv, ShaderProgram program, FrameBufferObject target) throws UninitializedException {
+    private void renderHUDText(GL3 gl, Float4Matrix mv, ShaderProgram program, FrameBufferObject target)
+            throws UninitializedException {
         // Set a new text for the string
         String randomString = "Colormap test, random: " + Math.random();
         hudText.setString(gl, randomString, Color4.WHITE, fontSize);
@@ -547,7 +602,7 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
         try {
             // Load all staged variables into the GPU, check for errors and
             // omissions.
-            postprocessShader.use(gl);
+            // postprocessShader.use(gl);
 
             // Call the model's draw method, this links the model's VertexBuffer
             // to
@@ -645,5 +700,36 @@ public class ColormapExampleGLEventListener extends NeonGLEventListener {
 
     public InputHandler getInputHandler() {
         return inputHandler;
+    }
+
+    /**
+     * Internal method to check for OpenGL errorsLogs errors if there were any.
+     * 
+     * @param gl
+     *            The opengl instance.
+     * @param exceptionMessage
+     *            The message Prefix.
+     * @param quietlyRemoveAllPreviousErrors
+     *            Set whether this method should focus on the current error
+     *            only, or print all errors that are buffered by opengl.
+     * @return true if there was no error.
+     */
+    private boolean checkNoError(GL gl, String exceptionMessage, boolean quietlyRemoveAllPreviousErrors) {
+        int error = gl.glGetError();
+        if (!quietlyRemoveAllPreviousErrors) {
+            if (GL.GL_NO_ERROR != error) {
+                while (GL.GL_NO_ERROR != error) {
+                    GLException exception = new GLException(" GL Error 0x" + Integer.toHexString(error));
+                    logger.error("Error in OpenGL operation " + exceptionMessage + " : ", exception);
+                    error = gl.glGetError();
+                }
+                return false;
+            }
+        } else {
+            while (GL.GL_NO_ERROR != error) {
+                error = gl.glGetError();
+            }
+        }
+        return true;
     }
 }

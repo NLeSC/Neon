@@ -150,7 +150,8 @@ public class ColormapExampleInterfaceWindow extends JPanel {
 
         final JComboBox<SimpleImageIcon> colorMapsComboBox = ColormapInterpreter.getLegendJComboBox(new Dimension(
                 DEFAULT_WIDTH, DEFAULT_HEIGHT));
-        colorMapsComboBox.setSelectedItem(settings.getSelectedColormapName());
+        colorMapsComboBox.setSelectedItem(colorMapsComboBox.getItemAt(ColormapInterpreter.getIndexOfColormap(settings
+                .getSelectedColormapName())));
         colorMapsComboBox.setMinimumSize(new Dimension(100, DEFAULT_HEIGHT));
         colorMapsComboBox.setMaximumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         screenVcomponents.add(colorMapsComboBox);

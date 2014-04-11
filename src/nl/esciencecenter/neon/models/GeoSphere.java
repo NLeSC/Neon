@@ -7,6 +7,9 @@ import nl.esciencecenter.neon.math.Float3Vector;
 import nl.esciencecenter.neon.math.Float4Vector;
 import nl.esciencecenter.neon.math.FloatVectorMath;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /* Copyright [2013] [Netherlands eScience Center]
  * 
  * Licensed under the Apache License, Version 2.0 (the "License")
@@ -29,6 +32,8 @@ import nl.esciencecenter.neon.math.FloatVectorMath;
  * @author Maarten van Meersbergen <m.vanmeersbergen@esciencecenter.nl>
  */
 public class GeoSphere extends Model {
+    private final static Logger logger = LoggerFactory.getLogger(GeoSphere.class);
+
     /** state keeper for texture coordinate state (3d coordinates yes/no) */
     private boolean texCoordsIn3D = false;
     /** the number of ribs in the latitude or longitude directions */
@@ -70,6 +75,10 @@ public class GeoSphere extends Model {
         }
 
         setNumVertices(points4List.size());
+
+        logger.debug("points4List size : " + points4List.size());
+        logger.debug("normals3List size : " + normals3List.size());
+        logger.debug("tCoords3List size : " + tCoords3List.size());
 
         setVertices(FloatVectorMath.vec4ListToBuffer(points4List));
         setNormals(FloatVectorMath.vec3ListToBuffer(normals3List));

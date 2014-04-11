@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
+import javax.media.opengl.GLException;
 
 import nl.esciencecenter.neon.datastructures.GLSLAttribute;
 import nl.esciencecenter.neon.datastructures.VertexBufferObject;
@@ -78,10 +80,12 @@ public class ShaderProgram {
     private final Map<String, Boolean> uniformBooleans;
     private final Map<String, Integer> uniformInts;
     private final Map<String, Float> uniformFloats;
+    private final Map<String, Double> uniformDoubles;
 
     private boolean geometryEnabled = false;
     private boolean warningsGiven = false;
     private boolean initialized = false;
+    private boolean attribsBound = false;
 
     /**
      * Basic constructor for ShaderProgram with Vertex and Fragment shaders.
@@ -101,6 +105,7 @@ public class ShaderProgram {
         uniformBooleans = new HashMap<String, Boolean>();
         uniformInts = new HashMap<String, Integer>();
         uniformFloats = new HashMap<String, Float>();
+        uniformDoubles = new HashMap<String, Double>();
     }
 
     /**
@@ -124,6 +129,7 @@ public class ShaderProgram {
         uniformBooleans = new HashMap<String, Boolean>();
         uniformInts = new HashMap<String, Integer>();
         uniformFloats = new HashMap<String, Float>();
+        uniformDoubles = new HashMap<String, Double>();
 
         geometryEnabled = true;
     }
@@ -148,18 +154,13 @@ public class ShaderProgram {
                 logger.error("Shaders not initialized properly");
             }
 
-            gl.glLinkProgram(getPointer());
+            // gl.glLinkProgram(getPointer());
 
             // Check for errors
-            IntBuffer buf = Buffers.newDirectIntBuffer(1);
-            gl.glGetProgramiv(getPointer(), GL3.GL_LINK_STATUS, buf);
-            if (buf.get(0) == 0) {
-                logger.error("Link error");
-                printError(gl);
-            }
+            // printError(gl, "link");
 
-            warningsGiven = false;
-            checkCompatibility(vs, fs);
+            // warningsGiven = false;
+            // checkCompatibility(vs, fs);
 
             initialized = true;
         }
@@ -238,6 +239,8 @@ public class ShaderProgram {
                 if (uniformFloatMatrices.containsKey(uniformEntry.getKey())) {
                     thisEntryAvailable = true;
                 } else if (uniformFloats.containsKey(uniformEntry.getKey())) {
+                    thisEntryAvailable = true;
+                } else if (uniformDoubles.containsKey(uniformEntry.getKey())) {
                     thisEntryAvailable = true;
                 } else if (uniformFloatVectors.containsKey(uniformEntry.getKey())) {
                     thisEntryAvailable = true;
@@ -322,12 +325,7 @@ public class ShaderProgram {
                 gl.glDeleteShader(fs.getShaderPointer());
 
                 // Check for errors
-                IntBuffer buf = Buffers.newDirectIntBuffer(1);
-                gl.glGetProgramiv(getPointer(), GL3.GL_LINK_STATUS, buf);
-                if (buf.get(0) == 0) {
-                    logger.error("Link error");
-                    printError(gl);
-                }
+                printError(gl, "link");
             } catch (UninitializedException e) {
                 logger.error("Shaders not initialized properly");
             }
@@ -366,16 +364,14 @@ public class ShaderProgram {
             for (Entry<String, Float> var : uniformFloats.entrySet()) {
                 passUniform(gl, var.getKey(), var.getValue());
             }
+            for (Entry<String, Double> var : uniformDoubles.entrySet()) {
+                passUniform(gl, var.getKey(), var.getValue());
+            }
 
             checkUniforms(vs, fs);
 
             // Check for errors
-            IntBuffer buf = Buffers.newDirectIntBuffer(1);
-            gl.glGetProgramiv(getPointer(), GL3.GL_LINK_STATUS, buf);
-            if (buf.get(0) == 0) {
-                logger.error("Use error");
-                printError(gl);
-            }
+            printError(gl, "use");
         } else {
             throw new UninitializedException();
         }
@@ -392,12 +388,43 @@ public class ShaderProgram {
      */
     public void linkAttribs(GL3 gl, GLSLAttribute... attribs) throws UninitializedException {
         if (initialized) {
+            if (!attribsBound) {
+                int index = 0;
+                for (GLSLAttribute attrib : attribs) {
+                    // logger.debug("bind------------------------------------------------");
+                    // logger.debug("getPointer(): " + getPointer());
+                    // logger.debug("name: " + attrib.getName());
+                    // logger.debug("size: " + attrib.getNumVectors());
+                    // logger.debug("capacity: " +
+                    // attrib.getBuffer().capacity());
+
+                    gl.glBindAttribLocation(getPointer(), index, attrib.getName());
+                    index++;
+                }
+                gl.glLinkProgram(getPointer());
+
+                warningsGiven = false;
+                checkCompatibility(vs, fs);
+
+                attribsBound = true;
+            }
+
             int nextStart = 0;
             for (GLSLAttribute attrib : attribs) {
                 int ptr = gl.glGetAttribLocation(getPointer(), attrib.getName());
-                gl.glVertexAttribPointer(ptr, attrib.getVectorSize(), GL3.GL_FLOAT, false, 0, nextStart);
-                gl.glEnableVertexAttribArray(ptr);
 
+                // logger.debug("----------------------------------------------------");
+                // logger.debug("getPointer(): " + getPointer());
+                // logger.debug("name: " + attrib.getName());
+                // logger.debug("ptr: " + ptr);
+                // logger.debug("nextStart: " + nextStart);
+                // logger.debug("size: " + attrib.getNumVectors());
+                // logger.debug("capacity: " + attrib.getBuffer().capacity());
+
+                gl.glVertexAttribPointer(ptr, attrib.getNumVectors(), GL3.GL_FLOAT, false, 0, nextStart);
+                // checkNoError(gl, "glVertexAttribPointer", true);
+
+                gl.glEnableVertexAttribArray(ptr);
                 nextStart += attrib.getBuffer().capacity() * Buffers.SIZEOF_FLOAT;
             }
 
@@ -416,14 +443,19 @@ public class ShaderProgram {
      * @param gl
      *            The opengl instance
      */
-    private void printError(GL3 gl) {
+    private void printError(GL3 gl, String state) {
         IntBuffer buf = Buffers.newDirectIntBuffer(1);
-        gl.glGetProgramiv(getPointer(), GL3.GL_INFO_LOG_LENGTH, buf);
-        int logLength = buf.get(0);
-        ByteBuffer reason = ByteBuffer.wrap(new byte[logLength]);
-        gl.glGetProgramInfoLog(getPointer(), logLength, null, reason);
+        gl.glGetProgramiv(getPointer(), GL3.GL_LINK_STATUS, buf);
 
-        logger.error(new String(reason.array()));
+        if (buf.get(0) == 0) {
+            gl.glGetProgramiv(getPointer(), GL3.GL_INFO_LOG_LENGTH, buf);
+            int logLength = buf.get(0);
+            ByteBuffer reason = ByteBuffer.wrap(new byte[logLength]);
+            gl.glGetProgramInfoLog(getPointer(), logLength, null, reason);
+
+            logger.error("GL error : " + state);
+            logger.error(new String(reason.array()));
+        }
     }
 
     /**
@@ -507,6 +539,22 @@ public class ShaderProgram {
             warningsGiven = false;
         }
         uniformFloats.put(name, var);
+    }
+
+    /**
+     * Staging method for a Uniform Float variable. This will be given to the
+     * GPU upon {@link ShaderProgram#use(GL3 gl)} of this ShaderProgram.
+     * 
+     * @param name
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The Double to stage.
+     */
+    public void setUniform(String name, Double var) {
+        if (!uniformDoubles.containsKey(name)) {
+            warningsGiven = false;
+        }
+        uniformDoubles.put(name, var);
     }
 
     /**
@@ -650,10 +698,28 @@ public class ShaderProgram {
      * @param var
      *            The uniform variable to pas to the shader.
      */
-
     public void passUniform(GL3 gl, String pointerNameInShader, float var) {
         int ptr = gl.glGetUniformLocation(getPointer(), pointerNameInShader);
         gl.glUniform1f(ptr, var);
+    }
+
+    /**
+     * Method used to pass uniform variables directly to the shader without
+     * staging them beforehand. Using this method to set shader variables
+     * interferes directly with the error checking code present in this class.
+     * Use is not recommended. Use
+     * {@link ShaderProgram#setUniform(String, Double)} instead.
+     * 
+     * @param gl
+     *            The OpenGL instance.
+     * @param pointerNameInShader
+     *            The name in the GLSL code for this uniform variable.
+     * @param var
+     *            The uniform variable to pas to the shader.
+     */
+    private void passUniform(GL3 gl, String pointerNameInShader, double var) {
+        int ptr = gl.glGetUniformLocation(getPointer(), pointerNameInShader);
+        gl.glUniform1d(ptr, var);
     }
 
     /**
@@ -683,5 +749,36 @@ public class ShaderProgram {
      */
     public void setPointer(int pointer) {
         this.pointer = pointer;
+    }
+
+    /**
+     * Internal method to check for OpenGL errorsLogs errors if there were any.
+     * 
+     * @param gl
+     *            The opengl instance.
+     * @param exceptionMessage
+     *            The message Prefix.
+     * @param quietlyRemoveAllPreviousErrors
+     *            Set whether this method should focus on the current error
+     *            only, or print all errors that are buffered by opengl.
+     * @return true if there was no error.
+     */
+    private boolean checkNoError(GL gl, String exceptionMessage, boolean quietlyRemoveAllPreviousErrors) {
+        int error = gl.glGetError();
+        if (!quietlyRemoveAllPreviousErrors) {
+            if (GL.GL_NO_ERROR != error) {
+                while (GL.GL_NO_ERROR != error) {
+                    GLException exception = new GLException(" GL Error 0x" + Integer.toHexString(error));
+                    logger.error("Error in OpenGL operation " + exceptionMessage + " : ", exception);
+                    error = gl.glGetError();
+                }
+                return false;
+            }
+        } else {
+            while (GL.GL_NO_ERROR != error) {
+                error = gl.glGetError();
+            }
+        }
+        return true;
     }
 }

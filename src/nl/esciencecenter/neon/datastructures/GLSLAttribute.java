@@ -48,11 +48,11 @@ public class GLSLAttribute {
      * @param vectorSize
      *            The size (number of places) per vector.
      */
-    public GLSLAttribute(Buffer buffer, String name, int numVectors, int vectorSize) {
+    public GLSLAttribute(Buffer buffer, String name, int vectorSize, int numVectors) {
         this.buffer = buffer;
         this.name = name;
-        this.numVectors = numVectors;
         this.vectorSize = vectorSize;
+        this.numVectors = numVectors;
     }
 
     /**
